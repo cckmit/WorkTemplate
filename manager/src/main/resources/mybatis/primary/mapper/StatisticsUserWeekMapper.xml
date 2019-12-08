@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.primary.mapper.StatisticsUserWeekMapper" >
+  <resultMap id="BaseResultMap" type="com.fish.dao.primary.model.StatisticsUserWeek" >
+    <id column="new_week" property="newWeek" jdbcType="INTEGER" />
+    <result column="WNU" property="wnu" jdbcType="BIGINT" />
+    <result column="WAU" property="wau" jdbcType="BIGINT" />
+    <result column="WOSU" property="wosu" jdbcType="BIGINT" />
+    <result column="pay_user" property="payUser" jdbcType="BIGINT" />
+    <result column="service_time" property="serviceTime" jdbcType="BIGINT" />
+    <result column="PCU" property="pcu" jdbcType="BIGINT" />
+    <result column="ACU" property="acu" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    new_week, WNU, WAU, WOSU, pay_user, service_time, PCU, ACU
+  </sql>
+  <!-- 自定义SQL语句 -->
+  <select id="selectBySQL" resultType="java.util.Map" parameterType="java.lang.String" >
+      ${_parameter}
+  </select>
+  <!-- 自定义SQL语句 -->
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from statistics_user_week
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from statistics_user_week
+    where new_week = #{newWeek,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from statistics_user_week
+    where new_week = #{newWeek,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fish.dao.primary.model.StatisticsUserWeek" >
+    insert into statistics_user_week (new_week, WNU, WAU, 
+      WOSU, pay_user, service_time, 
+      PCU, ACU)
+    values (#{newWeek,jdbcType=INTEGER}, #{wnu,jdbcType=BIGINT}, #{wau,jdbcType=BIGINT}, 
+      #{wosu,jdbcType=BIGINT}, #{payUser,jdbcType=BIGINT}, #{serviceTime,jdbcType=BIGINT}, 
+      #{pcu,jdbcType=BIGINT}, #{acu,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.dao.primary.model.StatisticsUserWeek" >
+    insert into statistics_user_week
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="newWeek != null" >
+        new_week,
+      </if>
+      <if test="wnu != null" >
+        WNU,
+      </if>
+      <if test="wau != null" >
+        WAU,
+      </if>
+      <if test="wosu != null" >
+        WOSU,
+      </if>
+      <if test="payUser != null" >
+        pay_user,
+      </if>
+      <if test="serviceTime != null" >
+        service_time,
+      </if>
+      <if test="pcu != null" >
+        PCU,
+      </if>
+      <if test="acu != null" >
+        ACU,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="newWeek != null" >
+        #{newWeek,jdbcType=INTEGER},
+      </if>
+      <if test="wnu != null" >
+        #{wnu,jdbcType=BIGINT},
+      </if>
+      <if test="wau != null" >
+        #{wau,jdbcType=BIGINT},
+      </if>
+      <if test="wosu != null" >
+        #{wosu,jdbcType=BIGINT},
+      </if>
+      <if test="payUser != null" >
+        #{payUser,jdbcType=BIGINT},
+      </if>
+      <if test="serviceTime != null" >
+        #{serviceTime,jdbcType=BIGINT},
+      </if>
+      <if test="pcu != null" >
+        #{pcu,jdbcType=BIGINT},
+      </if>
+      <if test="acu != null" >
+        #{acu,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.primary.model.StatisticsUserWeek" >
+    update statistics_user_week
+    <set >
+      <if test="wnu != null" >
+        WNU = #{wnu,jdbcType=BIGINT},
+      </if>
+      <if test="wau != null" >
+        WAU = #{wau,jdbcType=BIGINT},
+      </if>
+      <if test="wosu != null" >
+        WOSU = #{wosu,jdbcType=BIGINT},
+      </if>
+      <if test="payUser != null" >
+        pay_user = #{payUser,jdbcType=BIGINT},
+      </if>
+      <if test="serviceTime != null" >
+        service_time = #{serviceTime,jdbcType=BIGINT},
+      </if>
+      <if test="pcu != null" >
+        PCU = #{pcu,jdbcType=BIGINT},
+      </if>
+      <if test="acu != null" >
+        ACU = #{acu,jdbcType=BIGINT},
+      </if>
+    </set>
+    where new_week = #{newWeek,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.dao.primary.model.StatisticsUserWeek" >
+    update statistics_user_week
+    set WNU = #{wnu,jdbcType=BIGINT},
+      WAU = #{wau,jdbcType=BIGINT},
+      WOSU = #{wosu,jdbcType=BIGINT},
+      pay_user = #{payUser,jdbcType=BIGINT},
+      service_time = #{serviceTime,jdbcType=BIGINT},
+      PCU = #{pcu,jdbcType=BIGINT},
+      ACU = #{acu,jdbcType=BIGINT}
+    where new_week = #{newWeek,jdbcType=INTEGER}
+  </update>
+</mapper>

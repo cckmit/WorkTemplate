@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigEmailMapper" >
+  <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigEmail" >
+    <id column="udpType" property="udptype" jdbcType="VARCHAR" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="msg" property="msg" jdbcType="VARCHAR" />
+    <result column="button" property="button" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.fish.dao.second.model.ConfigEmail" extends="BaseResultMap" >
+    <result column="reward" property="reward" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    udpType, title, msg, button
+  </sql>
+  <sql id="Blob_Column_List" >
+    reward
+  </sql>
+  <select id="selectAll" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from config_email
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from config_email
+    where udpType = #{udptype,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from config_email
+    where udpType = #{udptype,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.fish.dao.second.model.ConfigEmail" >
+    insert into config_email (udpType, title, msg, 
+      button, reward)
+    values (#{udptype,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{msg,jdbcType=VARCHAR}, 
+      #{button,jdbcType=VARCHAR}, #{reward,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.dao.second.model.ConfigEmail" >
+    insert into config_email
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="udptype != null" >
+        udpType,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="msg != null" >
+        msg,
+      </if>
+      <if test="button != null" >
+        button,
+      </if>
+      <if test="reward != null" >
+        reward,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="udptype != null" >
+        #{udptype,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="msg != null" >
+        #{msg,jdbcType=VARCHAR},
+      </if>
+      <if test="button != null" >
+        #{button,jdbcType=VARCHAR},
+      </if>
+      <if test="reward != null" >
+        #{reward,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.ConfigEmail" >
+    update config_email
+    <set >
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="msg != null" >
+        msg = #{msg,jdbcType=VARCHAR},
+      </if>
+      <if test="button != null" >
+        button = #{button,jdbcType=VARCHAR},
+      </if>
+      <if test="reward != null" >
+        reward = #{reward,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where udpType = #{udptype,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.fish.dao.second.model.ConfigEmail" >
+    update config_email
+    set title = #{title,jdbcType=VARCHAR},
+      msg = #{msg,jdbcType=VARCHAR},
+      button = #{button,jdbcType=VARCHAR},
+      reward = #{reward,jdbcType=LONGVARCHAR}
+    where udpType = #{udptype,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.ConfigEmail" >
+    update config_email
+    set title = #{title,jdbcType=VARCHAR},
+      msg = #{msg,jdbcType=VARCHAR},
+      button = #{button,jdbcType=VARCHAR}
+    where udpType = #{udptype,jdbcType=VARCHAR}
+  </update>
+</mapper>

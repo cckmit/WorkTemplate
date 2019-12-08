@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.UserInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.fish.dao.second.model.UserInfo" >
+    <id column="userId" property="userid" jdbcType="BIGINT" />
+    <result column="nickName" property="nickname" jdbcType="VARCHAR" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="platform" property="platform" jdbcType="VARCHAR" />
+    <result column="device" property="device" jdbcType="VARCHAR" />
+    <result column="registTime" property="registtime" jdbcType="TIMESTAMP" />
+    <result column="loginTime" property="logintime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    userId, nickName, icon, platform, device, registTime, loginTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_info
+    where userId = #{userid,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from user_info
+    where userId = #{userid,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.fish.dao.second.model.UserInfo" >
+    insert into user_info (userId, nickName, icon, 
+      platform, device, registTime, 
+      loginTime)
+    values (#{userid,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
+      #{platform,jdbcType=VARCHAR}, #{device,jdbcType=VARCHAR}, #{registtime,jdbcType=TIMESTAMP}, 
+      #{logintime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.dao.second.model.UserInfo" >
+    insert into user_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        userId,
+      </if>
+      <if test="nickname != null" >
+        nickName,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="platform != null" >
+        platform,
+      </if>
+      <if test="device != null" >
+        device,
+      </if>
+      <if test="registtime != null" >
+        registTime,
+      </if>
+      <if test="logintime != null" >
+        loginTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="nickname != null" >
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null" >
+        #{platform,jdbcType=VARCHAR},
+      </if>
+      <if test="device != null" >
+        #{device,jdbcType=VARCHAR},
+      </if>
+      <if test="registtime != null" >
+        #{registtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logintime != null" >
+        #{logintime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.UserInfo" >
+    update user_info
+    <set >
+      <if test="nickname != null" >
+        nickName = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="platform != null" >
+        platform = #{platform,jdbcType=VARCHAR},
+      </if>
+      <if test="device != null" >
+        device = #{device,jdbcType=VARCHAR},
+      </if>
+      <if test="registtime != null" >
+        registTime = #{registtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="logintime != null" >
+        loginTime = #{logintime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where userId = #{userid,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.UserInfo" >
+    update user_info
+    set nickName = #{nickname,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      platform = #{platform,jdbcType=VARCHAR},
+      device = #{device,jdbcType=VARCHAR},
+      registTime = #{registtime,jdbcType=TIMESTAMP},
+      loginTime = #{logintime,jdbcType=TIMESTAMP}
+    where userId = #{userid,jdbcType=BIGINT}
+  </update>
+  <resultMap id="PlayUserVO" type="com.fish.protocols.PlayUserVO">
+    <id column="userId" property="userId" jdbcType="BIGINT" />
+    <result column="nickName" property="nickName" jdbcType="VARCHAR" />
+    <result column="platform" property="platform" jdbcType="VARCHAR" />
+    <result column="device" property="device" jdbcType="VARCHAR" />
+    <result column="register" property="register" jdbcType="TIMESTAMP" />
+    <result column="pearl" property="pearl" jdbcType="BIGINT" />
+    <result column="shell" property="shell" jdbcType="BIGINT" />
+    <result column="book" property="book" jdbcType="INTEGER" />
+    <result column="payCost" property="payCost" jdbcType="DECIMAL" />
+  </resultMap>
+  <select id="selectPlayUser" resultMap="PlayUserVO">
+    select  a.userId,a.registTime as register,nickName,pearl,shell,book,payCost,platform,device
+    from user_info a left join user_data b on a.userId=b.userId
+  </select>
+  <resultMap id="UserPayVO" type="com.fish.protocols.UserPayVO">
+    <id column="userId" property="userId" jdbcType="BIGINT" />
+    <result column="nickName" property="nickName" jdbcType="VARCHAR" />
+    <result column="register" property="register" jdbcType="TIMESTAMP" />
+    <result column="payCost" property="payCost" jdbcType="DECIMAL" />
+    <result column="lastSevenPay" property="lastSevenPay" jdbcType="DECIMAL" />
+    <result column="loveGood" property="loveGood" jdbcType="INTEGER" />
+    <result column="basin" property="basin" jdbcType="INTEGER" />
+    <result column="online" property="online" jdbcType="BIGINT" />
+  </resultMap>
+  <select id="selectMonitorUser" resultMap="UserPayVO">
+    select a.userId,
+           nickName,
+           payCost,
+           lastSevenPay,
+           loveGood,
+           basin,
+           a.registTime as register,
+           online
+    from user_info a
+      left join fishmanagerv5.monitor_user b
+      on a.userId=b.userId
+    order by payCost desc;
+  </select>
+</mapper>

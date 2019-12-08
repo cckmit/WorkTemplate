@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="chs">
+	<head>
+		<meta charset="UTF-8">
+		<title>鲸鱼用户</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+		<link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+		<script src="../layuiadmin/layui/layui.js"></script>
+		<script src="../layuiadmin/modules/operation.js"></script>
+		<style type="text/css">
+			.layui-form .layui-table-cell {
+				height: auto;
+				overflow: visible;
+				text-overflow: inherit;
+				white-space: normal;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="layui-fluid">
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-md12">
+					<div class="layui-card">
+
+						<div class="layui-form layui-card-header layuiadmin-card-header-auto">
+							<form class="layui-form-item" id="search-form">
+								<div class="layui-inline">
+									<label class="layui-form-label">玩家ID</label>
+									<div class="layui-input-inline" style="width: 5rem;">
+										<input type="number" class="layui-input" id="userId" name="userId">
+									</div>
+								</div>
+								<div class="layui-inline">
+									<label class="layui-form-label">玩家昵称</label>
+									<div class="layui-input-inline" style="width: 8rem;">
+										<input type="text" class="layui-input" id="nickName" name="nickName">
+									</div>
+								</div>
+								<div class="layui-inline">
+									<label class="layui-form-label">海域等级</label>
+									<div class="layui-input-inline" style="width: 5rem;">
+										<input type="number" class="layui-input" id="basin" name="basin">
+									</div>
+								</div>
+								<div class="layui-inline">
+									<label class="layui-form-label">充值金额</label>
+									<div class="layui-input-inline" style="width: 4rem;">
+										<select id="cost_formula" name="cost_formula" autocomplete="off">
+											<option value="0" selected="selected">&lt;</option>
+											<option value="1">=</option>
+											<option value="2">&gt;</option>
+										</select>
+									</div>
+									<div class="layui-input-inline" style="width: 5rem;">
+										<input type="number" class="layui-input" autocomplete="off" id="cost" name="cost">
+									</div>
+								</div>
+								<div class="layui-inline">
+									<button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
+										<i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+									</button>
+								</div>
+							</form>
+						</div>
+
+						<!-- 数据表格 -->
+						<div class="layui-card-body">
+							<table class="layui-hide" lay-filter="table-page" id="table-page"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<script type="text/html" id="toolbar">
+		</script>
+		<script>
+			var operatorurl = '../admin/basic/payUser';
+			layui.use(['table', 'laydate', 'form', 'layer'], () => {
+				var $ = layui.jquery,
+					table = layui.table,
+					form = layui.form,
+					layer = layui.layer,
+					laydate = layui.laydate;
+				table.render({
+					elem: '#table-page',
+					autoSort: false,
+					url: operatorurl + '?datagrid=data',
+					cols: [
+						[{
+								field: 'ranking',
+								width: 120,
+								title: '充值排名',
+								sort: true
+							},
+							{
+								field: 'userId',
+								width: 120,
+								title: '玩家ID',
+								sort: true
+							},
+							{
+								field: 'nickName',
+								width: 120,
+								title: '昵称',
+								sort: true
+							},
+							{
+								field: 'payCost',
+								width: 120,
+								title: '累计充值金额',
+								sort: true
+							},
+							{
+								field: 'lastSevenPay',
+								width: 120,
+								title: '近7天充值金额',
+								sort: true
+							},
+							{
+								field: 'loveGood',
+								width: 120,
+								title: '最喜爱商品信息',
+								sort: true
+							},
+							{
+								field: 'basin',
+								width: 120,
+								title: '最新海域信息',
+								sort: true
+							},
+							{
+								field: 'register',
+								width: 120,
+								title: '注册时间',
+								sort: true
+							},
+							{
+								field: 'online',
+								width: 120,
+								title: '累计在线时长',
+								sort: true,
+								templet: (d) => {
+									return UIConfig.formatTime(d.online);
+								}
+							}
+						]
+					],
+					page: true,
+					toolbar: '#toolbar',
+					defaultToolbar: ['filter', 'exports']
+				});
+			})
+		</script>
+	</body>
+</html>
