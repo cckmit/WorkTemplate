@@ -12,7 +12,7 @@
             <property name="suppressAllComments" value="true"/>
         </commentGenerator>
         <!--数据库链接URL，用户名、密码 -->
-        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver" connectionURL="jdbc:mysql://192.168.1.246:3306/fishmanagerv5?characterEncoding=utf-8&amp;mysqlEncoding=utf8mb4&amp;serverTimezone=Asia/Shanghai&amp;useSSL=true&amp;nullCatalogMeansCurrent=true" userId="root" password="root">
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver" connectionURL="jdbc:mysql://192.168.1.55:3306/persie_deamon?characterEncoding=utf-8&amp;mysqlEncoding=utf8mb4&amp;serverTimezone=Asia/Shanghai&amp;useSSL=true&amp;nullCatalogMeansCurrent=true" userId="query" password="query">
         </jdbcConnection>
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
@@ -31,6 +31,6 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
         <!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
-        <table tableName="manage_account" domainObjectName="ManageAccount" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+        <table tableName="ranking" domainObjectName="Ranking" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
    </context>
 </generatorConfiguration>

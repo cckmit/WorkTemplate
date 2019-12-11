@@ -9,14 +9,15 @@ window.UIConfig = {
         else
             return '其他';
     },
-    formatNullData(p)
-    {
-        if (p == null  || p == undefined)
-        {
-            return '--';
-        }else {
-            return  p;
-        }
+    formaterBool: (d) => {
+        if (d == 0)
+            return '小程序';
+        else if (d == 1)
+            return '小游戏';
+        else if (d == 2)
+            return '公众号';
+        else
+            return '其他';
     },
     //时间判断
     formatViewEffectTime: (startTime, endTime, real) => {
@@ -29,33 +30,17 @@ window.UIConfig = {
             return '<span style="color: blue">永久</span>';
         return real;
     }, // 刷新缓存
-	//非正整数，保留2位小数点
-	divideByDecimal:(a,b)=>{
-		if(a == 0 || b == 0 || a == undefined || b == undefined)
-			return '--';
-		return (a/b).toFixed(2);
-	},
-	//百分比
-	divideByPercent:(a,b)=>{
-		if(a == 0 || b == 0 || a == undefined || b == undefined)
-			return '--';
-		return (a*100/b).toFixed(1) + "%";
-	},
-    //获取时间，x时x分x秒
-    formatTime(val)
-    {
-        if (!val)
+    //非正整数，保留2位小数点
+    divideByDecimal:(a,b)=>{
+        if(a == 0 || b == 0 || a == undefined || b == undefined)
+            return '-';
+        return (a/b).toFixed(2);
+    },
+    //百分比
+    divideByPercent:(a,b)=>{
+        if(a == 0 || b == 0 || a == undefined || b == undefined)
             return '--';
-        let times = Math.floor(val / 1000);
-        let minute = Math.floor(times / 60);
-        let hour = Math.floor(minute / 60);
-        let str = "";
-        if(hour !== 0)
-            str = str.concat(hour + "时");
-        if(minute !== 0)
-            str = str.concat((minute % 60).toFixed(0) + "分");
-        str = str.concat((times % 60).toFixed(0) + "秒");
-        return str;
+        return (a*100/b).toFixed(1) + "%";
     },
     flushCache: () => {
         UIConfig.$.post(operatorurl + "?type=flush", {
@@ -177,11 +162,11 @@ layui.config({
     //监听排序事件
     table.on('sort(table-page)', function (obj) { //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
         table.reload('table-page', {
-            initSort: obj, //记录初始排序，如果不设的话，将无法标记表头的排序状态。            
+            initSort: obj, //记录初始排序，如果不设的话，将无法标记表头的排序状态。
             where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
-                sort: obj.field, //排序字段                
+                sort: obj.field, //排序字段
                 order: obj.type //排序方式
-            },			
+            },
         });
     });
 
@@ -214,12 +199,12 @@ layui.config({
                     update();
                 }
                 break;
+
         }
 
         // 修改
         function update() {
             $('#form_table').removeClass('layui-hide').addClass('layui-show');
-
             layui.layer.open({
                 type: 1,
                 title: '编辑',
@@ -233,6 +218,7 @@ layui.config({
                     let checkStatus = table.checkStatus('table-page');
                     let data = UIConfig.formatData(checkStatus.data[0]);
                     form.val("form_table", data);
+
                 },
                 yes: (index, layero) => {
                     // 提交监听
@@ -250,7 +236,13 @@ layui.config({
                                     layer.msg('修改成功');
                                     layer.close(index);
                                     table_reload();
-                                } else {
+                                }else if (result.code === 408){
+                                    layer.msg('AppID重复，操作失败')
+                                }else if (result.code === 409){
+                                    layer.msg('产品名称重复，操作失败')
+                                }else if (result.code === 410){
+                                    layer.msg('游戏代号重复，操作失败')
+                                }else{
                                     layer.msg('修改失败')
                                 }
                             }
@@ -300,6 +292,12 @@ layui.config({
                                     layer.msg('新增成功');
                                     layer.close(index);
                                     table_reload();
+                                }else if (result.code === 408){
+                                    layer.msg('AppID重复，操作失败')
+                                }else if (result.code === 409){
+                                    layer.msg('产品名称重复，操作失败')
+                                }else if (result.code === 410){
+                                    layer.msg('游戏代号重复，操作失败')
                                 } else {
                                     layer.msg('新增失败')
                                 }

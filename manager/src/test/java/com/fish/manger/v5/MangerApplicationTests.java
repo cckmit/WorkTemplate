@@ -85,11 +85,12 @@ public class MangerApplicationTests
     private void createAccount()
     {
         ManageAccount account = new ManageAccount();
-        account.setUsername("xuweihua@blazefire.com");
-        String password = setRandomPassword();
+        account.setUsername("admin");
+//        String password = setRandomPassword();
+        String password = "admin";
         String value = XwhTool.getMD5Encode(account.getUsername() + password);
         account.setPassword(value);
-        account.setNickname("胥伟华");
+        account.setNickname("admin");
         account.setUpdatetime(new Date());
         account.setRole("user");
         ManageAccount temp = userMapper.selectByPrimaryKey(account.getUsername());
@@ -97,6 +98,7 @@ public class MangerApplicationTests
         {
             userMapper.insert(account);
             LOGGER.info("新建账号:" + account.getUsername() + ",密码:" + password);
+            System.out.println("新建账号:" + account.getUsername() + ",密码:" + password);
         }
 
         //        user.setPassword("");
@@ -107,5 +109,9 @@ public class MangerApplicationTests
     public void contextLoads()
     {
         createAccount();
+    }
+    @Test
+    public  void creat(){
+        createLayUi();
     }
 }

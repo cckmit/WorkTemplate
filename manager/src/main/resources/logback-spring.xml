@@ -4,7 +4,7 @@
 
     <contextName>SpringBootLogback</contextName>
     <property name="LOG_PATH" value="/usr/logs" />
-    <property name="APPDIR" value="managerV5" />
+    <property name="APPDIR" value="managerV5_new" />
 
     <!-- 日志记录器，日期滚动记录 -->
     <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">

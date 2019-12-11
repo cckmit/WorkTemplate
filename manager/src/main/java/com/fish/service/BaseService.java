@@ -189,7 +189,7 @@ public interface BaseService<T>
     default GetResult findAll(GetParameter parameter)
     {
         GetResult<T> result = new GetResult<>();
-        List<T> data = selectAll(parameter);
+        List<T> data = (List<T>) selectAll(parameter);
         try
         {
             //动态移除数据

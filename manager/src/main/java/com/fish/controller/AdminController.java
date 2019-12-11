@@ -35,175 +35,183 @@ public class AdminController
             JSONObject parent = new JSONObject();
             parent.put("id", ++index);
             parent.put("parentId", 0);
-            parent.put("name", "微信官方数据");
+            parent.put("name", "产品配置");
             jsonArray.add(parent);
             final int parentId = index;
             {
                 JSONObject wxInput = new JSONObject();
                 wxInput.put("id", ++index);
                 wxInput.put("parentId", parentId);
-                wxInput.put("name", "访问趋势");
-                wxInput.put("url", "WxAccess.html");
+                wxInput.put("name", "产品信息");
+                wxInput.put("url", "wxConfig.html");
                 jsonArray.add(wxInput);
             }
             {
                 JSONObject wxInput = new JSONObject();
                 wxInput.put("id", ++index);
                 wxInput.put("parentId", parentId);
-                wxInput.put("name", "分享趋势");
-                wxInput.put("url", "WxShare.html");
+                wxInput.put("name", "审核配置");
+                wxInput.put("url", "appConfig.html");
                 jsonArray.add(wxInput);
             }
             {
                 JSONObject wxInput = new JSONObject();
                 wxInput.put("id", ++index);
                 wxInput.put("parentId", parentId);
-                wxInput.put("name", "用户留存趋势");
-                wxInput.put("url", "WxRetained.html");
+                wxInput.put("name", "产品赛制");
+                wxInput.put("url", "ProductFormat.html");
                 jsonArray.add(wxInput);
             }
             {
                 JSONObject wxInput = new JSONObject();
                 wxInput.put("id", ++index);
                 wxInput.put("parentId", parentId);
-                wxInput.put("name", "总收入趋势");
-                wxInput.put("url", "WxAllTotal.html");
+                wxInput.put("name", "赛制配置");
+                wxInput.put("url", "FormatConfig.html");
                 jsonArray.add(wxInput);
             }
             {
                 JSONObject wxInput = new JSONObject();
                 wxInput.put("id", ++index);
                 wxInput.put("parentId", parentId);
-                wxInput.put("name", "数据录入");
-                wxInput.put("url", "WxInput.html");
+                wxInput.put("name", "群赛制配置");
+                wxInput.put("url", "GroupFormatConfig.html");
+                jsonArray.add(wxInput);
+            }
+            {
+                JSONObject wxInput = new JSONObject();
+                wxInput.put("id", ++index);
+                wxInput.put("parentId", parentId);
+                wxInput.put("name", "全局配置");
+                wxInput.put("url", "ArcadeGlobalconfig.html");
                 jsonArray.add(wxInput);
             }
         }
 
         {
+            JSONObject parent = new JSONObject();
+            parent.put("id", ++index);
+            parent.put("parentId", 0);
+            parent.put("name", "合集配置");
+            jsonArray.add(parent);
+            final int parentId = index;
             {
-                JSONObject wxInput = new JSONObject();
-                wxInput.put("id", ++index);
-                wxInput.put("parentId", 0);
-                wxInput.put("name", "基础数据统计");
-                jsonArray.add(wxInput);
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "游戏列表");
+                child.put("url", "gamesList.html");
+                jsonArray.add(child);
             }
-            final int baseIndex = index;
             {
-                JSONObject parent = new JSONObject();
-                parent.put("id", ++index);
-                parent.put("parentId", baseIndex);
-                parent.put("name", "针对用户统计");
-                jsonArray.add(parent);
-                final int parentId = index;
-                {
-                    JSONObject child = new JSONObject();
-                    child.put("id", ++index);
-                    child.put("parentId", parentId);
-                    child.put("name", "新增 & 活跃");
-                    child.put("url", "statistics_user.html");
-                    jsonArray.add(child);
-                }
-                {
-                    JSONObject child = new JSONObject();
-                    child.put("id", ++index);
-                    child.put("parentId", parentId);
-                    child.put("name", "留存 & 流失");
-                    child.put("url", "statistics_user_retention.html");
-                    jsonArray.add(child);
-                }
-                {
-                    JSONObject child = new JSONObject();
-                    child.put("id", ++index);
-                    child.put("parentId", parentId);
-                    child.put("name", "收入 & 成本");
-                    child.put("url", "statistics_pay.html");
-                    jsonArray.add(child);
-                }
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "合集配置");
+                child.put("url", "gameset.html");
+                jsonArray.add(child);
             }
-//            {
-//                JSONObject wxInput = new JSONObject();
-//                wxInput.put("id", ++index);
-//                wxInput.put("parentId", 0);
-//                wxInput.put("name", "针对游戏统计");
-//                jsonArray.add(wxInput);
-//            }
-        }
-        {
-            JSONObject wxInput = new JSONObject();
-            wxInput.put("id", ++index);
-            wxInput.put("parentId", 0);
-            wxInput.put("name", "核心数据记录");
-            jsonArray.add(wxInput);
-            final int baseIndex = index;
             {
-                {
-                    JSONObject parent = new JSONObject();
-                    parent.put("id", ++index);
-                    parent.put("parentId", baseIndex);
-                    parent.put("name", "用户详情");
-                    parent.put("url", "BasicUserInfo.html");
-                    jsonArray.add(parent);
-                    final int parentId = index;
-                    {
-                        JSONObject child = new JSONObject();
-                        child.put("id", ++index);
-                        child.put("parentId", parentId);
-                        child.put("name", "鲸鱼用户");
-                        child.put("url", "BasicPayUser.html");
-                        jsonArray.add(child);
-                    }
-                }
-                {
-                    JSONObject parent = new JSONObject();
-                    parent.put("id", ++index);
-                    parent.put("parentId", baseIndex);
-                    parent.put("name", "充值详情");
-                    parent.put("url", "BasicUserPayInfo.html");
-                    jsonArray.add(parent);
-                }
-                {
-                    JSONObject parent = new JSONObject();
-                    parent.put("id", ++index);
-                    parent.put("parentId", baseIndex);
-                    parent.put("name", "图鉴详情");
-                    parent.put("url", "BasicUserBookInfo.html");
-                    jsonArray.add(parent);
-                }
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "游戏表");
+                child.put("url", "gameTable.html");
+                jsonArray.add(child);
             }
         }
         {
             JSONObject parent = new JSONObject();
             parent.put("id", ++index);
             parent.put("parentId", 0);
-            parent.put("name", "运营配置");
+            parent.put("name", "数据统计");
             jsonArray.add(parent);
-            final int parentId = index;
+            final int grandparentId = index;
+
             {
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
-                child.put("parentId", parentId);
-                child.put("name", "邮箱");
-                child.put("url", "OperatorEmail.html");
+                child.put("parentId", grandparentId);
+                child.put("name", "在线情况统计");
+                child.put("url", "OnlineStatistics.html");
                 jsonArray.add(child);
             }
             {
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
-                child.put("parentId", parentId);
-                child.put("name", "奖励转换工具");
-                child.put("url", "RewardConvertTool.html");
+                child.put("parentId", grandparentId);
+                child.put("name", "订单查询");
+                child.put("url", "orders.html");
                 jsonArray.add(child);
             }
             {
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
-                child.put("parentId", parentId);
-                child.put("name", "JSON转换工具模板");
-                child.put("url", "ConvertJsonTemplate.html");
+                child.put("parentId", grandparentId);
+                child.put("name", "常规赛结果查询");
+                child.put("url", " Ranking.html");
                 jsonArray.add(child);
             }
+
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", grandparentId);
+                child.put("name", "用户数据统计");
+                child.put("url", "userData.html");
+                jsonArray.add(child);
+            }
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", grandparentId);
+                child.put("name", "提现情况");
+                child.put("url", "recharge.html");
+                jsonArray.add(child);
+            }
+
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", grandparentId);
+                child.put("name", "上传素材");
+                child.put("url", "UploadTemplate.html");
+                jsonArray.add(child);
+            }
+
         }
+//        {
+//            JSONObject parent = new JSONObject();
+//            parent.put("id", ++index);
+//            parent.put("parentId", 0);
+//            parent.put("name", "运营配置");
+//            jsonArray.add(parent);
+//            final int parentId = index;
+//            {
+//                JSONObject child = new JSONObject();
+//                child.put("id", ++index);
+//                child.put("parentId", parentId);
+//                child.put("name", "邮箱");
+//                child.put("url", "");
+//                jsonArray.add(child);
+//            }
+//            {
+//                JSONObject child = new JSONObject();
+//                child.put("id", ++index);
+//                child.put("parentId", parentId);
+//                child.put("name", "奖励转换工具");
+//                child.put("url", "RewardConvertTool.html");
+//                jsonArray.add(child);
+//            }
+//            {
+//                JSONObject child = new JSONObject();
+//                child.put("id", ++index);
+//                child.put("parentId", parentId);
+//                child.put("name", "JSON转换工具模板");
+//                child.put("url", "ConvertJsonTemplate.html");
+//                jsonArray.add(child);
+//            }
+//        }
         return jsonArray;
     }
 }

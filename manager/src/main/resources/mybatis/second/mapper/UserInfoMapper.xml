@@ -2,155 +2,310 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.fish.dao.second.mapper.UserInfoMapper" >
   <resultMap id="BaseResultMap" type="com.fish.dao.second.model.UserInfo" >
-    <id column="userId" property="userid" jdbcType="BIGINT" />
-    <result column="nickName" property="nickname" jdbcType="VARCHAR" />
-    <result column="icon" property="icon" jdbcType="VARCHAR" />
-    <result column="platform" property="platform" jdbcType="VARCHAR" />
-    <result column="device" property="device" jdbcType="VARCHAR" />
-    <result column="registTime" property="registtime" jdbcType="TIMESTAMP" />
-    <result column="loginTime" property="logintime" jdbcType="TIMESTAMP" />
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ddUid" property="dduid" jdbcType="VARCHAR" />
+    <result column="ddOId" property="ddoid" jdbcType="VARCHAR" />
+    <result column="ddAppId" property="ddappid" jdbcType="VARCHAR" />
+    <result column="ddClientVersion" property="ddclientversion" jdbcType="VARCHAR" />
+    <result column="ddName" property="ddname" jdbcType="VARCHAR" />
+    <result column="ddAvatarUrl" property="ddavatarurl" jdbcType="VARCHAR" />
+    <result column="ddAvatarFrame" property="ddavatarframe" jdbcType="INTEGER" />
+    <result column="ddAvatarFrameGain" property="ddavatarframegain" jdbcType="VARCHAR" />
+    <result column="ddSex" property="ddsex" jdbcType="INTEGER" />
+    <result column="ddProvince" property="ddprovince" jdbcType="VARCHAR" />
+    <result column="ddCity" property="ddcity" jdbcType="VARCHAR" />
+    <result column="ddCountry" property="ddcountry" jdbcType="VARCHAR" />
+    <result column="ddLanguage" property="ddlanguage" jdbcType="VARCHAR" />
+    <result column="ddAwardList" property="ddawardlist" jdbcType="VARCHAR" />
+    <result column="ddCollected" property="ddcollected" jdbcType="INTEGER" />
+    <result column="ddInterested" property="ddinterested" jdbcType="INTEGER" />
+    <result column="ddServicedTime" property="ddservicedtime" jdbcType="VARCHAR" />
+    <result column="ddSharedTime" property="ddsharedtime" jdbcType="VARCHAR" />
+    <result column="ddDayWatchVideo" property="dddaywatchvideo" jdbcType="INTEGER" />
+    <result column="ddDayLoginGift" property="dddaylogingift" jdbcType="INTEGER" />
+    <result column="ddRegisterTime" property="ddregistertime" jdbcType="TIMESTAMP" />
+    <result column="ddLoginTime" property="ddlogintime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    userId, nickName, icon, platform, device, registTime, loginTime
+    id, ddUid, ddOId, ddAppId, ddClientVersion, ddName, ddAvatarUrl, ddAvatarFrame, ddAvatarFrameGain, 
+    ddSex, ddProvince, ddCity, ddCountry, ddLanguage, ddAwardList, ddCollected, ddInterested, 
+    ddServicedTime, ddSharedTime, ddDayWatchVideo, ddDayLoginGift, ddRegisterTime, ddLoginTime
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
     <include refid="Base_Column_List" />
     from user_info
-    where userId = #{userid,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+  <select id="selectByDdUid" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where ddUid = #{dduid,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from user_info
-    where userId = #{userid,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fish.dao.second.model.UserInfo" >
-    insert into user_info (userId, nickName, icon, 
-      platform, device, registTime, 
-      loginTime)
-    values (#{userid,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR}, 
-      #{platform,jdbcType=VARCHAR}, #{device,jdbcType=VARCHAR}, #{registtime,jdbcType=TIMESTAMP}, 
-      #{logintime,jdbcType=TIMESTAMP})
+    insert into user_info (id, ddUid, ddOId, 
+      ddAppId, ddClientVersion, ddName, 
+      ddAvatarUrl, ddAvatarFrame, ddAvatarFrameGain, 
+      ddSex, ddProvince, ddCity, 
+      ddCountry, ddLanguage, ddAwardList, 
+      ddCollected, ddInterested, ddServicedTime, 
+      ddSharedTime, ddDayWatchVideo, ddDayLoginGift, 
+      ddRegisterTime, ddLoginTime)
+    values (#{id,jdbcType=INTEGER}, #{dduid,jdbcType=VARCHAR}, #{ddoid,jdbcType=VARCHAR}, 
+      #{ddappid,jdbcType=VARCHAR}, #{ddclientversion,jdbcType=VARCHAR}, #{ddname,jdbcType=VARCHAR}, 
+      #{ddavatarurl,jdbcType=VARCHAR}, #{ddavatarframe,jdbcType=INTEGER}, #{ddavatarframegain,jdbcType=VARCHAR}, 
+      #{ddsex,jdbcType=INTEGER}, #{ddprovince,jdbcType=VARCHAR}, #{ddcity,jdbcType=VARCHAR}, 
+      #{ddcountry,jdbcType=VARCHAR}, #{ddlanguage,jdbcType=VARCHAR}, #{ddawardlist,jdbcType=VARCHAR}, 
+      #{ddcollected,jdbcType=INTEGER}, #{ddinterested,jdbcType=INTEGER}, #{ddservicedtime,jdbcType=VARCHAR}, 
+      #{ddsharedtime,jdbcType=VARCHAR}, #{dddaywatchvideo,jdbcType=INTEGER}, #{dddaylogingift,jdbcType=INTEGER}, 
+      #{ddregistertime,jdbcType=TIMESTAMP}, #{ddlogintime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.fish.dao.second.model.UserInfo" >
     insert into user_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="userid != null" >
-        userId,
+      <if test="id != null" >
+        id,
       </if>
-      <if test="nickname != null" >
-        nickName,
+      <if test="dduid != null" >
+        ddUid,
       </if>
-      <if test="icon != null" >
-        icon,
+      <if test="ddoid != null" >
+        ddOId,
       </if>
-      <if test="platform != null" >
-        platform,
+      <if test="ddappid != null" >
+        ddAppId,
       </if>
-      <if test="device != null" >
-        device,
+      <if test="ddclientversion != null" >
+        ddClientVersion,
       </if>
-      <if test="registtime != null" >
-        registTime,
+      <if test="ddname != null" >
+        ddName,
       </if>
-      <if test="logintime != null" >
-        loginTime,
+      <if test="ddavatarurl != null" >
+        ddAvatarUrl,
+      </if>
+      <if test="ddavatarframe != null" >
+        ddAvatarFrame,
+      </if>
+      <if test="ddavatarframegain != null" >
+        ddAvatarFrameGain,
+      </if>
+      <if test="ddsex != null" >
+        ddSex,
+      </if>
+      <if test="ddprovince != null" >
+        ddProvince,
+      </if>
+      <if test="ddcity != null" >
+        ddCity,
+      </if>
+      <if test="ddcountry != null" >
+        ddCountry,
+      </if>
+      <if test="ddlanguage != null" >
+        ddLanguage,
+      </if>
+      <if test="ddawardlist != null" >
+        ddAwardList,
+      </if>
+      <if test="ddcollected != null" >
+        ddCollected,
+      </if>
+      <if test="ddinterested != null" >
+        ddInterested,
+      </if>
+      <if test="ddservicedtime != null" >
+        ddServicedTime,
+      </if>
+      <if test="ddsharedtime != null" >
+        ddSharedTime,
+      </if>
+      <if test="dddaywatchvideo != null" >
+        ddDayWatchVideo,
+      </if>
+      <if test="dddaylogingift != null" >
+        ddDayLoginGift,
+      </if>
+      <if test="ddregistertime != null" >
+        ddRegisterTime,
+      </if>
+      <if test="ddlogintime != null" >
+        ddLoginTime,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="userid != null" >
-        #{userid,jdbcType=BIGINT},
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
       </if>
-      <if test="nickname != null" >
-        #{nickname,jdbcType=VARCHAR},
+      <if test="dduid != null" >
+        #{dduid,jdbcType=VARCHAR},
       </if>
-      <if test="icon != null" >
-        #{icon,jdbcType=VARCHAR},
+      <if test="ddoid != null" >
+        #{ddoid,jdbcType=VARCHAR},
       </if>
-      <if test="platform != null" >
-        #{platform,jdbcType=VARCHAR},
+      <if test="ddappid != null" >
+        #{ddappid,jdbcType=VARCHAR},
       </if>
-      <if test="device != null" >
-        #{device,jdbcType=VARCHAR},
+      <if test="ddclientversion != null" >
+        #{ddclientversion,jdbcType=VARCHAR},
       </if>
-      <if test="registtime != null" >
-        #{registtime,jdbcType=TIMESTAMP},
+      <if test="ddname != null" >
+        #{ddname,jdbcType=VARCHAR},
       </if>
-      <if test="logintime != null" >
-        #{logintime,jdbcType=TIMESTAMP},
+      <if test="ddavatarurl != null" >
+        #{ddavatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="ddavatarframe != null" >
+        #{ddavatarframe,jdbcType=INTEGER},
+      </if>
+      <if test="ddavatarframegain != null" >
+        #{ddavatarframegain,jdbcType=VARCHAR},
+      </if>
+      <if test="ddsex != null" >
+        #{ddsex,jdbcType=INTEGER},
+      </if>
+      <if test="ddprovince != null" >
+        #{ddprovince,jdbcType=VARCHAR},
+      </if>
+      <if test="ddcity != null" >
+        #{ddcity,jdbcType=VARCHAR},
+      </if>
+      <if test="ddcountry != null" >
+        #{ddcountry,jdbcType=VARCHAR},
+      </if>
+      <if test="ddlanguage != null" >
+        #{ddlanguage,jdbcType=VARCHAR},
+      </if>
+      <if test="ddawardlist != null" >
+        #{ddawardlist,jdbcType=VARCHAR},
+      </if>
+      <if test="ddcollected != null" >
+        #{ddcollected,jdbcType=INTEGER},
+      </if>
+      <if test="ddinterested != null" >
+        #{ddinterested,jdbcType=INTEGER},
+      </if>
+      <if test="ddservicedtime != null" >
+        #{ddservicedtime,jdbcType=VARCHAR},
+      </if>
+      <if test="ddsharedtime != null" >
+        #{ddsharedtime,jdbcType=VARCHAR},
+      </if>
+      <if test="dddaywatchvideo != null" >
+        #{dddaywatchvideo,jdbcType=INTEGER},
+      </if>
+      <if test="dddaylogingift != null" >
+        #{dddaylogingift,jdbcType=INTEGER},
+      </if>
+      <if test="ddregistertime != null" >
+        #{ddregistertime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ddlogintime != null" >
+        #{ddlogintime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.UserInfo" >
     update user_info
     <set >
-      <if test="nickname != null" >
-        nickName = #{nickname,jdbcType=VARCHAR},
+      <if test="dduid != null" >
+        ddUid = #{dduid,jdbcType=VARCHAR},
       </if>
-      <if test="icon != null" >
-        icon = #{icon,jdbcType=VARCHAR},
+      <if test="ddoid != null" >
+        ddOId = #{ddoid,jdbcType=VARCHAR},
       </if>
-      <if test="platform != null" >
-        platform = #{platform,jdbcType=VARCHAR},
+      <if test="ddappid != null" >
+        ddAppId = #{ddappid,jdbcType=VARCHAR},
       </if>
-      <if test="device != null" >
-        device = #{device,jdbcType=VARCHAR},
+      <if test="ddclientversion != null" >
+        ddClientVersion = #{ddclientversion,jdbcType=VARCHAR},
       </if>
-      <if test="registtime != null" >
-        registTime = #{registtime,jdbcType=TIMESTAMP},
+      <if test="ddname != null" >
+        ddName = #{ddname,jdbcType=VARCHAR},
       </if>
-      <if test="logintime != null" >
-        loginTime = #{logintime,jdbcType=TIMESTAMP},
+      <if test="ddavatarurl != null" >
+        ddAvatarUrl = #{ddavatarurl,jdbcType=VARCHAR},
+      </if>
+      <if test="ddavatarframe != null" >
+        ddAvatarFrame = #{ddavatarframe,jdbcType=INTEGER},
+      </if>
+      <if test="ddavatarframegain != null" >
+        ddAvatarFrameGain = #{ddavatarframegain,jdbcType=VARCHAR},
+      </if>
+      <if test="ddsex != null" >
+        ddSex = #{ddsex,jdbcType=INTEGER},
+      </if>
+      <if test="ddprovince != null" >
+        ddProvince = #{ddprovince,jdbcType=VARCHAR},
+      </if>
+      <if test="ddcity != null" >
+        ddCity = #{ddcity,jdbcType=VARCHAR},
+      </if>
+      <if test="ddcountry != null" >
+        ddCountry = #{ddcountry,jdbcType=VARCHAR},
+      </if>
+      <if test="ddlanguage != null" >
+        ddLanguage = #{ddlanguage,jdbcType=VARCHAR},
+      </if>
+      <if test="ddawardlist != null" >
+        ddAwardList = #{ddawardlist,jdbcType=VARCHAR},
+      </if>
+      <if test="ddcollected != null" >
+        ddCollected = #{ddcollected,jdbcType=INTEGER},
+      </if>
+      <if test="ddinterested != null" >
+        ddInterested = #{ddinterested,jdbcType=INTEGER},
+      </if>
+      <if test="ddservicedtime != null" >
+        ddServicedTime = #{ddservicedtime,jdbcType=VARCHAR},
+      </if>
+      <if test="ddsharedtime != null" >
+        ddSharedTime = #{ddsharedtime,jdbcType=VARCHAR},
+      </if>
+      <if test="dddaywatchvideo != null" >
+        ddDayWatchVideo = #{dddaywatchvideo,jdbcType=INTEGER},
+      </if>
+      <if test="dddaylogingift != null" >
+        ddDayLoginGift = #{dddaylogingift,jdbcType=INTEGER},
+      </if>
+      <if test="ddregistertime != null" >
+        ddRegisterTime = #{ddregistertime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ddlogintime != null" >
+        ddLoginTime = #{ddlogintime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where userId = #{userid,jdbcType=BIGINT}
+    where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.UserInfo" >
     update user_info
-    set nickName = #{nickname,jdbcType=VARCHAR},
-      icon = #{icon,jdbcType=VARCHAR},
-      platform = #{platform,jdbcType=VARCHAR},
-      device = #{device,jdbcType=VARCHAR},
-      registTime = #{registtime,jdbcType=TIMESTAMP},
-      loginTime = #{logintime,jdbcType=TIMESTAMP}
-    where userId = #{userid,jdbcType=BIGINT}
+    set ddUid = #{dduid,jdbcType=VARCHAR},
+      ddOId = #{ddoid,jdbcType=VARCHAR},
+      ddAppId = #{ddappid,jdbcType=VARCHAR},
+      ddClientVersion = #{ddclientversion,jdbcType=VARCHAR},
+      ddName = #{ddname,jdbcType=VARCHAR},
+      ddAvatarUrl = #{ddavatarurl,jdbcType=VARCHAR},
+      ddAvatarFrame = #{ddavatarframe,jdbcType=INTEGER},
+      ddAvatarFrameGain = #{ddavatarframegain,jdbcType=VARCHAR},
+      ddSex = #{ddsex,jdbcType=INTEGER},
+      ddProvince = #{ddprovince,jdbcType=VARCHAR},
+      ddCity = #{ddcity,jdbcType=VARCHAR},
+      ddCountry = #{ddcountry,jdbcType=VARCHAR},
+      ddLanguage = #{ddlanguage,jdbcType=VARCHAR},
+      ddAwardList = #{ddawardlist,jdbcType=VARCHAR},
+      ddCollected = #{ddcollected,jdbcType=INTEGER},
+      ddInterested = #{ddinterested,jdbcType=INTEGER},
+      ddServicedTime = #{ddservicedtime,jdbcType=VARCHAR},
+      ddSharedTime = #{ddsharedtime,jdbcType=VARCHAR},
+      ddDayWatchVideo = #{dddaywatchvideo,jdbcType=INTEGER},
+      ddDayLoginGift = #{dddaylogingift,jdbcType=INTEGER},
+      ddRegisterTime = #{ddregistertime,jdbcType=TIMESTAMP},
+      ddLoginTime = #{ddlogintime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
   </update>
-  <resultMap id="PlayUserVO" type="com.fish.protocols.PlayUserVO">
-    <id column="userId" property="userId" jdbcType="BIGINT" />
-    <result column="nickName" property="nickName" jdbcType="VARCHAR" />
-    <result column="platform" property="platform" jdbcType="VARCHAR" />
-    <result column="device" property="device" jdbcType="VARCHAR" />
-    <result column="register" property="register" jdbcType="TIMESTAMP" />
-    <result column="pearl" property="pearl" jdbcType="BIGINT" />
-    <result column="shell" property="shell" jdbcType="BIGINT" />
-    <result column="book" property="book" jdbcType="INTEGER" />
-    <result column="payCost" property="payCost" jdbcType="DECIMAL" />
-  </resultMap>
-  <select id="selectPlayUser" resultMap="PlayUserVO">
-    select  a.userId,a.registTime as register,nickName,pearl,shell,book,payCost,platform,device
-    from user_info a left join user_data b on a.userId=b.userId
-  </select>
-  <resultMap id="UserPayVO" type="com.fish.protocols.UserPayVO">
-    <id column="userId" property="userId" jdbcType="BIGINT" />
-    <result column="nickName" property="nickName" jdbcType="VARCHAR" />
-    <result column="register" property="register" jdbcType="TIMESTAMP" />
-    <result column="payCost" property="payCost" jdbcType="DECIMAL" />
-    <result column="lastSevenPay" property="lastSevenPay" jdbcType="DECIMAL" />
-    <result column="loveGood" property="loveGood" jdbcType="INTEGER" />
-    <result column="basin" property="basin" jdbcType="INTEGER" />
-    <result column="online" property="online" jdbcType="BIGINT" />
-  </resultMap>
-  <select id="selectMonitorUser" resultMap="UserPayVO">
-    select a.userId,
-           nickName,
-           payCost,
-           lastSevenPay,
-           loveGood,
-           basin,
-           a.registTime as register,
-           online
-    from user_info a
-      left join fishmanagerv5.monitor_user b
-      on a.userId=b.userId
-    order by payCost desc;
-  </select>
 </mapper>
