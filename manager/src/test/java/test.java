@@ -52,7 +52,7 @@ public class test {
 
 //        JSONObject paramMap = new JSONObject();
 //        paramMap.put("name","games");
-//        String res= HttpUtil.post("https://sgame.qinyougames.com/persieDeamon/flush/logic", paramMap.toJSONString());
+//        String res= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //        System.out.println("我是返回值 :"+res);
 
 //        JSONObject paramMap = new JSONObject();

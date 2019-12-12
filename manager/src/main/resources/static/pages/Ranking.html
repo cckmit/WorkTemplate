@@ -48,11 +48,12 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+
+<!--        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>-->
+<!--        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>-->
+<!--        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>-->
         <div class="layui-btn-group demoTable">
-            <button class="layui-btn" data-type="getCheckData">导出比赛结果</button>
+            <button class="layui-btn" data-type="getCheckData">比赛结果查看</button>
         </div>
     </div>
 </script>
@@ -97,41 +98,57 @@
 
         var $ = layui.$, active = {
             getCheckData: function () { //获取选中数据
-                var checkStatus = table.checkStatus('table-page')
-                    , data = checkStatus.data;
-                // layer.alert(JSON.stringify(data));
-                var submitDatas = JSON.stringify(data);
-                var arry = submitDatas.substr(1, submitDatas.length - 2);
-                console.log("jasonarry :" + arry)
-                var jsonArry = JSON.parse(arry);
-                console.log("我是matchId：" + jsonArry.ranking.matchid);
-                console.log("我是matchDate：" + jsonArry.ranking.matchdate);
-                console.log("我是gameCode：" + jsonArry.ranking.gamecode);
-                console.log("我是matchIndex：" + jsonArry.ranking.matchindex);
-                var obj = {
-                    "matchId": jsonArry.ranking.matchid,
-                    "matchDate": jsonArry.ranking.matchdate,
-                    "gameCode": jsonArry.ranking.gamecode,
-                    "matchIndex": jsonArry.ranking.matchindex
-                };
-                layer.confirm('确定导出该场次结果吗', function (index) {
-                    $.ajax({
-                        url: '../manage/ranking/result',
-                        data: JSON.stringify(obj),
-                        contentType: "application/json; charset=utf-8",
-                        type: 'post',
-                        dataType: "json",
-                        success: function (result) {
-                            if (result.code === 200) {
-                                layer.msg(JSON.stringify(result.data));
-                            } else {
-                                layer.msg('查询失败')
+                var checkStatus = table.checkStatus('table-page');
+                var l = checkStatus.data.length;
+                    data = checkStatus.data;
+                if (l == 0) {
+                    layer.msg('请选择一行');
+                } else if (l > 1) {
+                    layer.msg('只能查看一行哦');
+                } else {
+                    var submitDatas = JSON.stringify(data);
+                    var arry = submitDatas.substr(1, submitDatas.length - 2);
+                    //console.log("jasonarry :" + arry)
+                    var jsonArry = JSON.parse(arry);
+                    var obj = {
+                        "matchId": jsonArry.ranking.matchid,
+                        "matchDate": jsonArry.ranking.matchdate,
+                        "gameCode": jsonArry.ranking.gamecode,
+                        "matchIndex": jsonArry.ranking.matchindex
+                    };
+                    layer.confirm('确定展示该场次结果导出吗', function (index) {
+                        $.ajax({
+                            url: '../manage/ranking/result',
+                            data: JSON.stringify(obj),
+                            contentType: "application/json; charset=utf-8",
+                            type: 'post',
+                            dataType: "json",
+                            success: function (result) {
+                                if (result.code === 200) {
+                                    // layer.msg(JSON.stringify(result.data));
+                                    layui.use('table', function () {
+                                        var table = layui.table;
+                                        layer.open({
+                                            type: 2,
+                                            area: ["600px", '430px'],
+                                            title: "排行信息",
+                                            maxmin: false,
+                                            data:result.data,
+                                            content: 'RankingInfo.html?dataJson=' + escape(JSON.stringify(result.data)),
+                                            success: function (layero, index) {
+
+                                            }
+                                        });
+                                    });
+
+                                } else {
+                                    layer.msg('查询失败')
+                                }
                             }
-                        }
+                        });
+                        layer.close(index);
                     });
-
-                });
-
+                }
 
             }
         };

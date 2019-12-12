@@ -22,7 +22,7 @@ public class OdersController {
 
     @Autowired
     OrdersService ordersService;
-    //查询展示所有群赛制配置
+    //查询订单信息
     @ResponseBody
     @GetMapping(value = "/orders")
     public GetResult getOders(GetParameter parameter) {
@@ -52,7 +52,7 @@ public class OdersController {
 
     }
 
-    //新增群赛制配置信息
+    //新增订单信息
     @ResponseBody
     @PostMapping(value = "/orders/new")
     public PostResult insertOders(@RequestBody Orders productInfo) {
@@ -75,7 +75,7 @@ public class OdersController {
         }
     }
 
-    //修改群赛制配置
+    //修改订单信息
     @ResponseBody
     @PostMapping(value = "/orders/edit")
     public PostResult modifyOders(@RequestBody Orders productInfo) {

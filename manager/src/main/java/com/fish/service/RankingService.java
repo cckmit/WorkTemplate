@@ -80,7 +80,7 @@ public class RankingService implements BaseService<ShowRanking> {
         String matchIndex1 = parse.getString("matchIndex");
 
         String matchId ="RD49601647" ;
-        String   matchDate ="2019-12-11";
+        String   matchDate ="2019-12-12";
         int gameCode =1005;
         int matchIndex =0;
 
@@ -94,9 +94,47 @@ public class RankingService implements BaseService<ShowRanking> {
                String formatName = rounds.getDdname();
                //场次
                Integer matchindex = rank.getMatchindex();
+
+               Integer ddhour=0;
+               String  periodTime ="";
+               switch (matchindex) {
+                   case 0:
+                       ddhour = rounds.getDdhour0();
+                         periodTime ="0 - "+ddhour;
+                       break;
+                   case 1:
+                       ddhour = rounds.getDdhour0()+rounds.getDdhour1();
+                       periodTime =rounds.getDdhour0()+" - "+rounds.getDdhour1();
+                       break;
+                   case 2:
+                       ddhour = rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2();
+                       periodTime=(rounds.getDdhour0()+rounds.getDdhour1())+" - "+rounds.getDdhour2();
+                       break;
+                   case 3:
+                       ddhour = rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2()+rounds.getDdhour3();
+                       periodTime=(rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2())+" - "+rounds.getDdhour3();
+                       break;
+                   case 4:
+                       ddhour =rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2()+rounds.getDdhour3()+ rounds.getDdhour4();
+                       periodTime=(rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2()+rounds.getDdhour3())+" - "+rounds.getDdhour4();
+                       break;
+                   case 5:
+                       ddhour = rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2()+rounds.getDdhour3()+ rounds.getDdhour4()+rounds.getDdhour5();
+                       periodTime=(rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2()+rounds.getDdhour3()+rounds.getDdhour4())+" - "+rounds.getDdhour5();
+                       break;
+                   case 6:
+                       ddhour =rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2()+rounds.getDdhour3()+ rounds.getDdhour4()+rounds.getDdhour5()+ rounds.getDdhour6();
+                       periodTime=(rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2()+rounds.getDdhour3()+rounds.getDdhour4()+rounds.getDdhour5())+" - "+rounds.getDdhour6();
+                       break;
+                   case 7:
+                       ddhour =rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2()+rounds.getDdhour3()+ rounds.getDdhour4()+rounds.getDdhour5()+ rounds.getDdhour6()+rounds.getDdhour7();
+                       periodTime=(rounds.getDdhour0()+rounds.getDdhour1()+rounds.getDdhour2()+rounds.getDdhour3()+rounds.getDdhour4()+rounds.getDdhour5()+rounds.getDdhour6())+" - "+rounds.getDdhour7();
+                       break;
+               }
+
+
                //排名
                Long ranking = rank.getRanking();
-
                UserInfo userInfo = userInfoMapper.selectByDdUid(rank.getUid());
                //昵称
                String userName = userInfo.getDdname();
@@ -113,11 +151,11 @@ public class RankingService implements BaseService<ShowRanking> {
                }
                //奖励
                 String award = awardtotal+awardtype;
-
+               rank.setUserName(userName);
                rank.setFormatName(formatName);
                rank.setGameName(gameName);
                rank.setAward(award);
-
+               rank.setPeriodTime(periodTime+"");
            }
        }
         return ranks;

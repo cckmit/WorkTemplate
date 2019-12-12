@@ -65,10 +65,14 @@ public class WxConfigController {
         PostResult result = new PostResult();
         int count = wxConfigService.updateByPrimaryKeySelective(productInfo);
         if (count == 1) {
-//            com.alibaba.fastjson.JSONObject paramMap = new JSONObject();
+//            JSONObject paramMap = new JSONObject();
+//            JSONObject paramMapWx = new JSONObject();
 //            paramMap.put("name","wx_config");
-//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
-//            System.out.println("我是res返回值 : "+res);
+//            String resApp= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
+//            paramMapWx.put("name","app_config");
+//            String resWx= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMapWx.toJSONString());
+//            System.out.println("我是res返回值 : "+resWx);
+//            System.out.println("我是res返回值 : "+resApp);
             result.setCode(200);
             result.setMsg("操作成功");
             return result;

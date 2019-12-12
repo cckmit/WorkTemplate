@@ -36,7 +36,7 @@ public class FormatConfigController {
         if (count == 1) {
 //            JSONObject paramMap = new JSONObject();
 //            paramMap.put("name","rounds");
-//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieDeamon/flush/logic", paramMap.toJSONString());
+//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //            System.out.println("我是res返回值 : "+res);
             result.setCode(200);
             result.setMsg("操作成功");
@@ -58,7 +58,7 @@ public class FormatConfigController {
         if (count != 0) {
 //            JSONObject paramMap = new JSONObject();
 //            paramMap.put("name","rounds");
-//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieDeamon/flush/logic", paramMap.toJSONString());
+//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //            System.out.println("我是res返回值 : "+res);
             result.setCode(200);
             result.setMsg("操作成功");

@@ -29,13 +29,12 @@ public class GameTableController {
     @ResponseBody
     @PostMapping(value = "/play/new")
     public PostResult insertGames(@RequestBody ArcadeGames productInfo) {
-        System.out.println("---------------------");
         PostResult result = new PostResult();
         int count = gamesService.insertGameInfo(productInfo);
         if (count == 1) {
 //            JSONObject paramMap = new JSONObject();
 //            paramMap.put("name","games");
-//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieDeamon/flush/logic", paramMap.toJSONString());
+//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //            System.out.println("我是res返回值 : "+res);
             result.setCode(200);
             result.setMsg("操作成功");
@@ -57,7 +56,7 @@ public class GameTableController {
         if (count != 0) {
 //            JSONObject paramMap = new JSONObject();
 //            paramMap.put("name","games");
-//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieDeamon/flush/logic", paramMap.toJSONString());
+//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //            System.out.println("我是res返回值 : "+res);
             result.setCode(200);
             result.setMsg("操作成功");

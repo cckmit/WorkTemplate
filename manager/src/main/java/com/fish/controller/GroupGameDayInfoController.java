@@ -1,5 +1,7 @@
 package com.fish.controller;
 
+import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.model.GameDayInfo;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
@@ -38,7 +40,7 @@ public class GroupGameDayInfoController {
         if (count == 1) {
 //            JSONObject paramMap = new JSONObject();
 //            paramMap.put("name","matchday");
-//            String res= HttpUtil.post("http://192.168.1.183:8081/persieDeamon/flush/logic", paramMap.toJSONString());
+//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //            System.out.println("我是res返回值 : "+res);
             result.setCode(200);
             result.setMsg("操作成功");
@@ -60,7 +62,7 @@ public class GroupGameDayInfoController {
         if (count != 0) {
 //            JSONObject paramMap = new JSONObject();
 //            paramMap.put("name","matchday");
-//            String res= HttpUtil.post("http://192.168.1.183:8081/persieDeamon/flush/logic", paramMap.toJSONString());
+//            String res= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //            System.out.println("我是res返回值 : "+res);
             result.setCode(200);
             result.setMsg("操作成功");

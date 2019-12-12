@@ -24,6 +24,14 @@ public class OnlineService implements BaseService<OnlineStatistics> {
     @Override
     //查询在线房间数信息
     public List<OnlineStatistics> selectAll(GetParameter parameter) {
+
+        List<OnlineStatistics> onlineRoom = onlineStatisticsMapper.selectAll();
+        return onlineRoom;
+    }
+
+    //新增appconfig信息
+    public int insert(GetParameter parameter) {
+        int insert =0;
         String res = HttpUtil.get("https://sgame.qinyougames.com/persieDeamon/query/online");
         com.alibaba.fastjson.JSONObject resObject = com.alibaba.fastjson.JSONObject.parseObject(res);
         JSONArray server = resObject.getJSONArray("server");
@@ -59,18 +67,11 @@ public class OnlineService implements BaseService<OnlineStatistics> {
                 for (OnlineStatistics room : rooms) {
                     room.setDdgameroomcount(Long.parseLong(buzyCount));
                     room.setDdremainroomcount(Long.parseLong(idleCount));
-                    int insert = onlineStatisticsMapper.insert(room);
+                      insert = onlineStatisticsMapper.insert(room);
                 }
             }
         }
-        List<OnlineStatistics> onlineRoom = onlineStatisticsMapper.selectAll();
-        return onlineRoom;
-    }
-
-    //新增appconfig信息
-    public int insert(OnlineStatistics record) {
-
-        return onlineStatisticsMapper.insert(record);
+        return  insert;
     }
 
     //更新appconfig信息

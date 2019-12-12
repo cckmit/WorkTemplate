@@ -71,7 +71,15 @@
                 {field: 'ddopenid', width: 120, title: 'OpenId', sort: true},
                 {field: 'ddappid', width: 120, title: '对应平台appId', sort: true},
                 {field: 'ddrmb', width: 120, title: '提现人民币', sort: true},
-                {field: 'ddtip', width: 120, title: '提现描述', sort: true},
+                {field: 'ddtip', width: 120, title: '提现描述', sort: true,
+                    templet: (d) => {
+                        if (d.ddtip == null || d.ddtip == "null") {
+                            return "无";
+                        }else {
+                            return d.ddtip;
+                        }
+                    }
+                },
                 {
                     field: 'ddstatus', width: 120, title: '提现状态', sort: true,
                     templet: (d) => {

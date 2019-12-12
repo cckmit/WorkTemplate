@@ -152,6 +152,14 @@ public class AdminController
                 child.put("url", " Ranking.html");
                 jsonArray.add(child);
             }
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", grandparentId);
+                child.put("name", "群比赛结果查询");
+                child.put("url", "  GroupRanking.html");
+                jsonArray.add(child);
+            }
 
             {
                 JSONObject child = new JSONObject();

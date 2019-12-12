@@ -28,7 +28,7 @@ public class RedisData {
     /**
      * 查找所有用户信息
      */
-    
+
     public void searchAllUser()
     {
         //群比赛排行榜
@@ -46,7 +46,7 @@ public class RedisData {
                 Rounds rounds = roundsMapper.selectByDdCodeQ(groupCode);
                 Integer ddhour0 = rounds.getDdhour0();
                 ArrayList<Ranking>  rankings = new ArrayList<>();
-                if(ddhour0 <= 24){
+
                     //TODO:群编号 查找 数据表:`persie`.`group_match`(主键)
                     //TODO:通过matchKey获取ranking相关需要数据缓存信息，包括不限于游戏表，产品表，赛场表，赛制表
                     Set element = redisUtil.zrevrangeWithScores(key, 0, -1);
@@ -85,7 +85,7 @@ public class RedisData {
                         //TODO:***批量***操作保存到数据库ranking内
                     }
                      rankingMapper.insertBatch(rankings);
-                }
+
 
             }
         }

@@ -1,7 +1,9 @@
 package com.fish.dao.primary.model;
 
-import java.util.List;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+@Component
 public class ArcadeGameSet {
     private Integer id;
 

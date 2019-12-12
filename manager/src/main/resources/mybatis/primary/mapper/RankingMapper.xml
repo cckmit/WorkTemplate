@@ -195,8 +195,15 @@
     select
     <include refid="Base_Column_List" />
     from ranking
-    where matchDate = #{matchdate,jdbcType=VARCHAR}
+    where matchDate = #{matchdate,jdbcType=VARCHAR} and ddgroup = FALSE
   </select>
+  <select id="selectByDateGroup" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ranking
+    where matchDate = #{matchdate,jdbcType=VARCHAR} and ddgroup = TRUE
+  </select>
+
   <select id="selectResult" resultMap="BaseResultMap">
       SELECT
     <include refid="Base_Column_List" />
@@ -205,5 +212,11 @@
     AND matchId =#{matchid,jdbcType=VARCHAR} AND matchIndex = #{matchindex,jdbcType=INTEGER} and ddgroup = FALSE
     ORDER  BY mark DESC
   </select>
-
+  <select id="selectGroupResult" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM ranking
+    WHERE matchDate = #{matchdate,jdbcType=VARCHAR} AND gameCode = #{gamecode,jdbcType=INTEGER}
+    AND matchId =#{matchid,jdbcType=VARCHAR} AND matchIndex = #{matchindex,jdbcType=INTEGER} and ddgroup = TRUE
+  </select>
 </mapper>

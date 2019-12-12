@@ -51,7 +51,24 @@
         <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
         <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
         <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button onclick="flushData()" class="layui-btn layui-btn-normal layui-btn-sm">刷新当前房间数</button>
     </div>
+
+</script>
+<script type="text/javascript">
+
+    function flushData() {
+        var $ = layui.jquery;
+        $.ajax({
+            url: operatorurl + '/flush'+ '?datagrid=data',
+            type: 'get',
+            success: function (res) {
+                if (res.code == 200) { //上传成功
+                    window.location.reload();
+                }
+            }
+        });
+    }
 </script>
 <script>
     var operatorurl = '../manage/online';

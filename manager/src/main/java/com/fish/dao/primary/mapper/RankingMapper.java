@@ -1,10 +1,11 @@
 package com.fish.dao.primary.mapper;
 
 import com.fish.dao.primary.model.Ranking;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-
+@Mapper
 public interface RankingMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -23,8 +24,9 @@ public interface RankingMapper {
     Ranking selectByGameCode(int gameCode);
 
     List<Ranking> selectByDate(String timestamp);
+    List<Ranking> selectByDateGroup(String timestamp);
 
     List<Ranking> selectResult(@Param("matchid")String matchId, @Param("matchdate")String matchDate, @Param("gamecode")int gameCode, @Param("matchindex")int matchIndex);
-
+    List<Ranking> selectGroupResult(@Param("matchid")String matchId, @Param("matchdate")String matchDate, @Param("gamecode")int gameCode, @Param("matchindex")int matchIndex);
 
 }

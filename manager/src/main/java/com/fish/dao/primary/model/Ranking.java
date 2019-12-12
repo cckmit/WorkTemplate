@@ -1,9 +1,10 @@
 package com.fish.dao.primary.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
-
+@Component
 public class Ranking {
 
     private String gameName;
@@ -11,6 +12,7 @@ public class Ranking {
 
     private String award;
     private String userName;
+    private String periodTime;
 
     private Long id;
 
@@ -34,7 +36,15 @@ public class Ranking {
 
     private Date inserttime;
 
-    private Byte ddgroup;
+    private Boolean ddgroup;
+
+    public String getPeriodTime() {
+        return periodTime;
+    }
+
+    public void setPeriodTime(String periodTime) {
+        this.periodTime = periodTime;
+    }
 
     public String getUserName() {
         return userName;
@@ -156,11 +166,11 @@ public class Ranking {
         this.inserttime = inserttime;
     }
 
-    public Byte getDdgroup() {
+    public Boolean getDdgroup() {
         return ddgroup;
     }
 
-    public void setDdgroup(Byte ddgroup) {
+    public void setDdgroup(Boolean ddgroup) {
         this.ddgroup = ddgroup;
     }
 
