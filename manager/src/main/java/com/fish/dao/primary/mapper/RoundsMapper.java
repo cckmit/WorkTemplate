@@ -2,10 +2,10 @@ package com.fish.dao.primary.mapper;
 
 import com.fish.dao.primary.model.Rounds;
 
-import java.sql.Timestamp;
 import java.util.List;
 
-public interface RoundsMapper {
+public interface RoundsMapper
+{
     int deleteByPrimaryKey(Integer id);
 
     int insert(Rounds record);
@@ -25,6 +25,7 @@ public interface RoundsMapper {
     Rounds selectByDdCode(String ddCode);
 
     Rounds selectByDdCodeS(String ddCode);
+
     Rounds selectByDdCodeQ(String ddCode);
 
 }

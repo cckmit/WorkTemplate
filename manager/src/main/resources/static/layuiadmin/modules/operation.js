@@ -10,9 +10,9 @@ window.UIConfig = {
             return '其他';
     },
     formaterBool: (d) => {
-        if (d == 0)
+        if (d == 1)
             return '小程序';
-        else if (d == 1)
+        else if (d == 0)
             return '小游戏';
         else if (d == 2)
             return '公众号';
@@ -199,6 +199,7 @@ layui.config({
                     update();
                 }
                 break;
+
 
         }
 

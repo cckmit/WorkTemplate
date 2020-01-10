@@ -31,11 +31,35 @@
     ddSex, ddProvince, ddCity, ddCountry, ddLanguage, ddAwardList, ddCollected, ddInterested, 
     ddServicedTime, ddSharedTime, ddDayWatchVideo, ddDayLoginGift, ddRegisterTime, ddLoginTime
   </sql>
+  <sql id="Base_List" >
+     ddUid,ddName
+  </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />
     from user_info
     where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultType="com.fish.dao.second.model.UserAllInfo">
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+  </select>
+  <select id="selectByRegister" resultType="com.fish.dao.second.model.UserAllInfo">
+    select
+    <include refid="Base_Column_List" />
+    from user_info where DATE(ddRegisterTime) between '${start}' and '${end}'
+  </select>
+  <select id="selectByLogin" resultType="com.fish.dao.second.model.UserAllInfo">
+    select
+    <include refid="Base_Column_List" />
+    from user_info where DATE(ddLoginTime) between '${start}' and '${end}'
+  </select>
+  <select id="selectByTime" resultType="com.fish.dao.second.model.UserAllInfo">
+    select
+    <include refid="Base_Column_List" />
+    from user_info where DATE(ddRegisterTime) between '${registerstart}' and '${registerend}'
+    and DATE(ddLoginTime) between '${loginstart}' and '${loginend}'
   </select>
   <select id="selectByDdUid" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
@@ -43,6 +67,21 @@
     from user_info
     where ddUid = #{dduid,jdbcType=VARCHAR}
   </select>
+  <select id="selectUserInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_List" />
+    from user_info
+    where ddUid in ( ${_parameter})
+  </select>
+    <select id="selectByDdName" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select
+      <include refid="Base_Column_List" />
+      from user_info
+      where ddName like '${_parameter}%'
+    </select>
+
+
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
     delete from user_info
     where id = #{id,jdbcType=INTEGER}

@@ -54,12 +54,18 @@
               url: operatorurl + '?datagrid=data',
               cols: [[
                   {type: 'checkbox'},
-                  {field: 'ddid', width: 120, title: '计费点ID', sort: true},
-                  {field: 'ddname', width: 120, title: '计费点金额', sort: true},
-                  {field: 'ddvalue', width: 120, title: '金币数量', sort: true}
+                  {field: 'ddid', width:'12%', title: '计费点ID', sort: true},
+                  {field: 'ddname', width:'14%', title: '计费点金额', sort: true},
+                  {field: 'ddgoodstype',width:'12%', title: '类型', sort: true},
+                  {field: 'ddvalue', width:'14%', title: '金币数量', sort: true},
+                  {field: 'ddhead', width:'14%', title: '头像框编号', sort: true},
+                  {field: 'ddmoney', width:'14%', title: '提现金额', sort: true},
+                  {field: 'ddvalue', width:'14%', title: '道具描述', sort: true},
+                  {field: 'inserttime', width:'30%', title: '创建时间', sort: true}
     ]],
               page: true,
               toolbar: '#toolbar',
+              limit: 30,
               defaultToolbar: ['filter', 'exports']
         });
 
@@ -90,12 +96,20 @@
         </div>
     </div>
     <div class="layui-form-item ">
+        <label class="layui-form-label">购买类型 *</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddgoodstype" name="ddgoodstype" lay-verify="required" autocomplete="off"
+                   class="layui-input ">
+        </div>
+    </div>
+    <div class="layui-form-item ">
         <label class="layui-form-label">金币数量 *</label>
         <div class="layui-input-inline">
             <input type="text" id="ddvalue" name="ddvalue" lay-verify="required" autocomplete="off"
                    class="layui-input ">
         </div>
     </div>
+
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">
     </div>

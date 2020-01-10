@@ -1,5 +1,7 @@
 package com.fish.protocols;
 
+import com.alibaba.fastjson.JSONObject;
+
 import java.util.List;
 
 public class GetResult<T>
@@ -9,6 +11,8 @@ public class GetResult<T>
     private Object footer;
     private int code;
     private String msg;
+    //折线图统计
+    private JSONObject lineData;
 
     public int getCount()
     {
@@ -58,5 +62,15 @@ public class GetResult<T>
     public void setMsg(String msg)
     {
         this.msg = msg;
+    }
+
+    public JSONObject getLineData()
+    {
+        return lineData;
+    }
+
+    public void setLineData(JSONObject lineData)
+    {
+        this.lineData = lineData;
     }
 }

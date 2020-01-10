@@ -2,11 +2,11 @@ package com.fish.dao.primary.mapper;
 
 import com.fish.dao.primary.model.PageInfo;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
-public interface PageInfoMapper {
+public interface PageInfoMapper
+{
 
 
     List<PageInfo> selectFirstParent();

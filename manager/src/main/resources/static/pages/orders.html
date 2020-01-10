@@ -21,8 +21,6 @@
                 <!-- 搜索表单 -->
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
-
-
                         <div class="layui-inline">
                             <label class="layui-form-label">产品名称</label>
                             <div class="layui-input-inline" style="width: 6rem;">
@@ -31,7 +29,7 @@
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">交易单号</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
+                            <div class="layui-input-inline" style="width: 9rem;">
                                 <input type="text" class="layui-input" id="tradeNumber" name="tradeNumber">
                             </div>
                         </div>
@@ -39,7 +37,7 @@
 
                         <div class="layui-inline">
                             <label class="layui-form-label">UID</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
+                            <div class="layui-input-inline" style="width: 8rem;">
                                 <input type="text" class="layui-input" id="uid" name="uid">
                             </div>
                         </div>
@@ -53,9 +51,9 @@
                         </div>
 
                         <div class="layui-inline">
-                            <label class="layui-form-label">支付状态</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
-                                <input type="text" class="layui-input" id="payState" name="payState">
+                            <label class="layui-form-label">OpenID</label>
+                            <div class="layui-input-inline" style="width: 7rem;">
+                                <input type="text" class="layui-input" id="openID" name="openID">
                             </div>
                         </div>
 
@@ -67,16 +65,24 @@
                             </div>
                         </div>
 
+
                         <div class="layui-inline">
-                            <label class="layui-form-label">OpenID</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
-                                <input type="text" class="layui-input" id="openID" name="openID">
+                            <label class="layui-form-label">支付状态</label>
+                            <div class="layui-input-inline">
+                                <select name="payState" id="payState">
+                                    <option value=""> -</option>
+                                    <option value=1>支付成功</option>
+                                    <option value=2>未支付</option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
                             </button>
+                            <div class="layui-btn-group demoTable">
+                                <button  type="button" class="layui-btn" data-type="getCheckData">进行补单</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -97,9 +103,7 @@
         <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
         <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
         <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
-        <div class="layui-btn-group demoTable">
-            <button class="layui-btn" data-type="getCheckData">进行补单</button>
-        </div>
+
     </div>
 </script>
 <script>
@@ -116,46 +120,80 @@
             cols: [[
                 {type: 'checkbox'},
                 {
-                    field: 'order', width: 120, title: '订单号', sort: true,
-                    templet: '<div>{{d.orders.ddid}}</div>'
+                    field: 'ordersTime', width: 120, title: '订单时间', sort: true
                 },
                 {
-                    field: 'order', width: 120, title: '商户平台订单号', sort: true,
-                    templet: '<div>{{d.orders.ddorder}}</div>'
+                    field: 'ordersId', width: 120, title: '订单号', sort: true
                 },
                 {
-                    field: 'order', width: 120, title: 'UID', sort: true,
-                    templet: '<div>{{d.orders.dduid}}</div>'
+                    field: 'ordersOder', width: 120, title: '商户平台订单号', sort: true,
+                    templet: (d) => {
+                        if(d.ordersOder != "null"){
+                            return d.ordersOder;
+                        } else {
+                            return "无";
+                        }
+                    }
+                },
+                {
+                    field: 'ordersUid', width: 120, title: 'UID', sort: true
                 },
                 {
                     field: 'order', width: 120, title: 'openid', sort: true,
-                    templet: '<div>{{d.orders.ddoid}}</div>'
+                    templet: (d) => {
+                        if(d.orders.ddoid != null){
+                            return d.orders.ddoid;
+                        } else {
+                            return "无";
+                        }
+                    }
                 },
 
+                {field: 'userName', width: 120, title: '用户昵称', sort: true},
+                {field: 'productName', width: 120, title: '产品名称', sort: true},
+                {
+                    field: 'productType', width: 120, title: '产品类型', sort: true,
+                    templet: (d) => {
+                        if (d.productType === 1) {
+                            return '小程序';
+                        } else if (d.productType === 0) {
+                            return '小游戏';
+                        }
+                        else if (d.productType === 2){
+                            return '公众号';
+                        }
+                        else
+                            return '其他';
+                    }
+                },
+                {field: 'originName', width: 120, title: '原始名称', sort: true},
                 {
                     field: 'goodsName', width: 120, title: '订单商品id', sort: true,
                     templet: (d) => {
-                      return   d.orders.ddgid +"-"+ d.goodsName;
+                        return   d.goodsName;
                     }
                 },
-                {field: 'userName', width: 120, title: '用户昵称', sort: true},
-                {field: 'productName', width: 120, title: '产品名称', sort: true},
-
-                {field: 'originName', width: 120, title: '原始名称', sort: true},
                 {field: 'ddDesc', width: 120, title: '商品名称', sort: true},
+                {field: 'ordersPrice', width: 120, title: '支付金额', sort: true},
                 {
-                    field: 'order', width: 120, title: '支付金额', sort: true,
-                    templet: '<div>{{d.orders.ddprice}}</div>'
-                },
-                {
-                    field: 'order', width: 120, title: '支付状态', sort: true,
-                    templet: '<div>{{d.orders.ddstate}}</div>'
-                },
-                {
-                    field: 'order', width: 120, title: '创建时间', sort: true,
-                    templet: '<div>{{d.orders.ddtime}}</div>'
+                    field: 'ordersState', width: 120, title: '支付状态', sort: true,
+                    templet: (d) => {
+                        if(d.ordersState === 1){
+                            return "支付成功";
+                        }
+                        else if(d.ordersState === 2){
+                            return "未支付";
+                        }
+                        else if(d.ordersState === -1){
+                            return "支付异常";
+                        }
+                        else {
+                            return "数据有误请联系管理员";
+                        }
+                    }
                 }
             ]],
+            limit: 20,
             page: true,
             toolbar: '#toolbar',
             autoSort: false,
@@ -164,7 +202,7 @@
 
         laydate.render({
             elem: '#times',
-            format: 'yyyy/MM/dd'
+            range: true
         });
         laydate.render({
             elem: '#ddtime',
@@ -183,43 +221,48 @@
                     var data = checkStatus.data;  //获取选中行数据
                     layer.alert(JSON.stringify(data));
                     break;
-            }
-            ;
+            };
+
         });
         var $ = layui.$, active = {
             getCheckData: function () { //获取选中数据
-                var checkStatus = table.checkStatus('table-page')
+                let checkStatus = table.checkStatus('table-page')
+                let l = checkStatus.data.length
                     , data = checkStatus.data;
+                if (l == 0) {
+                    layer.msg('请选择一行');
+                } else if (l > 1) {
+                    layer.msg('只能查看一行哦');
+                } else {
                 // layer.alert(JSON.stringify(data));
-                var submitDatas = JSON.stringify(data);
-                var arry = submitDatas.substr(1, submitDatas.length - 2);
-                var jsonArry = JSON.parse(arry);
+                let submitDatas = JSON.stringify(data);
+                let arry = submitDatas.substr(1, submitDatas.length - 2);
+                let jsonArry = JSON.parse(arry);
                 console.log("我是ddappid：" + jsonArry.orders.ddappid);
                 console.log("我是dduid：" + jsonArry.orders.dduid);
                 console.log("我是ddoid：" + jsonArry.orders.ddoid);
                 console.log("我是ddoid：" + jsonArry.orders.ddprice);
-
-                var obj = {"appId": jsonArry.orders.ddappid, "uid": jsonArry.orders.dduid,"orderid":jsonArry.orders.ddoid};
+                let obj = {"appId": jsonArry.orders.ddappid, "uid": jsonArry.orders.dduid,"orderid":jsonArry.orders.ddoid};
                 layer.confirm('确定补发订单号：'+jsonArry.orders.ddid+'  订单，  '+'金额 ：'+jsonArry.orders.ddprice+'元吗', function (index) {
-                    // $.ajax({
-                    //     url: '../manage/orders/single',
-                    //     data: JSON.stringify(obj),
-                    //     contentType: "application/json; charset=utf-8",
-                    //     type: 'post',
-                    //     dataType: "json",
-                    //     success: function (result) {
-                    //         if (result.code === 200) {
-                    //             layer.msg('补单成功');
-                    //             layer.close(index);
-                    //         } else {
-                    //             layer.msg('查询失败')
-                    //         }
-                    //     }
-                    //     });
+                    $.ajax({
+                        url: '../manage/orders/single',
+                        data: JSON.stringify(obj),
+                        contentType: "application/json; charset=utf-8",
+                        type: 'post',
+                        dataType: "json",
+                        success: function (result) {
+                            if (result.code === 200) {
+                                layer.msg('补单成功');
+                                layer.close(index);
+                            } else {
+                                layer.msg('查询失败')
+                            }
+                        }
+                        });
 
                 });
 
-
+                }
             }
         };
         $('.demoTable .layui-btn').on('click', function () {
@@ -236,7 +279,7 @@
     <div class="layui-form-item layui-hide">
         <label class="layui-form-label">订单号</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddid" name="ddid" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddid" name="ddid"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -244,7 +287,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">支付用户编号</label>
         <div class="layui-input-inline">
-            <input type="text" id="dduid" name="dduid" lay-verify="required" autocomplete="off"
+            <input type="text" id="dduid" name="dduid"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -252,7 +295,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">订单商品id</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddgid" name="ddgid" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddgid" name="ddgid"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -260,7 +303,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">支付类型</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddtype" name="ddtype" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddtype" name="ddtype" autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -268,7 +311,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">商户平台交易账号</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddaccount" name="ddaccount" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddaccount" name="ddaccount"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -276,7 +319,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">商户平台订单号</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddorder" name="ddorder" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddorder" name="ddorder"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -284,7 +327,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">商户平台失败原因</label>
         <div class="layui-input-inline">
-            <input type="text" id="dderror" name="dderror" lay-verify="required" autocomplete="off"
+            <input type="text" id="dderror" name="dderror"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -292,7 +335,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">订单金额</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddprice" name="ddprice" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddprice" name="ddprice"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -300,7 +343,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">订单状态</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddstate" name="ddstate" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddstate" name="ddstate"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -308,7 +351,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">创建时间</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddtime" name="ddtime" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddtime" name="ddtime" autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -316,7 +359,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">完成订单</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddtrans" name="ddtrans" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddtrans" name="ddtrans"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -324,7 +367,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">openid</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddoid" name="ddoid" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddoid" name="ddoid"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
@@ -332,7 +375,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">appid</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddappid" name="ddappid" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddappid" name="ddappid"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>

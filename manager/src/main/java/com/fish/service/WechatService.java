@@ -1,5 +1,6 @@
 package com.fish.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.mapper.WxInputMapper;
 import com.fish.dao.primary.model.WxInput;
 import com.fish.protocols.GetParameter;
@@ -81,10 +82,9 @@ public class WechatService implements BaseService<WxInput>
      * @param searchData 查询内容
      * @return 是否移除
      */
-    public boolean removeIf(WxInput wxInput, Map<String, String> searchData)
+    public boolean removeIf(WxInput wxInput, JSONObject searchData)
     {
-        String st = searchData.get("st"),
-                ed = searchData.get("ed");
+        String st = searchData.getString("st"), ed = searchData.getString("ed");
         if (st == null || ed == null || st.isEmpty() || ed.isEmpty())
             return false;
         Date start = parseDate(st), end = parseDate(ed);
@@ -176,13 +176,13 @@ public class WechatService implements BaseService<WxInput>
      */
     private void filterData(List<WxInput> list, GetParameter parameter, boolean isNew)
     {
-        Map<String, String> searchData = filterData(list, parameter);
+        JSONObject searchData = filterData(list, parameter);
         if (!isNew)
             return;
         if (searchData == null)
             createNewDate(list, new Date());
         else
-            createNewDate(list, parseDate(searchData.get("ed")));
+            createNewDate(list, parseDate(searchData.getString("ed")));
     }
 
     //查询结果

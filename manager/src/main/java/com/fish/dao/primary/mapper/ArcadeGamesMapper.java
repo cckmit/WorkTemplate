@@ -23,8 +23,7 @@ public interface ArcadeGamesMapper {
 
     int updateByPrimaryKey(ArcadeGames record);
 
-    List<ArcadeGames> selectAllByAsc();
+    int updateSQL(String SQL);
 
-    List<ArcadeGames> selectAllByDesc();
-
+    ArcadeGames selectByGameName(String ddName);
 }

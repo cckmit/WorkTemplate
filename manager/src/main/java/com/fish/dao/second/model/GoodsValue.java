@@ -1,9 +1,12 @@
 package com.fish.dao.second.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class GoodsValue {
+public class GoodsValue
+{
     private Integer ddid;
 
     private Boolean ddstate;
@@ -19,83 +22,102 @@ public class GoodsValue {
     private String ddgoodstype;
 
     private Integer ddvalue;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date inserttime;
 
-    public Integer getDdid() {
+    public Integer getDdid()
+    {
         return ddid;
     }
 
-    public void setDdid(Integer ddid) {
+    public void setDdid(Integer ddid)
+    {
         this.ddid = ddid;
     }
 
-    public Boolean getDdstate() {
+    public Boolean getDdstate()
+    {
         return ddstate;
     }
 
-    public void setDdstate(Boolean ddstate) {
+    public void setDdstate(Boolean ddstate)
+    {
         this.ddstate = ddstate;
     }
 
-    public String getDdname() {
+    public String getDdname()
+    {
         return ddname;
     }
 
-    public void setDdname(String ddname) {
+    public void setDdname(String ddname)
+    {
         this.ddname = ddname == null ? null : ddname.trim();
     }
 
-    public String getDddesc() {
+    public String getDddesc()
+    {
         return dddesc;
     }
 
-    public void setDddesc(String dddesc) {
+    public void setDddesc(String dddesc)
+    {
         this.dddesc = dddesc == null ? null : dddesc.trim();
     }
 
-    public String getDdcosttype() {
+    public String getDdcosttype()
+    {
         return ddcosttype;
     }
 
-    public void setDdcosttype(String ddcosttype) {
+    public void setDdcosttype(String ddcosttype)
+    {
         this.ddcosttype = ddcosttype == null ? null : ddcosttype.trim();
     }
 
-    public BigDecimal getDdprice() {
+    public BigDecimal getDdprice()
+    {
         return ddprice;
     }
 
-    public void setDdprice(BigDecimal ddprice) {
+    public void setDdprice(BigDecimal ddprice)
+    {
         this.ddprice = ddprice;
     }
 
-    public String getDdgoodstype() {
+    public String getDdgoodstype()
+    {
         return ddgoodstype;
     }
 
-    public void setDdgoodstype(String ddgoodstype) {
+    public void setDdgoodstype(String ddgoodstype)
+    {
         this.ddgoodstype = ddgoodstype == null ? null : ddgoodstype.trim();
     }
 
-    public Integer getDdvalue() {
+    public Integer getDdvalue()
+    {
         return ddvalue;
     }
 
-    public void setDdvalue(Integer ddvalue) {
+    public void setDdvalue(Integer ddvalue)
+    {
         this.ddvalue = ddvalue;
     }
 
-    public Date getInserttime() {
+    public Date getInserttime()
+    {
         return inserttime;
     }
 
-    public void setInserttime(Date inserttime) {
+    public void setInserttime(Date inserttime)
+    {
         this.inserttime = inserttime;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

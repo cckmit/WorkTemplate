@@ -1,10 +1,10 @@
 server:
-  port: 8888
+  port: 8889
   servlet:
     context-path: /manager
+  max-http-header-size: 102400
 spring:
   redis:
-    open:
     database: 5
     host: 192.168.1.55
     port: 6379
@@ -63,7 +63,32 @@ second:
       test-on-return: false
       pool-prepared-statements: false
       max-pool-prepared-statement-per-connection-size: 200
+third:
+  datasource:
+    druid:
+      filters: stat
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://103.20.249.243:3307/minigameback?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true
+      username: queryMiniWx
+      password: blazefire103.
+      minIdle: 1
+      initial-size: 2
+      max-active: 300
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 200
 config:
   upload: d:/upload/normal
   domain: http://192.168.1.126:8888/upload/
   excelSave: d:/upload/excel
+  matchRes: http://192.168.1.55:8980/persieDeamon/match/
+  readRes: /data/res.qinyougames.com/persieRes/
+  resHost: http://192.168.1.55:8080/persieRes/
+  flushCache: http://192.168.1.55:8080/persieService/flush/logic
+  flushOnline: http://129.211.119.249:10085/persieDeamon/query/online

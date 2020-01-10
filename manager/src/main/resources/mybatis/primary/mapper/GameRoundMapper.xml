@@ -128,6 +128,12 @@
     from game_round
     where ddGame = #{id,jdbcType=INTEGER}
   </select>
+  <select id="selectByDdRound" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List" />
+    from game_round
+    where ddRound = #{ddround,jdbcType=VARCHAR}
+  </select>
   <select id="selectAll" resultType="com.fish.dao.primary.model.GameRound">
     select
     <include refid="Base_Column_List" />

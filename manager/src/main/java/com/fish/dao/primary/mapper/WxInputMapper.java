@@ -1,11 +1,13 @@
 package com.fish.dao.primary.mapper;
 
 import com.fish.dao.primary.model.WxInput;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public interface WxInputMapper {
+public interface WxInputMapper
+{
     int deleteByPrimaryKey(Date insertTime);
 
     int insert(WxInput record);

@@ -18,20 +18,20 @@
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
     <include refid="Base_Column_List" />
-    from goods_value
+    from goods_value_ext
     where ddId = #{ddid,jdbcType=INTEGER}
   </select>
     <select id="selectAll" resultType="com.fish.dao.second.model.GoodsValue">
       select
       <include refid="Base_Column_List" />
-      from goods_value
+      from goods_value_ext
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
-    delete from goods_value
+    delete from goods_value_ext
     where ddId = #{ddid,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fish.dao.second.model.GoodsValue" >
-    insert into goods_value (ddId, ddState, ddName, 
+    insert into goods_value_ext (ddId, ddState, ddName, 
       ddDesc, ddCostType, ddPrice, 
       ddGoodsType, ddValue, insertTime
       )
@@ -41,7 +41,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="com.fish.dao.second.model.GoodsValue" >
-    insert into goods_value
+    insert into goods_value_ext
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="ddid != null" >
         ddId,
@@ -102,7 +102,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.GoodsValue" >
-    update goods_value
+    update goods_value_ext
     <set >
       <if test="ddstate != null" >
         ddState = #{ddstate,jdbcType=BIT},
@@ -132,7 +132,7 @@
     where ddId = #{ddid,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.GoodsValue" >
-    update goods_value
+    update goods_value_ext
     set ddState = #{ddstate,jdbcType=BIT},
       ddName = #{ddname,jdbcType=VARCHAR},
       ddDesc = #{dddesc,jdbcType=VARCHAR},

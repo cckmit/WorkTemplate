@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Orders {
+public class Orders
+{
     private String ddid;
 
     private String dduid;
@@ -24,7 +25,7 @@ public class Orders {
 
     private Integer ddstate;
 
-    @JsonFormat(pattern = "yyyy/MM/dd")
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date ddtime;
 
     private Date ddtrans;
@@ -33,112 +34,139 @@ public class Orders {
 
     private String ddappid;
 
-    public String getDdid() {
+    public String getDdid()
+    {
         return ddid;
     }
 
-    public void setDdid(String ddid) {
+    public void setDdid(String ddid)
+    {
         this.ddid = ddid == null ? null : ddid.trim();
     }
 
-    public String getDduid() {
+    public String getDduid()
+    {
         return dduid;
     }
 
-    public void setDduid(String dduid) {
+    public void setDduid(String dduid)
+    {
         this.dduid = dduid == null ? null : dduid.trim();
     }
 
-    public Integer getDdgid() {
+    public Integer getDdgid()
+    {
         return ddgid;
     }
 
-    public void setDdgid(Integer ddgid) {
+    public void setDdgid(Integer ddgid)
+    {
         this.ddgid = ddgid;
     }
 
-    public String getDdtype() {
+    public String getDdtype()
+    {
         return ddtype;
     }
 
-    public void setDdtype(String ddtype) {
+    public void setDdtype(String ddtype)
+    {
         this.ddtype = ddtype == null ? null : ddtype.trim();
     }
 
-    public String getDdaccount() {
+    public String getDdaccount()
+    {
         return ddaccount;
     }
 
-    public void setDdaccount(String ddaccount) {
+    public void setDdaccount(String ddaccount)
+    {
         this.ddaccount = ddaccount == null ? null : ddaccount.trim();
     }
 
-    public String getDdorder() {
+    public String getDdorder()
+    {
         return ddorder;
     }
 
-    public void setDdorder(String ddorder) {
+    public void setDdorder(String ddorder)
+    {
         this.ddorder = ddorder == null ? null : ddorder.trim();
     }
 
-    public String getDderror() {
+    public String getDderror()
+    {
         return dderror;
     }
 
-    public void setDderror(String dderror) {
+    public void setDderror(String dderror)
+    {
         this.dderror = dderror == null ? null : dderror.trim();
     }
 
-    public BigDecimal getDdprice() {
+    public BigDecimal getDdprice()
+    {
         return ddprice;
     }
 
-    public void setDdprice(BigDecimal ddprice) {
+    public void setDdprice(BigDecimal ddprice)
+    {
         this.ddprice = ddprice;
     }
 
-    public Integer getDdstate() {
+    public Integer getDdstate()
+    {
         return ddstate;
     }
 
-    public void setDdstate(Integer ddstate) {
+    public void setDdstate(Integer ddstate)
+    {
         this.ddstate = ddstate;
     }
 
-    public Date getDdtime() {
+    public Date getDdtime()
+    {
         return ddtime;
     }
 
-    public void setDdtime(Date ddtime) {
+    public void setDdtime(Date ddtime)
+    {
         this.ddtime = ddtime;
     }
 
-    public Date getDdtrans() {
+    public Date getDdtrans()
+    {
         return ddtrans;
     }
 
-    public void setDdtrans(Date ddtrans) {
+    public void setDdtrans(Date ddtrans)
+    {
         this.ddtrans = ddtrans;
     }
 
-    public String getDdoid() {
+    public String getDdoid()
+    {
         return ddoid;
     }
 
-    public void setDdoid(String ddoid) {
+    public void setDdoid(String ddoid)
+    {
         this.ddoid = ddoid == null ? null : ddoid.trim();
     }
 
-    public String getDdappid() {
+    public String getDdappid()
+    {
         return ddappid;
     }
 
-    public void setDdappid(String ddappid) {
+    public void setDdappid(String ddappid)
+    {
         this.ddappid = ddappid == null ? null : ddappid.trim();
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

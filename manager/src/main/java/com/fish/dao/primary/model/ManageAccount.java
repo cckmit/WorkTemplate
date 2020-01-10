@@ -2,7 +2,8 @@ package com.fish.dao.primary.model;
 
 import java.util.Date;
 
-public class ManageAccount {
+public class ManageAccount
+{
     private String username;
 
     private String password;
@@ -13,48 +14,59 @@ public class ManageAccount {
 
     private Date updatetime;
 
-    public String getUsername() {
+    public String getUsername()
+    {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(String username)
+    {
         this.username = username == null ? null : username.trim();
     }
 
-    public String getPassword() {
+    public String getPassword()
+    {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password)
+    {
         this.password = password == null ? null : password.trim();
     }
 
-    public String getNickname() {
+    public String getNickname()
+    {
         return nickname;
     }
 
-    public void setNickname(String nickname) {
+    public void setNickname(String nickname)
+    {
         this.nickname = nickname == null ? null : nickname.trim();
     }
 
-    public String getRole() {
+    public String getRole()
+    {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(String role)
+    {
         this.role = role == null ? null : role.trim();
     }
 
-    public Date getUpdatetime() {
+    public Date getUpdatetime()
+    {
         return updatetime;
     }
 
-    public void setUpdatetime(Date updatetime) {
+    public void setUpdatetime(Date updatetime)
+    {
         this.updatetime = updatetime;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

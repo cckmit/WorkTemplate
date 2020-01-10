@@ -22,9 +22,34 @@
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
-                            <label class="layui-form-label">时间范围</label>
+                            <label class="layui-form-label">提现时间</label>
                             <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="times" placeholder=" - ">
+                                <input type="text" class="layui-input" id="times"  name="times" placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">产品名称</label>
+                            <div class="layui-input-inline" style="width: 6rem;">
+                                <input type="text" class="layui-input" id="productName" name="productName">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户昵称</label>
+                            <div class="layui-input-inline" style="width: 6rem;">
+                                <input type="text" class="layui-input" id="userName" name="userName">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">提现状态</label>
+                            <div class="layui-input-inline" style="width: 12rem;">
+                                <select name="ddStatus" id="ddStatus">
+                                    <option value=""> -</option>
+                                    <option value=0>申请中</option>
+                                    <option value=200>提现成功</option>
+                                    <option value=1>未绑定</option>
+                                    <option value=2>已提现操作，未到账</option>
+                                    <option value=-1>申请驳回</option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -48,13 +73,13 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
+ <!--       <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
         <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>-->
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/recharge';
+    var operatorurl = '../manage/recharged';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
@@ -66,11 +91,25 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'ddid', width: 120, title: '订单编号', sort: true},
-                {field: 'dduid', width: 120, title: '用户编号', sort: true},
-                {field: 'ddopenid', width: 120, title: 'OpenId', sort: true},
-                {field: 'ddappid', width: 120, title: '对应平台appId', sort: true},
-                {field: 'ddrmb', width: 120, title: '提现人民币', sort: true},
+                {field: 'dduid', width: 120, title: '用户ID', sort: true},
+                {field: 'userName', width: 120, title: '用户昵称', sort: true},
+                {field: 'ddrmb', width: 120, title: '提现金额(元)', sort: true},
+                {field: 'ddrmbed', width: 120, title: '已提现金额(元)', sort: true},
+                {field: 'remainAmount', width: 120, title: '剩余提现金额(元)', sort: true},
+                {field: 'programType', width: 120, title: '来源类型', sort: true,
+                    templet: (d) => {
+                        if (d.programType == 1) {
+                            return '小程序';
+                        }else if (d.programType == 0) {
+                            return '小游戏';
+                        }else if (d.programType == 2) {
+                            return '公众号';
+                        }
+                    }
+                },
+                {field: 'ddappid', width: 120, title: '来源APPID', sort: true},
+                {field: 'productName', width: 120, title: '来源产品名称', sort: true},
+                {field: 'ddid', width: 120, title: '提现订单号', sort: true},
                 {field: 'ddtip', width: 120, title: '提现描述', sort: true,
                     templet: (d) => {
                         if (d.ddtip == null || d.ddtip == "null") {
@@ -84,18 +123,23 @@
                     field: 'ddstatus', width: 120, title: '提现状态', sort: true,
                     templet: (d) => {
                         if (d.ddstatus == 0) {
-                            return '未体现';
+                            return '申请中';
                         } else if (d.ddstatus == 1) {
-                            return '已提现';
+                            return '1-未绑定';
                         } else if (d.ddstatus == 2) {
-                            return '体现一场';
-                        } else
+                            return '2-已提现操作，未到账';
+                        }else if (d.ddstatus == 200) {
+                            return '提现成功';
+                        }else if (d.ddstatus == -1) {
+                            return '-1-申请驳回';
+                        }  else
                             return '其他';
                     }
                 },
                 {field: 'ddtrans', width: 120, title: '完成时间', sort: true},
                 {field: 'ddtimes', width: 120, title: '操作时间', sort: true}
             ]],
+            limit: 20,
             autoSort: false,
             page: true,
             toolbar: '#toolbar',
@@ -158,30 +202,6 @@
         <label class="layui-form-label">提现描述</label>
         <div class="layui-input-inline">
             <input type="text" id="ddtip" name="ddtip" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item ">
-        <label class="layui-form-label">提现状态</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddstatus" name="ddstatus" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item ">
-        <label class="layui-form-label">完成时间</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddtrans" name="ddtrans" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item ">
-        <label class="layui-form-label">操作时间</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddtimes" name="ddtimes" lay-verify="required" autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>

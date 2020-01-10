@@ -29,7 +29,7 @@
     <select id="selectAll" resultMap="BaseResultMap">
       select
       <include refid="Base_Column_List" />
-      from orders
+      from orders order by ddTime desc
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from orders

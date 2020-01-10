@@ -4,7 +4,8 @@ import com.fish.dao.second.model.UserValue;
 
 import java.util.List;
 
-public interface UserValueMapper {
+public interface UserValueMapper
+{
     List<UserValue> selectAll();
 
     int deleteByPrimaryKey(String dduid);

@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-@Component
-public class Ranking {
 
+@Component
+public class Ranking
+{
+    private String roundName;
     private String gameName;
-    private String  formatName;
+    private String formatName;
 
     private String award;
     private String userName;
@@ -38,144 +40,191 @@ public class Ranking {
 
     private Boolean ddgroup;
 
-    public String getPeriodTime() {
+    public String getRoundName()
+    {
+        return roundName;
+    }
+
+    public void setRoundName(String roundName)
+    {
+        this.roundName = roundName;
+    }
+
+    public String getPeriodTime()
+    {
         return periodTime;
     }
 
-    public void setPeriodTime(String periodTime) {
+    public void setPeriodTime(String periodTime)
+    {
         this.periodTime = periodTime;
     }
 
-    public String getUserName() {
+    public String getUserName()
+    {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    public void setUserName(String userName)
+    {
         this.userName = userName;
     }
 
-    public String getGameName() {
+    public String getGameName()
+    {
         return gameName;
     }
 
-    public void setGameName(String gameName) {
+    public void setGameName(String gameName)
+    {
         this.gameName = gameName;
     }
 
-    public String getFormatName() {
+    public String getFormatName()
+    {
         return formatName;
     }
 
-    public void setFormatName(String formatName) {
+    public void setFormatName(String formatName)
+    {
         this.formatName = formatName;
     }
 
-    public String getAward() {
+    public String getAward()
+    {
         return award;
     }
 
-    public void setAward(String award) {
+    public void setAward(String award)
+    {
         this.award = award;
     }
 
-    public Long getId() {
+    public Long getId()
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
 
-    public String getMatchid() {
+    public String getMatchid()
+    {
         return matchid;
     }
 
-    public void setMatchid(String matchid) {
+    public void setMatchid(String matchid)
+    {
         this.matchid = matchid == null ? null : matchid.trim();
     }
+
     @JsonFormat(pattern = "yyyy-MM-dd")
-    public Date getMatchdate() {
+    public Date getMatchdate()
+    {
         return matchdate;
     }
+
     @JsonFormat(pattern = "yyyy-MM-dd")
-    public void setMatchdate(Date matchdate) {
+    public void setMatchdate(Date matchdate)
+    {
         this.matchdate = matchdate;
     }
 
-    public Integer getGamecode() {
+    public Integer getGamecode()
+    {
         return gamecode;
     }
 
-    public void setGamecode(Integer gamecode) {
+    public void setGamecode(Integer gamecode)
+    {
         this.gamecode = gamecode;
     }
 
-    public Integer getMatchindex() {
+    public Integer getMatchindex()
+    {
         return matchindex;
     }
 
-    public void setMatchindex(Integer matchindex) {
+    public void setMatchindex(Integer matchindex)
+    {
         this.matchindex = matchindex;
     }
 
-    public String getUid() {
+    public String getUid()
+    {
         return uid;
     }
 
-    public void setUid(String uid) {
+    public void setUid(String uid)
+    {
         this.uid = uid == null ? null : uid.trim();
     }
 
-    public Long getRanking() {
+    public Long getRanking()
+    {
         return ranking;
     }
 
-    public void setRanking(Long ranking) {
+    public void setRanking(Long ranking)
+    {
         this.ranking = ranking;
     }
 
-    public Long getMark() {
+    public Long getMark()
+    {
         return mark;
     }
 
-    public void setMark(Long mark) {
+    public void setMark(Long mark)
+    {
         this.mark = mark;
     }
 
-    public String getAwardtype() {
+    public String getAwardtype()
+    {
         return awardtype;
     }
 
-    public void setAwardtype(String awardtype) {
+    public void setAwardtype(String awardtype)
+    {
         this.awardtype = awardtype == null ? null : awardtype.trim();
     }
 
-    public Integer getAwardtotal() {
+    public Integer getAwardtotal()
+    {
         return awardtotal;
     }
 
-    public void setAwardtotal(Integer awardtotal) {
+    public void setAwardtotal(Integer awardtotal)
+    {
         this.awardtotal = awardtotal;
     }
 
-    public Date getInserttime() {
+    public Date getInserttime()
+    {
         return inserttime;
     }
 
-    public void setInserttime(Date inserttime) {
+    public void setInserttime(Date inserttime)
+    {
         this.inserttime = inserttime;
     }
 
-    public Boolean getDdgroup() {
+    public Boolean getDdgroup()
+    {
         return ddgroup;
     }
 
-    public void setDdgroup(Boolean ddgroup) {
+    public void setDdgroup(Boolean ddgroup)
+    {
         this.ddgroup = ddgroup;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

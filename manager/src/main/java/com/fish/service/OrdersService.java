@@ -1,120 +1,144 @@
 package com.fish.service;
 
-import com.fish.dao.second.mapper.GoodsValueMapper;
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.OrdersMapper;
-import com.fish.dao.second.mapper.UserInfoMapper;
-import com.fish.dao.second.mapper.WxConfigMapper;
-import com.fish.dao.second.model.*;
+import com.fish.dao.second.model.GoodsValue;
+import com.fish.dao.second.model.Orders;
+import com.fish.dao.second.model.ShowOrders;
+import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
+import com.fish.service.cache.CacheService;
+import com.fish.utils.XwhTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
-public class OrdersService implements BaseService<ShowOrders> {
+public class OrdersService implements BaseService<ShowOrders>
+{
 
     @Autowired
     OrdersMapper ordersMapper;
 
     @Autowired
-    UserInfoMapper userInfoMapper;
-    @Autowired
-    GoodsValueMapper goodsValueMapper;
-
-    @Autowired
-    WxConfigMapper wxConfigMapper;
+    CacheService cacheService;
 
     @Override
     //查询展示所有wxconfig信息
-    public List<ShowOrders> selectAll(GetParameter parameter) {
+    public List<ShowOrders> selectAll(GetParameter parameter)
+    {
         ArrayList<ShowOrders> shows = new ArrayList<>();
         List<Orders> orders = ordersMapper.selectAll();
-        for (Orders order : orders) {
+        String className = OrdersService.class.getSimpleName().toLowerCase();
+        Set<String> users = new HashSet<>();
+        for (Orders order : orders)
+            users.add(order.getDduid());
+        for (Orders order : orders)
+        {
             ShowOrders showOrders = new ShowOrders();
             String appId = order.getDdappid();
             Integer goodId = order.getDdgid();
             String dduId = order.getDduid();
-            GoodsValue goodsValue = goodsValueMapper.selectByPrimaryKey(goodId);
-            String goodnName = goodsValue.getDdname();
-            String dddesc = goodsValue.getDddesc();
-            showOrders.setDdDesc(dddesc);
-            UserInfo userInfo = userInfoMapper.selectByDdUid(dduId);
-            String userName = userInfo.getDdname();
-            WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
-            if (wxConfig != null) {
+            GoodsValue goodsValue = cacheService.getGoodsValue(goodId);
+            if (goodsValue != null)
+            {
+                String goodnName = goodsValue.getDdname();
+                String dddesc = goodsValue.getDddesc();
+                showOrders.setGoodsName(goodnName);
+                showOrders.setDdDesc(dddesc);
+            }
+
+            String userName = cacheService.getUserName(className, users, dduId);
+            showOrders.setUserName(userName);
+            WxConfig wxConfig = cacheService.getWxConfig(appId);
+            if (wxConfig != null)
+            {
                 String productName = wxConfig.getProductName();
                 String originName = wxConfig.getOriginName();
-
-                if (productName != null) {
+                Integer programType = wxConfig.getProgramType();
+                if (programType != null)
+                {
+                    showOrders.setProductType(programType);
+                }
+                if (productName != null)
+                {
                     showOrders.setProductName(productName);
                 }
-                if (originName != null) {
+                if (originName != null)
+                {
                     showOrders.setOriginName(originName);
                 }
-
             }
-            if (goodnName != null) {
-                showOrders.setGoodsName(goodnName);
-            }
-            if (userName != null) {
-                showOrders.setUserName(userName);
-            }
+            showOrders.setOrdersId(order.getDdid());
+            showOrders.setOrdersUid(order.getDduid());
+            showOrders.setOrdersOder(order.getDdorder());
+            showOrders.setOrdersPrice(order.getDdprice());
+            showOrders.setOrdersState(order.getDdstate());
+            showOrders.setOrdersTime(order.getDdtime());
             showOrders.setOrders(order);
             shows.add(showOrders);
         }
 
         return shows;
     }
-    public ShowOrders singleOrder(String record) {
 
-        //新增产品信息
+    public ShowOrders singleOrder(String record)
+    {
+        //查询订单产品信息
         Orders order = ordersMapper.selectByPrimaryKey(record);
-
         ShowOrders showOrders = new ShowOrders();
         String appId = order.getDdappid();
         Integer goodId = order.getDdgid();
         String dduId = order.getDduid();
-        GoodsValue goodsValue = goodsValueMapper.selectByPrimaryKey(goodId);
-        String goodnName = goodsValue.getDdname();
-        String dddesc = goodsValue.getDddesc();
-        showOrders.setDdDesc(dddesc);
-        UserInfo userInfo = userInfoMapper.selectByDdUid(dduId);
-        String userName = userInfo.getDdname();
-        WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
-        if (wxConfig != null) {
+        order.setDdstate(1);
+        GoodsValue goodsValue = cacheService.getGoodsValue(goodId);
+        String goodName = goodsValue.getDdname();
+        String ddDesc = goodsValue.getDddesc();
+        showOrders.setDdDesc(ddDesc);
+        String userName = cacheService.getUserName(dduId);
+        WxConfig wxConfig = cacheService.getWxConfig(appId);
+        if (wxConfig != null)
+        {
             String productName = wxConfig.getProductName();
             String originName = wxConfig.getOriginName();
 
-            if (productName != null) {
+            if (productName != null)
+            {
                 showOrders.setProductName(productName);
             }
-            if (originName != null) {
+            if (originName != null)
+            {
                 showOrders.setOriginName(originName);
             }
 
         }
-        if (goodnName != null) {
-            showOrders.setGoodsName(goodnName);
+        if (goodName != null)
+        {
+            showOrders.setGoodsName(goodName);
 
         }
-        if (userName != null) {
+        if (userName != null)
+        {
             showOrders.setUserName(userName);
         }
+        showOrders.setOrdersId(order.getDdid());
+        showOrders.setOrdersUid(order.getDduid());
+        showOrders.setOrdersOder(order.getDdorder());
+        showOrders.setOrdersPrice(order.getDdprice());
+        showOrders.setOrdersState(order.getDdstate());
+        showOrders.setOrdersTime(order.getDdtime());
         showOrders.setOrders(order);
 
-        if(showOrders != null){
-            return showOrders;
-        }
+        //        if (showOrders != null) {
+        //            return showOrders;
+        //        }
         return null;
     }
+
     //新增展示所有产品信息
-    public int insert(Orders record) {
+    public int insert(Orders record)
+    {
 
 
         int insert1 = 0;
@@ -126,13 +150,15 @@ public class OrdersService implements BaseService<ShowOrders> {
 
 
     //更新产品信息
-    public int updateByPrimaryKeySelective(Orders record) {
+    public int updateByPrimaryKeySelective(Orders record)
+    {
 
         return ordersMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter) {
+    public void setDefaultSort(GetParameter parameter)
+    {
         if (parameter.getOrder() != null)
             return;
         parameter.setSort("productName");
@@ -140,38 +166,47 @@ public class OrdersService implements BaseService<ShowOrders> {
     }
 
     @Override
-    public Class<ShowOrders> getClassInfo() {
+    public Class<ShowOrders> getClassInfo()
+    {
         return ShowOrders.class;
     }
 
     @Override
-    public boolean removeIf(ShowOrders orders, Map<String, String> searchData) {
+    public boolean removeIf(ShowOrders orders, JSONObject searchData)
+    {
 
-        if (existValueFalse(searchData.get("productName"), orders.getProductName())) {
+        String times = searchData.getString("times");
+        Date[] parse = XwhTool.parseDate(times);
+        if (times != "" && times.length() != 0)
+        {
+            if (orders.getOrders().getDdtime().before(parse[0]) || orders.getOrders().getDdtime().after(parse[1]))
+            {
+                return true;
+            }
+        }
+        if (existValueFalse(searchData.getString("productName"), orders.getProductName()))
+        {
             return true;
         }
-        if (existValueFalse(searchData.get("tradeNumber"), orders.getOrders().getDdorder())) {
+        if (existValueFalse(searchData.getString("tradeNumber"), orders.getOrders().getDdid()))
+        {
             return true;
         }
-        if (existValueFalse(searchData.get("uid"), orders.getProductName())) {
+        if (existValueFalse(searchData.getString("uid"), orders.getOrders().getDduid()))
+        {
             return true;
         }
-        if (existValueFalse(searchData.get("userName"), orders.getUserName())) {
+        if (existValueFalse(searchData.getString("userName"), orders.getUserName()))
+        {
             return true;
         }
-        if (existValueFalse(searchData.get("payState"), orders.getOrders().getDdstate())) {
+        if (existValueFalse(searchData.getString("payState"), orders.getOrders().getDdstate()))
+        {
             return true;
         }
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        String dt = simpleDateFormat.format(orders.getOrders().getDdtime());
-        if (existValueFalse(searchData.get("times"),  dt)) {
-            return true;
-        }
-//
-//        if (existValueFalse(searchData.get("clear"), wxConfig.getClearCompany())) {
-//            return true;
-//        }
-        return existValueFalse(searchData.get("openID"), orders.getOrders().getDdoid());
+        //        if (existValueFalse(searchData.get("clear"), wxConfig.getClearCompany())) {
+        //            return true;
+        //        }
+        return existValueFalse(searchData.getString("openID"), orders.getOrders().getDdoid());
     }
 }

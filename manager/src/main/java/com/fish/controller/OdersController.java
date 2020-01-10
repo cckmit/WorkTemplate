@@ -1,7 +1,5 @@
 package com.fish.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.model.Orders;
 import com.fish.dao.second.model.ShowOrders;
 import com.fish.protocols.GetParameter;
@@ -16,35 +14,37 @@ import java.util.ArrayList;
 
 @Controller
 @RequestMapping(value = "/manage")
-public class OdersController {
-
-
-
+public class OdersController
+{
     @Autowired
     OrdersService ordersService;
+
     //查询订单信息
     @ResponseBody
     @GetMapping(value = "/orders")
-    public GetResult getOders(GetParameter parameter) {
+    public GetResult getOders(GetParameter parameter)
+    {
         return ordersService.findAll(parameter);
     }
 
     @ResponseBody
     @PostMapping(value = "/orders/single")
-    public GetResult getSingleOders(@RequestBody ShowOrders showOrder) {
-
+    public GetResult getSingleOders(@RequestBody ShowOrders showOrder)
+    {
         GetResult result = new GetResult();
         Orders orders = showOrder.getOrders();
         String ddid = orders.getDdid();
-        ShowOrders  resOrder = ordersService.singleOrder(ddid);
+        ShowOrders resOrder = ordersService.singleOrder(ddid);
         ArrayList<ShowOrders> objects = new ArrayList<>();
-        if(resOrder !=null){
+        if (resOrder != null)
+        {
             objects.add(resOrder);
             result.setData(objects);
             result.setCode(200);
             result.setMsg("操作成功");
             return result;
-        }else {
+        } else
+        {
             result.setCode(404);
             result.setMsg("订单查询失败，请联系管理员");
             return result;
@@ -55,12 +55,14 @@ public class OdersController {
     //新增订单信息
     @ResponseBody
     @PostMapping(value = "/orders/new")
-    public PostResult insertOders(@RequestBody Orders productInfo) {
+    public PostResult insertOders(@RequestBody Orders productInfo)
+    {
         PostResult result = new PostResult();
 
         int count = ordersService.insert(productInfo);
-      // count =1;
-        if (count == 1) {
+        // count =1;
+        if (count == 1)
+        {
 //            JSONObject paramMap = new JSONObject();
 //            paramMap.put("name","matchday");
 //            String res= HttpUtil.post("http://192.168.1.183:8081/persieDeamon/flush/logic", paramMap.toJSONString());
@@ -68,7 +70,8 @@ public class OdersController {
             result.setCode(200);
             result.setMsg("操作成功");
             return result;
-        } else {
+        } else
+        {
             result.setCode(404);
             result.setMsg("操作失败，请联系管理员");
             return result;
@@ -78,11 +81,13 @@ public class OdersController {
     //修改订单信息
     @ResponseBody
     @PostMapping(value = "/orders/edit")
-    public PostResult modifyOders(@RequestBody Orders productInfo) {
+    public PostResult modifyOders(@RequestBody Orders productInfo)
+    {
         PostResult result = new PostResult();
-      //  int count =1;
-       int count = ordersService.updateByPrimaryKeySelective(productInfo);
-        if (count != 0) {
+        //  int count =1;
+        int count = ordersService.updateByPrimaryKeySelective(productInfo);
+        if (count != 0)
+        {
 //            JSONObject paramMap = new JSONObject();
 //            paramMap.put("name","matchday");
 //            String res= HttpUtil.post("http://192.168.1.183:8081/persieDeamon/flush/logic", paramMap.toJSONString());
@@ -90,7 +95,8 @@ public class OdersController {
             result.setCode(200);
             result.setMsg("操作成功");
             return result;
-        } else {
+        } else
+        {
             result.setCode(404);
             result.setMsg("操作失败，请联系管理员");
             return result;

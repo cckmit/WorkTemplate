@@ -23,16 +23,33 @@
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
                             <label class="layui-form-label">时间范围</label>
-                            <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="times" placeholder=" - ">
+                            <div class="layui-input-inline" >
+                                <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">游戏名称</label>
+                            <div class="layui-input-inline" style="width: 6rem;">
+                                <input type="text" class="layui-input" id="gameName" name="gameName">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">赛制名称</label>
+                            <div class="layui-input-inline" style="width: 6rem;">
+                                <input type="text" class="layui-input" id="roundName" name="roundName">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
                             </button>
+
+                        </div>
+                        <div class="layui-btn-group demoTable">
+                            <button type="button" class="layui-btn" data-type="getCheckData">比赛结果导出</button>
                         </div>
                     </form>
+
                 </div>
 
                 <!-- 数据表格 -->
@@ -49,12 +66,10 @@
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
 
-<!--        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>-->
-<!--        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>-->
-<!--        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>-->
-        <div class="layui-btn-group demoTable">
-            <button class="layui-btn" data-type="getCheckData">比赛结果查看</button>
-        </div>
+        <!--        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>-->
+        <!--        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>-->
+        <!--        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>-->
+
     </div>
 </script>
 <script>
@@ -71,28 +86,16 @@
             cols: [[
                 {type: 'checkbox'},
 
-                {field: 'gamesName', width: 120, title: '游戏名称', sort: true},
-                {
-                    field: 'ranking', width: 120, title: '游戏ID', sort: true,
-                    templet: '<div>{{d.ranking.gamecode}}</div>'
-                },
-                {
-                    field: 'ranking', width: 120, title: '比赛日期', sort: true,
-                    templet: '<div>{{d.ranking.matchdate}}</div>'
-                },
-                {field: 'formatName', width: 120, title: '使用赛制', sort: true},
-                {
-                    field: 'ranking', width: 120, title: '场次', sort: true,
-
-                    templet: (d) => {
-                        return d.ranking.matchindex + 1;
-                    }
-
-                }
-
+                {field: 'gamesName', width:'14%', title: '游戏名称', sort: true},
+                {field: 'gamesCode', width:'14%', title: '游戏ID', sort: true},
+                {field: 'matchdate', width:'22%', title: '比赛结束时间', sort: true},
+                {field: 'roundName', width:'18%', title: '赛制名称', sort: true},
+                {field: 'roundLength', width:'14%', title: '赛制时长', sort: true},
+                {field: 'ddNumber', width:'14%', title: '参赛人数', sort: true}
             ]],
             page: true,
             toolbar: '#toolbar',
+            limit: 20,
             defaultToolbar: ['filter', 'exports']
         });
 
@@ -100,7 +103,7 @@
             getCheckData: function () { //获取选中数据
                 var checkStatus = table.checkStatus('table-page');
                 var l = checkStatus.data.length;
-                    data = checkStatus.data;
+                data = checkStatus.data;
                 if (l == 0) {
                     layer.msg('请选择一行');
                 } else if (l > 1) {
@@ -108,48 +111,39 @@
                 } else {
                     var submitDatas = JSON.stringify(data);
                     var arry = submitDatas.substr(1, submitDatas.length - 2);
-                    //console.log("jasonarry :" + arry)
+                    console.log("jasonarry :" + arry)
                     var jsonArry = JSON.parse(arry);
-                    var obj = {
-                        "matchId": jsonArry.ranking.matchid,
-                        "matchDate": jsonArry.ranking.matchdate,
-                        "gameCode": jsonArry.ranking.gamecode,
-                        "matchIndex": jsonArry.ranking.matchindex
-                    };
-                    layer.confirm('确定展示该场次结果导出吗', function (index) {
-                        $.ajax({
-                            url: '../manage/ranking/result',
-                            data: JSON.stringify(obj),
-                            contentType: "application/json; charset=utf-8",
-                            type: 'post',
-                            dataType: "json",
-                            success: function (result) {
-                                if (result.code === 200) {
-                                    // layer.msg(JSON.stringify(result.data));
-                                    layui.use('table', function () {
-                                        var table = layui.table;
-                                        layer.open({
-                                            type: 2,
-                                            area: ["600px", '430px'],
-                                            title: "排行信息",
-                                            maxmin: false,
-                                            data:result.data,
-                                            content: 'RankingInfo.html?dataJson=' + escape(JSON.stringify(result.data)),
-                                            success: function (layero, index) {
-
-                                            }
-                                        });
-                                    });
-
-                                } else {
-                                    layer.msg('查询失败')
-                                }
-                            }
-                        });
+                   // var group =0;
+                   //  if(jsonArry.ddGroup){
+                   //      group =1;
+                   //  } else {
+                   //      group =0;
+                   //  }
+                   //  var obj = {
+                   //      "ddCode": jsonArry.ddCode,
+                   //      "ddGroup": jsonArry.ddGroup,
+                   //      "ddIndex": jsonArry.ddIndex,
+                   //      "roundCode": jsonArry.roundCode,
+                   //      "roundName": jsonArry.roundName,
+                   //      "roundLength": jsonArry.roundLength,
+                   //      "ddNumber":jsonArry.ddNumber
+                   //  };
+                   //  var objs =JSON.stringify(obj);
+                        // $.ajax({
+                        //     url: '../manage/ranking/result',
+                        //     data: JSON.stringify(obj),
+                        //     dataType: "json",
+                        //     contentType: "application/json; charset=utf-8",
+                        //     type: 'post'
+                        // });
+                    layer.confirm('确定导出结果吗', function (index) {
+                        window.location.href = '../manage/ranking/result' + "?ddCode=" + jsonArry.ddCode + "&ddGroup=" + jsonArry.ddGroup
+                            + "&ddIndex=" + jsonArry.ddIndex + "&roundCode=" + jsonArry.roundCode + "&roundName=" + jsonArry.roundName
+                            + "&roundLength=" + jsonArry.roundLength + "&ddNumber=" + jsonArry.ddNumber+ "&matchdate=" + jsonArry.matchdate
+                            + "&gamesCode=" + jsonArry.gamesCode ;
                         layer.close(index);
-                    });
+                    })
                 }
-
             }
         };
         $('.demoTable .layui-btn').on('click', function () {

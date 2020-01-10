@@ -113,12 +113,12 @@
                 {field: 'originName', width: 120, title: '原始名称', sort: true},
                 {field: 'ddprogram', width: 120, title: '是否为小程序', sort: true,
                     templet: (d) => {
-                        if (d.programType == 0) {
+                        if (d.ddprogram == 1) {
                             return '小程序';
-                        } else if (d.programType == 1) {
+                        } else if (d.ddprogram == 0) {
                             return '小游戏';
                         }
-                        else if (d.programType == 2){
+                        else if (d.ddprogram == 2){
                             return '公众号';
                         }
                         else
@@ -150,7 +150,8 @@
             autoSort:false,
             page: true,
             toolbar: '#toolbar',
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            limit: 20
         });
 
         laydate.render({

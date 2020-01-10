@@ -4,7 +4,8 @@ import com.fish.dao.primary.model.GameRound;
 
 import java.util.List;
 
-public interface GameRoundMapper {
+public interface GameRoundMapper
+{
     int deleteByPrimaryKey(Integer id);
 
     int insert(GameRound record);
@@ -20,4 +21,6 @@ public interface GameRoundMapper {
     List<GameRound> selectAll();
 
     List<GameRound> selectByDdCode(Integer code);
+
+    List<GameRound> selectByDdRound(String ddRound);
 }

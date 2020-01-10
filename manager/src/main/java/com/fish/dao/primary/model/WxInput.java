@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class WxInput {
+public class WxInput
+{
     @JsonFormat(pattern = "yyyy/MM/dd")
     private Date insertTime;
 
@@ -53,179 +54,224 @@ public class WxInput {
 
     private BigDecimal promotionCosts;
 
-    public Date getInsertTime() {
+
+    public Date getInsertTime()
+    {
         return insertTime;
     }
 
-    public void setInsertTime(Date insertTime) {
+    public void setInsertTime(Date insertTime)
+    {
         this.insertTime = insertTime;
     }
 
-    public Integer getNewAddNop() {
+    public Integer getNewAddNop()
+    {
         return newAddNop;
     }
 
-    public void setNewAddNop(Integer newAddNop) {
+    public void setNewAddNop(Integer newAddNop)
+    {
         this.newAddNop = newAddNop;
     }
 
-    public Integer getActiveNop() {
+    public Integer getActiveNop()
+    {
         return activeNop;
     }
 
-    public void setActiveNop(Integer activeNop) {
+    public void setActiveNop(Integer activeNop)
+    {
         this.activeNop = activeNop;
     }
 
-    public Integer getVisitCount() {
+    public Integer getVisitCount()
+    {
         return visitCount;
     }
 
-    public void setVisitCount(Integer visitCount) {
+    public void setVisitCount(Integer visitCount)
+    {
         this.visitCount = visitCount;
     }
 
-    public Double getVisitAvg() {
+    public Double getVisitAvg()
+    {
         return visitAvg;
     }
 
-    public void setVisitAvg(Double visitAvg) {
+    public void setVisitAvg(Double visitAvg)
+    {
         this.visitAvg = visitAvg;
     }
 
-    public Integer getStayAvg() {
+    public Integer getStayAvg()
+    {
         return stayAvg;
     }
 
-    public void setStayAvg(Integer stayAvg) {
+    public void setStayAvg(Integer stayAvg)
+    {
         this.stayAvg = stayAvg;
     }
 
-    public Integer getShareNop() {
+    public Integer getShareNop()
+    {
         return shareNop;
     }
 
-    public void setShareNop(Integer shareNop) {
+    public void setShareNop(Integer shareNop)
+    {
         this.shareNop = shareNop;
     }
 
-    public Integer getShareCount() {
+    public Integer getShareCount()
+    {
         return shareCount;
     }
 
-    public void setShareCount(Integer shareCount) {
+    public void setShareCount(Integer shareCount)
+    {
         this.shareCount = shareCount;
     }
 
-    public Integer getShareNewAdd() {
+    public Integer getShareNewAdd()
+    {
         return shareNewAdd;
     }
 
-    public void setShareNewAdd(Integer shareNewAdd) {
+    public void setShareNewAdd(Integer shareNewAdd)
+    {
         this.shareNewAdd = shareNewAdd;
     }
 
-    public Double getKeepDay1() {
+    public Double getKeepDay1()
+    {
         return keepDay1;
     }
 
-    public void setKeepDay1(Double keepDay1) {
+    public void setKeepDay1(Double keepDay1)
+    {
         this.keepDay1 = keepDay1;
     }
 
-    public Double getKeepDay3() {
+    public Double getKeepDay3()
+    {
         return keepDay3;
     }
 
-    public void setKeepDay3(Double keepDay3) {
+    public void setKeepDay3(Double keepDay3)
+    {
         this.keepDay3 = keepDay3;
     }
 
-    public Double getKeepDay7() {
+    public Double getKeepDay7()
+    {
         return keepDay7;
     }
 
-    public void setKeepDay7(Double keepDay7) {
+    public void setKeepDay7(Double keepDay7)
+    {
         this.keepDay7 = keepDay7;
     }
 
-    public Integer getBannerExposure() {
+    public Integer getBannerExposure()
+    {
         return bannerExposure;
     }
 
-    public void setBannerExposure(Integer bannerExposure) {
+    public void setBannerExposure(Integer bannerExposure)
+    {
         this.bannerExposure = bannerExposure;
     }
 
-    public Integer getBannerClick() {
+    public Integer getBannerClick()
+    {
         return bannerClick;
     }
 
-    public void setBannerClick(Integer bannerClick) {
+    public void setBannerClick(Integer bannerClick)
+    {
         this.bannerClick = bannerClick;
     }
 
-    public BigDecimal getBannerIncome() {
+    public BigDecimal getBannerIncome()
+    {
         return bannerIncome;
     }
 
-    public void setBannerIncome(BigDecimal bannerIncome) {
+    public void setBannerIncome(BigDecimal bannerIncome)
+    {
         this.bannerIncome = bannerIncome;
     }
 
-    public Integer getVideoExposure() {
+    public Integer getVideoExposure()
+    {
         return videoExposure;
     }
 
-    public void setVideoExposure(Integer videoExposure) {
+    public void setVideoExposure(Integer videoExposure)
+    {
         this.videoExposure = videoExposure;
     }
 
-    public Integer getVideoClick() {
+    public Integer getVideoClick()
+    {
         return videoClick;
     }
 
-    public void setVideoClick(Integer videoClick) {
+    public void setVideoClick(Integer videoClick)
+    {
         this.videoClick = videoClick;
     }
 
-    public BigDecimal getVideoIncome() {
+    public BigDecimal getVideoIncome()
+    {
         return videoIncome;
     }
 
-    public void setVideoIncome(BigDecimal videoIncome) {
+    public void setVideoIncome(BigDecimal videoIncome)
+    {
         this.videoIncome = videoIncome;
     }
 
-    public BigDecimal getVideoTotal() {
+    public BigDecimal getVideoTotal()
+    {
         return videoTotal;
     }
 
-    public void setVideoTotal(BigDecimal videoTotal) {
+    public void setVideoTotal(BigDecimal videoTotal)
+    {
         this.videoTotal = videoTotal;
     }
 
-    public BigDecimal getVirtualPay() {
+    public BigDecimal getVirtualPay()
+    {
         return virtualPay;
     }
 
-    public void setVirtualPay(BigDecimal virtualPay) {
+    public void setVirtualPay(BigDecimal virtualPay)
+    {
         this.virtualPay = virtualPay;
     }
 
-    public BigDecimal getPayTotal() {
+    public BigDecimal getPayTotal()
+    {
         return payTotal;
     }
 
-    public void setPayTotal(BigDecimal payTotal) {
+    public void setPayTotal(BigDecimal payTotal)
+    {
         this.payTotal = payTotal;
     }
 
-    public Integer getAlltotal() {
+    public Integer getAlltotal()
+    {
         return alltotal;
     }
 
-    public void setAlltotal(Integer alltotal) {
+    public void setAlltotal(Integer alltotal)
+    {
         this.alltotal = alltotal;
     }
 
@@ -240,7 +286,8 @@ public class WxInput {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

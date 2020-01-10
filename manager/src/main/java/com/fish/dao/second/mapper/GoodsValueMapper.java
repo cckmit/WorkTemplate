@@ -4,7 +4,8 @@ import com.fish.dao.second.model.GoodsValue;
 
 import java.util.List;
 
-public interface GoodsValueMapper {
+public interface GoodsValueMapper
+{
     int deleteByPrimaryKey(Integer ddid);
 
     int insert(GoodsValue record);

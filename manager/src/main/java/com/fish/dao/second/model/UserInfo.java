@@ -2,7 +2,8 @@ package com.fish.dao.second.model;
 
 import java.util.Date;
 
-public class UserInfo {
+public class UserInfo
+{
     private Integer id;
 
     private String dduid;
@@ -49,192 +50,239 @@ public class UserInfo {
 
     private Date ddlogintime;
 
-    public Integer getId() {
+    public Integer getId()
+    {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id)
+    {
         this.id = id;
     }
 
-    public String getDduid() {
+    public String getDduid()
+    {
         return dduid;
     }
 
-    public void setDduid(String dduid) {
+    public void setDduid(String dduid)
+    {
         this.dduid = dduid == null ? null : dduid.trim();
     }
 
-    public String getDdoid() {
+    public String getDdoid()
+    {
         return ddoid;
     }
 
-    public void setDdoid(String ddoid) {
+    public void setDdoid(String ddoid)
+    {
         this.ddoid = ddoid == null ? null : ddoid.trim();
     }
 
-    public String getDdappid() {
+    public String getDdappid()
+    {
         return ddappid;
     }
 
-    public void setDdappid(String ddappid) {
+    public void setDdappid(String ddappid)
+    {
         this.ddappid = ddappid == null ? null : ddappid.trim();
     }
 
-    public String getDdclientversion() {
+    public String getDdclientversion()
+    {
         return ddclientversion;
     }
 
-    public void setDdclientversion(String ddclientversion) {
+    public void setDdclientversion(String ddclientversion)
+    {
         this.ddclientversion = ddclientversion == null ? null : ddclientversion.trim();
     }
 
-    public String getDdname() {
+    public String getDdname()
+    {
         return ddname;
     }
 
-    public void setDdname(String ddname) {
+    public void setDdname(String ddname)
+    {
         this.ddname = ddname == null ? null : ddname.trim();
     }
 
-    public String getDdavatarurl() {
+    public String getDdavatarurl()
+    {
         return ddavatarurl;
     }
 
-    public void setDdavatarurl(String ddavatarurl) {
+    public void setDdavatarurl(String ddavatarurl)
+    {
         this.ddavatarurl = ddavatarurl == null ? null : ddavatarurl.trim();
     }
 
-    public Integer getDdavatarframe() {
+    public Integer getDdavatarframe()
+    {
         return ddavatarframe;
     }
 
-    public void setDdavatarframe(Integer ddavatarframe) {
+    public void setDdavatarframe(Integer ddavatarframe)
+    {
         this.ddavatarframe = ddavatarframe;
     }
 
-    public String getDdavatarframegain() {
+    public String getDdavatarframegain()
+    {
         return ddavatarframegain;
     }
 
-    public void setDdavatarframegain(String ddavatarframegain) {
+    public void setDdavatarframegain(String ddavatarframegain)
+    {
         this.ddavatarframegain = ddavatarframegain == null ? null : ddavatarframegain.trim();
     }
 
-    public Integer getDdsex() {
+    public Integer getDdsex()
+    {
         return ddsex;
     }
 
-    public void setDdsex(Integer ddsex) {
+    public void setDdsex(Integer ddsex)
+    {
         this.ddsex = ddsex;
     }
 
-    public String getDdprovince() {
+    public String getDdprovince()
+    {
         return ddprovince;
     }
 
-    public void setDdprovince(String ddprovince) {
+    public void setDdprovince(String ddprovince)
+    {
         this.ddprovince = ddprovince == null ? null : ddprovince.trim();
     }
 
-    public String getDdcity() {
+    public String getDdcity()
+    {
         return ddcity;
     }
 
-    public void setDdcity(String ddcity) {
+    public void setDdcity(String ddcity)
+    {
         this.ddcity = ddcity == null ? null : ddcity.trim();
     }
 
-    public String getDdcountry() {
+    public String getDdcountry()
+    {
         return ddcountry;
     }
 
-    public void setDdcountry(String ddcountry) {
+    public void setDdcountry(String ddcountry)
+    {
         this.ddcountry = ddcountry == null ? null : ddcountry.trim();
     }
 
-    public String getDdlanguage() {
+    public String getDdlanguage()
+    {
         return ddlanguage;
     }
 
-    public void setDdlanguage(String ddlanguage) {
+    public void setDdlanguage(String ddlanguage)
+    {
         this.ddlanguage = ddlanguage == null ? null : ddlanguage.trim();
     }
 
-    public String getDdawardlist() {
+    public String getDdawardlist()
+    {
         return ddawardlist;
     }
 
-    public void setDdawardlist(String ddawardlist) {
+    public void setDdawardlist(String ddawardlist)
+    {
         this.ddawardlist = ddawardlist == null ? null : ddawardlist.trim();
     }
 
-    public Integer getDdcollected() {
+    public Integer getDdcollected()
+    {
         return ddcollected;
     }
 
-    public void setDdcollected(Integer ddcollected) {
+    public void setDdcollected(Integer ddcollected)
+    {
         this.ddcollected = ddcollected;
     }
 
-    public Integer getDdinterested() {
+    public Integer getDdinterested()
+    {
         return ddinterested;
     }
 
-    public void setDdinterested(Integer ddinterested) {
+    public void setDdinterested(Integer ddinterested)
+    {
         this.ddinterested = ddinterested;
     }
 
-    public String getDdservicedtime() {
+    public String getDdservicedtime()
+    {
         return ddservicedtime;
     }
 
-    public void setDdservicedtime(String ddservicedtime) {
+    public void setDdservicedtime(String ddservicedtime)
+    {
         this.ddservicedtime = ddservicedtime == null ? null : ddservicedtime.trim();
     }
 
-    public String getDdsharedtime() {
+    public String getDdsharedtime()
+    {
         return ddsharedtime;
     }
 
-    public void setDdsharedtime(String ddsharedtime) {
+    public void setDdsharedtime(String ddsharedtime)
+    {
         this.ddsharedtime = ddsharedtime == null ? null : ddsharedtime.trim();
     }
 
-    public Integer getDddaywatchvideo() {
+    public Integer getDddaywatchvideo()
+    {
         return dddaywatchvideo;
     }
 
-    public void setDddaywatchvideo(Integer dddaywatchvideo) {
+    public void setDddaywatchvideo(Integer dddaywatchvideo)
+    {
         this.dddaywatchvideo = dddaywatchvideo;
     }
 
-    public Integer getDddaylogingift() {
+    public Integer getDddaylogingift()
+    {
         return dddaylogingift;
     }
 
-    public void setDddaylogingift(Integer dddaylogingift) {
+    public void setDddaylogingift(Integer dddaylogingift)
+    {
         this.dddaylogingift = dddaylogingift;
     }
 
-    public Date getDdregistertime() {
+    public Date getDdregistertime()
+    {
         return ddregistertime;
     }
 
-    public void setDdregistertime(Date ddregistertime) {
+    public void setDdregistertime(Date ddregistertime)
+    {
         this.ddregistertime = ddregistertime;
     }
 
-    public Date getDdlogintime() {
+    public Date getDdlogintime()
+    {
         return ddlogintime;
     }
 
-    public void setDdlogintime(Date ddlogintime) {
+    public void setDdlogintime(Date ddlogintime)
+    {
         this.ddlogintime = ddlogintime;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

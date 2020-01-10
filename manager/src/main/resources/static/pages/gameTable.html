@@ -38,6 +38,10 @@
                                 <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
                             </button>
                         </div>
+
+                        <div class="layui-btn-group flushPictures" style="float: right">
+                            <button type="button" class="layui-btn" data-type="flushPicture">刷新缩略图</button>
+                        </div>
                     </form>
                 </div>
 
@@ -72,16 +76,56 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'ddcode', width: 120, title: '游戏ID', sort: true},
-                {field: 'ddname', width: 120, title: '游戏名称', sort: true}
-
+                {field: 'ddcode',width:'20%', title: '游戏ID', sort: true},
+                {field: 'ddname', width:'20%', title: '游戏名称', sort: true},
+                {field: 'ddshareres', width:'56%', title: '分享JSON', sort: true}
             ]],
             page: true,
             autoSort:false,
             toolbar: '#toolbar',
+            limit: 20,
             defaultToolbar: ['filter', 'exports']
         });
-
+        var $ = layui.$, active = {
+            flushPicture: function () { //获取选中数据
+                var checkStatus = table.checkStatus('table-page');
+                var l = checkStatus.data.length;
+                data = checkStatus.data;
+                if (l == 0) {
+                    layer.msg('请选择一行');
+                } else {
+                    var arr =[];
+                    for(var i in data){
+                        arr.push(data[i].ddcode);
+                    }
+                    console.log("gameArry :" +  arr)
+                    var obj ={
+                        "gameList": arr
+                    };
+                    $.ajax({
+                        url: '../manage/games/flushgames',
+                        data: JSON.stringify(obj),
+                        contentType: "application/json; charset=utf-8",
+                        type: 'post',
+                        dataType: "json",
+                        success: function (res) {
+                            if (res.code === 200) {
+                                layer.msg("刷新成功");
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 800);
+                            } else {
+                                layer.msg('刷新失败，请联系管理员')
+                            }
+                        }
+                    });
+                }
+            }
+        };
+        $('.flushPictures .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
         laydate.render({
             elem: '#times',
             range: true
@@ -120,7 +164,13 @@
                    class="layui-input ">
         </div>
     </div>
-
+    <div class="layui-form-item ">
+        <label class="layui-form-label">分享JSON</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddshareres" name="ddshareres" autocomplete="off"
+                   class="layui-input ">
+        </div>
+    </div>
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">
     </div>

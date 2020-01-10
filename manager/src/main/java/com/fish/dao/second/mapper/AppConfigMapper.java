@@ -4,7 +4,8 @@ import com.fish.dao.second.model.AppConfig;
 
 import java.util.List;
 
-public interface AppConfigMapper {
+public interface AppConfigMapper
+{
     int deleteByPrimaryKey(String ddappid);
 
     int insert(AppConfig record);
@@ -16,5 +17,6 @@ public interface AppConfigMapper {
     int updateByPrimaryKeySelective(AppConfig record);
 
     int updateByPrimaryKey(AppConfig record);
+
     List<AppConfig> selectAll();
 }

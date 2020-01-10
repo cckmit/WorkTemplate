@@ -57,6 +57,9 @@
         <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
         <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
         <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <div class="layui-btn-group demoTable">
+            <button class="layui-btn" data-type="getCheckData">刷新缩略图</button>
+        </div>
     </div>
 </script>
 <script>
@@ -78,25 +81,116 @@
                 {field: 'ddmulticoin', width: 120, title: '游戏多人组队所需金币数', sort: true},
                 {field: 'ddmaxplayer', width: 120, title: '游戏容纳人数上限', sort: true},
                 {field: 'ddrolecount', width: 120, title: '游戏角色个数', sort: true},
-                {field: 'ddispk', width: 120, title: '游戏是否为PK', sort: true},
-                {field: 'ddavailable', width: 120, title: '游戏是否有效', sort: true},
+                {field: 'ddispk', width: 120, title: '游戏是否为PK', sort: true,
+                    templet: (d) => {
+                        if (d.ddispk == 1) {
+                            return '1-pk';
+                        } else if (d.ddispk == 0) {
+                            return '0-闯关';
+                        }
+                        else
+                            return '其他';
+                    }},
+                {field: 'ddavailable', width: 120, title: '游戏是否有效', sort: true,
+                    templet: (d) => {
+                        if (d.ddavailable == 1) {
+                            return '1-有效';
+                        } else if (d.ddavailable == 0) {
+                            return '0-无效';
+                        }
+                        else
+                            return '其他';
+                    }},
                 {field: 'ddtitle', width: 120, title: '游戏称号相关内容', sort: true},
-                {field: 'ddround1024a', width: 120, title: '游戏比赛日相关内容', sort: true},
-                {field: 'ddrespath2048u', width: 120, title: '游戏资源路径', sort: true},
-                {field: 'ddresversion', width: 120, title: '游戏资源版本', sort: true},
-                {field: 'ddrescount', width: 120, title: '游戏资源个数', sort: true},
-                {field: 'ddrocker', width: 120, title: '游戏手柄方案', sort: true},
-                {field: 'ddengine', width: 120, title: '游戏引擎方案', sort: true},
-                {field: 'ddresolution', width: 120, title: '游戏屏幕分辨率', sort: true},
-                {field: 'ddappid', width: 120, title: '游戏小程序appid', sort: true},
+                {field: 'ddrocker', width: 120, title: '游戏手柄方案', sort: true,
+                    templet: (d) => {
+                        if (d.ddrocker == 0) {
+                            return '0-a/b/a+b';
+                        } else if (d.ddrocker == 1) {
+                            return '1-a/b/c';
+                        }else if (d.ddrocker == 2) {
+                            return '2-a/b/a+b/c/d/c+d';
+                        }else if (d.ddrocker == 3) {
+                            return '3-a/b';
+                        }
+                        else
+                            return '其他';
+                    }},
+                {field: 'ddengine', width: 120, title: '游戏引擎方案', sort: true,
+                    templet: (d) => {
+                        if (d.ddengine == 0) {
+                            return '0-CPS1/CPS2/CPS3';
+                        } else if (d.ddengine == 1) {
+                            return '1-NEOGEO';
+                        }
+                        else
+                            return '其他';
+                    }},
+                {field: 'ddresolution', width: 120, title: '游戏屏幕分辨率', sort: true,
+                    templet: (d) => {
+                        if (d.ddresolution == 0) {
+                            return '0-384 x 224';
+                        } else if (d.ddresolution == 1) {
+                            return '1-304 x 224';
+                        }else if (d.ddresolution == 2) {
+                            return '2-320 x 240';
+                        }else if (d.ddresolution == 3) {
+                            return '3-320 x 224';
+                        }
+                        else
+                            return '其他';
+                    }},
                 {field: 'ddautoselect', width: 120, title: '是否自动选择', sort: true},
-                {field: 'ddfriendurl', width: 120, title: '圈子链接地址', sort: true}
+                {field: 'ddfriendurl', width: 120, title: '圈子链接地址', sort: true},
+                {field: 'ddshareres', width: 120, title: '分享资源', sort: true}
             ]],
             page: true,
             toolbar: '#toolbar',
+            limit: 20,
             defaultToolbar: ['filter', 'exports']
         });
+        var $ = layui.$, active = {
+            getCheckData: function () { //获取选中数据
+                var checkStatus = table.checkStatus('table-page');
+                var l = checkStatus.data.length;
+                data = checkStatus.data;
+                if (l == 0) {
+                    layer.msg('请选择一行');
+                } else if (l > 1) {
+                    layer.msg('只能查看一行哦');
+                } else {
+                    var submitDatas = JSON.stringify(data);
+                    var arry = submitDatas.substr(1, submitDatas.length - 2);
+                    console.log("jasonarry :" + arry);
+                    var jsonArry = JSON.parse(arry);
+                    var obj = {
+                        "ddcode": jsonArry.ddcode
+                    };
+                    layer.confirm('刷新资源图', function (index) {
+                        $.ajax({
+                            url: '../manage/games/resource',
+                            data: JSON.stringify(obj),
+                            contentType: "application/json; charset=utf-8",
+                            type: 'post',
+                            dataType: "json",
+                            success: function (result) {
+                                if (result.code === 200) {
+                                    // layer.msg(JSON.stringify(result.data));
+                                } else {
+                                    layer.msg('查询失败')
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    });
+                }
 
+            }
+        };
+        $('.demoTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
         laydate.render({
             elem: '#times',
             range: true
@@ -181,9 +275,11 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">游戏是否有效</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddavailable" name="ddavailable" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
+
+            <select class="layui-select" id="ddavailable" name="ddavailable" >
+                <option value=1>有效</option>
+                <option value=0>无效</option>
+            </select>
     </div>
 
     <div class="layui-form-item ">
@@ -193,37 +289,7 @@
                    class="layui-input layui-input">
         </div>
     </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">游戏比赛日相关内容</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddround1024a" name="ddround1024a" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
 
-    <div class="layui-form-item ">
-        <label class="layui-form-label">游戏资源路径</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddrespath2048u" name="ddrespath2048u"  autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item ">
-        <label class="layui-form-label">游戏资源版本</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddresversion" name="ddresversion"  autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item ">
-        <label class="layui-form-label">游戏资源个数</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddrescount" name="ddrescount"  autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
 
 
     <div class="layui-form-item ">
@@ -257,14 +323,6 @@
         <label class="layui-form-label">游戏屏幕分辨率</label>
         <div class="layui-input-inline">
             <input type="text" id="ddresolution" name="ddresolution" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item ">
-        <label class="layui-form-label">游戏小程序appid</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddappid" name="ddappid" lay-verify="required" autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>

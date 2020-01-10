@@ -51,7 +51,7 @@ public class PrimaryDataBaseConfig
 
 
     // 主数据源使用@Primary注解进行标识
-    @Primary
+
     @Bean(name = "primaryDataSource")
     public DataSource primaryDataSource() throws SQLException
     {
@@ -94,7 +94,7 @@ public class PrimaryDataBaseConfig
     }
 
     // 创建该数据源的事务管理
-    @Primary
+
     @Bean(name = "primaryTransactionManager")
     public DataSourceTransactionManager primaryTransactionManager() throws SQLException
     {
@@ -102,7 +102,7 @@ public class PrimaryDataBaseConfig
     }
 
     // 创建Mybatis的连接会话工厂实例
-    @Primary
+
     @Bean(name = "primarySqlSessionFactory")
     public SqlSessionFactory primarySqlSessionFactory(@Qualifier("primaryDataSource") DataSource primaryDataSource) throws Exception
     {

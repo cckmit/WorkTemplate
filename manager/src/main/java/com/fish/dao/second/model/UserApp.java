@@ -2,7 +2,8 @@ package com.fish.dao.second.model;
 
 import java.util.Date;
 
-public class UserApp {
+public class UserApp
+{
     private String ddoid;
 
     private String dduid;
@@ -13,48 +14,59 @@ public class UserApp {
 
     private Date ddregistertime;
 
-    public String getDdoid() {
+    public String getDdoid()
+    {
         return ddoid;
     }
 
-    public void setDdoid(String ddoid) {
+    public void setDdoid(String ddoid)
+    {
         this.ddoid = ddoid == null ? null : ddoid.trim();
     }
 
-    public String getDduid() {
+    public String getDduid()
+    {
         return dduid;
     }
 
-    public void setDduid(String dduid) {
+    public void setDduid(String dduid)
+    {
         this.dduid = dduid == null ? null : dduid.trim();
     }
 
-    public String getDdappid() {
+    public String getDdappid()
+    {
         return ddappid;
     }
 
-    public void setDdappid(String ddappid) {
+    public void setDdappid(String ddappid)
+    {
         this.ddappid = ddappid == null ? null : ddappid.trim();
     }
 
-    public String getDdclientversion() {
+    public String getDdclientversion()
+    {
         return ddclientversion;
     }
 
-    public void setDdclientversion(String ddclientversion) {
+    public void setDdclientversion(String ddclientversion)
+    {
         this.ddclientversion = ddclientversion == null ? null : ddclientversion.trim();
     }
 
-    public Date getDdregistertime() {
+    public Date getDdregistertime()
+    {
         return ddregistertime;
     }
 
-    public void setDdregistertime(Date ddregistertime) {
+    public void setDdregistertime(Date ddregistertime)
+    {
         this.ddregistertime = ddregistertime;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

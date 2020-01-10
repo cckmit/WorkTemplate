@@ -4,7 +4,8 @@ import com.fish.dao.second.model.WxConfig;
 
 import java.util.List;
 
-public interface WxConfigMapper {
+public interface WxConfigMapper
+{
     int deleteByPrimaryKey(String ddappid);
 
     int insert(WxConfig record);
@@ -13,10 +14,13 @@ public interface WxConfigMapper {
 
     WxConfig selectByPrimaryKey(String ddappid);
 
-    WxConfig selectByProductName(String productName);
-
     int updateByPrimaryKeySelective(WxConfig record);
 
     int updateByPrimaryKey(WxConfig record);
+
+    WxConfig selectByProductName(String productName);
+
     List<WxConfig> selectAll();
+
+    List<WxConfig> selectAllGames();
 }

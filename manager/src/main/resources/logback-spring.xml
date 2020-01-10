@@ -152,10 +152,10 @@
         <appender-ref ref="DEBUG" />
         <appender-ref ref="INFO" />
         <!-- 生产环境将请 stdout 去掉 -->
-        <appender-ref ref="STDOUT" />
+     <!--   <appender-ref ref="STDOUT" />-->
     </logger>
     <root level="DEBUG">
         <!-- 生产环境将请 stdout 去掉 -->
-        <appender-ref ref="STDOUT" />
+      <!--  <appender-ref ref="STDOUT" />-->
     </root>
 </configuration>

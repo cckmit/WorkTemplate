@@ -83,6 +83,7 @@
             ]],
             page: true,
             toolbar: '#toolbar',
+            limit: 20,
             defaultToolbar: ['filter', 'exports']
         });
         //监听工具条
@@ -95,6 +96,15 @@
 
             }
 
+        });
+        form.verify({
+            numberOrEmpty: function (value, item) {
+                if (value != '') {
+                    if (!/^\d+$/.test(value)) {
+                        return '只能填写数字或者不填';
+                    }
+                }
+            }
         });
         laydate.render({
             elem: '#times',
@@ -124,7 +134,7 @@
         <label class="layui-form-label">id</label>
         <div class="layui-input-inline">
             <input type="text" id="id" name="id"  autocomplete="off"
-                   class="layui-input ">
+                   class="layui-input " >
         </div>
     </div>
 
@@ -168,37 +178,37 @@
         <div class="layui-input-inline">
             <label class="layui-form-label">比赛时长:</label>
             <input type="text" id="ddhour0" name="ddhour0" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                   class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">冠军奖金:</label>
             <input type="text" id="one1" name="one1" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                   class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">亚军奖金:</label>
             <input type="text" id="one2" name="one2" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                   class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">季军奖金:</label>
             <input type="text" id="one3" name="one3" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                   class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">4-9金币:</label>
             <input type="text" id="one4" name="one4" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                   class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">10-39金币:</label>
             <input type="text" id="one5" name="one5" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                   class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">40-100金币:</label>
             <input type="text" id="one6" name="one6" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                   class="layui-input " lay-verify ="numberOrEmpty">
         </div>
 
     </div>
@@ -207,37 +217,37 @@
         <div class="layui-input-inline">
             <label class="layui-form-label">比赛时长:</label>
             <input type="text" id="ddhour1" name="ddhour1" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                   class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">冠军奖金:</label>
             <input type="text" id="two1" name="two1" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">亚军奖金:</label>
             <input type="text" id="two2" name="two2" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">季军奖金:</label>
             <input type="text" id="two3" name="two3" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">4-9金币:</label>
             <input type="text" id="two4" name="two4" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">10-39金币:</label>
             <input type="text" id="two5" name="two5" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">40-100金币:</label>
             <input type="text" id="two6" name="two6" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
 
     </div>
@@ -246,37 +256,37 @@
         <div class="layui-input-inline">
             <label class="layui-form-label">比赛时长:</label>
             <input type="text" id="ddhour2" name="ddhour2" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">冠军奖金:</label>
             <input type="text" id="three1" name="three1" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">亚军奖金:</label>
             <input type="text" id="three2" name="three2" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">季军奖金:</label>
             <input type="text" id="three3" name="three3" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">4-9金币:</label>
             <input type="text" id="three4" name="three4" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">10-39金币:</label>
             <input type="text" id="three5" name="three5" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">40-100金币:</label>
             <input type="text" id="three6" name="three6" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
 
     </div>
@@ -285,37 +295,37 @@
         <div class="layui-input-inline">
             <label class="layui-form-label">比赛时长:</label>
             <input type="text" id="ddhour3" name="ddhour3" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">冠军奖金:</label>
             <input type="text" id="four1" name="four1" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">亚军奖金:</label>
             <input type="text" id="four2" name="four2" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">季军奖金:</label>
             <input type="text" id="four3" name="four3" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">4-9金币:</label>
             <input type="text" id="four4" name="four4" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">10-39金币:</label>
             <input type="text" id="four5" name="four5" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">40-100金币:</label>
             <input type="text" id="four6" name="four6" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
 
     </div>
@@ -324,37 +334,37 @@
         <div class="layui-input-inline">
             <label class="layui-form-label">比赛时长:</label>
             <input type="text" id="ddhour4" name="ddhour4" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">冠军奖金:</label>
             <input type="text" id="five1" name="five1" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">亚军奖金:</label>
             <input type="text" id="five2" name="five2" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">季军奖金:</label>
             <input type="text" id="five3" name="five3" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">4-9金币:</label>
             <input type="text" id="five4" name="five4" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">10-39金币:</label>
             <input type="text" id="five5" name="five5" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">40-100金币:</label>
             <input type="text" id="five6" name="five6" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
 
     </div>
@@ -363,37 +373,37 @@
         <div class="layui-input-inline">
             <label class="layui-form-label">比赛时长:</label>
             <input type="text" id="ddhour5" name="ddhour5" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">冠军奖金:</label>
             <input type="text" id="six1" name="six1" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">亚军奖金:</label>
             <input type="text" id="six2" name="six2" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">季军奖金:</label>
             <input type="text" id="six3" name="six3" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">4-9名金币:</label>
             <input type="text" id="six4" name="six4" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">10-39金币:</label>
             <input type="text" id="six5" name="six5" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">40-100金币:</label>
             <input type="text" id="six6" name="six6" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
 
     </div>
@@ -402,37 +412,37 @@
         <div class="layui-input-inline">
             <label class="layui-form-label">比赛时长:</label>
             <input type="text" id="ddhour6" name="ddhour6" autocomplete="off"
-                   class="layui-input ">
+                    class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">冠军奖金:</label>
             <input type="text" id="seven1" name="seven1" autocomplete="off"
-                   class="layui-input ">
+                    class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">亚军奖金:</label>
             <input type="text" id="seven2" name="seven2" autocomplete="off"
-                   class="layui-input ">
+                    class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">季军奖金:</label>
             <input type="text" id="seven3" name="seven3" autocomplete="off"
-                   class="layui-input ">
+                    class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">4-9金币:</label>
             <input type="text" id="seven4" name="seven4" autocomplete="off"
-                   class="layui-input ">
+                    class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">10-39金币:</label>
             <input type="text" id="seven5" name="seven5" autocomplete="off"
-                   class="layui-input ">
+                    class="layui-input " lay-verify ="numberOrEmpty">
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">40-100金币:</label>
             <input type="text" id="seven6" name="seven6" autocomplete="off"
-                   class="layui-input ">
+                    class="layui-input " lay-verify ="numberOrEmpty">
         </div>
 
     </div>
@@ -441,37 +451,37 @@
         <div class="layui-input-inline">
             <label class="layui-form-label">比赛时长:</label>
             <input type="text" id="ddhour7" name="ddhour7" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">冠军奖金:</label>
             <input type="text" id="eight1" name="eight1" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">亚军奖金:</label>
             <input type="text" id="eight2" name="eight2" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">季军奖金:</label>
             <input type="text" id="eight3" name="eight3" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">4-9金币:</label>
             <input type="text" id="eight4" name="eight4" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">10-39金币:</label>
             <input type="text" id="eight5" name="eight5" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
         <div class="layui-input-inline">
             <label class="layui-form-label">40-100金币:</label>
             <input type="text" id="eight6" name="eight6" autocomplete="off"
-                   class="layui-input " lay-verify="number">
+                    class="layui-input " lay-verify ="numberOrEmpty" >
         </div>
 
     </div>

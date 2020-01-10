@@ -17,7 +17,8 @@
     from user_app
     where ddUid = #{dduid,jdbcType=VARCHAR}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from user_app
     where ddOId = #{ddoid,jdbcType=VARCHAR}
   </delete>
@@ -90,4 +91,19 @@
       ddRegisterTime = #{ddregistertime,jdbcType=TIMESTAMP}
     where ddOId = #{ddoid,jdbcType=VARCHAR}
   </update>
+
+
+  <select id="searchOppenId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_app
+    where ddUid = #{dduid,jdbcType=VARCHAR} and ddAppId = #{ddappid,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByOpenId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_app
+    where ddOId = #{ddoid,jdbcType=VARCHAR}
+  </select>
 </mapper>

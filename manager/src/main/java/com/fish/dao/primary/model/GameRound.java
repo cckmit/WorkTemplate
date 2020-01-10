@@ -3,8 +3,10 @@ package com.fish.dao.primary.model;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+
 @Component
-public class GameRound {
+public class GameRound
+{
     private Integer id;
 
     private Integer ddpriority;
@@ -21,72 +23,89 @@ public class GameRound {
 
     private Date times;
 
-    public Integer getId() {
+    public Integer getId()
+    {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id)
+    {
         this.id = id;
     }
 
-    public Integer getDdpriority() {
+    public Integer getDdpriority()
+    {
         return ddpriority;
     }
 
-    public void setDdpriority(Integer ddpriority) {
+    public void setDdpriority(Integer ddpriority)
+    {
         this.ddpriority = ddpriority;
     }
 
-    public Boolean getDdstate() {
+    public Boolean getDdstate()
+    {
         return ddstate;
     }
 
-    public void setDdstate(Boolean ddstate) {
+    public void setDdstate(Boolean ddstate)
+    {
         this.ddstate = ddstate;
     }
 
-    public Integer getDdgame() {
+    public Integer getDdgame()
+    {
         return ddgame;
     }
 
-    public void setDdgame(Integer ddgame) {
+    public void setDdgame(Integer ddgame)
+    {
         this.ddgame = ddgame;
     }
 
-    public String getDdround() {
+    public String getDdround()
+    {
         return ddround;
     }
 
-    public void setDdround(String ddround) {
+    public void setDdround(String ddround)
+    {
         this.ddround = ddround == null ? null : ddround.trim();
     }
 
-    public Date getDdstart() {
+    public Date getDdstart()
+    {
         return ddstart;
     }
 
-    public void setDdstart(Date ddstart) {
+    public void setDdstart(Date ddstart)
+    {
         this.ddstart = ddstart;
     }
 
-    public Date getDdend() {
+    public Date getDdend()
+    {
         return ddend;
     }
 
-    public void setDdend(Date ddend) {
+    public void setDdend(Date ddend)
+    {
         this.ddend = ddend;
     }
 
-    public Date getTimes() {
+    public Date getTimes()
+    {
         return times;
     }
 
-    public void setTimes(Date times) {
+    public void setTimes(Date times)
+    {
         this.times = times;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

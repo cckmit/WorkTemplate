@@ -2,7 +2,8 @@ package com.fish.dao.primary.model;
 
 import java.util.Date;
 
-public class RankingRecord {
+public class RankingRecord
+{
     private Long id;
 
     private String dduid;
@@ -25,96 +26,119 @@ public class RankingRecord {
 
     private Date ddtime;
 
-    public Long getId() {
+    public Long getId()
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
 
-    public String getDduid() {
+    public String getDduid()
+    {
         return dduid;
     }
 
-    public void setDduid(String dduid) {
+    public void setDduid(String dduid)
+    {
         this.dduid = dduid == null ? null : dduid.trim();
     }
 
-    public Integer getDdgcode() {
+    public Integer getDdgcode()
+    {
         return ddgcode;
     }
 
-    public void setDdgcode(Integer ddgcode) {
+    public void setDdgcode(Integer ddgcode)
+    {
         this.ddgcode = ddgcode;
     }
 
-    public Date getDdmdate() {
+    public Date getDdmdate()
+    {
         return ddmdate;
     }
 
-    public void setDdmdate(Date ddmdate) {
+    public void setDdmdate(Date ddmdate)
+    {
         this.ddmdate = ddmdate;
     }
 
-    public String getDdmcode() {
+    public String getDdmcode()
+    {
         return ddmcode;
     }
 
-    public void setDdmcode(String ddmcode) {
+    public void setDdmcode(String ddmcode)
+    {
         this.ddmcode = ddmcode == null ? null : ddmcode.trim();
     }
 
-    public Integer getDdmindex() {
+    public Integer getDdmindex()
+    {
         return ddmindex;
     }
 
-    public void setDdmindex(Integer ddmindex) {
+    public void setDdmindex(Integer ddmindex)
+    {
         this.ddmindex = ddmindex;
     }
 
-    public Integer getDdmark() {
+    public Integer getDdmark()
+    {
         return ddmark;
     }
 
-    public void setDdmark(Integer ddmark) {
+    public void setDdmark(Integer ddmark)
+    {
         this.ddmark = ddmark;
     }
 
-    public Integer getDdranking() {
+    public Integer getDdranking()
+    {
         return ddranking;
     }
 
-    public void setDdranking(Integer ddranking) {
+    public void setDdranking(Integer ddranking)
+    {
         this.ddranking = ddranking;
     }
 
-    public String getDdtype() {
+    public String getDdtype()
+    {
         return ddtype;
     }
 
-    public void setDdtype(String ddtype) {
+    public void setDdtype(String ddtype)
+    {
         this.ddtype = ddtype == null ? null : ddtype.trim();
     }
 
-    public Integer getDdtotal() {
+    public Integer getDdtotal()
+    {
         return ddtotal;
     }
 
-    public void setDdtotal(Integer ddtotal) {
+    public void setDdtotal(Integer ddtotal)
+    {
         this.ddtotal = ddtotal;
     }
 
-    public Date getDdtime() {
+    public Date getDdtime()
+    {
         return ddtime;
     }
 
-    public void setDdtime(Date ddtime) {
+    public void setDdtime(Date ddtime)
+    {
         this.ddtime = ddtime;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

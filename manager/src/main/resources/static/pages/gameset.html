@@ -63,7 +63,7 @@
 <script>
     var operatorurl = '../manage/gameset';
 
-    layui.use(['table', 'laydate', 'form', 'layer', 'multiSelect','index'], function (arrayLike) {
+    layui.use(['table', 'laydate', 'form', 'layer', 'multiSelect', 'index'], function (arrayLike) {
         var table = layui.table,
             form = layui.form,
             layer = layui.layer,
@@ -96,10 +96,10 @@
             paging: true,
             pageSize: 5,
             delay: 500,
-            max:1,
+            max: 1,
             filterable: true,
             filterDone: function (val, list) {
-                console.log("搜索完毕, 搜索关键词:"+val+"过滤数据: "+list.length+"}个");
+                console.log("搜索完毕, 搜索关键词:" + val + "过滤数据: " + list.length + "}个");
             },
         });
         $(() => {
@@ -128,29 +128,29 @@
                     alert("查询失败")
                 }
             },);
-                $.ajax({
-                    type: "get",
-                    dataType: "json",
-                    url: '../manage/gameset/jumpdirect',
-                    success: (res) => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/gameset/jumpdirect',
+                success: (res) => {
 
-                        res.forEach(function (val, index, arr) {
-                            // console.log("val.jumpDirect :"+val.jumpDirect);
-                            // console.log("val.ddappid :"+val.ddappid);
-                            let context = {name: val.jumpDirect, value: val.jumpDirect,selected: false};
-                            jumpArr.push(context);
-                        });
-                        jumpSelect.update(
-                            {
-                                data: jumpArr,
-                                autoRow: true,
-                            }
-                        );
-                    },
-                    error: function () {
-                        alert("查询失败")
-                    }
-                });
+                    res.forEach(function (val, index, arr) {
+                        // console.log("val.jumpDirect :"+val.jumpDirect);
+                        // console.log("val.ddappid :"+val.ddappid);
+                        let context = {name: val.jumpDirect, value: val.jumpDirect, selected: false};
+                        jumpArr.push(context);
+                    });
+                    jumpSelect.update(
+                        {
+                            data: jumpArr,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            });
         });
 
 
@@ -168,8 +168,6 @@
                 }
             });
         }
-
-
 
 
         table.on('toolbar(table-game)', function (obj) {
@@ -223,8 +221,8 @@
                         let directData = [];
                         for (let i = 0; i < jumpArr.length; i++) {
                             let a = jumpArr[i];
-                            var result =(direct == a.value);
-                           //console.log(" === a --："+result+"-"+typeof (result))
+                            var result = (direct == a.value);
+                            //console.log(" === a --："+result+"-"+typeof (result))
                             let context = {
                                 name: a.value,
                                 value: a.value,
@@ -250,6 +248,7 @@
                     break;
 
             }
+
             // 修改
             function update() {
                 $('#form_table').removeClass('layui-hide').addClass('layui-show');
@@ -354,13 +353,13 @@
                                         layer.msg('新增成功');
                                         layer.close(index);
 
-                                    }else if (result.code === 408){
+                                    } else if (result.code === 408) {
                                         layer.msg('AppID重复，操作失败')
-                                    }else if (result.code === 409){
+                                    } else if (result.code === 409) {
                                         layer.msg('产品名称重复，操作失败')
-                                    }else if (result.code === 410){
+                                    } else if (result.code === 410) {
                                         layer.msg('游戏代号重复，操作失败')
-                                    }  else {
+                                    } else {
                                         layer.msg('新增失败')
                                     }
                                 }
@@ -409,23 +408,24 @@
             cols: [[
                 {type: 'checkbox'},
 
-                {field: 'ddcode', width: 120, title: '游戏集代号', sort: true},
+                {field: 'ddcode', width:'20%', title: '游戏集代号', sort: true},
                 {
-                    field: 'ddstate', width: 120, title: '合集类型', sort: true, templet: (d) => {
+                    field: 'ddstate', width:'20%', title: '合集类型', sort: true, templet: (d) => {
                         if (d.ddstate == true)
                             return "壳子模式";
                         return "游戏模式";
                     }
                 },
 
-                {field: 'ddname', width: 120, title: '游戏合集名称', sort: true},
-                {field: 'ddcontent512a', width: 120, title: '游戏合集内容', sort: true},
-                {field: 'ddappid', width: 120, title: '跳转关系', sort: true}
+                {field: 'ddname', width:'25%', title: '游戏合集名称', sort: true},
+                {field: 'ddcontent512a', width:'25%', title: '游戏合集内容', sort: true}
             ]],
 
             page: true,
+            limit: 20,
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports']
+            ,cellMinWidth: 80
         });
 
         laydate.render({
@@ -477,14 +477,14 @@
         <label class="layui-form-label">游戏合集名称 *</label>
         <div class="layui-input-inline">
             <input type="text" id="ddname" name="ddname" autocomplete="off"
-                   lay-verify="required" class="layui-input layui-input" >
+                   lay-verify="required" class="layui-input layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">游戏合集新增 *</label>
         <div class="layui-input-block">
-            <div id="gameBox" name="gameBox" lay-filter="heji" lay-verify="required"></div>
+            <div id="gameBox" name="gameBox" lay-filter="heji"></div>
         </div>
     </div>
 
@@ -493,15 +493,15 @@
         <label class="layui-form-label">人工排序（以#分隔) *</label>
         <div class="layui-input-inline">
             <input type="text" id="ddarrange512a" name="ddarrange512a" autocomplete="off"
-                   lay-verify="required" class="layui-input layui-input">
+                   class="layui-input layui-input">
         </div>
     </div>
 
     <div class="layui-form-item ">
         <label class="layui-form-label">跳转关系 </label>
-            <div class="layui-input-block">
-                <div id="jumpDirect" name="jumpDirect" lay-filter="jumpDirect"></div>
-            </div>
+        <div class="layui-input-block">
+            <div id="jumpDirect" name="jumpDirect" lay-filter="jumpDirect"></div>
+        </div>
     </div>
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">

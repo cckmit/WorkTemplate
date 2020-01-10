@@ -1,5 +1,6 @@
 package com.fish.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.mapper.ArcadeGamesMapper;
 import com.fish.dao.primary.model.ArcadeGameSet;
 import com.fish.dao.primary.model.ArcadeGames;
@@ -14,10 +15,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
-public class GamesSetService implements BaseService<ArcadeGameSet> {
+public class GamesSetService implements BaseService<ArcadeGameSet>
+{
     @Autowired
     com.fish.dao.primary.mapper.ArcadeGameSetMapper arcadeGameSetMapper;
     @Autowired
@@ -27,32 +28,41 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
 
     @Override
     //查询展示所有产品信息
-    public List<ArcadeGameSet> selectAll(GetParameter parameter) {
+    public List<ArcadeGameSet> selectAll(GetParameter parameter)
+    {
         List<ArcadeGameSet> arcadeGameSets = new ArrayList<>();
-        if ("asc".equals(parameter.getOrder())) {
+        if ("asc".equals(parameter.getOrder()))
+        {
             arcadeGameSets = arcadeGameSetMapper.selectAllByAsc();
-        } else if ("desc".equals(parameter.getOrder())) {
+        } else if ("desc".equals(parameter.getOrder()))
+        {
             arcadeGameSets = arcadeGameSetMapper.selectAllByDesc();
-        } else {
+        } else
+        {
             arcadeGameSets = arcadeGameSetMapper.selectAll();
         }
-        for (ArcadeGameSet arcadeGameSet : arcadeGameSets) {
+        for (ArcadeGameSet arcadeGameSet : arcadeGameSets)
+        {
             String name = arcadeGameSet.getDdname();
             String desc = arcadeGameSet.getDddesc();
             String content = arcadeGameSet.getDdcontent512a();
             String ddContents = "";
             List<String> gameBox = new ArrayList<>();
-            try {
+            try
+            {
                 String[] split = content.split("#");
-                for (int i = 0; i < split.length; i++) {
+                for (int i = 0; i < split.length; i++)
+                {
                     String ddCode = split[i];
-                    if (StringUtils.isNotBlank(ddCode)) {
+                    if (StringUtils.isNotBlank(ddCode))
+                    {
 
                         gameBox.add(ddCode);
                         ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(Integer.valueOf(ddCode));
                         String ddname = StringUtils.isBlank(arcadeGames.getDdname()) ? "" :
                                 arcadeGames.getDdname();
-                        if (ddContents.length() > 0) {
+                        if (ddContents.length() > 0)
+                        {
                             ddContents = ddContents + ",";
                         }
                         ddContents = ddContents + ddname;
@@ -62,22 +72,27 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
                 }
 
                 arcadeGameSet.setDdname(name);
-                if (desc != null) {
+                if (desc != null)
+                {
                     arcadeGameSet.setDddesc(desc);
 
                 }
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 e.printStackTrace();
             }
 
             arcadeGameSet.setDdcontent512a(ddContents);
             String ddappid = arcadeGameSet.getDdappid();
             WxConfig wxConfigName = wxConfigMapper.selectByPrimaryKey(ddappid);
-            if(wxConfigName !=null ){
-                if(StringUtils.isNotBlank(wxConfigName.getProductName())){
+            if (wxConfigName != null)
+            {
+                if (StringUtils.isNotBlank(wxConfigName.getProductName()))
+                {
                     arcadeGameSet.setDdappid(arcadeGameSet.getDdappid() + "-" + wxConfigName.getProductName());
                 }
-            }else {
+            } else
+            {
                 arcadeGameSet.setDdappid(arcadeGameSet.getDdappid());
             }
         }
@@ -85,31 +100,38 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
     }
 
     //新增展示所有产品信息
-    public int insert(ArcadeGameSet record) {
+    public int insert(ArcadeGameSet record)
+    {
         //新增判断是否游戏编号重复
         ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(record.getDdcode());
-        if (!org.springframework.util.StringUtils.isEmpty(arcadeGameSet)) {
+        if (!org.springframework.util.StringUtils.isEmpty(arcadeGameSet))
+        {
             return 5;
         }
         List<String> gameBox = new ArrayList<>();
         String select = record.getSelect();
         String[] split = select.split(",");
-        for (int i = 0; i < split.length; i++) {
+        for (int i = 0; i < split.length; i++)
+        {
             gameBox.add(split[i]);
         }
         String ddContents = "";
         String ddName = "";
-        if (gameBox.size() >= 1) {
-            for (String box : gameBox) {
-                if (!"".equals(box)) {
+        if (gameBox.size() >= 1)
+        {
+            for (String box : gameBox)
+            {
+                if (!"".equals(box))
+                {
                     ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(Integer.valueOf(box));
-                  //  String ddName128u = HexToStringUtil.getStringFromHex(arcadeGames.getDdname());
                     String ddname = arcadeGames.getDdname();
-                    if (ddName.length() > 0) {
+                    if (ddName.length() > 0)
+                    {
                         ddName = ddName + ",";
                     }
                     ddName = ddName + ddname;
-                    if (ddContents.length() > 0) {
+                    if (ddContents.length() > 0)
+                    {
                         ddContents = ddContents + "#";
                     }
                     ddContents = ddContents + box;
@@ -117,19 +139,21 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
             }
         }
         record.setDdcontent512a(ddContents);
-       // record.setDdname128u(HexToStringUtil.getStringToHex(record.getDdname()));
-        if (ddName != null) {
+        if (ddName != null)
+        {
             record.setDddesc512u(HexToStringUtil.getStringToHex(ddName));
             record.setDddesc(ddName);
         }
-        if (StringUtils.isNotBlank(record.getJumpDirect())) {
+        if (StringUtils.isNotBlank(record.getJumpDirect()))
+        {
             String jumpDirect = record.getJumpDirect();
             String[] split1 = jumpDirect.split("-");
             record.setDdappid(split1[0]);
             String s = split1[0];
             WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(s);
             record.setDdappid(s);
-            if (StringUtils.isNotBlank(wxConfig.getProductName())) {
+            if (StringUtils.isNotBlank(wxConfig.getProductName()))
+            {
                 String productName = wxConfig.getProductName();
                 record.setDdname(productName);
             }
@@ -139,7 +163,8 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
     }
 
     //更新产品信息
-    public int updateByPrimaryKeySelective(ArcadeGameSet record) {
+    public int updateByPrimaryKeySelective(ArcadeGameSet record)
+    {
         //新增判断是否游戏编号重复
 //        ArcadeGameSet  arcadeGameSet= arcadeGameSetMapper.selectByPrimaryKey(record.getDdcode());
 //        if (!org.springframework.util.StringUtils.isEmpty(arcadeGameSet)) {
@@ -147,11 +172,13 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
 //        }
         List<ArcadeGameSet> arcadeGameSets = arcadeGameSetMapper.selectAll();
         List<ArcadeGameSet> arcadeGameSetOthers = new ArrayList<>();
-        for (ArcadeGameSet arcadeGameSetSingle : arcadeGameSets) {
+        for (ArcadeGameSet arcadeGameSetSingle : arcadeGameSets)
+        {
             if (record.getId() != arcadeGameSetSingle.getId())
                 arcadeGameSetOthers.add(arcadeGameSetSingle);
         }
-        for (ArcadeGameSet arcadeGameSetOther : arcadeGameSetOthers) {
+        for (ArcadeGameSet arcadeGameSetOther : arcadeGameSetOthers)
+        {
             if (record.getDdcode().equals(arcadeGameSetOther.getDdcode()))
                 return 5;
         }
@@ -159,22 +186,27 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
         String select = record.getSelect();
 
         String[] split = select.split(",");
-        for (int i = 0; i < split.length; i++) {
+        for (int i = 0; i < split.length; i++)
+        {
             gameBox.add(split[i]);
         }
         String ddContents = "";
         String ddName = "";
-        if (gameBox.size() >= 1) {
-            for (String box : gameBox) {
-                if (!"".equals(box)) {
+        if (gameBox.size() >= 1)
+        {
+            for (String box : gameBox)
+            {
+                if (!"".equals(box))
+                {
                     ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(Integer.valueOf(box));
-                   // String ddName128u = HexToStringUtil.getStringFromHex(arcadeGames.getDdname128u());
                     String ddname = arcadeGames.getDdname();
-                    if (ddName.length() > 0) {
+                    if (ddName.length() > 0)
+                    {
                         ddName = ddName + ",";
                     }
                     ddName = ddName + ddname;
-                    if (ddContents.length() > 0) {
+                    if (ddContents.length() > 0)
+                    {
                         ddContents = ddContents + "#";
                     }
                     ddContents = ddContents + box;
@@ -184,25 +216,27 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
         System.out.println("我是修改ddContents :" + XwhTool.getJSONByFastJSON(record));
 
         record.setDdcontent512a(ddContents);
-        //record.setDdname128u(HexToStringUtil.getStringToHex(record.getDdname128u()));
-        if (ddName != null) {
-            //record.setDddesc512u(HexToStringUtil.getStringToHex(ddName));
+        if (ddName != null)
+        {
             record.setDddesc(ddName);
         }
-        if (StringUtils.isNotBlank(record.getJumpDirect())) {
+        if (StringUtils.isNotBlank(record.getJumpDirect()))
+        {
             String jumpDirect = record.getJumpDirect();
             String[] split1 = jumpDirect.split("-");
             String s = split1[0];
             WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(s);
             record.setDdappid(s);
-        }else {
+        } else
+        {
             record.setDdappid("");
         }
         return arcadeGameSetMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter) {
+    public void setDefaultSort(GetParameter parameter)
+    {
         if (parameter.getOrder() != null)
             return;
         parameter.setOrder("desc");
@@ -210,20 +244,23 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
     }
 
     @Override
-    public Class<ArcadeGameSet> getClassInfo() {
+    public Class<ArcadeGameSet> getClassInfo()
+    {
         return ArcadeGameSet.class;
     }
 
     @Override
-    public boolean removeIf(ArcadeGameSet arcadeGameSet, Map<String, String> searchData) {
+    public boolean removeIf(ArcadeGameSet arcadeGameSet, JSONObject searchData)
+    {
 
 
-        if (existValueFalse(searchData.get("gameId"), arcadeGameSet.getDdcode())) {
+        if (existValueFalse(searchData.getString("gameId"), arcadeGameSet.getDdcode()))
+        {
             return true;
         }
 
 
-        return (existValueFalse(searchData.get("gameName"), arcadeGameSet.getDdname()));
+        return (existValueFalse(searchData.getString("gameName"), arcadeGameSet.getDdname()));
 
 
     }

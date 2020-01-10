@@ -4,13 +4,15 @@
     <resultMap id="BaseResultMap" type="com.fish.dao.second.model.WxConfig">
         <id column="ddAppId" jdbcType="VARCHAR" property="ddappid"/>
         <result column="ddAppSecret" jdbcType="VARCHAR" property="ddappsecret"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
         <result column="ddMchId" jdbcType="VARCHAR" property="ddmchid"/>
         <result column="ddP12Password" jdbcType="VARCHAR" property="ddp12password"/>
         <result column="ddKey" jdbcType="VARCHAR" property="ddkey"/>
         <result column="ddP12" jdbcType="VARCHAR" property="ddp12"/>
+        <result column="ddShareRes" jdbcType="VARCHAR" property="ddshareres"/>
+        <result column="ddAppSkipRes" jdbcType="VARCHAR" property="ddappskipres"/>
         <result column="program_type" jdbcType="INTEGER" property="programType"/>
         <result column="origin_id" jdbcType="VARCHAR" property="originId"/>
-        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
         <result column="origin_name" jdbcType="VARCHAR" property="originName"/>
         <result column="add_id" jdbcType="VARCHAR" property="addId"/>
         <result column="account" jdbcType="VARCHAR" property="account"/>
@@ -22,9 +24,9 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    ddAppId, ddAppSecret, ddMchId, ddP12Password, ddKey, ddP12, program_type, origin_id, 
-    product_name, origin_name, add_id, account, password, code_manager,manager_wechat, belong_company,
-    clear_company, create_time
+    ddAppId, ddAppSecret, product_name, ddMchId, ddP12Password, ddKey, ddP12, ddShareRes, 
+    ddAppSkipRes, program_type, origin_id, origin_name, add_id, account, password, code_manager, 
+    manager_wechat, belong_company, clear_company, create_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
@@ -37,17 +39,19 @@
     where ddAppId = #{ddappid,jdbcType=VARCHAR}
   </delete>
     <insert id="insert" parameterType="com.fish.dao.second.model.WxConfig">
-    insert into wx_config (ddAppId, ddAppSecret, ddMchId, 
-      ddP12Password, ddKey, ddP12, 
-      program_type, origin_id, product_name, 
-      origin_name, add_id, account, 
-      password, code_manager, manager_wechat,belong_company,
+    insert into wx_config (ddAppId, ddAppSecret, product_name, 
+      ddMchId, ddP12Password, ddKey, 
+      ddP12, ddShareRes, ddAppSkipRes, 
+      program_type, origin_id, origin_name, 
+      add_id, account, password, 
+      code_manager, manager_wechat, belong_company, 
       clear_company, create_time)
-    values (#{ddappid,jdbcType=VARCHAR}, #{ddappsecret,jdbcType=VARCHAR}, #{ddmchid,jdbcType=VARCHAR}, 
-      #{ddp12password,jdbcType=VARCHAR}, #{ddkey,jdbcType=VARCHAR}, #{ddp12,jdbcType=VARCHAR}, 
-      #{programType,jdbcType=INTEGER}, #{originId,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR},
-      #{originName,jdbcType=VARCHAR}, #{addId,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{codeManager,jdbcType=VARCHAR},#{managerWechat,jdbcType=VARCHAR}, #{belongCompany,jdbcType=VARCHAR},
+    values (#{ddappid,jdbcType=VARCHAR}, #{ddappsecret,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR}, 
+      #{ddmchid,jdbcType=VARCHAR}, #{ddp12password,jdbcType=VARCHAR}, #{ddkey,jdbcType=VARCHAR}, 
+      #{ddp12,jdbcType=VARCHAR}, #{ddshareres,jdbcType=VARCHAR}, #{ddappskipres,jdbcType=VARCHAR}, 
+      #{programType,jdbcType=INTEGER}, #{originId,jdbcType=VARCHAR}, #{originName,jdbcType=VARCHAR}, 
+      #{addId,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{codeManager,jdbcType=VARCHAR}, #{managerWechat,jdbcType=VARCHAR}, #{belongCompany,jdbcType=VARCHAR}, 
       #{clearCompany,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
     <insert id="insertSelective" parameterType="com.fish.dao.second.model.WxConfig">
@@ -58,6 +62,9 @@
             </if>
             <if test="ddappsecret != null">
                 ddAppSecret,
+            </if>
+            <if test="productName != null">
+                product_name,
             </if>
             <if test="ddmchid != null">
                 ddMchId,
@@ -71,14 +78,17 @@
             <if test="ddp12 != null">
                 ddP12,
             </if>
+            <if test="ddshareres != null">
+                ddShareRes,
+            </if>
+            <if test="ddappskipres != null">
+                ddAppSkipRes,
+            </if>
             <if test="programType != null">
                 program_type,
             </if>
             <if test="originId != null">
                 origin_id,
-            </if>
-            <if test="productName != null">
-                product_name,
             </if>
             <if test="originName != null">
                 origin_name,
@@ -95,7 +105,6 @@
             <if test="codeManager != null">
                 code_manager,
             </if>
-
             <if test="managerWechat != null">
                 manager_wechat,
             </if>
@@ -116,6 +125,9 @@
             <if test="ddappsecret != null">
                 #{ddappsecret,jdbcType=VARCHAR},
             </if>
+            <if test="productName != null">
+                #{productName,jdbcType=VARCHAR},
+            </if>
             <if test="ddmchid != null">
                 #{ddmchid,jdbcType=VARCHAR},
             </if>
@@ -128,14 +140,17 @@
             <if test="ddp12 != null">
                 #{ddp12,jdbcType=VARCHAR},
             </if>
+            <if test="ddshareres != null">
+                #{ddshareres,jdbcType=VARCHAR},
+            </if>
+            <if test="ddappskipres != null">
+                #{ddappskipres,jdbcType=VARCHAR},
+            </if>
             <if test="programType != null">
                 #{programType,jdbcType=INTEGER},
             </if>
             <if test="originId != null">
                 #{originId,jdbcType=VARCHAR},
-            </if>
-            <if test="productName != null">
-                #{productName,jdbcType=VARCHAR},
             </if>
             <if test="originName != null">
                 #{originName,jdbcType=VARCHAR},
@@ -155,7 +170,6 @@
             <if test="managerWechat != null">
                 #{managerWechat,jdbcType=VARCHAR},
             </if>
-
             <if test="belongCompany != null">
                 #{belongCompany,jdbcType=VARCHAR},
             </if>
@@ -173,6 +187,9 @@
             <if test="ddappsecret != null">
                 ddAppSecret = #{ddappsecret,jdbcType=VARCHAR},
             </if>
+            <if test="productName != null">
+                product_name = #{productName,jdbcType=VARCHAR},
+            </if>
             <if test="ddmchid != null">
                 ddMchId = #{ddmchid,jdbcType=VARCHAR},
             </if>
@@ -185,14 +202,17 @@
             <if test="ddp12 != null">
                 ddP12 = #{ddp12,jdbcType=VARCHAR},
             </if>
+            <if test="ddshareres != null">
+                ddShareRes = #{ddshareres,jdbcType=VARCHAR},
+            </if>
+            <if test="ddappskipres != null">
+                ddAppSkipRes = #{ddappskipres,jdbcType=VARCHAR},
+            </if>
             <if test="programType != null">
                 program_type = #{programType,jdbcType=INTEGER},
             </if>
             <if test="originId != null">
                 origin_id = #{originId,jdbcType=VARCHAR},
-            </if>
-            <if test="productName != null">
-                product_name = #{productName,jdbcType=VARCHAR},
             </if>
             <if test="originName != null">
                 origin_name = #{originName,jdbcType=VARCHAR},
@@ -209,11 +229,9 @@
             <if test="codeManager != null">
                 code_manager = #{codeManager,jdbcType=VARCHAR},
             </if>
-
             <if test="managerWechat != null">
                 manager_wechat = #{managerWechat,jdbcType=VARCHAR},
             </if>
-
             <if test="belongCompany != null">
                 belong_company = #{belongCompany,jdbcType=VARCHAR},
             </if>
@@ -229,30 +247,36 @@
     <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.WxConfig">
     update wx_config
     set ddAppSecret = #{ddappsecret,jdbcType=VARCHAR},
+      product_name = #{productName,jdbcType=VARCHAR},
       ddMchId = #{ddmchid,jdbcType=VARCHAR},
       ddP12Password = #{ddp12password,jdbcType=VARCHAR},
       ddKey = #{ddkey,jdbcType=VARCHAR},
       ddP12 = #{ddp12,jdbcType=VARCHAR},
+      ddShareRes = #{ddshareres,jdbcType=VARCHAR},
+      ddAppSkipRes = #{ddappskipres,jdbcType=VARCHAR},
       program_type = #{programType,jdbcType=INTEGER},
       origin_id = #{originId,jdbcType=VARCHAR},
-      product_name = #{productName,jdbcType=VARCHAR},
       origin_name = #{originName,jdbcType=VARCHAR},
       add_id = #{addId,jdbcType=VARCHAR},
       account = #{account,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       code_manager = #{codeManager,jdbcType=VARCHAR},
-        manager_wechat = #{managerWechat,jdbcType=VARCHAR},
-
+      manager_wechat = #{managerWechat,jdbcType=VARCHAR},
       belong_company = #{belongCompany,jdbcType=VARCHAR},
       clear_company = #{clearCompany,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP}
     where ddAppId = #{ddappid,jdbcType=VARCHAR}
   </update>
-
     <select id="selectAll" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from wx_config
+    </select>
+
+    <select id="selectAllGames" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wx_config where  program_type = 0
     </select>
     <select id="selectByProductName" parameterType="java.lang.String" resultMap="BaseResultMap">
         select

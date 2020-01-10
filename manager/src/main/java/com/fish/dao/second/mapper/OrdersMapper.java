@@ -4,7 +4,8 @@ import com.fish.dao.second.model.Orders;
 
 import java.util.List;
 
-public interface OrdersMapper {
+public interface OrdersMapper
+{
     int deleteByPrimaryKey(String ddid);
 
     int insert(Orders record);

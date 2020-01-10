@@ -23,6 +23,11 @@
     <select id="selectAll" resultMap="BaseResultMap">
       select
       <include refid="Base_Column_List" />
+      from recharge where ddStatus != 200
+    </select>
+    <select id="selectAllCharged" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
       from recharge
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >

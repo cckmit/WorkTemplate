@@ -4,7 +4,8 @@ import com.fish.dao.primary.model.RankingRecord;
 
 import java.util.List;
 
-public interface RankingRecordMapper {
+public interface RankingRecordMapper
+{
     int deleteByPrimaryKey(Long id);
 
     int insert(RankingRecord record);

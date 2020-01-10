@@ -511,6 +511,26 @@ public class XwhTool
      * @param times 时间
      * @return 结果
      */
+    public static Date parseTime(String times)
+    {
+        try
+        {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            return dateFormat.parse(times);
+        } catch (Exception e)
+        {
+            LOG.error(Log4j.getExceptionInfo(e));
+        }
+        return null;
+    }
+
+
+    /**
+     * 进行解析日期
+     *
+     * @param times 时间
+     * @return 结果
+     */
     public static int[] parseMonth(String times)
     {
         int[] result = new int[2];
