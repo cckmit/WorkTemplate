@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.mapper.RoundExtMapper;
 import com.fish.dao.primary.model.RoundExt;
 import com.fish.protocols.GetParameter;
+import com.fish.utils.XwhTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -23,9 +25,17 @@ public class RoundExtService implements BaseService<RoundExt>
     //查询常规游戏赛制信息
     public List<RoundExt> selectAll(GetParameter parameter)
     {
-
-        List<RoundExt> roundExts = roundExtMapper.selectAll();
-
+        List<RoundExt> roundExts;
+        JSONObject search = getSearchData(parameter.getSearchData());
+        if (search == null || search.getString("times").isEmpty())
+        {
+            roundExts = roundExtMapper.selectAll();
+        } else
+        {
+            Date[] parse = XwhTool.parseDate(search.getString("times"));
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            roundExts = roundExtMapper.selectByTimes(format.format(parse[0]), format.format(parse[1]));
+        }
         return roundExts;
     }
 
@@ -136,10 +146,16 @@ public class RoundExtService implements BaseService<RoundExt>
 //        if (existValueFalse(searchData.get("appId"), appConfig.getDdappid())) {
 //            return true;
 //        }
-//        if (existValueFalse(searchData.get("gameName"), appConfig.getDdname())) {
-//            return true;
-//        }
-        return true;
+        String code ="";
+        String roundSelect = searchData.get("roundSelect").toString();
+        if (roundSelect != null && roundSelect.contains("-"))
+        {
+             code = roundSelect.split("-")[0];
+        }
+        if (existValueFull(code, record.getDdcode())) {
+            return true;
+        }
+        return false;
     }
 
 

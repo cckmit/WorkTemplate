@@ -17,8 +17,6 @@ public class UserInfoController
 
     @Autowired
     UserInfoService userInfoService;
-    @Autowired
-    BaseConfig baseConfig;
 
     //展示用户信息
     @ResponseBody

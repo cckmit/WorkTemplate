@@ -13,7 +13,7 @@
   <sql id="Base_Column_List" >
     ddUid, ddAwardMoney, ddAwardCoin, ddCoinCount, ddMoney, ddTotalPayMoney, ddLoginTime
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap"  >
     select 
     <include refid="Base_Column_List" />
     from user_value

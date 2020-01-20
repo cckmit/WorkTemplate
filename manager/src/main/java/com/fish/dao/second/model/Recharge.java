@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class Recharge
 {
+
     private BigDecimal ddrmbed;//已提现金额
     private Integer remainAmount;//剩余金额
     private String productName;//产品名称
@@ -33,6 +34,7 @@ public class Recharge
     private Date ddtrans;
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date ddtimes;
+
 
     public BigDecimal getDdrmbed()
     {
@@ -222,4 +224,6 @@ public class Recharge
         sb.append("]");
         return sb.toString();
     }
+
+
 }

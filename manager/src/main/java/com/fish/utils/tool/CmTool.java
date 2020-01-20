@@ -1041,7 +1041,7 @@ public class CmTool
         try
         {
             KeyStore ks = KeyStore.getInstance("PKCS12");
-            ks.load(new FileInputStream("E:\\IdeaProjects\\ArcadeBackground\\edit\\manager\\src\\main\\resources\\p12\\1553368211.p12"), password.toCharArray());
+            ks.load(new FileInputStream(p12), password.toCharArray());
             KeyManagerFactory trustManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(ks, password.toCharArray());
             return trustManagerFactory.getKeyManagers();

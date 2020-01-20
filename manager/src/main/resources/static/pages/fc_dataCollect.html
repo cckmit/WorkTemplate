@@ -56,18 +56,24 @@
     function flushCash() {
         var $ = layui.jquery;
         layer.confirm('是否进行数据刷新？', function (index) {
+            layer.close(layer.index);
+            var loading = layer.load(0, {
+                shade: false
+            });
             $.ajax({
                 url: '../manage/datacollect/flush',
                 type: 'get',
                 success: function (res) {
                     if (res.code === 200) { //上传成功
-                        layer.msg('刷新成功');
 
+                        layer.msg('刷新成功');
+                        layer.close(loading);
                         setTimeout(function () {
                             window.location.reload();
                         }, 1000);
                     } else {
                         layer.msg('刷新失败，请联系管理员');
+                        layer.close(loading);
                     }
                 }
             });

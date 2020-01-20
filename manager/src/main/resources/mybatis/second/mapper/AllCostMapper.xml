@@ -34,6 +34,12 @@
     from all_cost
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectCurrentCoin" resultType="com.fish.dao.second.model.AllCost" parameterType="java.lang.String" >
+     ${_parameter}
+  </select>
+  <select id="selectCurrentCash" resultType="com.fish.dao.second.model.AllCost" parameterType="java.lang.String">
+    ${_parameter}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from all_cost
     where id = #{id,jdbcType=BIGINT}

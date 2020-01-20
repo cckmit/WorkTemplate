@@ -12,7 +12,9 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -50,8 +52,9 @@ public class test
 //        String res= HttpUtil.post("http://192.168.1.55:8080/persieService/flush/logic", paramMap.toJSONString());
 //        System.out.println("我是返回值 :"+res);
 
+
 //        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name","games");
+//        paramMap.put("name","deamon");//deamon , online   persieDeamon
 //        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //        System.out.println("我是返回值 :"+res);
 
@@ -62,8 +65,8 @@ public class test
 
 
 //        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name","wx_config");
-//        String res= HttpUtil.post("http://192.168.1.55:8080/persieService/flush/logic", paramMap.toJSONString());
+//        paramMap.put("name","notice_system");
+//        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //        System.out.println("我是返回值 :"+res);
 
 //        JSONObject paramMap = new JSONObject();
@@ -72,10 +75,10 @@ public class test
 //        System.out.println("我是返回值 :"+res);
 
 
-//        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name", "games");
-//        String res = HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
-//        System.out.println("我是返回值 :" + res);
+        JSONObject paramMap = new JSONObject();
+        paramMap.put("name", "wx_config");
+        String res = HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
+        System.out.println("我是返回值 :" + res);
 
 //        JSONObject paramMap = new JSONObject();
 //        paramMap.put("name", "rounds");
@@ -149,46 +152,44 @@ public class test
 //        Object list = jsonObject.get("list");
 //        Object banner = jsonObject.get("banner");
 //
-        List<ExportResult> exportResults = new ArrayList<>();
-        String obtainResultUrl1 = "http://192.168.1.55:8980/persieDeamon/match/match-c68-g0-i4-0.json";
-        String result1 = HttpUtil.get(obtainResultUrl1);
-        //System.out.println(result1);
-        JSONArray object1 = JSONArray.parseArray(result1);
-
-        String obtainResultUrl2 = "http://192.168.1.55:8980/persieDeamon/match/match-c160-g0-i3-0.json";
-        String result2 = HttpUtil.get(obtainResultUrl2);
-        JSONArray object2 = JSONArray.parseArray(result2);
-
-        object1.addAll(object2);
-        // System.out.println(object1.toJSONString());
-        for (Object object : object1)
-        {
-            ExportResult exportResult = new ExportResult();
-            JSONObject jsonObject = JSONObject.parseObject(object.toString());
-
-            Object uid = jsonObject.get("uid");
-            Object index = jsonObject.get("index");
-            Object name = jsonObject.get("name");
-            Object value = jsonObject.get("value");
-            Object type = jsonObject.get("type");
-            Object mark = jsonObject.get("mark");
-
-            exportResult.setRoundName("常规赛");
-            exportResult.setRoundLength("15分钟");
-            exportResult.setIndex(Integer.parseInt(index.toString()));
-            exportResult.setName(name.toString());
-            exportResult.setUid(uid.toString());
-            exportResult.setValue(Integer.parseInt(value.toString()));
-            exportResult.setType(type.toString());
-            exportResult.setMark(Integer.parseInt(mark.toString()));
-            exportResults.add(exportResult);
-        }
-        LocalDate now = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String localDatea = formatter.format(now);
-        Workbook sheets = ExcelUtils.writeExcel(exportResults, localDatea);
-
-        System.out.println();
+//        List<ExportResult> exportResults = new ArrayList<>();
+//        String obtainResultUrl1 = "http://192.168.1.55:8980/persieDeamon/match/match-c68-g0-i4-0.json";
+//        String result1 = HttpUtil.get(obtainResultUrl1);
+//        //System.out.println(result1);
+//        JSONArray object1 = JSONArray.parseArray(result1);
+//
+//        String obtainResultUrl2 = "http://192.168.1.55:8980/persieDeamon/match/match-c160-g0-i3-0.json";
+//        String result2 = HttpUtil.get(obtainResultUrl2);
+//        JSONArray object2 = JSONArray.parseArray(result2);
+//
+//        object1.addAll(object2);
+//        // System.out.println(object1.toJSONString());
+//        for (Object object : object1)
+//        {
+//            ExportResult exportResult = new ExportResult();
+//            JSONObject jsonObject = JSONObject.parseObject(object.toString());
+//
+//            Object uid = jsonObject.get("uid");
+//            Object index = jsonObject.get("index");
+//            Object name = jsonObject.get("name");
+//            Object value = jsonObject.get("value");
+//            Object type = jsonObject.get("type");
+//            Object mark = jsonObject.get("mark");
+//
+//            exportResult.setRoundName("常规赛");
+//            exportResult.setRoundLength("15分钟");
+//            exportResult.setIndex(Integer.parseInt(index.toString()));
+//            exportResult.setName(name.toString());
+//            exportResult.setUid(uid.toString());
+//            exportResult.setValue(Integer.parseInt(value.toString()));
+//            exportResult.setType(type.toString());
+//            exportResult.setMark(Integer.parseInt(mark.toString()));
+//            exportResults.add(exportResult);
+//        }
+//        LocalDate now = LocalDate.now();
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//        String localDatea = formatter.format(now);
+//        Workbook sheets = ExcelUtils.writeExcel(exportResults, localDatea);
 
 //        String s = ReadJsonUtil.ReadFile("C:/Users/Host-0/Desktop/readme.json");
 //        System.out.println(s);
@@ -198,6 +199,14 @@ public class test
 //            String s = dataCollect.toString();
 //            System.out.println(s);
 //        }
+
+       // File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "static/p12/userTemplate.xlsx");
+//       String aa= ResourceUtils.CLASSPATH_URL_PREFIX + "static/p12/1502768571.p12";
+//        System.out.println(aa);
+//        String path = test.class.getResource("/").getPath();
+//        System.out.println(path);
+
+
     }
 
 

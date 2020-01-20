@@ -11,6 +11,7 @@ public class ShowOrders
 {
     private Orders orders;
     private String productName;
+
     private Integer productType;
     private String originName;
 
@@ -26,6 +27,7 @@ public class ShowOrders
     private String ordersOder;
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date ordersTime;
+
 
     public String getOrdersOder()
     {

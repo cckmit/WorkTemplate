@@ -7,23 +7,52 @@ import java.util.Date;
 
 public class GoodsValue
 {
+    private String coinNumber;
+    private String headNumber;
+    private String cashNumber;
+
     private Integer ddid;
-
     private Boolean ddstate;
-
     private String ddname;
-
     private String dddesc;
-
     private String ddcosttype;
-
     private BigDecimal ddprice;
-
     private String ddgoodstype;
-
     private Integer ddvalue;
+
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date inserttime;
+
+    public String getCoinNumber()
+    {
+        return coinNumber;
+    }
+
+    public void setCoinNumber(String coinNumber)
+    {
+        this.coinNumber = coinNumber;
+    }
+
+    public String getHeadNumber()
+    {
+        return headNumber;
+    }
+
+    public void setHeadNumber(String headNumber)
+    {
+        this.headNumber = headNumber;
+    }
+
+    public String getCashNumber()
+    {
+        return cashNumber;
+    }
+
+    public void setCashNumber(String cashNumber)
+    {
+        this.cashNumber = cashNumber;
+    }
 
     public Integer getDdid()
     {

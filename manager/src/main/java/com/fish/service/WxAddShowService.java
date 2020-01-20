@@ -231,7 +231,7 @@ public class WxAddShowService implements BaseService<WxConfig>
         //        if (existValueFalse(searchData.get("clear"), wxConfig.getClearCompany())) {
         //            return true;
         //        }
-        return existValueFalse(searchData.getString("productsName"), wxConfig.getProductName());
+        return existValueFalse(searchData.getString("productsName"), wxConfig.getDdappid());
     }
 
 }

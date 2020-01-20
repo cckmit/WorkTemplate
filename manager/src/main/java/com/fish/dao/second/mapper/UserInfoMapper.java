@@ -3,6 +3,7 @@ package com.fish.dao.second.mapper;
 import com.fish.dao.second.model.UserAllInfo;
 import com.fish.dao.second.model.UserInfo;
 import com.fish.dao.second.model.UserValue;
+import com.fish.protocols.MatchCost;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public interface UserInfoMapper
     int updateByPrimaryKey(UserInfo record);
 
     List<UserAllInfo> selectAll();
+
+    List<UserAllInfo> selectBySQL(String SQL);
 
     List<UserAllInfo> selectByRegister(@Param("start") String start, @Param("end") String end);
 

@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping(value = "/manage")
 public class RechargeController
 {
-
+    //提现审核
     @Autowired
     RechargeService rechargeService;
 
@@ -31,6 +31,7 @@ public class RechargeController
     {
         PostResult result = new PostResult();
         int cash = rechargeService.getCash(productInfo);
+       // int cash =200;
         if (cash == 200)
         {
             result.setCode(200);

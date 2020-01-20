@@ -37,6 +37,7 @@ public class RankingService implements BaseService<ShowRanking>
     private CacheService cacheService;
     @Autowired
     BaseConfig baseConfig;
+
     @Override
     //查询排名信息
     public List<ShowRanking> selectAll(GetParameter parameter)
@@ -169,6 +170,7 @@ public class RankingService implements BaseService<ShowRanking>
             exportResult.setRoundName(roundName);
             exportResult.setRoundLength(roundLength);
             exportResult.setMatchdate(format);
+
             exportResults.add(exportResult);
         }
 
@@ -221,7 +223,7 @@ public class RankingService implements BaseService<ShowRanking>
     public boolean removeIf(ShowRanking record, JSONObject searchData)
     {
 
-        if (existValueFalse(searchData.getString("gameName"), record.getGamesName()))
+        if (existValueFalse(searchData.getString("gameName"), record.getGamesCode()))
         {
             return true;
         }
@@ -230,7 +232,11 @@ public class RankingService implements BaseService<ShowRanking>
 //            return true;
 //        }
 //        return (existTimeFalse(record.getMatchdate(), searchData.getString("times")));
-        return (existValueFalse(searchData.getString("roundName"), record.getRoundName()));
+        String roundName = searchData.getString("roundName");
+
+        if (roundName != null && roundName.contains("-"))
+            roundName = roundName.split("-")[0];
+        return (existValueFalse(roundName, record.getRoundCode()));
     }
 
     @Autowired

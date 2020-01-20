@@ -36,7 +36,7 @@ public class Fc_DataCollectController
     public PostResult flushDataCollect(GetParameter parameter)
     {
         PostResult result = new PostResult();
-        int count = fcDataCollectService.flushAll(parameter);
+        int count = fcDataCollectService.flushAll();
         if (count == 1)
         {
             result.setCode(200);

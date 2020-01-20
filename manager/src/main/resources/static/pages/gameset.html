@@ -41,12 +41,10 @@
                         </div>
                     </form>
                 </div>
-
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-game" id="table-game"></table>
                 </div>
-
             </div>
         </div>
     </div>
@@ -62,7 +60,6 @@
 </script>
 <script>
     var operatorurl = '../manage/gameset';
-
     layui.use(['table', 'laydate', 'form', 'layer', 'multiSelect', 'index'], function (arrayLike) {
         var table = layui.table,
             form = layui.form,
@@ -135,7 +132,6 @@
                 success: (res) => {
 
                     res.forEach(function (val, index, arr) {
-                        // console.log("val.jumpDirect :"+val.jumpDirect);
                         // console.log("val.ddappid :"+val.ddappid);
                         let context = {name: val.jumpDirect, value: val.jumpDirect, selected: false};
                         jumpArr.push(context);
@@ -153,7 +149,6 @@
             });
         });
 
-
         // 表格重载
         function table_reload(where_data) {
             if (where_data instanceof Object) {
@@ -168,7 +163,6 @@
                 }
             });
         }
-
 
         table.on('toolbar(table-game)', function (obj) {
             var checkStatus = table.checkStatus(obj.config.id);
@@ -215,9 +209,6 @@
                             data.push(context);
                         }
                         var direct = row.ddappid;
-                        // console.log('direct -- :', direct);
-                        // console.log('typeof -- :', typeof (row));
-                        // var a = JSON.stringify(row);
                         let directData = [];
                         for (let i = 0; i < jumpArr.length; i++) {
                             let a = jumpArr[i];
@@ -242,11 +233,9 @@
                                 autoRow: true,
                             }
                         );
-
                         update();
                     }
                     break;
-
             }
 
             // 修改
@@ -258,7 +247,7 @@
                     content: $('#form_table'),
                     maxmin: true,
                     shade: 0,
-                    area: ['auto', '450px'],
+                    area: ['auto', '550px'],
                     btn: ['确定', '取消'],
 
                     success: (layero, index) => {
@@ -330,7 +319,7 @@
                     content: $('#form_table'),
                     title: '添加',
                     maxmin: true,
-                    area: ['auto', '450px'],
+                    area: ['auto', '550px'],
                     btn: ['确定', '取消'],
                     success: function (layero, index) {
                         var checkStatus = table.checkStatus('#table-game');
@@ -401,38 +390,32 @@
                 });
             }
         });
-
         table.render({
             elem: '#table-game',
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
 
-                {field: 'ddcode', width:'20%', title: '游戏集代号', sort: true},
+                {field: 'ddcode', width: '20%', title: '游戏集代号', sort: true},
                 {
-                    field: 'ddstate', width:'20%', title: '合集类型', sort: true, templet: (d) => {
+                    field: 'ddstate', width: '20%', title: '合集类型', sort: true, templet: (d) => {
                         if (d.ddstate == true)
                             return "壳子模式";
                         return "游戏模式";
                     }
                 },
-
-                {field: 'ddname', width:'25%', title: '游戏合集名称', sort: true},
-                {field: 'ddcontent512a', width:'25%', title: '游戏合集内容', sort: true}
+                {field: 'ddname', width: '25%', title: '游戏合集名称', sort: true},
+                {field: 'ddcontent512a', width: '25%', title: '游戏合集内容', sort: true}
             ]],
-
             page: true,
             limit: 20,
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports']
-            ,cellMinWidth: 80
         });
-
         laydate.render({
             elem: '#times',
             range: true
         });
-
         // 搜索查询
         form.on('submit(game-search)', function (data) {
             var field = data.field;
@@ -441,11 +424,10 @@
             return false;
         });
     })
-
 </script>
-
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;">
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 550px;height: 550px;">
 
     <div class="layui-form-item layui-hide">
         <label class="layui-form-label"></label>
@@ -454,7 +436,6 @@
                    class="layui-input layui-input">
         </div>
     </div>
-
     <div class="layui-form-item ">
         <label class="layui-form-label">游戏合集代号 *</label>
         <div class="layui-input-inline">
@@ -462,7 +443,6 @@
                    class="layui-input layui-input ">
         </div>
     </div>
-
     <div class=" layui-form-item">
         <label class="layui-form-label">合集类型 *</label>
         <div class="layui-input-inline">
@@ -472,7 +452,6 @@
             </select>
         </div>
     </div>
-
     <div class="layui-form-item ">
         <label class="layui-form-label">游戏合集名称 *</label>
         <div class="layui-input-inline">
@@ -480,15 +459,12 @@
                    lay-verify="required" class="layui-input layui-input">
         </div>
     </div>
-
     <div class="layui-form-item">
         <label class="layui-form-label">游戏合集新增 *</label>
         <div class="layui-input-block">
             <div id="gameBox" name="gameBox" lay-filter="heji"></div>
         </div>
     </div>
-
-
     <div class="layui-form-item ">
         <label class="layui-form-label">人工排序（以#分隔) *</label>
         <div class="layui-input-inline">
@@ -496,15 +472,15 @@
                    class="layui-input layui-input">
         </div>
     </div>
-
     <div class="layui-form-item ">
         <label class="layui-form-label">跳转关系 </label>
         <div class="layui-input-block">
             <div id="jumpDirect" name="jumpDirect" lay-filter="jumpDirect"></div>
         </div>
     </div>
-    <div class="layui-form-item layui-hide">
-        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">
+    <div class="layui-form-item layui-hide" style="text-align:center;">
+        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认"
+               style="text-align:center;">
     </div>
 </form>
 </body>

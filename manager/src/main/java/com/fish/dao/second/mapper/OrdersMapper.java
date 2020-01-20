@@ -1,6 +1,7 @@
 package com.fish.dao.second.mapper;
 
 import com.fish.dao.second.model.Orders;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface OrdersMapper
     int updateByPrimaryKey(Orders record);
 
     List<Orders> selectAll();
+
+    List<Orders> selectByTimes(@Param("start") String start, @Param("end") String end);
 }

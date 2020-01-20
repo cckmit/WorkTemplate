@@ -22,14 +22,14 @@ public class ExportResult
     @Comments(name = "奖励数量")
     private Integer value;
 
-    @Comments(name = "奖励")
+    @Comments(name = "奖励类型")
     private String type;
+
+    @Comments(name = "得分")
+    private Integer mark;
 
     @Comments(name = "比赛结束时间")
     private String matchdate;
-    @NonExcel
-    @Comments(name = "得分")
-    private Integer mark;
 
 
     public String getMatchdate()

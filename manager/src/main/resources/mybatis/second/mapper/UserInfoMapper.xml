@@ -79,7 +79,9 @@
       from user_info
       where ddName like '${_parameter}%'
     </select>
-
+  <select id="selectBySQL" resultType="com.fish.dao.second.model.UserAllInfo" parameterType="java.lang.String">
+     ${_parameter}
+  </select>
 
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >

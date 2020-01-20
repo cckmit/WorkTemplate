@@ -3,6 +3,8 @@ server:
   servlet:
     context-path: /manager
   max-http-header-size: 102400
+  session:
+    timeout=7200:
 spring:
   redis:
     database: 5
@@ -28,9 +30,9 @@ primary:
     druid:
       filters: stat
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.1.55:3306/persie_deamon?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true&zeroDateTimeBehavior=convertToNull
-      username: query
-      password: query
+      url: jdbc:mysql://192.168.1.246:3306/persie_deamon?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: root
       minIdle: 1
       initial-size: 2
       max-active: 300
@@ -48,9 +50,9 @@ second:
     druid:
       filters: stat
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.1.55:3306/persie?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true
-      username: query
-      password: query
+      url: jdbc:mysql://192.168.1.246:3306/persie?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true
+      username: root
+      password: root
       minIdle: 1
       initial-size: 2
       max-active: 300
@@ -92,3 +94,5 @@ config:
   resHost: http://192.168.1.55:8080/persieRes/
   flushCache: http://192.168.1.55:8080/persieService/flush/logic
   flushOnline: http://129.211.119.249:10085/persieDeamon/query/online
+  wxQueryUrl: https://api.mch.weixin.qq.com/pay/orderquery
+  supplementUrl: http://192.168.1.55:8080/persieService/pay/callback

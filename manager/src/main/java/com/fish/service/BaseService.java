@@ -296,7 +296,7 @@ public interface BaseService<T>
         } finally
         {
             record.add(System.currentTimeMillis() - startTime);
-            System.out.println("查询获奖记录:" + (System.currentTimeMillis() - startTime) / 1000 + "s,长度:" + JSONObject.toJSONString(result).length() + "记录长度:" + JSONObject.toJSONString(record));
+           // System.out.println("查询获奖记录:" + (System.currentTimeMillis() - startTime) / 1000 + "s,长度:" + JSONObject.toJSONString(result).length() + "记录长度:" + JSONObject.toJSONString(record));
         }
         return result;
     }

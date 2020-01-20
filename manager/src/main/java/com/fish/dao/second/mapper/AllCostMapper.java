@@ -24,4 +24,8 @@ public interface AllCostMapper
     List<AllCost> selectAllCost(@Param("start") String start, @Param("end") String end);
 
     List<MatchCost> selectBySQL(String SQL);
+
+    AllCost selectCurrentCoin(String SQL);
+
+    List<AllCost> selectCurrentCash(String SQL);
 }

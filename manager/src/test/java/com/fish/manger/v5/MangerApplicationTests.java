@@ -168,7 +168,7 @@ public class MangerApplicationTests
 //
 //        String aaaol = stringValueOperations.get("aaaol");
 //        System.out.println(aaaol);
-//        String coin = RedisUtils.hget("user-oxDM75DNVEcHIT0eHnL-QYCMv8sY", "coin");
+        String coin = RedisUtils.hget("user-oxDM75DNVEcHIT0eHnL-QYCMv8sY", "coin");
 //        System.out.println(coin);
 //
 //        RedisUtils.hset("user-oSn_LwyddZA4PLWhR7qKz_C8xyRU", "coin", "8950");

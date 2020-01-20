@@ -7,10 +7,7 @@ import com.fish.dao.second.mapper.GoodsValueMapper;
 import com.fish.dao.second.mapper.UserInfoMapper;
 import com.fish.dao.second.mapper.UserValueMapper;
 import com.fish.dao.second.mapper.WxConfigMapper;
-import com.fish.dao.second.model.GoodsValue;
-import com.fish.dao.second.model.UserInfo;
-import com.fish.dao.second.model.UserValue;
-import com.fish.dao.second.model.WxConfig;
+import com.fish.dao.second.model.*;
 import com.fish.dao.third.mapper.MinitjWxMapper;
 import com.fish.dao.third.model.MinitjWx;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +71,29 @@ public class CacheService
 
     private Map<String, RoundRecord> roundRecordCache = new ConcurrentHashMap<>();
 
+
+
     //记录用户数值，是否进行更新用户信息
     private Map<String, Integer> userQueryRecord = new ConcurrentHashMap<>();
+
+    private Map<String, UserAllInfo> userInfoCache = new ConcurrentHashMap<>();
+
+
+    public UserAllInfo getUserInfo(String uid)
+    {
+        if (userInfoCache.isEmpty())
+        {
+            getAllUserInfo();
+        }
+        return userInfoCache.get(uid);
+    }
+
+    public List<UserAllInfo> getAllUserInfo()
+    {
+        List<UserAllInfo> userAllInfo = userInfoMapper.selectAll();
+        userAllInfo.forEach(userInfo -> userInfoCache.put(userInfo.getDduid(), userInfo));
+        return userAllInfo;
+    }
 
     public List<RoundRecord> getAllRoundRecord()
     {
@@ -216,6 +234,7 @@ public class CacheService
             if (roundExt != null)
             {
                 data.put("time", roundExt.getTip());
+                data.put("code", roundExt.getDdcode());
             }
         }
         roundInfoMap.put(key, data);

@@ -13,6 +13,7 @@ public class ShowRanking
     private Integer ddIndex;//赛场轮次
 
     private String appName;//产品名称
+    private String appId;//产品appID
     private RankingResult rankingResult;//赛场结果
     private String gamesName;//游戏名称
     private Integer gamesCode;//游戏ID
@@ -27,6 +28,16 @@ public class ShowRanking
     private Date startTime;//开始时间
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date endTime;//结束时间
+
+    public String getAppId()
+    {
+        return appId;
+    }
+
+    public void setAppId(String appId)
+    {
+        this.appId = appId;
+    }
 
     public Integer getDdNumber()
     {

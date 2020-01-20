@@ -9,6 +9,7 @@ public class RoundReceive
     private String userName;
     private String gameName;
     private String roudName;
+    private String roudCode;
     private String roudTime;
     private Long id;
 
@@ -36,6 +37,16 @@ public class RoundReceive
 
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date ddtime;
+
+    public String getRoudCode()
+    {
+        return roudCode;
+    }
+
+    public void setRoudCode(String roudCode)
+    {
+        this.roudCode = roudCode;
+    }
 
     public String getRoudTime()
     {

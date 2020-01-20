@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
     <script src="../layuiadmin/layui/layui.js"></script>
     <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
     <script>
 
     </script>
@@ -25,8 +26,8 @@
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
                             <label class="layui-form-label">产品名称</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
-                                <input type="text" class="layui-input" id="productsName" name="productsName">
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <div id="productsName" name="productsName" lay-filter="productsName"></div>
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -93,6 +94,57 @@
             form = layui.form,
             layer = layui.layer,
             laydate = layui.laydate, flow = layui.flow;
+        var $ = layui.$;
+        var appNames = [];
+        var appSelect = xmSelect.render({
+            el: '#productsName',
+            name: 'productsName',
+            language: 'zn',
+            toolbar: {show: true},
+            data: [],
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            paging: true,
+            pageSize: 5,
+            delay: 500,
+            filterable: true,
+            filterDone: function (val, list) {
+                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+            },
+        });
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: '../manage/roundmatch/appname',
+            success: (res) => {
+
+                res.forEach(function (val, index, arr) {
+                    //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
+                    var type ;
+                    if(val.programType ===0){
+                        type ="小游戏";
+                    }
+                    if(val.programType ===1){
+                        type ="小程序";
+                    }
+                    if(val.programType ===2){
+                        type ="公众号";
+                    }
+                    let context = {name: val.productName+"（"+type+")", value: val.ddappid, selected: false};
+                    appNames.push(context);
+                });
+                appSelect.update(
+                    {
+                        data: appNames,
+                        autoRow: true,
+                    }
+                );
+            },
+            error: function () {
+                alert("查询失败")
+            }
+        });
         flow.lazyimg();
         table.render({
             elem: '#table-page',
@@ -145,7 +197,7 @@
 </script>
 
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;">
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;width: 500px;height: 600px;">
 
     <div class="layui-form-item ">
         <label class="layui-form-label">产品名称 *</label>

@@ -62,7 +62,10 @@ public class RoundReceiveService implements BaseService<RoundReceive>
         for (RoundReceive roundReceive : roundReceives)
         {
             String dduid = roundReceive.getDduid();
-
+            String ddtype = roundReceive.getDdtype();
+            if("rmb".equals(ddtype)){
+                roundReceive.setDdtotal(roundReceive.getDdtotal()/100);
+            }
             roundReceive.setUserName(cacheService.getUserName(className, users, dduid));
             ArcadeGames games = cacheService.getGames(roundReceive.getDdgcode());
             if (games != null)
@@ -86,6 +89,13 @@ public class RoundReceiveService implements BaseService<RoundReceive>
             } else
             {
                 roundReceive.setRoudTime("未知时长");
+            }
+            if ((roundInfo.containsKey("code")))
+            {
+                roundReceive.setRoudCode(roundInfo.getString("code"));
+            } else
+            {
+                roundReceive.setRoudCode("位置赛制");
             }
         }
         record.add(System.currentTimeMillis() - current);
@@ -131,7 +141,7 @@ public class RoundReceiveService implements BaseService<RoundReceive>
             return true;
         String roundCode = searchData.getString("roundCode");
         if (roundCode != null && roundCode.contains("-"))
-            roundCode = roundCode.split("-", 2)[1];
-        return existValueFalse(record.getRoudName(), roundCode);
+            roundCode = roundCode.split("-")[0];
+        return existValueFalse(roundCode, record.getRoudCode());
     }
 }

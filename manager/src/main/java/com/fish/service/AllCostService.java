@@ -97,6 +97,16 @@ public class AllCostService implements BaseService<AllCost>
         uid = null;
         Date[] parse = XwhTool.parseDate(search.getString("ddtime"));
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return costMapper.selectAllCost(format.format(parse[0]), format.format(parse[1]));
+        List<AllCost> allCosts = costMapper.selectAllCost(format.format(parse[0]), format.format(parse[1]));
+        for (AllCost allCost : allCosts)
+        {
+            String ddtype = allCost.getDdtype();
+            if("rmb".equals(ddtype)){
+                allCost.setDdhistory(allCost.getDdhistory() / 100 );
+                allCost.setDdcurrent(allCost.getDdcurrent()/100);
+                allCost.setDdvalue(allCost.getDdvalue()/100);
+            }
+        }
+        return allCosts;
     }
 }

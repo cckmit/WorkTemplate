@@ -27,7 +27,30 @@ public class BaseConfig
     //刷新在线人数
     private String flushOnline;
     private JSONObject uploadJson;
+    //微信查询订单地址
+    private String wxQueryUrl;
+    //服务器补单地址
+    private String supplementUrl;
 
+    public String getSupplementUrl()
+    {
+        return supplementUrl;
+    }
+
+    public void setSupplementUrl(String supplementUrl)
+    {
+        this.supplementUrl = supplementUrl;
+    }
+
+    public String getWxQueryUrl()
+    {
+        return wxQueryUrl;
+    }
+
+    public void setWxQueryUrl(String wxQueryUrl)
+    {
+        this.wxQueryUrl = wxQueryUrl;
+    }
 
     public String getUpload()
     {

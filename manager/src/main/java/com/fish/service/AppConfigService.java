@@ -96,7 +96,7 @@ public class AppConfigService implements BaseService<AppConfig>
             return true;
         }
 
-        if (existValueFalse(searchData.getString("gameName"), appConfig.getDdname()))
+        if (existValueFalse(searchData.getString("gameName"), appConfig.getDdappid()))
         {
             return true;
         }

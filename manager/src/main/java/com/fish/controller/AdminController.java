@@ -50,42 +50,18 @@ public class AdminController
                 JSONObject wxInput = new JSONObject();
                 wxInput.put("id", ++index);
                 wxInput.put("parentId", parentId);
-                wxInput.put("name", "广告位配置");
-                wxInput.put("url", "wxAddShow.html");
+                wxInput.put("name", "审核配置");
+                wxInput.put("url", "appConfig.html");
                 jsonArray.add(wxInput);
             }
             {
                 JSONObject wxInput = new JSONObject();
                 wxInput.put("id", ++index);
                 wxInput.put("parentId", parentId);
-                wxInput.put("name", "审核配置");
-                wxInput.put("url", "appConfig.html");
+                wxInput.put("name", "广告位配置");
+                wxInput.put("url", "wxAddShow.html");
                 jsonArray.add(wxInput);
             }
-//            {
-//                JSONObject wxInput = new JSONObject();
-//                wxInput.put("id", ++index);
-//                wxInput.put("parentId", parentId);
-//                wxInput.put("name", "产品赛制");
-//                wxInput.put("url", "ProductFormat.html");
-//                jsonArray.add(wxInput);
-//            }
-//            {
-//                JSONObject wxInput = new JSONObject();
-//                wxInput.put("id", ++index);
-//                wxInput.put("parentId", parentId);
-//                wxInput.put("name", "赛制配置");
-//                wxInput.put("url", "FormatConfig.html");
-//                jsonArray.add(wxInput);
-//            }
-//            {
-//                JSONObject wxInput = new JSONObject();
-//                wxInput.put("id", ++index);
-//                wxInput.put("parentId", parentId);
-//                wxInput.put("name", "群赛制配置");
-//                wxInput.put("url", "GroupFormatConfig.html");
-//                jsonArray.add(wxInput);
-//            }
             {
                 JSONObject wxInput = new JSONObject();
                 wxInput.put("id", ++index);
@@ -95,7 +71,40 @@ public class AdminController
                 jsonArray.add(wxInput);
             }
         }
+        {
+            JSONObject parent = new JSONObject();
+            parent.put("id", ++index);
+            parent.put("parentId", 0);
+            parent.put("name", "赛制配置");
+            jsonArray.add(parent);
+            final int parentId = index;
 
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "游戏赛制配置");
+                child.put("url", "roundExt.html");
+                jsonArray.add(child);
+            }
+
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "小程序赛制");
+                child.put("url", "roundMatch.html");
+                jsonArray.add(child);
+            }
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "小游戏赛制");
+                child.put("url", "roundGame.html");
+                jsonArray.add(child);
+            }
+        }
         {
             JSONObject parent = new JSONObject();
             parent.put("id", ++index);
@@ -140,7 +149,7 @@ public class AdminController
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
                 child.put("parentId", grandparentId);
-                child.put("name", "在线情况统计");
+                child.put("name", "游戏在线人数统计");
                 child.put("url", "Online.html");
                 jsonArray.add(child);
             }
@@ -148,78 +157,26 @@ public class AdminController
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
                 child.put("parentId", grandparentId);
-                child.put("name", "订单查询");
-                child.put("url", "orders.html");
+                child.put("name", "数据汇总");
+                child.put("url", "fc_dataCollect.html");
                 jsonArray.add(child);
             }
             {
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
                 child.put("parentId", grandparentId);
-                child.put("name", "游戏赛结果查询");
-                child.put("url", "Ranking.html");
+                child.put("name", "产品数据详情");
+                child.put("url", "fc_productData.html");
                 jsonArray.add(child);
             }
             {
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
                 child.put("parentId", grandparentId);
-                child.put("name", "小程序结果查询");
-                child.put("url", "ProgramRanking.html");
+                child.put("name", "用户来源明细");
+                child.put("url", "fc_userResource.html");
                 jsonArray.add(child);
             }
-
-//            {
-//                JSONObject child = new JSONObject();
-//                child.put("id", ++index);
-//                child.put("parentId", grandparentId);
-//                child.put("name", "用户数据统计");
-//                child.put("url", "userData.html");
-//                jsonArray.add(child);
-//            }
-            {
-                JSONObject child = new JSONObject();
-                child.put("id", ++index);
-                child.put("parentId", grandparentId);
-                child.put("name", "提现情况");
-                child.put("url", "recharge.html");
-                jsonArray.add(child);
-            }
-            {
-                JSONObject child = new JSONObject();
-                child.put("id", ++index);
-                child.put("parentId", grandparentId);
-                child.put("name", "提现审核");
-                child.put("url", "rechargeAudit.html");
-                jsonArray.add(child);
-            }
-            {
-                JSONObject child = new JSONObject();
-                child.put("id", ++index);
-                child.put("parentId", grandparentId);
-                child.put("name", "获奖记录查询");
-                child.put("url", "roundReceive.html");
-                jsonArray.add(child);
-            }
-
-            {
-                JSONObject child = new JSONObject();
-                child.put("id", ++index);
-                child.put("parentId", grandparentId);
-                child.put("name", "用户来源详情");
-                child.put("url", "UserInfo.html");
-                jsonArray.add(child);
-            }
-
-            {
-                JSONObject child = new JSONObject();
-                child.put("id", ++index);
-                child.put("parentId", grandparentId);
-                child.put("name", "消耗查询");
-                child.put("url", "AllCost.html");
-                jsonArray.add(child);
-            }
-
             {
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
@@ -228,61 +185,69 @@ public class AdminController
                 child.put("url", "MatchCost.html");
                 jsonArray.add(child);
             }
-//            {
-//                JSONObject child = new JSONObject();
-//                child.put("id", ++index);
-//                child.put("parentId", grandparentId);
-//                child.put("name", "折线图");
-//                child.put("url", "chartDemo.html");
-//                jsonArray.add(child);
-//            }
-
         }
-//        {
-//            JSONObject parent = new JSONObject();
-//            parent.put("id", ++index);
-//            parent.put("parentId", 0);
-//            parent.put("name", "运营配置");
-//            jsonArray.add(parent);
-//            final int parentId = index;
-//            {
-//                JSONObject child = new JSONObject();
-//                child.put("id", ++index);
-//                child.put("parentId", parentId);
-//                child.put("name", "奖励转换工具");
-//                child.put("url", "RewardConvertTool.html");
-//                jsonArray.add(child);
-//            }
-//            {
-//                JSONObject child = new JSONObject();
-//                child.put("id", ++index);
-//                child.put("parentId", parentId);
-//                child.put("name", "JSON转换工具模板");
-//                child.put("url", "ConvertJsonTemplate.html");
-//                jsonArray.add(child);
-//            }
-//        }
         {
             JSONObject parent = new JSONObject();
             parent.put("id", ++index);
             parent.put("parentId", 0);
-            parent.put("name", "变更栏位");
+            parent.put("name", "比赛数据管理");
             jsonArray.add(parent);
             final int parentId = index;
-//            {
-//                JSONObject child = new JSONObject();
-//                child.put("id", ++index);
-//                child.put("parentId", parentId);
-//                child.put("name", "游戏赛制");
-//                child.put("url", "");
-//                jsonArray.add(child);
-//            }
+
             {
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
                 child.put("parentId", parentId);
-                child.put("name", "游戏赛制配置");
-                child.put("url", "roundExt.html");
+                child.put("name", "获奖记录查询");
+                child.put("url", "roundReceive.html");
+                jsonArray.add(child);
+            }
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "小程序比赛结果查询");
+                child.put("url", "ProgramRanking.html");
+                jsonArray.add(child);
+            }
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "小游戏比赛结果查询");
+                child.put("url", "Ranking.html");
+                jsonArray.add(child);
+            }
+        }
+        {
+            JSONObject parent = new JSONObject();
+            parent.put("id", ++index);
+            parent.put("parentId", 0);
+            parent.put("name", "用户数据查询");
+            jsonArray.add(parent);
+            final int parentId = index;
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "用户信息查询");
+                child.put("url", "UserInfo.html");
+                jsonArray.add(child);
+            }
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "充值订单查询");
+                child.put("url", "orders.html");
+                jsonArray.add(child);
+            }
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", parentId);
+                child.put("name", "提现记录查询");
+                child.put("url", "recharge.html");
                 jsonArray.add(child);
             }
 
@@ -290,16 +255,24 @@ public class AdminController
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
                 child.put("parentId", parentId);
-                child.put("name", "小程序赛制");
-                child.put("url", "roundMatch.html");
+                child.put("name", "消耗情况查询");
+                child.put("url", "AllCost.html");
                 jsonArray.add(child);
             }
+        }
+        {
+            JSONObject parent = new JSONObject();
+            parent.put("id", ++index);
+            parent.put("parentId", 0);
+            parent.put("name", "操作");
+            jsonArray.add(parent);
+            final int parentId = index;
             {
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
                 child.put("parentId", parentId);
-                child.put("name", "小游戏赛制");
-                child.put("url", "roundGame.html");
+                child.put("name", "提现审核");
+                child.put("url", "rechargeAudit.html");
                 jsonArray.add(child);
             }
             {
@@ -314,31 +287,7 @@ public class AdminController
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
                 child.put("parentId", parentId);
-                child.put("name", "产品信息详情");
-                child.put("url", "fc_productData.html");
-                jsonArray.add(child);
-            }
-            {
-                JSONObject child = new JSONObject();
-                child.put("id", ++index);
-                child.put("parentId", parentId);
-                child.put("name", "用户来源详情");
-                child.put("url", "fc_userResource.html");
-                jsonArray.add(child);
-            }
-            {
-                JSONObject child = new JSONObject();
-                child.put("id", ++index);
-                child.put("parentId", parentId);
-                child.put("name", "数据汇总");
-                child.put("url", "fc_dataCollect.html");
-                jsonArray.add(child);
-            }
-            {
-                JSONObject child = new JSONObject();
-                child.put("id", ++index);
-                child.put("parentId", parentId);
-                child.put("name", "买量支出");
+                child.put("name", "买量支出导入");
                 child.put("url", "fc_buypay.html");
                 jsonArray.add(child);
             }

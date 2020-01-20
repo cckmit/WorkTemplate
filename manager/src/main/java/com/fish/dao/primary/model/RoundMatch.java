@@ -27,6 +27,7 @@ public class RoundMatch
 
     private String roundLength;//赛制时长
     private String appName;//产品名称
+
     private String appNameSelect;//界面选择产品代号
     private String roundSelect;//界面选择赛制代号
     private String gameCodeSelect;//界面选择游戏代号

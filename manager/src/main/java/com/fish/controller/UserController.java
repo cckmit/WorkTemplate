@@ -15,6 +15,7 @@ public class UserController
     public String login(@RequestParam("username") String username, @RequestParam("password") String password)
     {
         Subject subject = SecurityUtils.getSubject();
+        subject.getSession().setTimeout(7200000);
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         try
         {

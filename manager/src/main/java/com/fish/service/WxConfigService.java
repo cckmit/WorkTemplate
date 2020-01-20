@@ -70,7 +70,6 @@ public class WxConfigService implements BaseService<WxConfig>
         for (WxConfig config : wxConfigs)
         {
             String ddShareRes = config.getDdshareres();
-            logger.info("WxConfigService-----------" + wxConfigs.size());
             try
             {
                 if (ddShareRes != null && ddShareRes.length() > 0)
@@ -185,7 +184,7 @@ public class WxConfigService implements BaseService<WxConfig>
             return true;
         }
 
-        return existValueFalse(searchData.getString("productsName"), wxConfig.getProductName());
+        return existValueFalse(searchData.getString("productsName"), wxConfig.getDdappid());
     }
 
     /**

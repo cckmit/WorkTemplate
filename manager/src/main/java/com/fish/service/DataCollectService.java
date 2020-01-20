@@ -15,16 +15,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 @Service
-public class DataCollectService implements BaseService<DataCollect>
+public class DataCollectService implements BaseService<DataCollect>, Runnable
 {
 
     @Autowired
@@ -53,16 +55,9 @@ public class DataCollectService implements BaseService<DataCollect>
     @Override
     public List<DataCollect> selectAll(GetParameter parameter)
     {
-        // List<DataCollect> list = (List<DataCollect>) RedisUtils.getList("dataList");
-
-//        List<DataCollect> list = (List<DataCollect>) RedisUtils.getList("dataList");
-//        String start = "", end = "";
-//        Date startDate = parseDate(start);
-//        Date endDate = parseDate(end);
-//        List<DataCollect> collect = list.stream().filter(x -> x.getWxDate().before(startDate) && x.getWxDate().after(endDate)).collect(Collectors.toList());
         if (dataCollects == null)
         {
-            flushAll(parameter);
+            flushAll();
         } else
         {
             for (DataCollect dataCollect : dataCollects)
@@ -125,34 +120,38 @@ public class DataCollectService implements BaseService<DataCollect>
         {
             Date wxDate = dataCollect.getWxDate();
             String format = sdf.format(wxDate);
-            if (StringUtils.isNotEmpty(beginDate) && StringUtils.isNotEmpty(endDate))
+            if (StringUtils.isNotEmpty(beginDate))
             {
-                int start = format.compareTo(beginDate);
-                int end = format.compareTo(endDate);
-                if (start >= 0 && end <= 0)
+                if (StringUtils.isNotEmpty(endDate))
+                {
+                    int start = format.compareTo(beginDate);
+                    int end = format.compareTo(endDate);
+                    if (start >= 0 && end <= 0)
+                    {
+                        lists.add(dataCollect);
+                    }
+                } else
+                {
+                    int start = format.compareTo(beginDate);
+                    if (start >= 0)
+                    {
+                        lists.add(dataCollect);
+                    }
+                }
+
+            } else
+            {
+                if (StringUtils.isNotEmpty(endDate))
+                {
+                    int end = format.compareTo(endDate);
+                    if (end <= 0)
+                    {
+                        lists.add(dataCollect);
+                    }
+                } else
                 {
                     lists.add(dataCollect);
                 }
-            }
-            if (StringUtils.isNotEmpty(beginDate) && StringUtils.isEmpty(endDate))
-            {
-                int start = format.compareTo(beginDate);
-                if (start >= 0)
-                {
-                    lists.add(dataCollect);
-                }
-            }
-            if (StringUtils.isEmpty(beginDate) && StringUtils.isNotEmpty(endDate))
-            {
-                int end = format.compareTo(endDate);
-                if (end <= 0)
-                {
-                    lists.add(dataCollect);
-                }
-            }
-            if (StringUtils.isEmpty(beginDate) && StringUtils.isEmpty(endDate))
-            {
-                lists.add(dataCollect);
             }
         }
         filterData(lists, parameter);
@@ -160,7 +159,16 @@ public class DataCollectService implements BaseService<DataCollect>
         return template(lists, parameter);
     }
 
-    public int flushAll(GetParameter parameter)
+    public String timeFlushAll()
+    {
+        SimpleDateFormat sm = new SimpleDateFormat("yyyy-MM-dd- HH:mm:ss");
+        Date date = new Date(System.currentTimeMillis());
+        String temp = sm.format(date);
+        System.out.println("当前时间" + temp);
+        return temp;
+    }
+
+    public int flushAll()
     {
         dataCollects = new ArrayList<>();
 
@@ -250,4 +258,9 @@ public class DataCollectService implements BaseService<DataCollect>
         }
     }
 
+    @Override
+    public void run()
+    {
+        timeFlushAll();
+    }
 }

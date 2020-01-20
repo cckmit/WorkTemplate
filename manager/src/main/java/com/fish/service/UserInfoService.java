@@ -1,12 +1,9 @@
 package com.fish.service;
 
-import cn.hutool.json.JSONNull;
 import com.alibaba.fastjson.JSONObject;
-import com.fish.dao.second.mapper.UserInfoMapper;
-import com.fish.dao.second.mapper.UserValueMapper;
-import com.fish.dao.second.mapper.WxConfigMapper;
+import com.fish.dao.second.mapper.*;
+import com.fish.dao.second.model.AllCost;
 import com.fish.dao.second.model.UserAllInfo;
-import com.fish.dao.second.model.UserValue;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
 import com.fish.service.cache.CacheService;
@@ -15,15 +12,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 @Service
 public class UserInfoService implements BaseService<UserAllInfo>
 {
-
+    @Autowired
+    AllCostMapper allCostMapper;
     @Autowired
     UserValueMapper uerValueMapper;
 
@@ -35,65 +34,113 @@ public class UserInfoService implements BaseService<UserAllInfo>
     @Autowired
     CacheService cacheService;
 
+    @Autowired
+    RechargeMapper rechargeMapper;
+
     @Override
     public List<UserAllInfo> selectAll(GetParameter parameter)
     {
-        List<UserAllInfo> userInfos =new ArrayList<>();
         JSONObject search = getSearchData(parameter.getSearchData());
-        if(search !=null){
+        if (search == null)
+        {
+            return new Vector<>();
+        }
+        long current = System.currentTimeMillis();
+        List<UserAllInfo> userInfos = null;
+        if (search != null)
+        {
             String registertime = search.getString("registertime");
-            String logintime = search.getString("logintime");
-            if(StringUtils.isNotBlank(registertime) && StringUtils.isBlank(logintime)){
-                Date[] parse = XwhTool.parseDate(search.getString("registertime"));
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                userInfos = userInfoMapper.selectByRegister(format.format(parse[0]), format.format(parse[1]));
-            }
-
-            else if(StringUtils.isBlank(registertime) && StringUtils.isNotBlank(logintime)){
-                Date[] parse = XwhTool.parseDate(search.getString("logintime"));
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                userInfos = userInfoMapper.selectByRegister(format.format(parse[0]), format.format(parse[1]));
-            }
-            else if(StringUtils.isNotBlank(registertime) && StringUtils.isNotBlank(logintime)){
-                Date[] register = XwhTool.parseDate(search.getString("registertime"));
-                Date[] login = XwhTool.parseDate(search.getString("logintime"));
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                userInfos = userInfoMapper.selectByTime(format.format(register[0]), format.format(register[1]),format.format(login[0]), format.format(login[1]));
-            }else {
-                userInfos = userInfoMapper.selectAll();
-
+            String ddname = search.getString("ddname");
+            String uid = search.getString("uid");
+            if (StringUtils.isNotBlank(ddname))
+            {
+                if (StringUtils.isNotBlank(uid))
+                {
+                    if (StringUtils.isNotBlank(registertime))
+                    {
+                        Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'";
+                        userInfos = userInfoMapper.selectBySQL(sql);
+                    } else
+                    {
+                        String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%'";
+                        userInfos = userInfoMapper.selectBySQL(sql);
+                    }
+                } else
+                {
+                    if (StringUtils.isNotBlank(registertime))
+                    {
+                        Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%'" + " and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
+                        userInfos = userInfoMapper.selectBySQL(sql);
+                    } else
+                    {
+                        String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%' ";
+                        userInfos = userInfoMapper.selectBySQL(sql);
+                    }
+                }
+            } else
+            {
+                if (StringUtils.isNotBlank(registertime))
+                {
+                    Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    String sql = "SELECT *  FROM  user_info where  ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
+                    userInfos = userInfoMapper.selectBySQL(sql);
+                } else
+                {
+                    String sql = "SELECT *  FROM  user_info where  ddUid like '%" + uid + "%' ";
+                    userInfos = userInfoMapper.selectBySQL(sql);
+                }
             }
         }
-        else {
-            userInfos = userInfoMapper.selectAll();
-        }
-
+        LOGGER.info("查询,耗时:" + (System.currentTimeMillis() - current) + "ms");
         for (UserAllInfo userInfo : userInfos)
         {
-            Integer remainMoney = 0;
+            int cashOut = 0;
             String ddappid = userInfo.getDdappid();
             String dduid = userInfo.getDduid();
-            UserValue userValue = cacheService.getUserValue(dduid);
+
             WxConfig wxConfig = cacheService.getWxConfig(ddappid);
+            //WxConfig wxConfig =wxConfigMapper.selectByPrimaryKey(ddappid);
             if (wxConfig != null)
             {
                 String productName = wxConfig.getProductName();
                 userInfo.setProductName(productName);
             }
-            if (userValue != null)
-            {
-                Integer ddcoincount = userValue.getDdcoincount();
-                Integer payMoney = userValue.getDdtotalpaymoney();
-                userInfo.setDdcoincount(ddcoincount);
-                userInfo.setDdtotalpaymoney(payMoney);
-                Integer awardMoney = userValue.getDdawardmoney();
-                Integer money = userValue.getDdmoney();
-                remainMoney = awardMoney - money;
-                userInfo.setRemainMoney(remainMoney/100);
-                userInfo.setDdmoney(money/100);
-            }
-        }
 
+            String cashRmb = "select COUNT(ddRmb) from recharge WHERE ddStatus = 200 AND ddUid ='" + dduid + "'";
+            BigDecimal decimal = rechargeMapper.selectRecharged(cashRmb);
+            userInfo.setCashOut(decimal.intValue());
+
+            String coinSql = "select * from all_cost where ddUid ='" + dduid + "' and ddType ='coin' ORDER BY id DESC LIMIT 1";
+            AllCost coinCost = allCostMapper.selectCurrentCoin(coinSql);
+
+            String rmbSql = "select * from all_cost where ddUid ='" + dduid + "' and ddType ='rmb' ORDER BY id DESC LIMIT 1";
+            AllCost rmbCost = allCostMapper.selectCurrentCoin(rmbSql);
+
+            if (coinCost != null)
+            {
+                Long coinCurrent = coinCost.getDdcurrent();
+                userInfo.setDdcoincount(coinCurrent.intValue());
+            } else
+            {
+                userInfo.setDdcoincount(0);
+            }
+            if (rmbCost != null)
+            {   //剩余可提现金额
+                Long rmbCurrent = rmbCost.getDdcurrent();
+                userInfo.setRemainMoney(rmbCurrent.intValue() / 100);
+            } else
+            {
+                userInfo.setRemainMoney(0);
+            }
+
+
+        }
+        System.out.println("返回,耗时:" + (System.currentTimeMillis() - current) + "ms");
         return userInfos;
     }
 
@@ -124,10 +171,8 @@ public class UserInfoService implements BaseService<UserAllInfo>
     @Override
     public boolean removeIf(UserAllInfo userAllInfo, JSONObject searchData)
     {
-        if (existValueFalse(searchData.getString("ddname"), userAllInfo.getDdname()))
-            return true;
 
-        return (existValueFalse(searchData.getString("uid"), userAllInfo.getDduid()));
+        return (existValueFalse(searchData.getString("appSelect"), userAllInfo.getDdappid()));
     }
 
 }

@@ -1,5 +1,7 @@
 package com.fish.service;
 
+import cn.hutool.Hutool;
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.OrdersMapper;
 import com.fish.dao.second.model.GoodsValue;
@@ -8,28 +10,52 @@ import com.fish.dao.second.model.ShowOrders;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
 import com.fish.service.cache.CacheService;
+import com.fish.utils.BaseConfig;
 import com.fish.utils.XwhTool;
+import com.fish.utils.log4j.Log4j;
+import com.fish.utils.tool.CmTool;
+import com.fish.utils.tool.SignatureAlgorithm;
+import com.fish.utils.tool.XMLHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.fish.utils.tool.CmTool.createNonceStr;
 
 @Service
 public class OrdersService implements BaseService<ShowOrders>
 {
-
+    // 签名类型
+    private static final String SIGN_TYPE = "MD5";
     @Autowired
     OrdersMapper ordersMapper;
 
     @Autowired
     CacheService cacheService;
+    @Autowired
+    BaseConfig baseConfig;
 
     @Override
     //查询展示所有wxconfig信息
     public List<ShowOrders> selectAll(GetParameter parameter)
     {
         ArrayList<ShowOrders> shows = new ArrayList<>();
-        List<Orders> orders = ordersMapper.selectAll();
+        List<Orders> orders;
+        JSONObject search = getSearchData(parameter.getSearchData());
+        if (search == null || search.getString("times").isEmpty())
+        {
+            orders = ordersMapper.selectAll();
+        } else
+        {
+            Date[] parse = XwhTool.parseDate(search.getString("times"));
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            String format0 = format.format(parse[0]);
+            String format1 = format.format(parse[1]);
+            orders = ordersMapper.selectByTimes(format0, format1);
+        }
         String className = OrdersService.class.getSimpleName().toLowerCase();
         Set<String> users = new HashSet<>();
         for (Orders order : orders)
@@ -83,57 +109,34 @@ public class OrdersService implements BaseService<ShowOrders>
         return shows;
     }
 
-    public ShowOrders singleOrder(String record)
+    public int singleOrder(String appId, String uid, String orderId)
     {
         //查询订单产品信息
-        Orders order = ordersMapper.selectByPrimaryKey(record);
-        ShowOrders showOrders = new ShowOrders();
-        String appId = order.getDdappid();
-        Integer goodId = order.getDdgid();
-        String dduId = order.getDduid();
-        order.setDdstate(1);
-        GoodsValue goodsValue = cacheService.getGoodsValue(goodId);
-        String goodName = goodsValue.getDdname();
-        String ddDesc = goodsValue.getDddesc();
-        showOrders.setDdDesc(ddDesc);
-        String userName = cacheService.getUserName(dduId);
+        Orders order = ordersMapper.selectByPrimaryKey(orderId);
         WxConfig wxConfig = cacheService.getWxConfig(appId);
-        if (wxConfig != null)
+        String ddMchId = wxConfig.getDdmchid();
+        Map<String, String> stringStringMap = searchPayOrder(appId, ddMchId, orderId);
+        boolean status = orderIsSuccess(stringStringMap);
+        if (status)
         {
-            String productName = wxConfig.getProductName();
-            String originName = wxConfig.getOriginName();
-
-            if (productName != null)
-            {
-                showOrders.setProductName(productName);
+            String supplementUrl = baseConfig.getSupplementUrl();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("version","2.2.2");
+            jsonObject.put("appId",appId);
+            jsonObject.put("uid",uid);
+            jsonObject.put("orderid",orderId);
+            //System.out.println(jsonObject.toJSONString());
+            String result = HttpUtil.post(supplementUrl, jsonObject.toString());
+            JSONObject jsonResult = JSONObject.parseObject(result);
+            if("success".equals(jsonResult.getString("result"))){
+                String ddOrder = stringStringMap.get("transaction_id");
+                order.setDdstate(1);
+                order.setDdorder(ddOrder);
+                ordersMapper.updateByPrimaryKeySelective(order);
+                return 200;
             }
-            if (originName != null)
-            {
-                showOrders.setOriginName(originName);
-            }
-
         }
-        if (goodName != null)
-        {
-            showOrders.setGoodsName(goodName);
-
-        }
-        if (userName != null)
-        {
-            showOrders.setUserName(userName);
-        }
-        showOrders.setOrdersId(order.getDdid());
-        showOrders.setOrdersUid(order.getDduid());
-        showOrders.setOrdersOder(order.getDdorder());
-        showOrders.setOrdersPrice(order.getDdprice());
-        showOrders.setOrdersState(order.getDdstate());
-        showOrders.setOrdersTime(order.getDdtime());
-        showOrders.setOrders(order);
-
-        //        if (showOrders != null) {
-        //            return showOrders;
-        //        }
-        return null;
+        return  404;
     }
 
     //新增展示所有产品信息
@@ -174,17 +177,7 @@ public class OrdersService implements BaseService<ShowOrders>
     @Override
     public boolean removeIf(ShowOrders orders, JSONObject searchData)
     {
-
-        String times = searchData.getString("times");
-        Date[] parse = XwhTool.parseDate(times);
-        if (times != "" && times.length() != 0)
-        {
-            if (orders.getOrders().getDdtime().before(parse[0]) || orders.getOrders().getDdtime().after(parse[1]))
-            {
-                return true;
-            }
-        }
-        if (existValueFalse(searchData.getString("productName"), orders.getProductName()))
+        if (existValueFalse(searchData.getString("productName"), orders.getOrders().getDdappid()))
         {
             return true;
         }
@@ -208,5 +201,62 @@ public class OrdersService implements BaseService<ShowOrders>
         //            return true;
         //        }
         return existValueFalse(searchData.getString("openID"), orders.getOrders().getDdoid());
+    }
+
+    /**
+     * 查询微信支付订单
+     *
+     * @param orderId 订单号
+     */
+    private Map<String, String> searchPayOrder(String ddAppId, String ddMchId, String orderId)
+    {
+
+        // 查询订单在数据库中是否存在
+        // 封装查询订单参数
+        Map<String, String> searchOrder_map = new HashMap<>();
+        searchOrder_map.put("appid", ddAppId);
+        searchOrder_map.put("mch_id", ddMchId);
+        searchOrder_map.put("out_trade_no", orderId);
+        searchOrder_map.put("nonce_str", createNonceStr());
+        searchOrder_map.put("sign_type", SIGN_TYPE);
+        WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
+        SignatureAlgorithm signatureAlgorithm = new SignatureAlgorithm(wxConfig.getDdkey(), searchOrder_map);
+        String searchOrderXml = signatureAlgorithm.getSignXml();
+
+        try
+        {
+            // 从微信平台里查询支付订单
+            String searchResultXml = CmTool.sendHttps(searchOrderXml, baseConfig.getWxQueryUrl(), OrdersService.class.getResource("/").getPath() + "static/"+wxConfig.getDdp12(), wxConfig.getDdp12password());
+            XMLHandler parse = XMLHandler.parse(searchResultXml);
+            return parse.getXmlMap();
+        } catch (Exception e)
+        {
+            LOGGER.error(Log4j.getExceptionInfo(e));
+        }
+        return null;
+    }
+
+    /**
+     * 订单是否成功
+     *
+     * @param orderMap 订单回调内容
+     * @return 结果
+     */
+    private boolean orderIsSuccess(Map<String, String> orderMap)
+    {
+        return existResult(orderMap, "result_code") && existResult(orderMap, "return_code") && existResult(orderMap, "trade_state");
+    }
+
+    /**
+     * 检测是否匹配
+     *
+     * @param map 内容
+     * @param key 查询参数
+     * @return 是否匹配
+     */
+    private static boolean existResult(Map<String, String> map, String key)
+    {
+        String resultCode = map.get(key);
+        return "success".equalsIgnoreCase(resultCode);
     }
 }

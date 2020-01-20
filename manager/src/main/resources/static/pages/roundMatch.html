@@ -88,7 +88,7 @@
 </script>
 <script type="text/html" id="imgTpl">
     <a href="{{ d.jumpDirect }}" target="_blank " title="点击查看">
-   <img lay-src="{{ d.jumpDirect }}" onerror="this.style.display='none'"></a>
+        <img lay-src="{{ d.jumpDirect }}" onerror="this.style.display='none'"></a>
 </script>
 <script type="text/javascript">
     function flushGamePicture() {
@@ -197,27 +197,27 @@
                     alert("查询失败")
                 }
             }),
-            $.ajax({
-                type: "get",
-                dataType: "json",
-                url: '../manage//roundmatch/rounds',
-                success: (res) => {
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    url: '../manage//roundmatch/rounds',
+                    success: (res) => {
 
-                    res.forEach(function (val, index, arr) {
-                        let context = {name: val.ddcode, value: val.ddcode, selected: false};
-                        codesArr.push(context);
-                    });
-                    codeSelect.update(
-                        {
-                            data: codesArr,
-                            autoRow: true,
-                        }
-                    );
-                },
-                error: function () {
-                    alert("查询失败")
-                }
-            }),
+                        res.forEach(function (val, index, arr) {
+                            let context = {name: val.ddcode, value: val.ddcode, selected: false};
+                            codesArr.push(context);
+                        });
+                        codeSelect.update(
+                            {
+                                data: codesArr,
+                                autoRow: true,
+                            }
+                        );
+                    },
+                    error: function () {
+                        alert("查询失败")
+                    }
+                }),
                 $.ajax({
                     type: "get",
                     dataType: "json",
@@ -306,11 +306,11 @@
                         let data = [];
                         for (let i = 0; i < gameCodes.length; i++) {
                             let val = gameCodes[i];
-                           // console.log('val的值 :', val.value);
+                            // console.log('val的值 :', val.value);
                             //console.log('val的title :', val.title);
 
                             var gameResult =(gameData == val.value);
-                           // console.log(" === gameResult --："+gameResult+"-"+typeof (gameResult))
+                            // console.log(" === gameResult --："+gameResult+"-"+typeof (gameResult))
                             let context = {
                                 name: val.title,
                                 value: val.value,
@@ -327,7 +327,7 @@
                             console.log('round的值 :', a.value);
                             var split = a.value.split("-");
                             var codeResult =(round == split[0]);
-                           // console.log(" === codeResult --："+codeResult+"-"+typeof (codeResult))
+                            // console.log(" === codeResult --："+codeResult+"-"+typeof (codeResult))
                             let context = {
                                 name: a.value,
                                 value: a.value,
@@ -598,13 +598,13 @@
         </div>
     </div>
 
-<!--    <div class="layui-form-item ">-->
-<!--        <label class="layui-form-label">结束时间</label>-->
-<!--        <div class="layui-input-inline">-->
-<!--            <input type="text" id="ddend" name="ddend" lay-verify="required" autocomplete="off"-->
-<!--                   class="layui-input layui-input">-->
-<!--        </div>-->
-<!--    </div>-->
+    <!--    <div class="layui-form-item ">-->
+    <!--        <label class="layui-form-label">结束时间</label>-->
+    <!--        <div class="layui-input-inline">-->
+    <!--            <input type="text" id="ddend" name="ddend" lay-verify="required" autocomplete="off"-->
+    <!--                   class="layui-input layui-input">-->
+    <!--        </div>-->
+    <!--    </div>-->
     <div class="layui-form-item ">
         <label class="layui-form-label">小程序赛制名</label>
         <div class="layui-input-inline">

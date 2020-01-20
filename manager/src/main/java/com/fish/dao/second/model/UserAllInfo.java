@@ -8,8 +8,10 @@ import java.util.Date;
 public class UserAllInfo
 {
 
-    private String   productName;
-    private Integer   remainMoney;
+    private String productName;
+    //剩余金额
+    private Integer remainMoney;
+    private Integer cashOut;
 
     private Integer ddawardmoney;
 
@@ -20,7 +22,6 @@ public class UserAllInfo
     private Integer ddmoney;
 
     private Integer ddtotalpaymoney;
-
 
 
     private Integer id;
@@ -65,11 +66,21 @@ public class UserAllInfo
 
     private Integer dddaylogingift;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date ddregistertime;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date ddlogintime;
 
+
+    public Integer getCashOut()
+    {
+        return cashOut;
+    }
+
+    public void setCashOut(Integer cashOut)
+    {
+        this.cashOut = cashOut;
+    }
 
     public String getProductName()
     {

@@ -270,7 +270,7 @@ layui.config({
                 content: $('#form_table'),
                 title: '添加',
                 maxmin: true,
-                area: ['auto', '450px'],
+                area: ['auto', '500px'],
                 btn: ['确定', '取消'],
                 success: function (layero, index) {
                     var checkStatus = table.checkStatus('#table-page');

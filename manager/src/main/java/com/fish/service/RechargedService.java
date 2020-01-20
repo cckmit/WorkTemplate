@@ -2,11 +2,11 @@ package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.*;
+import com.fish.dao.second.model.AllCost;
 import com.fish.dao.second.model.Recharge;
-import com.fish.dao.second.model.UserApp;
 import com.fish.dao.second.model.UserInfo;
-import com.fish.dao.second.model.UserValue;
 import com.fish.protocols.GetParameter;
+import com.fish.service.cache.CacheService;
 import com.fish.utils.XwhTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class RechargedService implements BaseService<Recharge>
 {
+    //提现情况
     private static final Logger LOG = LoggerFactory.getLogger(RechargedService.class);
     @Autowired
     RechargeMapper rechargeMapper;
@@ -32,37 +34,58 @@ public class RechargedService implements BaseService<Recharge>
     UserInfoMapper userInfoMapper;
     @Autowired
     UserValueMapper userValueMapper;
+    @Autowired
+    CacheService cacheService;
+    @Autowired
+    AllCostMapper allCostMapper;
 
     @Override
     //查询提现成功订单
     public List<Recharge> selectAll(GetParameter parameter)
     {
-        List<Recharge> recharges = rechargeMapper.selectAllCharged();
+        List<Recharge> recharges;
+        JSONObject search = getSearchData(parameter.getSearchData());
+        if (search == null || search.getString("times").isEmpty())
+        {
+            recharges = rechargeMapper.selectAllCharged();
+        } else
+        {
+            Date[] parse = XwhTool.parseDate(search.getString("times"));
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            recharges = rechargeMapper.selectChargedByTime(format.format(parse[0]), format.format(parse[1]));
+        }
         for (Recharge recharge : recharges)
         {
-            //提现金额
+            int cashOut = 0;
             String dduid = recharge.getDduid();
-            BigDecimal ddRmb = recharge.getDdrmb();
-            //已提现金额设置
-            if (recharge.getDdstatus() == 200)
+
+            Date times = recharge.getDdtimes();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String ddTime = sdf.format(times);
+            String sql = " SELECT * FROM all_cost WHERE ddTime ='" + ddTime + "' ";
+            AllCost allCost = allCostMapper.selectCurrentCoin(sql);
+            if (allCost != null)
             {
-                recharge.setDdrmbed(ddRmb);
-            }
-            UserValue userValue = userValueMapper.selectByPrimaryKey(dduid);
-            if (userValue != null)
+                Long rmbCurrent = allCost.getDdcurrent();
+                //剩余金额
+                recharge.setRemainAmount(rmbCurrent.intValue() / 100);
+            } else
             {
-                Integer ddMoney = userValue.getDdmoney();
-                //剩余提现金额设置
-                recharge.setRemainAmount(ddMoney / 100);
+                recharge.setRemainAmount(0);
             }
-            UserApp userApp = userAppMapper.selectByPrimaryKey(dduid);
-            if (userApp != null)
-            {
-                String ddoid = userApp.getDdoid();
-                recharge.setDdopenid(ddoid);
-            }
-            String ddappid = recharge.getDdappid();
-            com.fish.dao.second.model.WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(ddappid);
+            String reChargeSql = "SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '" + dduid + "' AND ddTimes <= '" + ddTime + "' ";
+            int cashOutCurrent = rechargeMapper.selectCashOut(reChargeSql);
+//            String cashSql = " SELECT * FROM all_cost WHERE ddCostType ='recharge' AND ddUid = '"+dduid+"'AND ddTime <='" + ddTime + "' ";
+//            List<AllCost> cashCosts = allCostMapper.selectCurrentCash(cashSql);
+//            for (AllCost cashCost : cashCosts)
+//            {
+//                Integer ddvalue = cashCost.getDdvalue();
+//                cashOut += ddvalue;
+//            }
+            //已提现金额
+            recharge.setDdrmbed(new BigDecimal(cashOutCurrent));
+            String ddAppId = recharge.getDdappid();
+            com.fish.dao.second.model.WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
             if (wxConfig != null)
             {
                 String productName = wxConfig.getProductName();
@@ -70,7 +93,6 @@ public class RechargedService implements BaseService<Recharge>
                 recharge.setProductName(productName);
                 recharge.setProgramType(programType);
             }
-
             UserInfo userInfo = userInfoMapper.selectByDdUid(dduid);
             if (userInfo != null)
             {
@@ -85,14 +107,12 @@ public class RechargedService implements BaseService<Recharge>
     //新增信息
     public int insert(Recharge record)
     {
-
         return rechargeMapper.insert(record);
     }
 
     //更新信息
     public int updateByPrimaryKeySelective(Recharge record)
     {
-
         return rechargeMapper.updateByPrimaryKeySelective(record);
     }
 
@@ -114,20 +134,15 @@ public class RechargedService implements BaseService<Recharge>
     @Override
     public boolean removeIf(Recharge recharge, JSONObject searchData)
     {
-        String times = searchData.getString("times");
-        Date[] parse = XwhTool.parseDate(times);
-        if (times != null && times.length() != 0)
+        if (existValueFalse(searchData.getString("uid"), recharge.getDduid()))
         {
-            if (recharge.getDdtimes().before(parse[0]) || recharge.getDdtimes().after(parse[1]))
-            {
-                return true;
-            }
+            return true;
         }
         if (existValueFalse(searchData.getString("userName"), recharge.getUserName()))
         {
             return true;
         }
-        if (existValueFalse(searchData.getString("productName"), recharge.getProductName()))
+        if (existValueFalse(searchData.getString("productName"), recharge.getDdappid()))
         {
             return true;
         }

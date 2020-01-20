@@ -5,7 +5,8 @@
     <title>Title</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
     <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
     <script src="../layuiadmin/layui/layui.js"></script>
@@ -20,9 +21,25 @@
                 <!-- 搜索表单 -->
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">计费点金额</label>
+                            <div class="layui-input-inline" style="width: 6rem;">
+                                <input type="text" class="layui-input" id="money" name="money">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">类型</label>
+                            <div class="layui-input-inline" style="width: 6rem;">
+                                <input type="text" class="layui-input" id="type" name="type">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
-
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
@@ -43,48 +60,99 @@
 </script>
 <script>
     let operatorurl = '../manage/globalConfig';
-    layui.use(['table', 'laydate', 'form','layer'], function () {
+    layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
-            layer=layui.layer,
+            layer = layui.layer,
             laydate = layui.laydate;
-
+        var $ = layui.$;
         table.render({
             elem: '#table-page',
-              url: operatorurl + '?datagrid=data',
-              cols: [[
-                  {type: 'checkbox'},
-                  {field: 'ddid', width:'12%', title: '计费点ID', sort: true},
-                  {field: 'ddname', width:'14%', title: '计费点金额', sort: true},
-                  {field: 'ddgoodstype',width:'12%', title: '类型', sort: true},
-                  {field: 'ddvalue', width:'14%', title: '金币数量', sort: true},
-                  {field: 'ddhead', width:'14%', title: '头像框编号', sort: true},
-                  {field: 'ddmoney', width:'14%', title: '提现金额', sort: true},
-                  {field: 'ddvalue', width:'14%', title: '道具描述', sort: true},
-                  {field: 'inserttime', width:'30%', title: '创建时间', sort: true}
-    ]],
-              page: true,
-              toolbar: '#toolbar',
-              limit: 30,
-              defaultToolbar: ['filter', 'exports']
+            url: operatorurl + '?datagrid=data',
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'ddid', width: '8%', title: '计费点ID', sort: true},
+                {field: 'ddname', width: '10%', title: '计费点金额', sort: true},
+                {field: 'ddgoodstype', width: '9%', title: '类型', sort: true},
+                {
+                    field: 'coinNumber', width: '10%', title: '金币数量', sort: true,
+                    templet: (d) => {
+                        if (d.coinNumber === '' || d.coinNumber === null) {
+                            return '-';
+                        } else {
+                            return d.coinNumber + "个";
+                        }
+                    }
+                },
+                {
+                    field: 'headNumber', width: '9%', title: '头像框编号', sort: true,
+                    templet: (d) => {
+                        if (d.headNumber === '' || d.headNumber === null) {
+                            return '-';
+                        } else {
+                            return d.headNumber + "号";
+                        }
+                    }
+                },
+                {
+                    field: 'cashNumber', width: '9%', title: '提现金额', sort: true,
+                    templet: (d) => {
+                        if (d.cashNumber === '' || d.cashNumber === null) {
+                            return '-';
+                        } else {
+                            return d.cashNumber  + "元";
+                        }
+                    }
+                },
+                {field: 'dddesc', width: '12%', title: '道具描述', sort: true},
+                {
+                    field: 'ddstate', width: '8%', title: '状态', sort: true,
+                    templet: (d) => {
+                        if (d.ddstate === true) {
+                            return '开启';
+                        } else {
+                            return "关闭";
+                        }
+                    }
+                },
+                {field: 'inserttime', width: '16%', title: '创建时间', sort: true}
+            ]],
+            page: true,
+            toolbar: '#toolbar',
+            limit: 30,
+            defaultToolbar: ['filter', 'exports']
+        });
+        form.on('select(ddgoodstype)', function (data) {
+            console.log("data:" + data.value)
+            if (data.value === "coin") {
+                $("#coinNumber").removeClass('layui-hide');
+                $("#headNumber").addClass("layui-hide");
+                $("#cashNumber").addClass("layui-hide");
+
+            } else if (data.value === "head") {
+                $("#coinNumber").addClass("layui-hide");
+                $('#headNumber').removeClass('layui-hide');
+                $("#cashNumber").addClass("layui-hide");
+            } else if (data.value === "recharge") {
+                $("#coinNumber").addClass("layui-hide");
+                $("#headNumber").addClass("layui-hide");
+                $("#cashNumber").removeClass('layui-hide');
+            }
         });
 
         laydate.render({
             elem: '#times',
             range: true
         });
-        
     })
-
 </script>
-
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;">
-
-    <div class="layui-form-item ">
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 350px;height: 300px;">
+    <div class="layui-form-item  layui-hide">
         <label class="layui-form-label">计费点ID *</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddid" name="ddid" lay-verify="required" autocomplete="off"
+        <div class="layui-input-inline ">
+            <input type="text" id="ddid" name="ddid"  autocomplete="off"
                    class="layui-input ">
         </div>
     </div>
@@ -98,20 +166,45 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">购买类型 *</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddgoodstype" name="ddgoodstype" lay-verify="required" autocomplete="off"
+            <select class="layui-select" id="ddgoodstype" name="ddgoodstype" lay-verify="required"
+                    lay-filter="ddgoodstype">
+                <option value="coin">金币</option>
+                <option value="head">头像框</option>
+                <option value="recharge">提现</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item  " id="coinNumber">
+        <label class="layui-form-label">购买数量 *</label>
+        <div class="layui-input-inline">
+            <input type="number" id="coin" name="coinNumber" autocomplete="off"
                    class="layui-input ">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide" id="headNumber">
+        <label class="layui-form-label">头像框编号 *</label>
+        <div class="layui-input-inline">
+            <input type="number" id="head" name="headNumber" autocomplete="off"
+                   class="layui-input ">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide " id="cashNumber">
+        <label class="layui-form-label">提现金额 *</label>
+        <div class="layui-input-inline">
+            <input type="number"  id="cash" name="cashNumber" autocomplete="off"
+                              class="layui-input " placeholder="(元)" >
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">金币数量 *</label>
+        <label class="layui-form-label">状态 *</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddvalue" name="ddvalue" lay-verify="required" autocomplete="off"
-                   class="layui-input ">
+            <div class="layui-input-block">
+                <input type="checkbox" id="ddstate" name="ddstate" lay-skin="switch">
+            </div>
         </div>
     </div>
-
     <div class="layui-form-item layui-hide">
-        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">
+        <input type="button" lay-submit lay-filter="submit" id="front-submit" value="确认">
     </div>
 </form>
 </body>

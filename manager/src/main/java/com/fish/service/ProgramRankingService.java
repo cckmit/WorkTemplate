@@ -102,7 +102,9 @@ public class ProgramRankingService implements BaseService<ShowRanking>
             showRanking.setRoundName(roundName);
             showRanking.setRoundLength(tip);
             showRanking.setAppName(productName);
+            showRanking.setAppId(wxConfig.getDdappid());
             showRanking.setGamesName(gameName);
+            showRanking.setGamesCode(arcadeGames.getDdcode());
             showRanking.setStartTime(ddStart);
             showRanking.setEndTime(ddSubmit);
             showRanking.setRoundCode(ddRound);
@@ -238,12 +240,12 @@ public class ProgramRankingService implements BaseService<ShowRanking>
     public boolean removeIf(ShowRanking record, JSONObject searchData)
     {
 
-        if (existValueFalse(searchData.getString("appName"), record.getAppName()))
+        if (existValueFalse(searchData.getString("appName"), record.getAppId()))
         {
             return true;
         }
 
-        if (existValueFalse(searchData.getString("gameName"), record.getGamesName()))
+        if (existValueFalse(searchData.getString("gameName"), record.getGamesCode()))
         {
             return true;
         }
@@ -252,7 +254,11 @@ public class ProgramRankingService implements BaseService<ShowRanking>
 //            return true;
 //        }
 //        return (existTimeFalse(record.getEndTime(), searchData.getString("times")));
-        return (existValueFalse(searchData.getString("roundName"), record.getRoundName()));
+        String roundName = searchData.getString("roundName");
+
+        if (roundName != null && roundName.contains("-"))
+            roundName = roundName.split("-")[0];
+        return (existValueFalse(roundName, record.getRoundCode()));
     }
 
 

@@ -1,6 +1,7 @@
 package com.fish.dao.second.mapper;
 
 import com.fish.dao.second.model.UserValue;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 

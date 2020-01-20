@@ -208,7 +208,7 @@
                         i.startTime + " ms"), i.setColsWidth(), "function" == typeof a.done && a.done(t, e, t[n.countName])
                 },
                 error: function (e, t) {
-                    i.errorView("数据接口请求异常：" + t), i.renderForm(), i.setColsWidth()
+                    //i.errorView("数据接口请求异常：" + t), i.renderForm(), i.setColsWidth()
                 }
             })
         } else if (a.data && a.data.constructor === Array) {

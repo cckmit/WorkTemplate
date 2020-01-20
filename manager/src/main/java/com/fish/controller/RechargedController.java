@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/manage")
 public class RechargedController
 {
-
+    //提现情况
     @Autowired
     RechargedService rechargedService;
 
