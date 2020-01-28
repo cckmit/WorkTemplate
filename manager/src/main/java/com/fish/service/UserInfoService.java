@@ -97,9 +97,9 @@ public class UserInfoService implements BaseService<UserAllInfo>
             }
         }
         LOGGER.info("查询,耗时:" + (System.currentTimeMillis() - current) + "ms");
+
         for (UserAllInfo userInfo : userInfos)
         {
-            int cashOut = 0;
             String ddappid = userInfo.getDdappid();
             String dduid = userInfo.getDduid();
 
@@ -110,7 +110,6 @@ public class UserInfoService implements BaseService<UserAllInfo>
                 String productName = wxConfig.getProductName();
                 userInfo.setProductName(productName);
             }
-
             String cashRmb = "select COUNT(ddRmb) from recharge WHERE ddStatus = 200 AND ddUid ='" + dduid + "'";
             BigDecimal decimal = rechargeMapper.selectRecharged(cashRmb);
             userInfo.setCashOut(decimal.intValue());
@@ -138,9 +137,8 @@ public class UserInfoService implements BaseService<UserAllInfo>
                 userInfo.setRemainMoney(0);
             }
 
-
         }
-        System.out.println("返回,耗时:" + (System.currentTimeMillis() - current) + "ms");
+        LOGGER.info("返回,耗时:" + (System.currentTimeMillis() - current) + "ms");
         return userInfos;
     }
 

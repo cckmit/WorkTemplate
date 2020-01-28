@@ -69,8 +69,6 @@ public class RechargeService implements BaseService<Recharge>
         List<Recharge> rechargeList = new ArrayList<>();
         for (Recharge recharge : recharges)
         {
-
-            int cashOut = 0;
             String dduid = recharge.getDduid();
             String ddAppId = recharge.getDdappid();
             com.fish.dao.second.model.WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
@@ -90,7 +88,8 @@ public class RechargeService implements BaseService<Recharge>
             Date times = recharge.getDdtimes();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String ddTime = sdf.format(times);
-            String sql = "SELECT * FROM all_cost WHERE ddTime ='" + ddTime + "' ";
+           // String sql = "SELECT * FROM all_cost WHERE ddTime ='" + ddTime + "' ";
+            String sql =String.format(" SELECT * FROM all_cost WHERE ddTime ='%s' ",ddTime);
             AllCost allCost = allCostMapper.selectCurrentCoin(sql);
             if (allCost != null)
             {
@@ -101,7 +100,8 @@ public class RechargeService implements BaseService<Recharge>
             {
                 recharge.setRemainAmount(0);
             }
-            String reChargeSql ="SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '" + dduid + "' AND ddTimes <= '" + ddTime + "' ";
+            //String reChargeSql ="SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '" + dduid + "' AND ddTimes <= '" + ddTime + "' ";
+            String reChargeSql =String.format("SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '%s' AND ddTimes <= '%s' ",dduid,ddTime);
             int cashOutCurrent = rechargeMapper.selectCashOut(reChargeSql);
 
 

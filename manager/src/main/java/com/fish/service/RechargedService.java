@@ -56,13 +56,13 @@ public class RechargedService implements BaseService<Recharge>
         }
         for (Recharge recharge : recharges)
         {
-            int cashOut = 0;
             String dduid = recharge.getDduid();
 
             Date times = recharge.getDdtimes();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String ddTime = sdf.format(times);
-            String sql = " SELECT * FROM all_cost WHERE ddTime ='" + ddTime + "' ";
+            String sql =String.format(" SELECT * FROM all_cost WHERE ddTime ='%s' ",ddTime);
+            //String sql = " SELECT * FROM all_cost WHERE ddTime ='" + ddTime + "' ";
             AllCost allCost = allCostMapper.selectCurrentCoin(sql);
             if (allCost != null)
             {
@@ -73,7 +73,8 @@ public class RechargedService implements BaseService<Recharge>
             {
                 recharge.setRemainAmount(0);
             }
-            String reChargeSql = "SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '" + dduid + "' AND ddTimes <= '" + ddTime + "' ";
+            String reChargeSql =String.format("SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '%s' AND ddTimes <= '%s' ",dduid,ddTime);
+            //String reChargeSql = "SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '" + dduid + "' AND ddTimes <= '" + ddTime + "' ";
             int cashOutCurrent = rechargeMapper.selectCashOut(reChargeSql);
 //            String cashSql = " SELECT * FROM all_cost WHERE ddCostType ='recharge' AND ddUid = '"+dduid+"'AND ddTime <='" + ddTime + "' ";
 //            List<AllCost> cashCosts = allCostMapper.selectCurrentCash(cashSql);

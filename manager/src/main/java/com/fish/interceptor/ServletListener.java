@@ -39,7 +39,7 @@ public class ServletListener implements ServletContextListener
 //         executorService.scheduleAtFixedRate(updateOnline, 0, 10, TimeUnit.MINUTES);
         long oneDay = 24 * 60 * 60 * 1000;
         DateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
-        long initDelay = getTimeMillis("16:20:00") - System.currentTimeMillis();
+        long initDelay = getTimeMillis("15:15:00") - System.currentTimeMillis();
         initDelay = initDelay > 0 ? initDelay : oneDay + initDelay;
         executorService.scheduleAtFixedRate(updateDataCollect, initDelay, oneDay, TimeUnit.MILLISECONDS);
         System.out.println("执行汇总数据刷新 时间："+dateFormat.format(System.currentTimeMillis()));

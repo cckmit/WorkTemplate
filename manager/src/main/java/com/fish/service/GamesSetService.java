@@ -252,17 +252,11 @@ public class GamesSetService implements BaseService<ArcadeGameSet>
     @Override
     public boolean removeIf(ArcadeGameSet arcadeGameSet, JSONObject searchData)
     {
-
-
         if (existValueFalse(searchData.getString("gameId"), arcadeGameSet.getDdcode()))
         {
             return true;
         }
-
-
         return (existValueFalse(searchData.getString("gameName"), arcadeGameSet.getDdname()));
-
-
     }
 
 }

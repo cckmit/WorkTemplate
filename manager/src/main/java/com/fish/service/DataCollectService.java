@@ -169,7 +169,8 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable
     }
 
     public int flushAll()
-    {
+    { SimpleDateFormat sm = new SimpleDateFormat("yyyy-MM-dd- HH:mm:ss");
+        System.out.println("刷新数据汇总"+sm.format(System.currentTimeMillis()));
         dataCollects = new ArrayList<>();
 
         List<String> dates = minitjWxMapper.dateCash();
@@ -249,6 +250,7 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable
             shareCount = 0;
             shareRateCount = new BigDecimal(0);
         }
+        System.out.println("刷新数据汇总"+sm.format(System.currentTimeMillis()));
         if (dataCollects.size() > 0)
         {
             return 1;
@@ -261,6 +263,6 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable
     @Override
     public void run()
     {
-        timeFlushAll();
+        flushAll();
     }
 }
