@@ -57,7 +57,12 @@
                                 <div id="ddappid" name="ddappid" lay-filter="ddappid"></div>
                             </div>
                         </div>
-
+                        <div class="layui-inline">
+                            <label class="layui-form-label">OpenId</label>
+                            <div class="layui-input-inline" style="width:14rem;">
+                                <div id="ddoid" name="ddoid" lay-filter="ddoid"></div>
+                            </div>
+                        </div>
                         <div class="layui-inline">
                             <button  id="cx" class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="search">
                                 <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
@@ -162,7 +167,8 @@
                 {field: 'dduid', width: '17%', title: '用户ID', sort: true},
                 {field: 'ddname', width: 120, title: '用户昵称', sort: true},
                 {field: 'ddappid', width: '12%', title: '来源AppId', sort: true},
-
+                {field: 'ddoid', width: '12%', title: 'OPENID', sort: true},
+                {field: 'ddoid', width: '12%', title: 'OpenId', sort: true},
                 {field: 'productName', width: 120, title: '产品名称', sort: true},
                 {field: 'ddregistertime', width: 120, title: '注册时间', sort: true},
                 {field: 'ddlogintime', width: '10%', title: '最后登录时间', sort: true},

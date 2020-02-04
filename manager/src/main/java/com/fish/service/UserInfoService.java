@@ -52,47 +52,92 @@ public class UserInfoService implements BaseService<UserAllInfo>
             String registertime = search.getString("registertime");
             String ddname = search.getString("ddname");
             String uid = search.getString("uid");
+            String ddOpenID = search.getString("ddoid");
             if (StringUtils.isNotBlank(ddname))
             {
                 if (StringUtils.isNotBlank(uid))
                 {
+                    if(StringUtils.isNotBlank(ddOpenID)){
                     if (StringUtils.isNotBlank(registertime))
                     {
                         Date[] parse = XwhTool.parseDate(search.getString("registertime"));
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'";
+                        String sql = "SELECT *  FROM  user_info where  ddOid  like '"+ddOpenID+"%‘ and ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'";
                         userInfos = userInfoMapper.selectBySQL(sql);
                     } else
                     {
-                        String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%'";
+                        String sql = "SELECT *  FROM  user_info where ddOid like '"+ddOpenID+"%' and ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%'";
                         userInfos = userInfoMapper.selectBySQL(sql);
+                    }
+                    }else {
+                        if (StringUtils.isNotBlank(registertime))
+                        {
+                            Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            String sql = "SELECT *  FROM  user_info where   ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'";
+                            userInfos = userInfoMapper.selectBySQL(sql);
+                        } else
+                        {
+                            String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%'";
+                            userInfos = userInfoMapper.selectBySQL(sql);
+                        }
                     }
                 } else
                 {
-                    if (StringUtils.isNotBlank(registertime))
+                    if(StringUtils.isNotBlank(ddOpenID))
                     {
-                        Date[] parse = XwhTool.parseDate(search.getString("registertime"));
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%'" + " and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
-                        userInfos = userInfoMapper.selectBySQL(sql);
-                    } else
-                    {
-                        String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%' ";
-                        userInfos = userInfoMapper.selectBySQL(sql);
+                        if (StringUtils.isNotBlank(registertime))
+                        {
+                            Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            String sql = "SELECT *  FROM  user_info where ddOid like '"+ddOpenID+"%' and ddName like '" + ddname + "%'" + " and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
+                            userInfos = userInfoMapper.selectBySQL(sql);
+                        } else
+                        {
+                            String sql = "SELECT *  FROM  user_info where  ddoid like '"+ddOpenID+"%' and ddName like '" + ddname + "%' ";
+                            userInfos = userInfoMapper.selectBySQL(sql);
+                        }
+                    }else {
+                        if (StringUtils.isNotBlank(registertime))
+                        {
+                            Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%'" + " and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
+                            userInfos = userInfoMapper.selectBySQL(sql);
+                        } else
+                        {
+                            String sql = "SELECT *  FROM  user_info where ddName like '" + ddname + "%' ";
+                            userInfos = userInfoMapper.selectBySQL(sql);
+                        }
                     }
                 }
             } else
             {
-                if (StringUtils.isNotBlank(registertime))
+                if(StringUtils.isNotBlank(ddOpenID))
                 {
-                    Date[] parse = XwhTool.parseDate(search.getString("registertime"));
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                    String sql = "SELECT *  FROM  user_info where  ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
-                    userInfos = userInfoMapper.selectBySQL(sql);
-                } else
-                {
-                    String sql = "SELECT *  FROM  user_info where  ddUid like '%" + uid + "%' ";
-                    userInfos = userInfoMapper.selectBySQL(sql);
+                    if (StringUtils.isNotBlank(registertime))
+                    {
+                        Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        String sql = "SELECT *  FROM  user_info where ddOid like '"+ddOpenID+"%' and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
+                        userInfos = userInfoMapper.selectBySQL(sql);
+                    } else
+                    {
+                        String sql = "SELECT *  FROM  user_info where  ddOid like '"+ddOpenID+"%' and ddUid like '%" + uid + "%' ";
+                        userInfos = userInfoMapper.selectBySQL(sql);
+                    }
+                }else{
+                    if (StringUtils.isNotBlank(registertime))
+                    {
+                        Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        String sql = "SELECT *  FROM  user_info where  ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
+                        userInfos = userInfoMapper.selectBySQL(sql);
+                    } else
+                    {
+                        String sql = "SELECT *  FROM  user_info where  ddUid like '%" + uid + "%' ";
+                        userInfos = userInfoMapper.selectBySQL(sql);
+                    }
                 }
             }
         }

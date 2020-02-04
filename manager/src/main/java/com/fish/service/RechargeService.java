@@ -89,7 +89,7 @@ public class RechargeService implements BaseService<Recharge>
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String ddTime = sdf.format(times);
            // String sql = "SELECT * FROM all_cost WHERE ddTime ='" + ddTime + "' ";
-            String sql =String.format(" SELECT * FROM all_cost WHERE ddTime ='%s' ",ddTime);
+            String sql =String.format(" SELECT * FROM all_cost WHERE ddTime ='%s' and ddType = 'rmb'",ddTime);
             AllCost allCost = allCostMapper.selectCurrentCoin(sql);
             if (allCost != null)
             {

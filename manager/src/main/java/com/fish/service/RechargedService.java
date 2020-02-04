@@ -61,7 +61,7 @@ public class RechargedService implements BaseService<Recharge>
             Date times = recharge.getDdtimes();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String ddTime = sdf.format(times);
-            String sql =String.format(" SELECT * FROM all_cost WHERE ddTime ='%s' ",ddTime);
+            String sql =String.format(" SELECT * FROM all_cost WHERE ddTime ='%s' and ddType = 'rmb'",ddTime);
             //String sql = " SELECT * FROM all_cost WHERE ddTime ='" + ddTime + "' ";
             AllCost allCost = allCostMapper.selectCurrentCoin(sql);
             if (allCost != null)
