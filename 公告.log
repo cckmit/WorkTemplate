@@ -1,0 +1,65 @@
+UPDATE notice_system SET ddContext =  '    合金弹头X赛事火热进行中~~~
+    01-13 18:00 - 01-20 18:00
+    第1名：            300元现金
+    第2名：            200元现金
+    第3名：            100元现金
+    第4-100名：    游戏币奖励
+	
+	
+	
+	' WHERE ddId=9
+	
+	
+	
+	    亲爱的街机达人们，
+    免费的金币不够用？福利和奖励不给力？
+    不可能的~~~
+    我们将不定期举办各种比赛，并有丰厚的奖励，更有现金大奖拿到手软。
+    记得一定要关注我们的赛事预告，不要错过噢！
+	
+	    亲爱的街机达人们，
+    免费的金币不够用？福利和奖励不给力？
+    不可能的~~~
+    我们将不定期举办各种比赛，并有丰厚的奖励，更有现金大奖拿到手软。
+    记得一定要关注我们的赛事预告，不要错过噢！
+	
+	9
+	routine
+	
+	
+	SELECT @@global.sql_mode;
+SET @@global.sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+	
+	
+	
+Create Table
+
+CREATE TABLE `minitj_wx` (
+  `wx_appid` varchar(64) COLLATE utf8_bin NOT NULL COMMENT '游戏appid',
+  `wx_date` date NOT NULL COMMENT '日期',
+  `wx_new` int(11) DEFAULT NULL COMMENT '注册用户数',
+  `wx_active` int(11) DEFAULT NULL COMMENT '活跃用户数',
+  `wx_visit` int(11) DEFAULT NULL COMMENT '访问用户数',
+  `wx_avg_login` decimal(10,2) DEFAULT NULL COMMENT '人均登录次数',
+  `wx_avg_online` decimal(10,2) DEFAULT NULL COMMENT '人均在线时长',
+  `wx_remain2` decimal(10,2) DEFAULT NULL COMMENT '注册次留',
+  `wx_video_show` int(11) DEFAULT NULL COMMENT '视频曝光量',
+  `wx_video_clickrate` decimal(10,2) DEFAULT NULL COMMENT '视频点击率',
+  `wx_video_income` decimal(10,2) DEFAULT NULL COMMENT '视频收入',
+  `wx_banner_show` int(11) DEFAULT NULL COMMENT 'bannel曝光量',
+  `wx_banner_clickrate` decimal(10,2) DEFAULT NULL COMMENT 'bannel点击率',
+  `wx_banner_income` decimal(10,2) DEFAULT NULL COMMENT 'bannel收入',
+  `wx_reg_ad` int(11) DEFAULT NULL COMMENT '注册用户来自广告占比',
+  `wx_reg_jump` int(11) DEFAULT NULL COMMENT '注册用户来自跳转占比',
+  `wx_reg_search` int(11) DEFAULT NULL COMMENT '注册用户来自搜索占比',
+  `wx_reg_app` int(11) DEFAULT NULL COMMENT '注册用户来自app占比',
+  `wx_reg_code` int(11) DEFAULT NULL COMMENT '注册用户来自二维码占比',
+  `wx_reg_session` int(11) DEFAULT NULL COMMENT '注册用户来自会话占比',
+  `wx_active_women` decimal(10,2) DEFAULT NULL COMMENT '活跃女性占比',
+  `wx_share_user` int(11) DEFAULT NULL COMMENT '分享人数',
+  `wx_share_count` int(11) DEFAULT NULL COMMENT '分享次数',
+  `wx_share_rate` decimal(10,2) DEFAULT NULL COMMENT '分享率',
+  `wx_reg_json` text COLLATE utf8_bin COMMENT '注册用户来源`minitj_wx`',
+  `wx_updatetime` datetime DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`wx_appid`,`wx_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
