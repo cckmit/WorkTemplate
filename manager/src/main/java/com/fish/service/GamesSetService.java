@@ -27,7 +27,7 @@ public class GamesSetService implements BaseService<ArcadeGameSet>
     WxConfigMapper wxConfigMapper;
 
     @Override
-    //查询展示所有产品信息
+    //查询游戏集合信息
     public List<ArcadeGameSet> selectAll(GetParameter parameter)
     {
         List<ArcadeGameSet> arcadeGameSets = new ArrayList<>();

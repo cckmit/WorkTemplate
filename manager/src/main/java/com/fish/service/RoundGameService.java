@@ -21,8 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class RoundGameService implements BaseService<RoundGame>
-{
+public class RoundGameService implements BaseService<RoundGame> {
 
     @Autowired
     RoundGameMapper roundGameMapper;
@@ -39,8 +38,7 @@ public class RoundGameService implements BaseService<RoundGame>
 
     @Override
     //查询roundGame
-    public List<RoundGame> selectAll(GetParameter parameter)
-    {
+    public List<RoundGame> selectAll(GetParameter parameter) {
         String url = baseConfig.getResHost();
         List<RoundGame> roundGames = roundGameMapper.selectAll();
         for (RoundGame roundGame : roundGames)
@@ -69,7 +67,6 @@ public class RoundGameService implements BaseService<RoundGame>
                         }
                     }
                 }
-
             }
             String ddround = roundGame.getDdround();
             RoundExt roundExt = cacheService.getRoundExt(ddround);
@@ -82,8 +79,7 @@ public class RoundGameService implements BaseService<RoundGame>
     }
 
     //新增
-    public int insert(RoundGame record)
-    {
+    public int insert(RoundGame record) {
         String roundSelect = record.getRoundSelect();
         String[] roundSplit = roundSelect.split("-");
         String gameCodeSelect = record.getGameCodeSelect();
@@ -101,8 +97,7 @@ public class RoundGameService implements BaseService<RoundGame>
     }
 
     //更新
-    public int updateByPrimaryKeySelective(RoundGame record)
-    {
+    public int updateByPrimaryKeySelective(RoundGame record) {
         String roundSelect = record.getRoundSelect();
         String[] roundSplit = roundSelect.split("-");
         String gameCodeSelect = record.getGameCodeSelect();
@@ -121,8 +116,7 @@ public class RoundGameService implements BaseService<RoundGame>
 
     //默认排序
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
         parameter.setSort("times");
@@ -130,15 +124,13 @@ public class RoundGameService implements BaseService<RoundGame>
     }
 
     @Override
-    public Class<RoundGame> getClassInfo()
-    {
+    public Class<RoundGame> getClassInfo() {
         return RoundGame.class;
     }
 
     //筛选
     @Override
-    public boolean removeIf(RoundGame recharge, JSONObject searchData)
-    {
+    public boolean removeIf(RoundGame recharge, JSONObject searchData) {
         String times = searchData.getString("times");
         Date[] parse = XwhTool.parseDate(times);
         if (times != null && times.length() != 0)
@@ -160,8 +152,7 @@ public class RoundGameService implements BaseService<RoundGame>
     }
 
     //查询所有游戏赛制
-    public List<RoundExt> selectAllS()
-    {
+    public List<RoundExt> selectAllS() {
         List<RoundExt> roundExt = roundExtMapper.selectAllS();
         for (RoundExt round : roundExt)
         {

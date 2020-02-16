@@ -152,9 +152,9 @@
             cols: [[
                 {type: 'checkbox'},
                 {field: 'productName', width: 120, title: '产品名称', sort: true},
-                {field: 'ddappid', width: 120, title: 'appId', sort: true},
+                {field: 'ddappid', width: 180, title: 'appId', sort: true},
                 {field: 'local', width: 120, title: '资源图', sort: true},
-                {field: 'ddappskipres', width: 120, title: '跳转资源', sort: true},
+                {field: 'ddappskipres', width: 550, title: '跳转资源', sort: true},
                 {
                     field: 'banner1', width: 120, title: '游戏跳转1', sort: true,
                     templet: '#imgTpl1'
@@ -181,7 +181,7 @@
             autoSort: false,
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports'],
-            limit: 10
+            limit: 30
         });
         laydate.render({
             elem: '#times',

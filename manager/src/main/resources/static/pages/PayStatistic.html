@@ -23,46 +23,36 @@
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
-                            <label class="layui-form-label">注册时间</label>
-                            <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="registertime" name="registertime"
-                                       placeholder=" - ">
-                            </div>
-                        </div>
-                     <!--   <div class="layui-inline">
-                            <label class="layui-form-label">登录时间</label>
-                            <div class="layui-input-inline">
-                                <input type="text" class="layui-input" id="logintime" name="logintime"
-                                       placeholder=" - ">
-                            </div>
-                        </div>-->
-                        <div class="layui-inline">
-                            <label class="layui-form-label">用户昵称</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
-                                <input type="text" class="layui-input" id="ddname" name="ddname">
-                            </div>
-                        </div>
-
-                        <div class="layui-inline">
-                            <label class="layui-form-label">用户ID</label>
-                            <div class="layui-input-inline" style="width: 8rem;">
-                                <input type="text" class="layui-input" id="uid" name="uid">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
                             <label class="layui-form-label">产品名称</label>
                             <div class="layui-input-inline" style="width:14rem;">
-                                <div id="ddappid" name="ddappid" lay-filter="ddappid"></div>
+                                <div id="productName" name="productName" lay-filter="productName"></div>
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">OpenID</label>
-                            <div class="layui-input-inline" style="width: 8rem;">
-                                <input type="text" class="layui-input" id="ddoid" name="ddoid">
+                            <label class="layui-form-label">查询时间:</label>
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="start" name="start" placeholder=" - ">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button  id="cx" class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="search">
+                            <label class="layui-form-label">结束时间:</label>
+                            <div class="layui-input-inline">
+                                <input type="text" class="layui-input" id="end" name="end" placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">类型</label>
+                            <div class="layui-input-inline">
+                                <select name="payState" id="payState">
+                                    <option value="">全部</option>
+                                    <option value=0>小游戏</option>
+                                    <option value=1>小程序</option>
+                                    <option value=2>公众号</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="search">
                                 <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
                             </button>
                         </div>
@@ -72,17 +62,19 @@
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 </div>
+
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/userinfo';
+    var operatorurl = '../manage/statistic';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
@@ -91,8 +83,8 @@
         var $ = layui.$;
         var appNames = [];
         var appSelect = xmSelect.render({
-            el: '#ddappid',
-            name: 'appSelect',
+            el: '#productName',
+            name: 'productName',
             language: 'zn',
             toolbar: {show: true},
             data: [],
@@ -114,18 +106,17 @@
             success: (res) => {
 
                 res.forEach(function (val, index, arr) {
-                    //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
-                    var type ;
-                    if(val.programType ===0){
-                        type ="小游戏";
+                    var type;
+                    if (val.programType === 0) {
+                        type = "小游戏";
                     }
-                    if(val.programType ===1){
-                        type ="小程序";
+                    if (val.programType === 1) {
+                        type = "小程序";
                     }
-                    if(val.programType ===2){
-                        type ="公众号";
+                    if (val.programType === 2) {
+                        type = "公众号";
                     }
-                    let context = {name: val.productName+"（"+type+")", value: val.ddappid, selected: false};
+                    let context = {name: val.productName + "（" + type + ")", value: val.ddappid, selected: false};
                     appNames.push(context);
                 });
                 appSelect.update(
@@ -134,20 +125,18 @@
                         autoRow: true,
                     }
                 );
+                table.render();
             },
             error: function () {
                 alert("查询失败")
             }
         });
-        // 搜索查询
         form.on('submit(search)', function (data) {
-
             var field = data.field;
-            var $1 = $.trim($('#ddname').val());
-            var $2 = $.trim($("#uid").val());
-            var $3 = $.trim($("#ddoid").val());
-            if($1 ==="" && $2 === "" && $3 === ""){
-                layer.msg('用户昵称，用户ID，OpenID不能同时为空',function() {time:1500});
+            var $1 = $.trim($('#start').val());
+            var $2 = $.trim($("#end").val());
+            if(($1 !=="" && $2 === "") || ($1 ==="" && $2 !== "")){
+                layer.msg('请把查询时间和结束时间填写完整',function() {time:1500});
                 return false;
             }
             //执行重载
@@ -159,19 +148,33 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'dduid', width: 280, title: '用户ID', sort: true},
-                {field: 'ddname', width: 180, title: '用户昵称', sort: true},
-                {field: 'ddappid', width: 200, title: '来源AppId', sort: true},
-                {field: 'ddoid', width: 280, title: 'OpenId', sort: true},
-                {field: 'productName', width: 120, title: '产品名称', sort: true},
-                {field: 'ddregistertime', width: 200, title: '注册时间', sort: true},
-                {field: 'ddlogintime', width: 200, title: '最后登录时间', sort: true},
-                {field: 'ddcoincount', width: 120, title: '剩余金币', sort: true},
-                {field: 'remainMoney', width: 160, title: '剩余可提现金额', sort: true},
-                {field: 'cashOut', width: 120, title: '已提现金额', sort: true}
+                {
+                    field: 'ddtrans', width: 180, title: '时间', sort: true
+                },
+                {
+                    field: 'productName', width: 180, title: '产品名称', sort: true
+                },
+                {
+                    field: 'productType', width: 150, title: '产品类型', sort: true,
+                    templet: (d) => {
+                        if (d.productType === 1) {
+                            return '小程序';
+                        } else if (d.productType === 0) {
+                            return '小游戏';
+                        } else if (d.productType === 2) {
+                            return '公众号';
+                        } else
+                            return '其他';
+                    }
+                },
+                {field: 'payMoney', width: 180, title: '付费金额(元)', sort: true},
+                {field: 'payUsers', width: 150, title: '付费用户数', sort: true},
+                {field: 'payUp', width: 180, title: '人均付费金额(元)', sort: true}
             ]],
+            limit: 20,
             page: true,
             toolbar: '#toolbar',
+            autoSort: false,
             defaultToolbar: ['filter', 'exports']
         });
         // 表格重载
@@ -189,15 +192,26 @@
             });
         }
         laydate.render({
-            elem: '#registertime',
-            range: true
+            elem: '#start',
+            type: 'datetime',
+            format: 'yyyy-MM-dd HH:mm'
         });
         laydate.render({
-            elem: '#logintime',
-            range: true
+            elem: '#end',
+            type: 'datetime',
+            format: 'yyyy-MM-dd HH:mm'
+        });
+        //头工具栏事件
+        table.on('toolbar(table-page)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;  //获取选中行数据
+                    layer.alert(JSON.stringify(data));
+                    break;
+            };
         });
     })
-
 </script>
 
 <!-- 表单元素 -->

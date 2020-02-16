@@ -103,8 +103,6 @@ public class RechargeService implements BaseService<Recharge>
             //String reChargeSql ="SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '" + dduid + "' AND ddTimes <= '" + ddTime + "' ";
             String reChargeSql =String.format("SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '%s' AND ddTimes <= '%s' ",dduid,ddTime);
             int cashOutCurrent = rechargeMapper.selectCashOut(reChargeSql);
-
-
             //已提现金额
             recharge.setDdrmbed(new BigDecimal(cashOutCurrent));
 

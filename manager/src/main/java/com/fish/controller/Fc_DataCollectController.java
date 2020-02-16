@@ -57,9 +57,9 @@ public class Fc_DataCollectController
     {
         String beginDate = request.getParameter("beginDate");
         String endDate = request.getParameter("endDate");
-        String productName = request.getParameter("productName");
+        String type = request.getParameter("type");
 
-        return fcDataCollectService.searchData(beginDate, endDate, parameter);
+        return fcDataCollectService.searchData(beginDate, endDate,type, parameter);
     }
 
 }

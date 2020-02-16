@@ -1,10 +1,8 @@
 package com.fish.manger.v5;
 
-import com.alibaba.fastjson.JSON;
 import com.fish.dao.primary.mapper.ManageAccountMapper;
 import com.fish.dao.primary.mapper.RankingMapper;
 import com.fish.dao.primary.model.ManageAccount;
-import com.fish.dao.primary.model.Ranking;
 import com.fish.dao.second.mapper.WxConfigMapper;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.dao.third.mapper.MinitjWxMapper;
@@ -22,7 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
@@ -33,7 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 @RunWith(SpringRunner.class)

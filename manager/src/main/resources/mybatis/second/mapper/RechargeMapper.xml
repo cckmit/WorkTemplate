@@ -47,13 +47,14 @@
         <include refid="Base_Column_List"/>
         from recharge
     </select>
+    <select id="selectAllChargeSQL" resultType="com.fish.dao.second.model.Recharge">
+        ${_parameter}
+    </select>
     <select id="selectChargedByTime" resultType="com.fish.dao.second.model.Recharge" parameterType="string">
         select
         <include refid="Base_Column_List"/>
         from recharge where DATE(ddTimes) between '${start}' and '${end}'
     </select>
-
-
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from recharge

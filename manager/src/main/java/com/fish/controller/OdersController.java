@@ -8,6 +8,8 @@ import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
 import com.fish.protocols.PostResult;
 import com.fish.service.OrdersService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -32,14 +34,14 @@ public class OdersController
 
     @ResponseBody
     @PostMapping(value = "/orders/single")
-    public PostResult getSingleOders(@RequestBody String singleOrder)
+    public PostResult getSingleOders(@RequestBody JSONObject singleOrder)
     {
         PostResult result = new PostResult();
         int count =404;
-        JSONObject jsonObject = JSON.parseObject(singleOrder);
-        String appId = jsonObject.getString("appId");
-        String uid = jsonObject.getString("uid");
-        String orderId = jsonObject.getString("orderid");
+        //JSONObject jsonObject = JSON.parseObject(singleOrder);
+        String appId = singleOrder.getString("appId");
+        String uid = singleOrder.getString("uid");
+        String orderId = singleOrder.getString("orderid");
          count = ordersService.singleOrder(appId, uid, orderId);
         if (count == 200)
         {

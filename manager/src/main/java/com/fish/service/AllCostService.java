@@ -14,16 +14,14 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-public class AllCostService implements BaseService<AllCost>
-{
+public class AllCostService implements BaseService<AllCost> {
     @Autowired
     AllCostMapper costMapper;
     @Autowired
     CacheService cacheService;
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
         parameter.setOrder("desc");
@@ -31,8 +29,7 @@ public class AllCostService implements BaseService<AllCost>
     }
 
     @Override
-    public Class<AllCost> getClassInfo()
-    {
+    public Class<AllCost> getClassInfo() {
         return AllCost.class;
     }
 
@@ -40,8 +37,7 @@ public class AllCostService implements BaseService<AllCost>
     private Set<String> uid = null;
 
     @Override
-    public boolean removeIf(AllCost allCost, JSONObject searchData)
-    {
+    public boolean removeIf(AllCost allCost, JSONObject searchData) {
         String operate = searchData.getString("operate");
         if (operate != null)
         {
@@ -78,8 +74,7 @@ public class AllCostService implements BaseService<AllCost>
         return false;
     }
 
-    public void finish(GetResult<AllCost> result)
-    {
+    public void finish(GetResult<AllCost> result) {
         Set<String> users = new HashSet<>();
         result.getData().forEach(allCost -> users.add(allCost.getDduid()));
         cacheService.synUserName(users);
@@ -87,8 +82,7 @@ public class AllCostService implements BaseService<AllCost>
     }
 
     @Override
-    public List<AllCost> selectAll(GetParameter parameter)
-    {
+    public List<AllCost> selectAll(GetParameter parameter) {
         JSONObject search = getSearchData(parameter.getSearchData());
         if (search == null || search.getString("ddtime").isEmpty())
         {
@@ -101,10 +95,11 @@ public class AllCostService implements BaseService<AllCost>
         for (AllCost allCost : allCosts)
         {
             String ddtype = allCost.getDdtype();
-            if("rmb".equals(ddtype)){
-                allCost.setDdhistory(allCost.getDdhistory() / 100 );
-                allCost.setDdcurrent(allCost.getDdcurrent()/100);
-                allCost.setDdvalue(allCost.getDdvalue()/100);
+            if ("rmb".equals(ddtype))
+            {
+                allCost.setDdhistory(allCost.getDdhistory() / 100);
+                allCost.setDdcurrent(allCost.getDdcurrent() / 100);
+                allCost.setDdvalue(allCost.getDdvalue() / 100);
             }
         }
         return allCosts;

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BuyPayMapper
 {
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(@Param("buyDate") String date, @Param("buyAppId") String appId);
 
     int insert(BuyPay record);
 

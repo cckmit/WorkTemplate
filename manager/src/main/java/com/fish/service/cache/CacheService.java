@@ -107,7 +107,9 @@ public class CacheService
         if (gameValueCache.containsKey(gid))
             return gameValueCache.get(gid);
         GoodsValue goodsValue = goodsValueMapper.selectByPrimaryKey(gid);
-        gameValueCache.put(gid, goodsValue);
+        if(goodsValue != null){
+            gameValueCache.put(gid, goodsValue);
+        }
         return goodsValue;
     }
 

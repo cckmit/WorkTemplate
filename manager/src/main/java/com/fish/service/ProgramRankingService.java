@@ -168,6 +168,7 @@ public class ProgramRankingService implements BaseService<ShowRanking>
             Object uid = jsonObject.get("uid");
             Object index = jsonObject.get("index");
             Object name = jsonObject.get("name");
+            Object ddName = jsonObject.get("ddName");
             Object value = jsonObject.get("value");
             Object type = jsonObject.get("type");
             Object mark = jsonObject.get("mark");
@@ -179,7 +180,15 @@ public class ProgramRankingService implements BaseService<ShowRanking>
             exportResult.setRoundName(roundName);
             exportResult.setRoundLength(roundLength);
             exportResult.setIndex(Integer.parseInt(index.toString()));
-            exportResult.setName(name.toString());
+            if(name != null ){
+                exportResult.setName(name.toString());
+            }else {
+                if(ddName != null ) {
+                    exportResult.setName(ddName.toString());
+                }else {
+                    exportResult.setName("");
+                }
+            }
             exportResult.setUid(uid.toString());
             exportResult.setValue(reward);
             exportResult.setType(type.toString());
@@ -249,13 +258,7 @@ public class ProgramRankingService implements BaseService<ShowRanking>
         {
             return true;
         }
-//        if (existValueFalse(searchData.getString("roundName"), record.getRoundName()))
-//        {
-//            return true;
-//        }
-//        return (existTimeFalse(record.getEndTime(), searchData.getString("times")));
         String roundName = searchData.getString("roundName");
-
         if (roundName != null && roundName.contains("-"))
             roundName = roundName.split("-")[0];
         return (existValueFalse(roundName, record.getRoundCode()));

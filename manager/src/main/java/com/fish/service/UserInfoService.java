@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.Vector;
 
 @Service
-public class UserInfoService implements BaseService<UserAllInfo>
-{
+public class UserInfoService implements BaseService<UserAllInfo> {
     @Autowired
     AllCostMapper allCostMapper;
     @Autowired
@@ -38,8 +37,7 @@ public class UserInfoService implements BaseService<UserAllInfo>
     RechargeMapper rechargeMapper;
 
     @Override
-    public List<UserAllInfo> selectAll(GetParameter parameter)
-    {
+    public List<UserAllInfo> selectAll(GetParameter parameter) {
         JSONObject search = getSearchData(parameter.getSearchData());
         if (search == null)
         {
@@ -57,24 +55,26 @@ public class UserInfoService implements BaseService<UserAllInfo>
             {
                 if (StringUtils.isNotBlank(uid))
                 {
-                    if(StringUtils.isNotBlank(ddOpenID)){
-                    if (StringUtils.isNotBlank(registertime))
+                    if (StringUtils.isNotBlank(ddOpenID))
                     {
-                        Date[] parse = XwhTool.parseDate(search.getString("registertime"));
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        String sql = "SELECT *  FROM  user_info where  ddOid  like '"+ddOpenID+"%‘ and ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'";
-                        userInfos = userInfoMapper.selectBySQL(sql);
-                    } else
-                    {
-                        String sql = "SELECT *  FROM  user_info where ddOid like '"+ddOpenID+"%' and ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%'";
-                        userInfos = userInfoMapper.selectBySQL(sql);
-                    }
-                    }else {
                         if (StringUtils.isNotBlank(registertime))
                         {
                             Date[] parse = XwhTool.parseDate(search.getString("registertime"));
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                            String sql = "SELECT *  FROM  user_info where   ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'";
+                            String sql = "SELECT *  FROM  user_info where  ddOid  like '" + ddOpenID + "%' and ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'";
+                            userInfos = userInfoMapper.selectBySQL(sql);
+                        } else
+                        {
+                            String sql = "SELECT *  FROM  user_info where ddOid like '" + ddOpenID + "%' and ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%'";
+                            userInfos = userInfoMapper.selectBySQL(sql);
+                        }
+                    } else
+                    {
+                        if (StringUtils.isNotBlank(registertime))
+                        {
+                            Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            String sql = "SELECT *  FROM  user_info where  ddName like '" + ddname + "%'" + " and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'";
                             userInfos = userInfoMapper.selectBySQL(sql);
                         } else
                         {
@@ -84,20 +84,21 @@ public class UserInfoService implements BaseService<UserAllInfo>
                     }
                 } else
                 {
-                    if(StringUtils.isNotBlank(ddOpenID))
+                    if (StringUtils.isNotBlank(ddOpenID))
                     {
                         if (StringUtils.isNotBlank(registertime))
                         {
                             Date[] parse = XwhTool.parseDate(search.getString("registertime"));
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                            String sql = "SELECT *  FROM  user_info where ddOid like '"+ddOpenID+"%' and ddName like '" + ddname + "%'" + " and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
+                            String sql = "SELECT *  FROM  user_info where ddOid like '" + ddOpenID + "%' and ddName like '" + ddname + "%'" + " and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
                             userInfos = userInfoMapper.selectBySQL(sql);
                         } else
                         {
-                            String sql = "SELECT *  FROM  user_info where  ddoid like '"+ddOpenID+"%' and ddName like '" + ddname + "%' ";
+                            String sql = "SELECT *  FROM  user_info where  ddoid like '" + ddOpenID + "%' and ddName like '" + ddname + "%' ";
                             userInfos = userInfoMapper.selectBySQL(sql);
                         }
-                    }else {
+                    } else
+                    {
                         if (StringUtils.isNotBlank(registertime))
                         {
                             Date[] parse = XwhTool.parseDate(search.getString("registertime"));
@@ -111,22 +112,23 @@ public class UserInfoService implements BaseService<UserAllInfo>
                         }
                     }
                 }
-            } else
+            } else if (StringUtils.isBlank(ddname) && StringUtils.isNotBlank(uid))
             {
-                if(StringUtils.isNotBlank(ddOpenID))
+                if (StringUtils.isNotBlank(ddOpenID))
                 {
                     if (StringUtils.isNotBlank(registertime))
                     {
                         Date[] parse = XwhTool.parseDate(search.getString("registertime"));
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        String sql = "SELECT *  FROM  user_info where ddOid like '"+ddOpenID+"%' and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
+                        String sql = "SELECT *  FROM  user_info where ddOid like '" + ddOpenID + "%' and ddUid like '%" + uid + "%' and " + " DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
                         userInfos = userInfoMapper.selectBySQL(sql);
                     } else
                     {
-                        String sql = "SELECT *  FROM  user_info where  ddOid like '"+ddOpenID+"%' and ddUid like '%" + uid + "%' ";
+                        String sql = "SELECT *  FROM  user_info where  ddOid like '" + ddOpenID + "%' and ddUid like '%" + uid + "%' ";
                         userInfos = userInfoMapper.selectBySQL(sql);
                     }
-                }else{
+                } else
+                {
                     if (StringUtils.isNotBlank(registertime))
                     {
                         Date[] parse = XwhTool.parseDate(search.getString("registertime"));
@@ -138,6 +140,19 @@ public class UserInfoService implements BaseService<UserAllInfo>
                         String sql = "SELECT *  FROM  user_info where  ddUid like '%" + uid + "%' ";
                         userInfos = userInfoMapper.selectBySQL(sql);
                     }
+                }
+            } else if (StringUtils.isBlank(ddname) && StringUtils.isBlank(uid) && StringUtils.isNotBlank(ddOpenID))
+            {
+                if (StringUtils.isNotBlank(registertime))
+                {
+                    Date[] parse = XwhTool.parseDate(search.getString("registertime"));
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                    String sql = "SELECT *  FROM  user_info where  ddOid like '" + ddOpenID + "%' and  DATE(ddRegisterTime) between '" + format.format(parse[0]) + "' and '" + format.format(parse[1]) + "'  limit 0,10";
+                    userInfos = userInfoMapper.selectBySQL(sql);
+                } else
+                {
+                    String sql = "SELECT *  FROM  user_info where  ddOid like '" + ddOpenID + "%' ";
+                    userInfos = userInfoMapper.selectBySQL(sql);
                 }
             }
         }
@@ -155,16 +170,20 @@ public class UserInfoService implements BaseService<UserAllInfo>
                 String productName = wxConfig.getProductName();
                 userInfo.setProductName(productName);
             }
-            String cashRmb = "select COUNT(ddRmb) from recharge WHERE ddStatus = 200 AND ddUid ='" + dduid + "'";
+            String cashRmb = "select SUM(ddRmb) from recharge WHERE ddStatus = 200 AND ddUid ='" + dduid + "'";
             BigDecimal decimal = rechargeMapper.selectRecharged(cashRmb);
-            userInfo.setCashOut(decimal.intValue());
-
+            if (decimal != null)
+            {
+                userInfo.setCashOut(decimal.intValue());
+            } else
+            {
+                userInfo.setCashOut(0);
+            }
             String coinSql = "select * from all_cost where ddUid ='" + dduid + "' and ddType ='coin' ORDER BY id DESC LIMIT 1";
             AllCost coinCost = allCostMapper.selectCurrentCoin(coinSql);
 
             String rmbSql = "select * from all_cost where ddUid ='" + dduid + "' and ddType ='rmb' ORDER BY id DESC LIMIT 1";
             AllCost rmbCost = allCostMapper.selectCurrentCoin(rmbSql);
-
             if (coinCost != null)
             {
                 Long coinCurrent = coinCost.getDdcurrent();
@@ -187,33 +206,28 @@ public class UserInfoService implements BaseService<UserAllInfo>
         return userInfos;
     }
 
-    //新增展示所有产品信息
-    public int insert(UserAllInfo record)
-    {
+    //新增用户信息
+    public int insert(UserAllInfo record) {
         return 1;
     }
 
-    //更新产品信息
-    public int updateByPrimaryKeySelective(UserAllInfo record)
-    {
+    //更新用户信息
+    public int updateByPrimaryKeySelective(UserAllInfo record) {
         return 1;
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
 
     }
 
     @Override
-    public Class<UserAllInfo> getClassInfo()
-    {
+    public Class<UserAllInfo> getClassInfo() {
         return UserAllInfo.class;
     }
 
     @Override
-    public boolean removeIf(UserAllInfo userAllInfo, JSONObject searchData)
-    {
+    public boolean removeIf(UserAllInfo userAllInfo, JSONObject searchData) {
 
         return (existValueFalse(searchData.getString("appSelect"), userAllInfo.getDdappid()));
     }

@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class UploadExcelService
-{
+public class UploadExcelService {
 
     @Autowired
     WxConfigMapper wxConfigMapper;
@@ -25,9 +24,8 @@ public class UploadExcelService
     @Autowired
     WxConfig wxConfig;
 
-    //新增展示所有产品信息
-    public int insert(JSONObject record)
-    {
+    //插入Excel
+    public int insert(JSONObject record) {
         String context = record.getString("context");
         System.out.println("context :" + context);
         context = context.substring(1, context.length() - 1);
@@ -38,11 +36,9 @@ public class UploadExcelService
             for (int i = 0; i < param.size(); i++)
             {
                 String singleData = param.get(i).toString();
-
                 String singleString = singleData.substring(1, singleData.length() - 2);
                 System.out.println("我是singleString :" + singleString);
                 String[] split = singleString.split("], ");
-
                 for (int j = 0; j < split.length; j++)
                 {
                     if (j != 0 && j < split.length)
@@ -117,18 +113,14 @@ public class UploadExcelService
                             }
                         }
                         list.add(mapSingle);
-
                     }
                 }
 
             }
-
         } catch (JSONException e)
         {
             e.printStackTrace();
         }
-
-
         return 1;
     }
 }

@@ -173,6 +173,14 @@ public class AdminController
                 JSONObject child = new JSONObject();
                 child.put("id", ++index);
                 child.put("parentId", grandparentId);
+                child.put("name", "付费实时统计");
+                child.put("url", "PayStatistic.html");
+                jsonArray.add(child);
+            }
+            {
+                JSONObject child = new JSONObject();
+                child.put("id", ++index);
+                child.put("parentId", grandparentId);
                 child.put("name", "用户来源明细");
                 child.put("url", "fc_userResource.html");
                 jsonArray.add(child);

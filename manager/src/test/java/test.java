@@ -16,12 +16,15 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -75,10 +78,17 @@ public class test
 //        System.out.println("我是返回值 :"+res);
 
 
-        JSONObject paramMap = new JSONObject();
-        paramMap.put("name", "wx_config");
-        String res = HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
-        System.out.println("我是返回值 :" + res);
+//        JSONObject paramMap = new JSONObject();
+//        paramMap.put("name", "goods_value_ext");
+//        String res = HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
+//        System.out.println("我是返回值 :" + res);
+
+
+
+//        JSONObject paramMap = new JSONObject();
+////        paramMap.put("name", "goods_value_ext");
+////        String res = HttpUtil.post("https://sgame.qinyougames.com/public/flush/logic", paramMap.toJSONString());
+////        System.out.println("我是返回值 :" + res);
 
 //        JSONObject paramMap = new JSONObject();
 //        paramMap.put("name", "rounds");
@@ -96,23 +106,15 @@ public class test
         Date tomorrowDate=java.sql.Date.valueOf(localDate);
         System.out.println(tomorrowDate);*/
 
-        ;
-
-
-//        DateFormat dateFmt = new SimpleDateFormat("yyyyMMddHH");//格式化一下时间
+        DateFormat dateFmt = new SimpleDateFormat("yyyyMMddHH");//格式化一下时间
 //        Date dNow = new Date(); //当前时间
 //        Date dBefore = new Date();
 
-//        Calendar calendar = Calendar.getInstance(); //得到日历
-//        calendar.setTime(dNow);//把当前时间赋给日历
-//        String currenttime = dateFmt.format(calendar.getTime());
-//        System.out.println("currenttime :"+Integer.parseInt(currenttime));
-
 //        calendar.add(Calendar.DAY_OF_MONTH, -1); //设置为前一天
 //        dBefore = calendar.getTime(); //得到前一天的时间
-//        String defaultStartDate = dateFmt.format(dBefore); //格式化前一天
+       // String defaultStartDate = dateFmt.format(dBefore); //格式化前一天
 //        System.out.println("defaultStartDate ："+defaultStartDate);
-//        defaultStartDate = defaultStartDate.substring(0,10)+" 00:00:00";
+      //  defaultStartDate = defaultStartDate.substring(0,10)+" 00:00:00";
 //        System.out.println("defaultStartDate ："+defaultStartDate);
 //        String defaultEndDate = defaultStartDate.substring(0,10)+" 23:59:59";
 //        System.out.println("defaultEndDate ："+defaultEndDate);
@@ -206,6 +208,19 @@ public class test
 //        String path = test.class.getResource("/").getPath();
 //        System.out.println(path);
 
+        DateFormat format = new SimpleDateFormat("yyMM-dd HH:mm:ss");
+        Timestamp timestamp = new Timestamp(new Date().getTime());
+
+        String gameTime = format.format(timestamp);
+        System.out.println(gameTime);
+
+        long current=System.currentTimeMillis();    //当前时间毫秒数
+        long zeroT=current/(1000*3600*24)*(1000*3600*24)- TimeZone.getDefault().getRawOffset();  //今天零点零分零秒的毫秒数
+        String zero = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(zeroT);
+        String end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current);
+
+        System.out.println(zero);				//	2018-07-23 00:00:00
+        System.out.println(end);				//	2018-07-23 23:59:59
 
     }
 

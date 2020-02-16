@@ -7,8 +7,10 @@ import java.util.Date;
 
 public class ProductData
 {
+    private String wxAppid;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date wxDate;
+    private Integer programType;
 
     private String wxRegJson;
 
@@ -67,6 +69,32 @@ public class ProductData
     private Integer wxShareCount;
 
     private BigDecimal wxShareRate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date insertTime;
+
+    public Integer getProgramType() {
+        return programType;
+    }
+
+    public void setProgramType(Integer programType) {
+        this.programType = programType;
+    }
+
+    public Date getInsertTime() {
+        return insertTime;
+    }
+
+    public void setInsertTime(Date insertTime) {
+        this.insertTime = insertTime;
+    }
+
+    public String getWxAppid() {
+        return wxAppid;
+    }
+
+    public void setWxAppid(String wxAppid) {
+        this.wxAppid = wxAppid;
+    }
 
     public String getWxRegJson()
     {
@@ -305,7 +333,7 @@ public class ProductData
 
     public void setWxDate(Date wxDate)
     {
-        this.wxDate = minitjWx.getWxDate();
+        this.wxDate = wxDate;
     }
 
     public Integer getWxRegOther()

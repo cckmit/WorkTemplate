@@ -22,8 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class WxConfigService implements BaseService<WxConfig>
-{
+public class WxConfigService implements BaseService<WxConfig> {
     private static final Logger logger = LoggerFactory.getLogger(WxConfigService.class);
     @Autowired
     WxConfigMapper wxConfigMapper;
@@ -45,8 +44,7 @@ public class WxConfigService implements BaseService<WxConfig>
      * @param suffers 拼接数列
      * @return url
      */
-    public static String concatUrl(String resultUrl, String icon, String... suffers)
-    {
+    public static String concatUrl(String resultUrl, String icon, String... suffers) {
         if (icon != null)
         {
             if (suffers != null)
@@ -63,8 +61,7 @@ public class WxConfigService implements BaseService<WxConfig>
 
     @Override
     //查询所有WxConfig内容
-    public List<WxConfig> selectAll(GetParameter parameter)
-    {
+    public List<WxConfig> selectAll(GetParameter parameter) {
         List<WxConfig> wxConfigs = cacheService.getAllWxConfig();
         String url = baseConfig.getResHost();
         for (WxConfig config : wxConfigs)
@@ -96,8 +93,7 @@ public class WxConfigService implements BaseService<WxConfig>
     }
 
     //新增WxConfig内容
-    public int insert(WxConfig record)
-    {
+    public int insert(WxConfig record) {
         int insertAppConfig;
         appConfig.setDdappid(record.getDdappid());
         appConfig.setDdname(record.getProductName());
@@ -134,8 +130,7 @@ public class WxConfigService implements BaseService<WxConfig>
 
 
     //更新产品信息
-    public int updateByPrimaryKeySelective(WxConfig record)
-    {
+    public int updateByPrimaryKeySelective(WxConfig record) {
         //产品名称去重
         int insert;
 
@@ -161,8 +156,7 @@ public class WxConfigService implements BaseService<WxConfig>
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
         parameter.setOrder("desc");
@@ -170,14 +164,12 @@ public class WxConfigService implements BaseService<WxConfig>
     }
 
     @Override
-    public Class<WxConfig> getClassInfo()
-    {
+    public Class<WxConfig> getClassInfo() {
         return WxConfig.class;
     }
 
     @Override
-    public boolean removeIf(WxConfig wxConfig, JSONObject searchData)
-    {
+    public boolean removeIf(WxConfig wxConfig, JSONObject searchData) {
 
         if (existValueFalse(searchData.getString("appId"), wxConfig.getDdappid()))
         {
@@ -193,8 +185,7 @@ public class WxConfigService implements BaseService<WxConfig>
      * @param parameter parameter
      * @return update
      */
-    public int flushResource(JSONObject parameter)
-    {
+    public int flushResource(JSONObject parameter) {
         int updateWxConfig = 0;
         JSONArray array = parameter.getJSONArray("appList");
         for (int i = 0; i < array.size(); i++)

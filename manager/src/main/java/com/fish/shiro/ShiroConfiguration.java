@@ -26,7 +26,7 @@ public class ShiroConfiguration
 
         // 必须设置 SecurityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
-        //拦截器.
+        //拦截器.  设置不需要拦截的路径
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
 
         //登出

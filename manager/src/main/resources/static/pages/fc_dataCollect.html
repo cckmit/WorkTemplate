@@ -20,23 +20,36 @@
         <div class="layui-col-md12">
             <div class="layui-card">
 
-                <div class="demoTable layui-card-header layuiadmin-card-header-auto">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">开始日期</label>
-                        <div class="layui-input-inline" style="width: 7rem;">
-                            <input type="text" class="layui-input" id="beginDate" name="beginDate" placeholder=" - ">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">结束日期</label>
-                        <div class="layui-input-inline" style="width: 7rem;">
-                            <input type="text" class="layui-input" id="endDate" name="endDate" placeholder=" - ">
-                        </div>
-                    </div>
-                    <button id="submit" class="layui-btn" data-type="reload">
-                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
-                    </button>
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
 
+                        <div class="layui-inline">
+                            <label class="layui-form-label">开始日期</label>
+                            <div class="layui-input-inline" style="width: 7rem;">
+                                <input type="text" class="layui-input" id="beginDate" name="beginDate" placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">结束日期</label>
+                            <div class="layui-input-inline" style="width: 7rem;">
+                                <input type="text" class="layui-input" id="endDate" name="endDate" placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">类型</label>
+                            <div class="layui-input-inline" style="width: 8rem;">
+                                <select name="type" id="type">
+                                    <option value="">全部</option>
+                                    <option value=0>小游戏</option>
+                                    <option value=1>小程序</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button id="submit" class="layui-btn" data-type="reload">
+                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            </button>
+                        </div>
                     <div class="layui-btn-group " style="float: right">
                         <button type="button" class="layui-btn" onclick="flushCash()">数据刷新</button>
                     </div>
@@ -125,7 +138,14 @@
                         field: 'shareCount', width: 120, title: '分享次数', sort: true
                     },
                     {
-                        field: 'shareRateCount', width: 120, title: '分享率', sort: true
+                        field: 'shareRateCount', width: 120, title: '分享率', sort: true,
+                        templet: (d) => {
+                            if (d.shareRateCount != null) {
+                                return d.shareRateCount + "%";
+                            } else {
+                                return "";
+                            }
+                        }
                     }
                 ]
             ],
@@ -140,10 +160,10 @@
         $('#submit').click(function () {
             let beginDate = $('#beginDate').val()
             let endDate = $('#endDate').val()
-
+            let type = $('#type').val()
             console.log("beginDate :" + beginDate)
             console.log("endDate :" + endDate)
-
+            console.log("type :" + type)
             table.reload('table-page', {
                 page: {
                     curr: 1 //重新从第 1 页开始
@@ -153,7 +173,8 @@
                 method: "post",
                 where: {
                     "beginDate": beginDate,
-                    "endDate": endDate
+                    "endDate": endDate,
+                    "type": type
                 }
                 , page: {curr: 1}
             });
@@ -189,7 +210,13 @@
                    class="layui-input layui-input">
         </div>
     </div>
-
+    <div class="layui-form-item ">
+        <label class="layui-form-label">分享率</label>
+        <div class="layui-input-inline">
+            <input type="text" id="shareRateCount" name="shareRateCount" lay-verify="required" autocomplete="off"
+                   class="layui-input layui-input">
+        </div>
+    </div>
 
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">

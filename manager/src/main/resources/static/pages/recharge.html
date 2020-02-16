@@ -152,11 +152,11 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'dduid', width: 120, title: '用户ID', sort: true},
-                {field: 'userName', width: 120, title: '用户昵称', sort: true},
-                {field: 'ddrmb', width: 120, title: '申请提现金额(元)', sort: true},
+                {field: 'dduid', width: 270, title: '用户ID', sort: true},
+                {field: 'userName', width: 160, title: '用户昵称', sort: true},
+                {field: 'ddrmb', width: 160, title: '申请提现金额(元)', sort: true},
                 // {field: 'ddrmbed', width: 120, title: '已提现金额(元)', sort: true},
-                {field: 'remainAmount', width: 120, title: '剩余提现金额(元)', sort: true},
+                {field: 'remainAmount', width: 160, title: '剩余提现金额(元)', sort: true},
                 {field: 'programType', width: 120, title: '来源类型', sort: true,
                     templet: (d) => {
                         if (d.programType == 1) {
@@ -168,10 +168,10 @@
                         }
                     }
                 },
-                {field: 'ddappid', width: 120, title: '来源APPID', sort: true},
+                {field: 'ddappid', width: 180, title: '来源APPID', sort: true},
                 {field: 'productName', width: 120, title: '来源产品名称', sort: true},
-                {field: 'ddid', width: 120, title: '提现订单号', sort: true},
-                {field: 'ddtip', width: 120, title: '提现描述', sort: true,
+                {field: 'ddid', width: 180, title: '提现订单号', sort: true},
+                {field: 'ddtip', width: 220, title: '提现描述', sort: true,
                     templet: (d) => {
                         if (d.ddtip == null || d.ddtip == "null") {
                             return "无";
@@ -181,7 +181,7 @@
                     }
                 },
                 {
-                    field: 'ddstatus', width: 120, title: '提现状态', sort: true,
+                    field: 'ddstatus', width: 200, title: '提现状态', sort: true,
                     templet: (d) => {
                         if (d.ddstatus == 0) {
                             return '申请中';
@@ -197,8 +197,8 @@
                             return '其他';
                     }
                 },
-                {field: 'ddtrans', width: 120, title: '审核通过时间', sort: true},
-                {field: 'ddtimes', width: 120, title: '提现时间', sort: true}
+                {field: 'ddtrans', width: 160, title: '审核通过时间', sort: true},
+                {field: 'ddtimes', width: 160, title: '提现时间', sort: true}
             ]],
             limit: 20,
             autoSort: false,
@@ -206,7 +206,6 @@
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports']
         });
-
         laydate.render({
             elem: '#times',
             range: true

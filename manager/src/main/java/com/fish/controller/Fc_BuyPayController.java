@@ -119,4 +119,22 @@ public class Fc_BuyPayController
         }
 
     }
+    @ResponseBody
+    @PostMapping(value = "/buypay/delete")
+    public PostResult deleteBuyPay(@RequestBody BuyPay productInfo)
+    {
+        PostResult result = new PostResult();
+        int count =buyPayService.deleteSelective(productInfo);
+        if (count != 0)
+        {
+            result.setCode(200);
+            result.setMsg("操作成功");
+            return result;
+        } else
+        {
+            result.setCode(404);
+            result.setMsg("操作失败，请联系管理员");
+            return result;
+        }
+    }
 }

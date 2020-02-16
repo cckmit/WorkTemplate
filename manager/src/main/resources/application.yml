@@ -30,7 +30,7 @@ primary:
     druid:
       filters: stat
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.1.246:3306/persie_deamon?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://localhost:3306/persie_deamon?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true&zeroDateTimeBehavior=convertToNull
       username: root
       password: root
       minIdle: 1
@@ -50,7 +50,7 @@ second:
     druid:
       filters: stat
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.1.246:3306/persie?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true
+      url: jdbc:mysql://localhost:3306/persie?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true
       username: root
       password: root
       minIdle: 1
@@ -89,10 +89,11 @@ config:
   upload: d:/upload/normal
   domain: http://192.168.1.126:8888/upload/
   excelSave: d:/upload/excel
-  matchRes: http://192.168.1.55:8980/persieDeamon/match/
+  matchRes: https://res.qinyougames.com/match/
   readRes: /data/res.qinyougames.com/persieRes/
-  resHost: http://192.168.1.55:8080/persieRes/
-  flushCache: http://192.168.1.55:8080/persieService/flush/logic
+  resHost: https://res.qinyougames.com/persieRes/
+  flushCache: https://logic.qinyougames.com/persieService/flush/logic
+  flushPublicCache: https://sgame.qinyougames.com/public/flush/logic
   flushOnline: http://129.211.119.249:10085/persieDeamon/query/online
   wxQueryUrl: https://api.mch.weixin.qq.com/pay/orderquery
   supplementUrl: http://192.168.1.55:8080/persieService/pay/callback

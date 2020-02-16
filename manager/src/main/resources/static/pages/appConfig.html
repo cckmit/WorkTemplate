@@ -161,8 +161,8 @@
             cols: [[
                 {type: 'checkbox'},
                 {field: 'ddname', width: 120, title: '产品名称', sort: true},
-                {field: 'originName', width: 120, title: '原始名称', sort: true},
-                {field: 'ddprogram', width: 120, title: '是否为小程序', sort: true,
+                {field: 'originName', width: 270, title: '原始名称', sort: true},
+                {field: 'ddprogram', width: 150, title: '是否为小程序', sort: true,
                     templet: (d) => {
                         if (d.ddprogram == 1) {
                             return '小程序';
@@ -175,9 +175,9 @@
                         else
                             return '其他';
                     }},
-                {field: 'ddappid', width: 120, title: 'AppId', sort: true},
-                {field: 'ddgameurl', width: 120, title: '链接地址', sort: true},
-                {field: 'ddcode', width: 120, title: '正式合集', sort: true,
+                {field: 'ddappid', width: 180, title: 'AppId', sort: true},
+                {field: 'ddgameurl', width: 280, title: '链接地址', sort: true},
+                {field: 'ddcode', width: 180, title: '正式合集', sort: true,
                     templet: (d) => {
                         if (d.ddcode != null && d.ddcode != 0){
                         return  "("+d.ddcode + "-" + d.codename+")";
@@ -188,7 +188,7 @@
                         // return "关闭";
                     }},
                 {field: 'ddcheckversion', width: 120, title: '审核版本号', sort: true},
-                {field: 'ddcheckcode', width: 120, title: '审核合集', sort: true,
+                {field: 'ddcheckcode', width: 180, title: '审核合集', sort: true,
                     templet: (d) => {
 
                         if (d.ddcheckcode != null && d.ddcheckcode != 0){
@@ -196,13 +196,13 @@
                         }else {
                             return "";
                         }}},
-                {field: 'remark', width: 120, title: '备注', sort: true}
+                {field: 'remark', width: 180, title: '备注', sort: true}
             ]],
             autoSort:false,
             page: true,
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports'],
-            limit: 20
+            limit: 30
         });
 
         laydate.render({

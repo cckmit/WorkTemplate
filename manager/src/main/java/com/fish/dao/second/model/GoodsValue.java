@@ -10,9 +10,13 @@ public class GoodsValue
     private String coinNumber;
     private String headNumber;
     private String cashNumber;
+    private String costDesc;
+    private String gainDesc;
 
     private Integer ddid;
     private Boolean ddstate;
+
+    private Boolean ddfrist;
     private String ddname;
     private String dddesc;
     private String ddcosttype;
@@ -24,6 +28,29 @@ public class GoodsValue
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date inserttime;
 
+    public Boolean getDdfrist() {
+        return ddfrist;
+    }
+
+    public void setDdfrist(Boolean ddfrist) {
+        this.ddfrist = ddfrist;
+    }
+
+    public String getGainDesc() {
+        return gainDesc;
+    }
+
+    public void setGainDesc(String gainDesc) {
+        this.gainDesc = gainDesc;
+    }
+
+    public String getCostDesc() {
+        return costDesc;
+    }
+
+    public void setCostDesc(String costDesc) {
+        this.costDesc = costDesc;
+    }
     public String getCoinNumber()
     {
         return coinNumber;

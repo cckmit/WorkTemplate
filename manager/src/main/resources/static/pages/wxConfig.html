@@ -138,7 +138,7 @@
             cols: [[
                 {type: 'checkbox'},
                 {field: 'productName', width: 120, title: '产品名称', sort: true},
-                {field: 'ddappid', width: 120, title: 'appId', sort: true },
+                {field: 'ddappid', width: 180, title: 'appId', sort: true },
                 {field: 'ddappsecret', width: 120, title: 'appSecret', sort: true,hide:true},
                 {field: 'ddmchid', width: 120, title: '商户号', sort: true,hide:true},
                 {field: 'ddkey', width: 120, title: '支付key', sort: true,hide:true},
@@ -156,16 +156,16 @@
                     }
                 },
                 {field: 'originName', width: 120, title: '原始名称', sort: true},
-                {field: 'originId', width: 120, title: '原始ID', sort: true},
+                {field: 'originId', width: 180, title: '原始ID', sort: true},
                 {field: 'addId', width: 120, title: '广告id', sort: true,hide:true},
-                {field: 'account', width: 120, title: '账户', sort: true},
-                {field: 'password', width: 120, title: '密码', sort: true},
+                {field: 'account', width: 200, title: '账户', sort: true},
+                {field: 'password', width: 160, title: '密码', sort: true},
                 {field: 'codeManager', width: 120, title: '扫码管理员', sort: true},
-                {field: 'managerWechat', width: 120, title: '管理员微信', sort: true},
+                {field: 'managerWechat', width: 180, title: '管理员微信', sort: true},
                 {field: 'belongCompany', width: 120, title: '所属公司', sort: true},
                 {field: 'clearCompany', width: 120, title: '结算公司', sort: true},
-                {field: 'ddshareres', width: 120, title: '分享资源 ', sort: true},
-                {field: 'ddappskipres', width: 120, title: '跳转资源', sort: true},
+                {field: 'ddshareres', width: 300, title: '分享资源 ', sort: true},
+                {field: 'ddappskipres', width: 300, title: '跳转资源', sort: true},
                 {
                     field: 'jumpDirect', width: 120, title: '资源图',
                     sort: true,
@@ -182,7 +182,7 @@
             autoSort: false,
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports'],
-            limit: 10
+            limit: 30
         });
         var $ = layui.$, active = {
             flushPicture: function () { //获取选中数据

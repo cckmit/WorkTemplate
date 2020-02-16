@@ -39,7 +39,7 @@ public class OrdersService implements BaseService<ShowOrders>
     BaseConfig baseConfig;
 
     @Override
-    //查询展示所有wxconfig信息
+    //查询展示所有订单信息
     public List<ShowOrders> selectAll(GetParameter parameter)
     {
         ArrayList<ShowOrders> shows = new ArrayList<>();
@@ -117,8 +117,11 @@ public class OrdersService implements BaseService<ShowOrders>
         String ddMchId = wxConfig.getDdmchid();
         Map<String, String> stringStringMap = searchPayOrder(appId, ddMchId, orderId);
         boolean status = orderIsSuccess(stringStringMap);
+        LOGGER.info("补单状态status :"+status+"-appId :"+appId+"-orderId :"+orderId);
         if (status)
         {
+            order.setDdtrans(null);
+            ordersMapper.updateByPrimaryKey(order);
             String supplementUrl = baseConfig.getSupplementUrl();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("version","2.2.2");
@@ -222,7 +225,6 @@ public class OrdersService implements BaseService<ShowOrders>
         WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
         SignatureAlgorithm signatureAlgorithm = new SignatureAlgorithm(wxConfig.getDdkey(), searchOrder_map);
         String searchOrderXml = signatureAlgorithm.getSignXml();
-
         try
         {
             // 从微信平台里查询支付订单

@@ -31,12 +31,20 @@
       <include refid="Base_Column_List" />
       from orders order by ddTime desc
     </select>
+  <select id="selectBySQL" resultType="com.fish.dao.second.model.Orders">
+         ${_parameter}
+  </select>
+  <select id="selectResSingle" resultType="com.fish.dao.second.model.Orders">
+        ${_parameter}
+  </select>
   <select id="selectByTimes" resultType="com.fish.dao.second.model.Orders" parameterType="java.lang.String">
     select
     <include refid="Base_Column_List" />
     from orders  where DATE(ddTime) between '${start}' and '${end}'  order by ddTime desc
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
     delete from orders
     where ddId = #{ddid,jdbcType=VARCHAR}
   </delete>

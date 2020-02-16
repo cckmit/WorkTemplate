@@ -23,4 +23,5 @@ public interface WxConfigMapper
     List<WxConfig> selectAll();
 
     List<WxConfig> selectAllGames();
+    List<WxConfig> selectAllPrograms();
 }

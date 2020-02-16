@@ -65,7 +65,7 @@
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">产品名称</label>
-                            <div class="layui-input-inline" style="width:12rem;">
+                            <div class="layui-input-inline" style="width:14rem;">
                                 <div id="ddappid" name="ddappid" lay-filter="ddappid"></div>
                             </div>
                         </div>
@@ -117,6 +117,7 @@
         var $ = layui.$;
         var gameCodes = {};
         var appNames = {};
+        var appSelects = [];
         var gameType = {
             "sign": "签到",
             "head": "头像",
@@ -206,18 +207,24 @@
                     dataType: "json",
                     url: '../manage/roundmatch/appname',
                     success: (res) => {
-
                         res.forEach(function (val, index, arr) {
                             appNames[val.ddappid] = val.productName;
-                        });
-                        let data = [];
-                        Object.keys(appNames).forEach(key => {
-                            let context = {name: appNames[key], value: key, selected: false};
-                            data.push(context);
+                            var type ;
+                            if(val.programType ===0){
+                                type ="小游戏";
+                            }
+                            if(val.programType ===1){
+                                type ="小程序";
+                            }
+                            if(val.programType ===2){
+                                type ="公众号";
+                            }
+                            let context = {name: val.productName+"（"+type+")", value: val.ddappid, selected: false};
+                            appSelects.push(context);
                         });
                         appSelect.update(
                             {
-                                data: data,
+                                data: appSelects,
                                 autoRow: true,
                             }
                         );
@@ -228,15 +235,14 @@
                     }
                 });
         });
-
         table.render({
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',
             cols: [[
-                {field: 'ddtime', width: 120, title: '变更时间', sort: true},
-                {field: 'dduid', width: 120, title: '用户Id', sort: true},
+                {field: 'ddtime', width: 170, title: '变更时间', sort: true},
+                {field: 'dduid', width: 270, title: '用户Id', sort: true},
                 {field: 'ddtype', width: 120, title: '消耗类型', sort: true},
-                {field: 'nickname', width: 120, title: '用户昵称'},
+                {field: 'nickname', width: 250, title: '用户昵称'},
                 {field: 'ddhistory', width: 120, title: '变更前数量', sort: true},
                 {field: 'ddcurrent', width: 120, title: '变更后数量', sort: true},
                 {
@@ -257,7 +263,7 @@
                     }
                 },
                 {
-                    field: 'ddcostextra', width: 120, title: '变更详情', sort: true, templet: (d) => {
+                    field: 'ddcostextra', width: 180, title: '变更详情', sort: true, templet: (d) => {
 
                         let key = d.ddcostextra;
                         switch (d.ddcosttype)

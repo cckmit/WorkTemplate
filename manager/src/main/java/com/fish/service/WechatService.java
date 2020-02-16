@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class WechatService implements BaseService<WxInput>
-{
+public class WechatService implements BaseService<WxInput> {
     private static final Logger LOGGER = LoggerFactory.getLogger(WechatService.class);
     @Autowired
     BaseConfig baseConfig;
@@ -33,8 +32,7 @@ public class WechatService implements BaseService<WxInput>
      *
      * @param wxInput 文件解析
      */
-    public void saveWxInput(WxInput wxInput)
-    {
+    public void saveWxInput(WxInput wxInput) {
         try
         {
             //先进行删除插入数据
@@ -82,8 +80,7 @@ public class WechatService implements BaseService<WxInput>
      * @param searchData 查询内容
      * @return 是否移除
      */
-    public boolean removeIf(WxInput wxInput, JSONObject searchData)
-    {
+    public boolean removeIf(WxInput wxInput, JSONObject searchData) {
         String st = searchData.getString("st"), ed = searchData.getString("ed");
         if (st == null || ed == null || st.isEmpty() || ed.isEmpty())
             return false;
@@ -97,8 +94,7 @@ public class WechatService implements BaseService<WxInput>
      * @param str 字符串
      * @return 时间
      */
-    private Date parseDate(String str)
-    {
+    private Date parseDate(String str) {
         try
         {
             DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
@@ -116,8 +112,7 @@ public class WechatService implements BaseService<WxInput>
      * @param date 日期
      * @return 格式数据
      */
-    private String formatDate(Date date)
-    {
+    private String formatDate(Date date) {
         DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
         try
         {
@@ -134,8 +129,7 @@ public class WechatService implements BaseService<WxInput>
      *
      * @param parameter 上传参数
      */
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
         parameter.setSort("insertTime");
@@ -148,8 +142,7 @@ public class WechatService implements BaseService<WxInput>
      * @param parameter 查询内容
      * @return 结果
      */
-    public GetResult select(GetParameter parameter)
-    {
+    public GetResult select(GetParameter parameter) {
         GetResult<WxInput> result = new GetResult<>();
         List<WxInput> list = selectAll(parameter);
         try
@@ -174,8 +167,7 @@ public class WechatService implements BaseService<WxInput>
      * @param list      查找数据
      * @param parameter 上传参数
      */
-    private void filterData(List<WxInput> list, GetParameter parameter, boolean isNew)
-    {
+    private void filterData(List<WxInput> list, GetParameter parameter, boolean isNew) {
         JSONObject searchData = filterData(list, parameter);
         if (!isNew)
             return;
@@ -186,8 +178,7 @@ public class WechatService implements BaseService<WxInput>
     }
 
     //查询结果
-    public List<WxInput> selectAll(GetParameter parameter)
-    {
+    public List<WxInput> selectAll(GetParameter parameter) {
         return wxInputMapper.selectAll();
     }
 
@@ -197,8 +188,7 @@ public class WechatService implements BaseService<WxInput>
      *
      * @param parameter 查询内容
      */
-    public GetResult findWxInput(GetParameter parameter)
-    {
+    public GetResult findWxInput(GetParameter parameter) {
         GetResult<WxInput> result = new GetResult<>();
         List<WxInput> list = selectAll(parameter);
         try
@@ -223,8 +213,7 @@ public class WechatService implements BaseService<WxInput>
      * @param list 查询结果
      * @param date 日期
      */
-    private void createNewDate(List<WxInput> list, Date date)
-    {
+    private void createNewDate(List<WxInput> list, Date date) {
         String dayFormat = formatDate(date);
         WxInput now = list.stream().filter(o -> formatDate(o.getInsertTime()).equals(dayFormat)).findFirst().orElse(null);
         if (now == null)
@@ -235,8 +224,7 @@ public class WechatService implements BaseService<WxInput>
         }
     }
 
-    public Class<WxInput> getClassInfo()
-    {
+    public Class<WxInput> getClassInfo() {
         return WxInput.class;
     }
 }

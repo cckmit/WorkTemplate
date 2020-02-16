@@ -47,13 +47,11 @@ public class RoundReceiveService implements BaseService<RoundReceive>
                 roundReceives = roundReceiveMapper.selectAll();
             }
         }
-
         String className = RoundReceiveService.class.getSimpleName().toLowerCase();
         long current = System.currentTimeMillis();
         Vector<Long> record = new Vector<>();
-
         record.add(System.currentTimeMillis() - current);
-        //
+
         Set<String> users = new HashSet<>();
         for (RoundReceive roundReceive : roundReceives)
         {

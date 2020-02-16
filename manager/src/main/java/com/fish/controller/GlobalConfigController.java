@@ -39,9 +39,11 @@ public class GlobalConfigController
         int count = globalConfigService.insert(goodsValue);
         if (count == 1)
         {
-            String res = ReadJsonUtil.flushTable("goods_value", baseConfig.getFlushCache());
+            String res = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushCache());
+            String pubRes = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushPublicCache());
             result.setCode(200);
-            result.setMsg("操作成功" + res);
+            result.setMsg("操作成功" + res+pubRes);
+            //result.setMsg("操作成功");
             return result;
         } else
         {
@@ -60,9 +62,10 @@ public class GlobalConfigController
         int count = globalConfigService.updateByPrimaryKeySelective(goodsValue);
         if (count != 0)
         {
-            String res = ReadJsonUtil.flushTable("goods_value", baseConfig.getFlushCache());
+            String res = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushCache());
+            String pubRes = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushPublicCache());
             result.setCode(200);
-            result.setMsg("操作成功" + res);
+            result.setMsg("操作成功" + res+pubRes);
             return result;
         } else
         {
@@ -71,5 +74,25 @@ public class GlobalConfigController
             return result;
         }
 
+    }
+    @ResponseBody
+    @PostMapping(value = "/globalConfig/delete")
+    public PostResult deleteGoodsValue(@RequestBody GoodsValue goodsValue)
+    {
+        PostResult result = new PostResult();
+        int count =globalConfigService.deleteSelective(goodsValue);
+        if (count != 0)
+        {
+            String res = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushCache());
+            String pubRes = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushPublicCache());
+            result.setCode(200);
+            result.setMsg("操作成功" + res+pubRes);
+            return result;
+        } else
+        {
+            result.setCode(404);
+            result.setMsg("操作失败，请联系管理员");
+            return result;
+        }
     }
 }

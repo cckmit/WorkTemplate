@@ -20,8 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class WxAddShowService implements BaseService<WxConfig>
-{
+public class WxAddShowService implements BaseService<WxConfig> {
 
     @Autowired
     WxConfigMapper wxConfigMapper;
@@ -38,8 +37,7 @@ public class WxAddShowService implements BaseService<WxConfig>
 
     @Override
     //查询所有WxConfig内容
-    public List<WxConfig> selectAll(GetParameter parameter)
-    {
+    public List<WxConfig> selectAll(GetParameter parameter) {
         String resPath = baseConfig.getResHost();
         List<WxConfig> wxConfigs = cacheService.getAllWxConfig();
         for (WxConfig config : wxConfigs)
@@ -80,7 +78,6 @@ public class WxAddShowService implements BaseService<WxConfig>
                         }
                     }
                 }
-
                 if (data.containsKey("banner"))
                 {
                     JSONArray list = data.getJSONArray("banner");
@@ -120,13 +117,7 @@ public class WxAddShowService implements BaseService<WxConfig>
     }
 
     //新增WxConfig内容
-    public int insert(WxConfig record)
-    {
-        //新增判断是否产品名称重复
-        //        WxConfig wxConfig = wxConfigMapper.selectByProductName(record.getProductName());
-        ////        if (!StringUtils.isEmpty(wxConfig)) {
-        ////            return 4;
-        ////        }
+    public int insert(WxConfig record) {
         int insertAppConfig;
         appConfig.setDdappid(record.getDdappid());
         appConfig.setDdname(record.getProductName());
@@ -164,20 +155,8 @@ public class WxAddShowService implements BaseService<WxConfig>
 
 
     //更新产品信息
-    public int updateByPrimaryKeySelective(WxConfig record)
-    {
-        //产品名称去重
+    public int updateByPrimaryKeySelective(WxConfig record) {
         int insert;
-        //        List<WxConfig> wxConfigs = wxConfigMapper.selectAll();
-        //        List<WxConfig> wxConfigOthers =new ArrayList<>();
-        //        for (WxConfig wxConfigSingle : wxConfigs) {
-        //            if (!record.getDdappid().equals(wxConfigSingle.getDdappid()))
-        //                wxConfigOthers.add(wxConfigSingle);
-        //        }
-        //        for (WxConfig wxConfigOther : wxConfigOthers) {
-        //            if (record.getProductName().equals(wxConfigOther.getProductName()))
-        //                return 4;
-        //        }
         appConfig.setDdappid(record.getDdappid());
         appConfig.setDdname(record.getProductName());
         appConfig.setDdprogram(record.getProgramType());
@@ -200,8 +179,7 @@ public class WxAddShowService implements BaseService<WxConfig>
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
         parameter.setOrder("desc");
@@ -209,28 +187,16 @@ public class WxAddShowService implements BaseService<WxConfig>
     }
 
     @Override
-    public Class<WxConfig> getClassInfo()
-    {
+    public Class<WxConfig> getClassInfo() {
         return WxConfig.class;
     }
 
     @Override
-    public boolean removeIf(WxConfig wxConfig, JSONObject searchData)
-    {
-
-
+    public boolean removeIf(WxConfig wxConfig, JSONObject searchData) {
         if (existValueFalse(searchData.getString("appId"), wxConfig.getDdappid()))
         {
             return true;
         }
-
-        //        if (existValueFalse(searchData.get("belong"), wxConfig.getBelongCompany())) {
-        //            return true;
-        //        }
-        //
-        //        if (existValueFalse(searchData.get("clear"), wxConfig.getClearCompany())) {
-        //            return true;
-        //        }
         return existValueFalse(searchData.getString("productsName"), wxConfig.getDdappid());
     }
 

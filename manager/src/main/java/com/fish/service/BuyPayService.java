@@ -9,17 +9,18 @@ import com.fish.dao.second.mapper.WxConfigMapper;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
+import com.fish.utils.XwhTool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-public class BuyPayService implements BaseService<BuyPay>
-{
+public class BuyPayService implements BaseService<BuyPay> {
 
     @Autowired
     BuyPayMapper buyPayMapper;
@@ -27,17 +28,46 @@ public class BuyPayService implements BaseService<BuyPay>
     WxConfigMapper wxConfigMapper;
 
     @Override
-    //查询常规游戏赛制信息
-    public List<BuyPay> selectAll(GetParameter parameter)
-    {
-
-        List<BuyPay> buyPayList = buyPayMapper.selectAll();
-
+    //查询常所有买量信息
+    public List<BuyPay> selectAll(GetParameter parameter) {
+        List<BuyPay> buyPayList;
+        JSONObject search = getSearchData(parameter.getSearchData());
+        String sql = "select * from buy_pay where 1 = 1";
+        StringBuilder SQL = new StringBuilder(sql);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        if (search == null)
+        {
+            buyPayList = buyPayMapper.selectAll();
+        } else
+        {
+            String ddAppId = search.getString("ddappid");
+            String times = search.getString("times");
+            if (StringUtils.isNotBlank(ddAppId))
+            {
+                SQL.append(" and buy_app_id =" + "'").append(ddAppId).append("'");
+                if (StringUtils.isNotBlank(times))
+                {
+                    Date[] parse = XwhTool.parseDate(times);
+                    SQL.append(" and DATE(buy_date) between '").append(format.format(parse[0])).append("' and '").append(format.format(parse[1])).append("'");
+                }
+                buyPayList = buyPayMapper.selectSearch(SQL.toString());
+            } else
+            {
+                if (StringUtils.isNotBlank(times))
+                {
+                    Date[] parse = XwhTool.parseDate(times);
+                    SQL.append(" and DATE(buy_date) between '").append(format.format(parse[0])).append("' and '").append(format.format(parse[1])).append("'");
+                    buyPayList = buyPayMapper.selectSearch(SQL.toString());
+                } else
+                {
+                    buyPayList = buyPayMapper.selectAll();
+                }
+            }
+        }
         return buyPayList;
     }
 
-    public int insertExcel(JSONObject record)
-    {
+    public int insertExcel(JSONObject record) {
         String context = record.getString("context");
         System.out.println("context :" + context);
         context = context.substring(1, context.length() - 1);
@@ -127,8 +157,7 @@ public class BuyPayService implements BaseService<BuyPay>
         return 1;
     }
 
-    public int insert(BuyPay record)
-    {
+    public int insert(BuyPay record) {
 
         int insert = buyPayMapper.insert(record);
         // int insert = 1;
@@ -136,8 +165,7 @@ public class BuyPayService implements BaseService<BuyPay>
     }
 
 
-    public int updateByPrimaryKeySelective(BuyPay record)
-    {
+    public int updateByPrimaryKeySelective(BuyPay record) {
         String buyProductName = record.getBuyProductName();
         WxConfig wxConfig = wxConfigMapper.selectByProductName(buyProductName);
         if (wxConfig != null)
@@ -149,8 +177,7 @@ public class BuyPayService implements BaseService<BuyPay>
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
         parameter.setOrder("desc");
@@ -158,28 +185,20 @@ public class BuyPayService implements BaseService<BuyPay>
     }
 
     @Override
-    public Class<BuyPay> getClassInfo()
-    {
+    public Class<BuyPay> getClassInfo() {
         return BuyPay.class;
     }
 
     @Override
-    public boolean removeIf(BuyPay record, JSONObject searchData)
-    {
+    public boolean removeIf(BuyPay record, JSONObject searchData) {
 
-        if (existTimeFalse(record.getInsertTime(), searchData.getString("times")))
-        {
-            return true;
-        }
-        if (existValueFalse(searchData.getString("productName"), record.getBuyProductName()))
-        {
-            return true;
-        }
-        return true;
+//        if (existTimeFalse(record.getInsertTime(), searchData.getString("times"))) {
+//            return true;
+//        }
+        return false;
     }
 
-    public GetResult searchData(String beginDate, String endDate, String productName, GetParameter parameter)
-    {
+    public GetResult searchData(String beginDate, String endDate, String productName, GetParameter parameter) {
         String sql = "select * from buy_pay where 1 = 1";
         StringBuilder SQL = new StringBuilder(sql);
         if (StringUtils.isBlank(beginDate) && StringUtils.isBlank(endDate) && StringUtils.isBlank(productName))
@@ -215,5 +234,10 @@ public class BuyPayService implements BaseService<BuyPay>
         setDefaultSort(parameter);
         return template(buyPayList, parameter);
 
+    }
+
+    public int deleteSelective(BuyPay productInfo) {
+        int count = buyPayMapper.deleteByPrimaryKey(productInfo.getBuyDate(), productInfo.getBuyAppId());
+        return count;
     }
 }

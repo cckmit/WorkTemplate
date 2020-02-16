@@ -168,13 +168,13 @@
             cols: [[
                 {type: 'checkbox'},
                 {
-                    field: 'ordersTime', width: 120, title: '订单时间', sort: true
+                    field: 'ordersTime', width: 180, title: '订单时间', sort: true
                 },
                 {
-                    field: 'ordersId', width: 120, title: '订单号', sort: true
+                    field: 'ordersId', width: 180, title: '订单号', sort: true
                 },
                 {
-                    field: 'ordersOder', width: 120, title: '商户平台订单号', sort: true,
+                    field: 'ordersOder', width: 260, title: '商户平台订单号', sort: true,
                     templet: (d) => {
                         if (d.ordersOder != "null") {
                             return d.ordersOder;
@@ -184,10 +184,10 @@
                     }
                 },
                 {
-                    field: 'ordersUid', width: 120, title: 'UID', sort: true
+                    field: 'ordersUid', width: 280, title: 'UID', sort: true
                 },
                 {
-                    field: 'order', width: 120, title: 'openid', sort: true,
+                    field: 'order', width: 280, title: 'openid', sort: true,
                     templet: (d) => {
                         if (d.orders.ddoid != null) {
                             return d.orders.ddoid;
@@ -196,7 +196,6 @@
                         }
                     }
                 },
-
                 {field: 'userName', width: 120, title: '用户昵称', sort: true},
                 {field: 'productName', width: 120, title: '产品名称', sort: true},
                 {
@@ -236,7 +235,8 @@
                             return "数据有误请联系管理员";
                         }
                     }
-                }
+                },
+                {field: 'ordersPrice', width: 120, title: '支付金额', sort: true}
             ]],
             limit: 20,
             page: true,
@@ -284,11 +284,6 @@
                     let submitDatas = JSON.stringify(data);
                     let arry = submitDatas.substr(1, submitDatas.length - 2);
                     let jsonArry = JSON.parse(arry);
-                    console.log("我是ddid：" + jsonArry.orders.ddid);
-                    console.log("我是ddappid：" + jsonArry.orders.ddappid);
-                    console.log("我是dduid：" + jsonArry.orders.dduid);
-                    console.log("我是ddoid：" + jsonArry.orders.ddoid);
-                    console.log("我是ddprice：" + jsonArry.orders.ddprice);
                     let obj = {
                         "appId": jsonArry.orders.ddappid,
                         "uid": jsonArry.orders.dduid,

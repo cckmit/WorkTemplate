@@ -31,6 +31,8 @@ public interface RechargeMapper
     List<Recharge> selectRechargeByUid(String uid);
     //查询提现成功订单
     List<Recharge> selectAllCharged();
+    //查询提现记录
+    List<Recharge> selectAllChargeSQL(String sql);
     List<Recharge> selectChargedByTime(@Param("start") String start, @Param("end") String end);
     List<Recharge> selectByTime(@Param("start") String start, @Param("end") String end);
 

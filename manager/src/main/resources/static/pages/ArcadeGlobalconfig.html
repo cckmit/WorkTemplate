@@ -29,8 +29,13 @@
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">类型</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
-                                <input type="text" class="layui-input" id="type" name="type">
+                            <div class="layui-input-inline">
+                            <select name="type" id="type" >
+                                             <option value=""> -</option>
+                                            <option value="coin">金币</option>
+                                            <option value="recharge">提现</option>
+                                            <option value="head">头像框</option>
+                            </select>
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -71,42 +76,25 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'ddid', width: '8%', title: '计费点ID', sort: true},
-                {field: 'ddname', width: '10%', title: '计费点金额', sort: true},
-                {field: 'ddgoodstype', width: '9%', title: '类型', sort: true},
-                {
-                    field: 'coinNumber', width: '10%', title: '金币数量', sort: true,
+                {field: 'ddid', width: 120, title: '计费点ID', sort: true},
+                {field: 'costDesc', width: 180, title: '计费点描述', sort: true},
+                {field: 'ddcosttype', width: 150, title: '计费点金额', sort: true},
+                {field: 'ddgoodstype', width: 120, title: '类型', sort: true,
                     templet: (d) => {
-                        if (d.coinNumber === '' || d.coinNumber === null) {
-                            return '-';
-                        } else {
-                            return d.coinNumber + "个";
+                        if (d.ddgoodstype === "recharge") {
+                            return '提现';
+                        } else if (d.ddgoodstype === "coin") {
+                            return '金币';
+                        } else if (d.ddgoodstype === "head") {
+                            return '头像框';
                         }
                     }
                 },
                 {
-                    field: 'headNumber', width: '9%', title: '头像框编号', sort: true,
-                    templet: (d) => {
-                        if (d.headNumber === '' || d.headNumber === null) {
-                            return '-';
-                        } else {
-                            return d.headNumber + "号";
-                        }
-                    }
+                    field: 'gainDesc', width:160, title: '获得道具', sort: true
                 },
                 {
-                    field: 'cashNumber', width: '9%', title: '提现金额', sort: true,
-                    templet: (d) => {
-                        if (d.cashNumber === '' || d.cashNumber === null) {
-                            return '-';
-                        } else {
-                            return d.cashNumber  + "元";
-                        }
-                    }
-                },
-                {field: 'dddesc', width: '12%', title: '道具描述', sort: true},
-                {
-                    field: 'ddstate', width: '8%', title: '状态', sort: true,
+                    field: 'ddstate', width: 140, title: '状态', sort: true,
                     templet: (d) => {
                         if (d.ddstate === true) {
                             return '开启';
@@ -115,7 +103,7 @@
                         }
                     }
                 },
-                {field: 'inserttime', width: '16%', title: '创建时间', sort: true}
+                {field: 'inserttime', width: 180, title: '创建时间', sort: true}
             ]],
             page: true,
             toolbar: '#toolbar',
@@ -125,18 +113,18 @@
         form.on('select(ddgoodstype)', function (data) {
             console.log("data:" + data.value)
             if (data.value === "coin") {
-                $("#coinNumber").removeClass('layui-hide');
-                $("#headNumber").addClass("layui-hide");
-                $("#cashNumber").addClass("layui-hide");
+                $("#coin").removeClass('layui-hide');
+                $("#head").addClass("layui-hide");
+                $("#cash").addClass("layui-hide");
 
             } else if (data.value === "head") {
-                $("#coinNumber").addClass("layui-hide");
-                $('#headNumber').removeClass('layui-hide');
-                $("#cashNumber").addClass("layui-hide");
+                $("#coin").addClass("layui-hide");
+                $('#head').removeClass('layui-hide');
+                $("#cash").addClass("layui-hide");
             } else if (data.value === "recharge") {
-                $("#coinNumber").addClass("layui-hide");
-                $("#headNumber").addClass("layui-hide");
-                $("#cashNumber").removeClass('layui-hide');
+                $("#coin").addClass("layui-hide");
+                $("#head").addClass("layui-hide");
+                $("#cash").removeClass('layui-hide');
             }
         });
 
@@ -148,7 +136,8 @@
 </script>
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
-      style="padding: 20px 0 0 0;width: 350px;height: 300px;">
+      style="padding: 20px 0 0 0;width: 400px;height: 350px;">
+
     <div class="layui-form-item  layui-hide">
         <label class="layui-form-label">计费点ID *</label>
         <div class="layui-input-inline ">
@@ -159,7 +148,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">计费点金额 *</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddname" name="ddname" lay-verify="required" autocomplete="off"
+            <input type="text" id="ddprice" name="ddprice" lay-verify="required" autocomplete="off"
                    class="layui-input ">
         </div>
     </div>
@@ -174,25 +163,25 @@
             </select>
         </div>
     </div>
-    <div class="layui-form-item  " id="coinNumber">
+    <div class="layui-form-item  " id="coin">
         <label class="layui-form-label">购买数量 *</label>
         <div class="layui-input-inline">
-            <input type="number" id="coin" name="coinNumber" autocomplete="off"
+            <input type="number" id="coinNumber" name="coinNumber" autocomplete="off"
                    class="layui-input ">
         </div>
     </div>
-    <div class="layui-form-item layui-hide" id="headNumber">
+    <div class="layui-form-item layui-hide" id="head" >
         <label class="layui-form-label">头像框编号 *</label>
         <div class="layui-input-inline">
-            <input type="number" id="head" name="headNumber" autocomplete="off"
+            <input type="number"  id="headNumber" name="headNumber" autocomplete="off"
                    class="layui-input ">
         </div>
     </div>
-    <div class="layui-form-item layui-hide " id="cashNumber">
+    <div class="layui-form-item layui-hide "  id="cash" >
         <label class="layui-form-label">提现金额 *</label>
         <div class="layui-input-inline">
-            <input type="number"  id="cash" name="cashNumber" autocomplete="off"
-                              class="layui-input " placeholder="(元)" >
+            <input type="number"  id="cashNumber" name="cashNumber" autocomplete="off"
+                   class="layui-input " placeholder="(元)" >
         </div>
     </div>
     <div class="layui-form-item ">
@@ -203,8 +192,10 @@
             </div>
         </div>
     </div>
-    <div class="layui-form-item layui-hide">
-        <input type="button" lay-submit lay-filter="submit" id="front-submit" value="确认">
+
+    <div class="layui-form-item layui-hide" style="text-align:center;">
+        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认"
+               style="text-align:center;">
     </div>
 </form>
 </body>

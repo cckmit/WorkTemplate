@@ -21,6 +21,9 @@ public class MyRealm extends AuthorizingRealm
     @Autowired
     UserService userService;
 
+    /**
+     * 设置授权信息
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection)
     {
@@ -38,7 +41,9 @@ public class MyRealm extends AuthorizingRealm
         }
         return null;
     }
-
+    /**
+     * 设置认证信息
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException
     {

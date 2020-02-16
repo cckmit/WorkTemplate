@@ -16,8 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-public interface BaseService<T>
-{
+public interface BaseService<T> {
     Logger LOGGER = LoggerFactory.getLogger(BaseService.class);
 
     /**
@@ -26,8 +25,7 @@ public interface BaseService<T>
      * @param data 下发数据
      * @return 模板数据
      */
-    default GetResult<T> template(List<T> data, GetParameter parameter)
-    {
+    default GetResult<T> template(List<T> data, GetParameter parameter) {
         GetResult<T> result = new GetResult<>();
         String field = parameter.getSort();
         if (field != null)
@@ -79,17 +77,16 @@ public interface BaseService<T>
 
     /**
      * 获取折线图数据
-     *  xAxis 点数据
-     *  series 线集合 {name:string,data:array,smooth:false}
+     * xAxis 点数据
+     * series 线集合 {name:string,data:array,smooth:false}
+     *
      * @param data 查找数据
      */
-    default JSONObject getEcharts(List<T> data)
-    {
+    default JSONObject getEcharts(List<T> data) {
         return null;
     }
 
-    default void finish(GetResult<T> result)
-    {
+    default void finish(GetResult<T> result) {
     }
 
     void setDefaultSort(GetParameter parameter);
@@ -112,8 +109,7 @@ public interface BaseService<T>
      * @param value 上报值
      * @return 比较
      */
-    default boolean existValueFalse(String key, int value)
-    {
+    default boolean existValueFalse(String key, int value) {
         if (key != null && !key.trim().isEmpty())
         {
             return value != Integer.valueOf(key);
@@ -128,8 +124,7 @@ public interface BaseService<T>
      * @param value 上报值
      * @return 比较
      */
-    default boolean existValueFalse(String key, long value)
-    {
+    default boolean existValueFalse(String key, long value) {
         if (key != null && !key.trim().isEmpty())
         {
             return value != Long.valueOf(key);
@@ -144,8 +139,7 @@ public interface BaseService<T>
      * @param value 上报值
      * @return 比较
      */
-    default boolean existValueFalse(String key, String value)
-    {
+    default boolean existValueFalse(String key, String value) {
         if (key != null && !key.trim().isEmpty())
         {
             return !value.contains(key);
@@ -161,8 +155,7 @@ public interface BaseService<T>
      * @param value 上报值
      * @return 比较
      */
-    default boolean existValueFull(String key, String value)
-    {
+    default boolean existValueFull(String key, String value) {
         if (key != null && !key.trim().isEmpty())
         {
             return !value.equals(key);
@@ -177,8 +170,7 @@ public interface BaseService<T>
      * @param times 上报值
      * @return 非值
      */
-    default boolean existTimeFalse(Date date, String times)
-    {
+    default boolean existTimeFalse(Date date, String times) {
         if (times != null && !times.trim().isEmpty())
         {
             Date[] parse = XwhTool.parseDate(times);
@@ -194,8 +186,7 @@ public interface BaseService<T>
      * @param times 上报值
      * @return 非值
      */
-    default boolean existTimeBefore(Date date, String times)
-    {
+    default boolean existTimeBefore(Date date, String times) {
         if (times != null && !times.trim().isEmpty())
         {
             Date time = XwhTool.parseTime(times);
@@ -213,8 +204,7 @@ public interface BaseService<T>
      * @param times 上报值
      * @return 非值
      */
-    default boolean existTimeAfter(Date date, String times)
-    {
+    default boolean existTimeAfter(Date date, String times) {
         if (times != null && !times.trim().isEmpty())
         {
             Date time = XwhTool.parseTime(times);
@@ -231,8 +221,7 @@ public interface BaseService<T>
      * @param searchData 搜索参数
      * @return
      */
-    default JSONObject getSearchData(String searchData)
-    {
+    default JSONObject getSearchData(String searchData) {
         if (searchData == null)
             return null;
         return JSON.parseObject(searchData);
@@ -243,8 +232,7 @@ public interface BaseService<T>
      *
      * @param list 查找数据
      */
-    default JSONObject filterData(List<T> list, GetParameter parameter)
-    {
+    default JSONObject filterData(List<T> list, GetParameter parameter) {
         JSONObject search = getSearchData(parameter.getSearchData());
         if (search == null)
         {
@@ -273,8 +261,7 @@ public interface BaseService<T>
      * @param parameter 上报参数
      * @return 返回结果
      */
-    default GetResult findAll(GetParameter parameter)
-    {
+    default GetResult findAll(GetParameter parameter) {
         long startTime = System.currentTimeMillis();
         GetResult<T> result = new GetResult<>();
         List<T> data = selectAll(parameter);
@@ -296,7 +283,7 @@ public interface BaseService<T>
         } finally
         {
             record.add(System.currentTimeMillis() - startTime);
-           // System.out.println("查询获奖记录:" + (System.currentTimeMillis() - startTime) / 1000 + "s,长度:" + JSONObject.toJSONString(result).length() + "记录长度:" + JSONObject.toJSONString(record));
+            // System.out.println("查询获奖记录:" + (System.currentTimeMillis() - startTime) / 1000 + "s,长度:" + JSONObject.toJSONString(result).length() + "记录长度:" + JSONObject.toJSONString(record));
         }
         return result;
     }

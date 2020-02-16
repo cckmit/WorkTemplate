@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.fish.dao.second.model.GoodsValue" >
     <id column="ddId" property="ddid" jdbcType="INTEGER" />
     <result column="ddState" property="ddstate" jdbcType="BIT" />
+    <result column="ddFrist" property="ddfrist" jdbcType="BIT" />
     <result column="ddName" property="ddname" jdbcType="VARCHAR" />
     <result column="ddDesc" property="dddesc" jdbcType="VARCHAR" />
     <result column="ddCostType" property="ddcosttype" jdbcType="VARCHAR" />
@@ -13,7 +14,7 @@
     <result column="insertTime" property="inserttime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List" >
-    ddId, ddState, ddName, ddDesc, ddCostType, ddPrice, ddGoodsType, ddValue, insertTime
+    ddId, ddState,ddFrist, ddName, ddDesc, ddCostType, ddPrice, ddGoodsType, ddValue, insertTime
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -31,11 +32,11 @@
     where ddId = #{ddid,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.fish.dao.second.model.GoodsValue" >
-    insert into goods_value_ext (ddId, ddState, ddName, 
+    insert into goods_value_ext (ddId, ddState,ddFrist, ddName,
       ddDesc, ddCostType, ddPrice, 
       ddGoodsType, ddValue, insertTime
       )
-    values (#{ddid,jdbcType=INTEGER}, #{ddstate,jdbcType=BIT}, #{ddname,jdbcType=VARCHAR}, 
+    values (#{ddid,jdbcType=INTEGER}, #{ddstate,jdbcType=BIT},#{ddfrist,jdbcType=BIT}, #{ddname,jdbcType=VARCHAR},
       #{dddesc,jdbcType=VARCHAR}, #{ddcosttype,jdbcType=VARCHAR}, #{ddprice,jdbcType=DECIMAL}, 
       #{ddgoodstype,jdbcType=VARCHAR}, #{ddvalue,jdbcType=INTEGER}, #{inserttime,jdbcType=TIMESTAMP}
       )
@@ -48,6 +49,9 @@
       </if>
       <if test="ddstate != null" >
         ddState,
+      </if>
+      <if test="ddfrist != null" >
+        ddFrist,
       </if>
       <if test="ddname != null" >
         ddName,
@@ -78,6 +82,9 @@
       <if test="ddstate != null" >
         #{ddstate,jdbcType=BIT},
       </if>
+      <if test="ddfrist != null" >
+        #{ddfrist,jdbcType=BIT},
+      </if>
       <if test="ddname != null" >
         #{ddname,jdbcType=VARCHAR},
       </if>
@@ -107,6 +114,9 @@
       <if test="ddstate != null" >
         ddState = #{ddstate,jdbcType=BIT},
       </if>
+      <if test="ddfrist != null" >
+        ddFrist = #{ddfrist,jdbcType=BIT},
+      </if>
       <if test="ddname != null" >
         ddName = #{ddname,jdbcType=VARCHAR},
       </if>
@@ -134,6 +144,7 @@
   <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.GoodsValue" >
     update goods_value_ext
     set ddState = #{ddstate,jdbcType=BIT},
+      ddFrist = #{ddfrist,jdbcType=BIT},
       ddName = #{ddname,jdbcType=VARCHAR},
       ddDesc = #{dddesc,jdbcType=VARCHAR},
       ddCostType = #{ddcosttype,jdbcType=VARCHAR},

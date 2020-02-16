@@ -24,6 +24,8 @@ public class BaseConfig
     private String resHost;
     //刷新接口
     private String flushCache;
+    //刷新公众号接口
+    private String flushPublicCache;
     //刷新在线人数
     private String flushOnline;
     private JSONObject uploadJson;
@@ -31,6 +33,14 @@ public class BaseConfig
     private String wxQueryUrl;
     //服务器补单地址
     private String supplementUrl;
+
+    public String getFlushPublicCache() {
+        return flushPublicCache;
+    }
+
+    public void setFlushPublicCache(String flushPublicCache) {
+        this.flushPublicCache = flushPublicCache;
+    }
 
     public String getSupplementUrl()
     {
