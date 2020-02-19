@@ -40,6 +40,11 @@ public class PeDbGame extends PeDbObject
     public int ddMaxPlayer = 0;
 
     //
+    //允许单机
+    //
+    public boolean ddAllowSingle;
+
+    //
     // 游戏是否为PK
     //
     public int ddIsPk = 0;
@@ -140,6 +145,7 @@ public class PeDbGame extends PeDbObject
         gameObject.put("multiCoin", ddMultiCoin);
         gameObject.put("maxPlayer", ddMaxPlayer);
         gameObject.put("isPk", ddIsPk == 1);
+        gameObject.put("isSingle", ddAllowSingle);
         gameObject.put("rocker", ddRocker);
         gameObject.put("engine", ddEngine);
         gameObject.put("resolution", ddResolution);

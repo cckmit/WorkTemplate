@@ -2,6 +2,7 @@ package service.match;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import db.PeDbAppConfig;
 import db.PeDbGame;
 import db.PeDbRoundExt;
 import db.PeDbRoundReceive;
@@ -25,11 +26,13 @@ public class MatchRewardService
     private static final Logger LOG = LoggerFactory.getLogger(MatchRewardService.class);
     private final String appId;
     private final String ddUid;
+    private final PeDbAppConfig appConfig;
 
     public MatchRewardService(String ddUid, String appId)
     {
         this.ddUid = ddUid;
         this.appId = appId;
+        this.appConfig = PeDbAppConfig.getConfigsFast(appId);
     }
 
     /**
@@ -165,6 +168,10 @@ public class MatchRewardService
         if (matchJSON != null)
         {
             JSONObject matchInfo = JSONObject.parseObject(matchJSON);
+            //检测是否为小程序赛制
+            boolean isMatch = matchInfo.getBoolean("isGroup");
+            if ((isMatch && appConfig.ddProgram != 1) || (!isMatch && appConfig.ddProgram == 1))
+                return null;
             //检测赛区状态是否结算
             if ("over".equals(matchInfo.getString("status")))
             {

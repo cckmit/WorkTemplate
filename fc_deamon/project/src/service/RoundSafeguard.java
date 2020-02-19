@@ -1,7 +1,10 @@
 package service;
 
 import com.alibaba.fastjson.JSONObject;
-import db.*;
+import db.PeDbGame;
+import db.PeDbRoundExt;
+import db.PeDbRoundGame;
+import db.PeDbRoundMatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import servlet.CmServletListener;
@@ -13,7 +16,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -31,12 +34,17 @@ public class RoundSafeguard implements Runnable
     }
 
     //赛场记录编号
-    private Vector<PeDbRoundRecord> records;
+    private volatile Set<String> records;
+
+    public void init()
+    {
+        records = RoundSave.getMatchList();
+    }
 
     @Override
     public void run()
     {
-        records = PeDbRoundRecord.getAllRecord();
+        init();
         CountDownLatch latch = new CountDownLatch(2);
         try
         {
@@ -47,35 +55,15 @@ public class RoundSafeguard implements Runnable
             updateRoundGroup(latch);
             latch.await();
             //进行结算判断
-            records.forEach(roundRecord ->
-            {
-                PeDbRoundExt roundExt = null;
-                if (roundRecord.ddGroup)
-                {
-                    PeDbRoundMatch group = PeDbRoundMatch.getMatchFast(roundRecord.ddCode);
-                    if (group != null)
-                        roundExt = PeDbRoundExt.getRoundFast(group.ddRound);
-                } else
-                {
-                    PeDbRoundGame game = PeDbRoundGame.getGameFast(roundRecord.ddCode);
-                    if (game != null)
-                    {
-                        roundExt = PeDbRoundExt.getRoundFast(game.ddRound);
-                    }
-                }
-                if (roundExt != null)
-                    this.executor.execute(new RoundSave(roundRecord, roundExt));
-            });
+            records.forEach(key -> this.executor.execute(new RoundSave(key)));
             //更新数据库
             PeDbRoundGame.init();
             PeDbRoundMatch.init();
             PeDbRoundExt.init();
-            PeDbRoundRecord.init();
         } catch (Exception e)
         {
             LOG.error(Log4j.getExceptionInfo(e));
         }
-
     }
 
     /**
@@ -86,7 +74,7 @@ public class RoundSafeguard implements Runnable
         CmServletListener.scheduler.execute(() ->
         {
             Map<Integer, PeDbRoundGame> roundGameMap = PeDbRoundGame.getMatchesFast();
-            Map<Integer, PeDbRoundRecord> games = new HashMap<>();
+            Map<Integer, JSONObject> games = new HashMap<>();
             long now = System.currentTimeMillis();
             CountDownLatch temp = new CountDownLatch(roundGameMap.size());
             try
@@ -101,7 +89,7 @@ public class RoundSafeguard implements Runnable
                 }));
                 temp.await();
                 //更新赛场信息
-                RoundSave.updateNowRoundRecord(games);
+                RoundSave.updateNowRoundRecord(games, false);
 
             } catch (Exception e)
             {
@@ -119,17 +107,14 @@ public class RoundSafeguard implements Runnable
         CmServletListener.scheduler.execute(() ->
         {
             Map<Integer, PeDbRoundMatch> roundGroupMap = PeDbRoundMatch.getMatchesFast();
-            Map<Integer, PeDbRoundRecord> games = new HashMap<>();
             long now = System.currentTimeMillis();
             CountDownLatch temp = new CountDownLatch(roundGroupMap.size());
             roundGroupMap.forEach((k, v) -> CmServletListener.scheduler.execute(() ->
             {
                 if (v.ddState)
-                    updateRoundRecord(games, now, k, v.ddRound, v.ddGame, v.ddName, v.ddEnd, v.ddStart, true);
+                    updateRoundRecord(null, now, k, v.ddRound, v.ddGame, v.ddName, v.ddEnd, v.ddStart, true);
                 temp.countDown();
             }));
-            //更新赛场信息
-            RoundSave.updateNowRoundRecord(games);
         });
 
         latch.countDown();
@@ -147,7 +132,7 @@ public class RoundSafeguard implements Runnable
      * @param ddStart 开始时间
      * @param isGroup 是否群标签
      */
-    private void updateRoundRecord(Map<Integer, PeDbRoundRecord> games, long now, Integer k, String ddRound, int ddGame, String name, Timestamp ddEnd, Timestamp ddStart, boolean isGroup)
+    private void updateRoundRecord(Map<Integer, JSONObject> games, long now, Integer k, String ddRound, int ddGame, String name, Timestamp ddEnd, Timestamp ddStart, boolean isGroup)
     {
         PeDbRoundExt roundExt = PeDbRoundExt.getRoundFast(ddRound);
         //检测赛场是否结束
@@ -159,25 +144,32 @@ public class RoundSafeguard implements Runnable
             return;
         JSONObject data = getMatchIndex(game.ddIsPk == 1, now, ddStart, ddEnd, roundExt);
         int index = data.getInteger("index");
-        PeDbRoundRecord instance = records.stream().filter(record -> isGroup == record.ddGroup && record.ddCode == k && record.ddIndex == index).findFirst().orElse(null);
-        if (instance == null)
+        String matchKey = RoundSave.getField(k, isGroup, index);
+        JSONObject instance;
+        if (!records.contains(matchKey))
         {
             //符合条件赛场，进行创建
-            instance = new PeDbRoundRecord();
-            instance.ddIndex = index;
-            instance.ddGroup = isGroup;
-            instance.ddCode = k;
-            instance.ddName = name;
-            instance.ddRound = ddRound;
-            instance.ddGame = ddGame;
-            instance.ddEnd = data.getTimestamp("end");
-            instance.ddStart = data.getTimestamp("start");
-            instance.ddSubmit = data.getTimestamp("submit");
-            instance.ddTime = new Timestamp(System.currentTimeMillis());
-            instance.insert();
-            RoundSave.updateStatus(instance, "running");
+            JSONObject matchInfo = new JSONObject();
+            matchInfo.put("code", k);
+            matchInfo.put("round", ddRound);
+            matchInfo.put("submit", data.getLong("submit"));
+            matchInfo.put("start", data.getLong("start"));
+            matchInfo.put("end", data.getLong("end"));
+            matchInfo.put("gameCode", ddGame);
+            matchInfo.put("isGroup", isGroup);
+            matchInfo.put("matchKey", matchKey);
+            matchInfo.put("priority", roundExt.ddPriority);
+            matchInfo.put("name", name);
+            matchInfo.put("index", index);
+            RoundSave.updateStatus(matchInfo, 0, "running");
+            records.add(matchKey);
+            instance = matchInfo;
+        } else
+        {
+            instance = RoundSave.getRoundInfo(matchKey);
         }
-        instance.priority = roundExt.ddPriority;
+        if (games == null)
+            return;
         //获取当前游戏优先级
         int priority = roundExt.ddPriority;
         if (!games.containsKey(ddGame))
@@ -185,7 +177,7 @@ public class RoundSafeguard implements Runnable
             games.put(ddGame, instance);
             return;
         }
-        int temp = games.get(ddGame).priority;
+        int temp = games.get(ddGame).getInteger("priority");
         //当前游戏中，赛场优先级越小为最优
         if (temp > priority)
         {
@@ -223,9 +215,9 @@ public class RoundSafeguard implements Runnable
         {
             end = ddEnd.getTime();
         }
-        data.put("start", new Timestamp(start));
-        data.put("end", new Timestamp(end));
-        data.put("submit", new Timestamp(submit));
+        data.put("start", start);
+        data.put("end", end);
+        data.put("submit", submit);
         //获取当场开始时间
         return data;
     }

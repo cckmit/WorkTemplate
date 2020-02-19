@@ -74,16 +74,24 @@ public class CmTool
      */
     public static String getStringFromHex(String hexString)
     {
-        byte[] bytes = new byte[hexString.length() / 2];
-
-        for (int i = 0, j = 0; i < hexString.length(); i += 2, j++)
+        try
         {
-            String value = "0x" + hexString.substring(i, i + 2);
+            byte[] bytes = new byte[hexString.length() / 2];
 
-            bytes[j] = Integer.decode(value).byteValue();
+            for (int i = 0, j = 0; i < hexString.length(); i += 2, j++)
+            {
+                String value = "0x" + hexString.substring(i, i + 2);
+
+                bytes[j] = Integer.decode(value).byteValue();
+            }
+
+            return new String(bytes);
+        } catch (Exception e)
+        {
+
         }
+        return "00:00-24:00 实时榜单";
 
-        return new String(bytes);
     }
 
     /**

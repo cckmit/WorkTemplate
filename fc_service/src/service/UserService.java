@@ -280,7 +280,7 @@ public class UserService
                 if (value > 0)
                 {
                     userValue.ddAwardMoney = RedisUtils.hincrby(key, costType + "Total", value);
-                    filter = filter.concat("ddAwardMoney");
+                    filter = filter.concat("#ddAwardMoney");
                 }
             }
             break;
@@ -291,7 +291,7 @@ public class UserService
                 if (value > 0)
                 {
                     userValue.ddAwardCoin = RedisUtils.hincrby(key, costType + "Total", value);
-                    filter = filter.concat("ddAwardCoin");
+                    filter = filter.concat("#ddAwardCoin");
                 }
             }
             break;

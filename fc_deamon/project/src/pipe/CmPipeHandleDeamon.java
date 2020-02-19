@@ -25,7 +25,6 @@ public class CmPipeHandleDeamon
     {
         try
         {
-            System.out.println("pipe data:" + object.toJSONString());
             String type = object.getString("type");
             switch (type)
             {

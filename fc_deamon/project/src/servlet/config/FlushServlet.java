@@ -1,7 +1,9 @@
 package servlet.config;
 
 import com.alibaba.fastjson.JSONObject;
+import config.ReadConfig;
 import db.CmDbSqlResource;
+import db.PeDbWeight;
 import servlet.CmServletMain;
 import tool.ClassUtils;
 import tool.Log4j;
@@ -24,6 +26,15 @@ public class FlushServlet extends CmServletMain
     {
         String className = content.getString("name");
         JSONObject result = new JSONObject();
+        if ("config".equals(className))
+        {
+            //进行刷新配置文件，并且进行刷新权限文件
+            ReadConfig.init();
+            PeDbWeight.init();
+            result.put("result", "success");
+            result.put("msg", JSONObject.toJSONString(PeDbWeight.instance()));
+            return result;
+        }
         if (classMap == null)
         {
             result.put("result", "fail");

@@ -64,8 +64,17 @@ public class CmServletQueryMatch extends CmServletMain
         //通过IP获取地区编号
         String ares = getUserAres(requestObject);
         //获取地区服务器
-        JSONObject aresData = getServiceAres(ares, service);
-        JSONObject matchService = getMatchService(aresData, gameCode, config);
+        PeDbGame game = PeDbGame.getGameFast(gameCode);
+        if (game == null)
+        {
+            result.put("result", "fail");
+            result.put("msg", "非法游戏房间");
+            return result;
+        }
+        boolean isPk = game.ddIsPk == 1;
+        String type = isPk ? "pk" : "through";
+        JSONObject aresData = getServiceAres(ares, service, type);
+        JSONObject matchService = getMatchService(aresData, type, config);
         if (matchService != null)
         {
             result.put("result", "success");
@@ -79,19 +88,14 @@ public class CmServletQueryMatch extends CmServletMain
      * 获取对应匹配服
      *
      * @param aresData 地区服务器组
-     * @param gameCode 游戏编号
+     * @param type     房间配置
      * @param config   关停配置
      * @return 下发服务器节点
      */
-    private JSONObject getMatchService(JSONObject aresData, int gameCode, JSONObject config)
+    private JSONObject getMatchService(JSONObject aresData, String type, JSONObject config)
     {
         if (aresData == null)
             return null;
-        PeDbGame game = PeDbGame.getGameFast(gameCode);
-        if (game == null)
-            return null;
-        boolean isPk = game.ddIsPk == 1;
-        String type = isPk ? "pk" : "through";
         int allWeight = 0;
         Vector<JSONObject> matches = new Vector<>();
         //通过权重进行分配
@@ -140,14 +144,26 @@ public class CmServletQueryMatch extends CmServletMain
      * @param ares    地区编号
      * @param service 服务配置
      */
-    private JSONObject getServiceAres(String ares, JSONObject service)
+    private JSONObject getServiceAres(String ares, JSONObject service, String type)
     {
         if (ares == null || ares.trim().isEmpty())
             return service.getJSONObject("0");
         for (String key : ares.split("#"))
         {
-            if (service.containsKey(key))
-                return service.getJSONObject(key);
+            JSONObject match = service.getJSONObject(key);
+            if (match != null)
+            {
+                for (Map.Entry<String, Object> entry : match.entrySet())
+                {
+                    JSONObject matchService = (JSONObject) entry.getValue();
+                    //权重值
+                    int weight = matchService.getInteger("weight");
+                    Integer allTotal = matchService.getInteger(type);
+                    //存在權重，并且縂房間数分配大于0
+                    if (weight > 0 && allTotal != null && allTotal > 0)
+                        return match;
+                }
+            }
         }
         //最终默认地区参数
         return service.getJSONObject("0");

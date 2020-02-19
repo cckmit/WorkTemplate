@@ -374,6 +374,8 @@ public class PeDbObject implements Serializable
                 switch (type)
                 {
                     case "int":
+                    case "double":
+                    case "long":
                         sb.append(name).append("=").append(field.get(this)).append(",");
                         break;
                     case "class java.lang.String":

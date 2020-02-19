@@ -137,7 +137,7 @@ public class CmPipeSocket
             sendingQueue.removeElementAt(0);
 
             String message = object.toJSONString();
-            System.out.println("发送数据:" + message);
+            LOG.debug("sendData"+message);
             dataOutputStream.writeUTF(message);
         } catch (IOException e)
         {

@@ -12,10 +12,8 @@ import tool.CmTool;
 import tool.db.RedisUtils;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.sql.Timestamp;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -27,53 +25,73 @@ public class RoundSave implements Runnable
     //赛场状态
     private static final String ROUND_REDIS_KEY = "round-status";
     //一场赛场记录
-    private PeDbRoundRecord roundRecord;
-    //赛场名称
-    private PeDbRoundExt roundExt;
+    private String matchKey;
 
-    RoundSave(PeDbRoundRecord roundRecord, PeDbRoundExt roundExt)
+    RoundSave(String matchKey)
     {
-        this.roundRecord = roundRecord;
-        this.roundExt = roundExt;
+        this.matchKey = matchKey;
     }
 
     /**
      * 更新游戏状态
      *
-     * @param instance 赛场配置
-     * @param status   状态
+     * @param info   赛场配置
+     * @param status 状态
      */
-    static void updateStatus(PeDbRoundRecord instance, String status)
+    static void updateStatus(JSONObject info, int result, String status)
     {
-        LOG.debug("updateStatus:" + JSONObject.toJSONString(instance) + ",status=" + status);
-        JSONObject info = getRoundInfo(instance);
-        String field = getField(instance.ddCode, instance.ddGroup, instance.ddIndex);
-        info.put("matchKey", field);
+        LOG.debug("updateStatus:" + info.toJSONString() + ",status=" + status);
+        String field = info.getString("matchKey");
         info.put("status", status);
-        info.put("code", instance.ddCode);
-        info.put("isGroup", instance.ddGroup);
-        info.put("index", instance.ddIndex);
-        info.put("gameCode", instance.ddGame);
-        info.put("name", instance.ddName);
-        info.put("round", instance.ddRound);
-        info.put("start", instance.ddStart.getTime());
-        info.put("end", instance.ddEnd.getTime());
-        info.put("submit", instance.ddSubmit.getTime());
-        info.put("result", instance.ddResult);
+        info.put("result", result);
         LOG.debug("matchInfo:" + info.toJSONString());
+        //进行移除redis
+        if (status.equals("over"))
+        {
+            //进行保存历史场次
+            if (result > 0)
+                saveHistoryRecord(info, result);
+            if (result <= 0)
+            {
+                RedisUtils.hdel(ROUND_REDIS_KEY, field);
+                return;
+            }
+        }
         RedisUtils.hset(ROUND_REDIS_KEY, field, info.toJSONString());
+    }
+
+    /**
+     * 记录保存历史场次
+     *
+     * @param info   赛场信息
+     * @param result 赛场结果
+     */
+    private static void saveHistoryRecord(JSONObject info, int result)
+    {
+        PeDbRoundRecord record = new PeDbRoundRecord();
+        record.ddGame = info.getInteger("gameCode");
+        record.ddRound = info.getString("round");
+        record.ddName = info.getString("name");
+        record.ddSubmit = new Timestamp(info.getLong("submit"));
+        record.ddEnd = new Timestamp(info.getLong("end"));
+        record.ddStart = new Timestamp(info.getLong("start"));
+        record.ddTime = new Timestamp(System.currentTimeMillis());
+        record.ddCode = info.getInteger("code");
+        record.ddGroup = info.getBoolean("isGroup");
+        record.ddIndex = info.getInteger("index");
+        record.ddResult = result;
+        record.insert();
     }
 
     /**
      * 获取赛制信息
      *
-     * @param instance 赛场配置
+     * @param matchKey 赛场信息
      * @return 赛制内容
      */
-    private static JSONObject getRoundInfo(PeDbRoundRecord instance)
+    static JSONObject getRoundInfo(String matchKey)
     {
-        String field = getField(instance.ddCode, instance.ddGroup, instance.ddIndex);
-        String json = RedisUtils.hget(ROUND_REDIS_KEY, field);
+        String json = RedisUtils.hget(ROUND_REDIS_KEY, matchKey);
         JSONObject info = null;
         if (json != null)
             info = JSONObject.parseObject(json);
@@ -83,26 +101,13 @@ public class RoundSave implements Runnable
     }
 
     /**
-     * 获取当前状态
-     *
-     * @param instance 赛场配置
-     */
-    private static String getStatus(PeDbRoundRecord instance)
-    {
-        JSONObject info = getRoundInfo(instance);
-        if (info.containsKey("status"))
-            return info.getString("status");
-        return "unknown";
-    }
-
-    /**
      * 更新赛场信息
      *
-     * @param games 游戏赛场内容
+     * @param matches 游戏赛场内容
      */
-    static void updateNowRoundRecord(Map<Integer, PeDbRoundRecord> games)
+    static void updateNowRoundRecord(Map<Integer, JSONObject> matches, boolean isMatch)
     {
-        games.forEach((k, v) ->
+        matches.forEach((k, v) ->
         {
             String field = String.format("current-g%d", k);
             String json = RedisUtils.hget(ROUND_REDIS_KEY, field);
@@ -115,7 +120,7 @@ public class RoundSave implements Runnable
             {
                 data = new JSONObject();
             }
-            data.put(String.valueOf(v.ddGroup), getField(v.ddCode, v.ddGroup, v.ddIndex));
+            data.put(String.valueOf(isMatch), v.getString("matchKey"));
             RedisUtils.hset(ROUND_REDIS_KEY, field, data.toJSONString());
         });
     }
@@ -125,20 +130,25 @@ public class RoundSave implements Runnable
     {
         long current = System.currentTimeMillis();
         //进行关停当前赛场
-        String field = getField(roundRecord.ddCode, roundRecord.ddGroup, roundRecord.ddIndex);
+        JSONObject matchInfo = getRoundInfo(matchKey);
+        String status = matchInfo.getString("status");
+        long submit = matchInfo.getLong("submit");
         //是否达到结算时间
-        if (current >= this.roundRecord.ddSubmit.getTime() && getStatus(roundRecord).equals("running"))
+        if (current >= submit && status.equals("running"))
         {
             //标志该赛制正在结算
-            updateStatus(roundRecord, "finish");
+            updateStatus(matchInfo, 0, "finish");
             //获取排行信息0,1名
-            Set<Tuple> sets = RedisUtils.zrevrangeWithScores(field, 0, -1);
+            Set<Tuple> sets = RedisUtils.zrevrangeWithScores(matchKey, 0, -1);
             //已处理结算
             if (sets == null)
             {
-                updateStatus(roundRecord, "over");
+                updateStatus(matchInfo, 0, "over");
                 return;
             }
+            PeDbRoundExt roundExt = PeDbRoundExt.getRoundFast(matchInfo.getString("round"));
+            if (roundExt == null)
+                return;
             JSONObject reward = roundExt.getRoundReward();
             //排名和分数
             JSONArray array = new JSONArray();
@@ -203,7 +213,7 @@ public class RoundSave implements Runnable
             if (array.size() > 0)
             {
                 AtomicInteger index = new AtomicInteger();
-                String name = ReadConfig.get("match-save-path") + field + "-" + index.getAndIncrement() + ".json";
+                String name = ReadConfig.get("match-save-path") + matchKey + "-" + index.getAndIncrement() + ".json";
                 JSONArray save = new JSONArray();
                 //进行保存写入文件
                 for (int i = 0; i < array.size(); i++)
@@ -214,7 +224,7 @@ public class RoundSave implements Runnable
                         String json = save.toJSONString();
                         CmTool.writeFileString(name, json);
                         save.clear();
-                        name = ReadConfig.get("match-save-path") + field + "-" + index.getAndIncrement() + ".json";
+                        name = ReadConfig.get("match-save-path") + matchKey + "-" + index.getAndIncrement() + ".json";
                     }
                 }
                 if (save.size() > 0)
@@ -224,9 +234,7 @@ public class RoundSave implements Runnable
                     save.clear();
                 }
             }
-            roundRecord.ddResult = resultSize;
-            roundRecord.update("ddResult");
-            updateStatus(roundRecord, "over");
+            updateStatus(matchInfo, resultSize, "over");
         }
     }
 
@@ -261,8 +269,24 @@ public class RoundSave implements Runnable
      * @param ddGroup 群标签
      * @param ddIndex 轮次编号
      */
-    private static String getField(int ddCode, boolean ddGroup, int ddIndex)
+    static String getField(int ddCode, boolean ddGroup, int ddIndex)
     {
         return String.format("match-c%d-g%d-i%d", ddCode, ddGroup ? 1 : 0, ddIndex);
+    }
+
+    /**
+     * 獲取當前賽場信息
+     *
+     * @return 賽場詳情
+     */
+    static Set<String> getMatchList()
+    {
+        Set<String> keys = RedisUtils.hkeys(ROUND_REDIS_KEY);
+        if (keys != null)
+        {
+            keys.removeIf(key -> key.startsWith("current"));
+            return keys;
+        }
+        return new HashSet<>();
     }
 }

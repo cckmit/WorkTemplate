@@ -36,7 +36,6 @@ public class PeDbRoundRecord extends PeDbObject
     //当前赛场优先级
     public int priority;
 
-    private static Vector<PeDbRoundRecord> allRecord;
 
     /**
      * 进行插入数据
@@ -46,7 +45,6 @@ public class PeDbRoundRecord extends PeDbObject
         try
         {
             this.insertObject(CmDbSqlResource.instance());
-            allRecord.add(this);
         } catch (Exception e)
         {
             LOG.error(Log4j.getExceptionInfo(e));
@@ -72,10 +70,6 @@ public class PeDbRoundRecord extends PeDbObject
         }
     }
 
-    public static Vector<PeDbRoundRecord> getAllRecord()
-    {
-        return allRecord;
-    }
 
     /**
      * 获取游戏列表
@@ -101,8 +95,6 @@ public class PeDbRoundRecord extends PeDbObject
 
     public static void init()
     {
-        allRecord = getRoundRecord();
+
     }
-
-
 }

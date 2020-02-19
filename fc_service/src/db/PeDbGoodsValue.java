@@ -33,7 +33,7 @@ public class PeDbGoodsValue extends PeDbObject implements Serializable
     //
     // 全部商品的列表
     //
-    private static Vector<PeDbObject> allGoods = new Vector<>();
+    private static Vector<PeDbGoodsValue> allGoods = new Vector<>();
 
     /**
      * 获取游戏信息
@@ -42,7 +42,7 @@ public class PeDbGoodsValue extends PeDbObject implements Serializable
     {
         for (int i = 0; i < allGoods.size(); i++)
         {
-            PeDbGoodsValue game = (PeDbGoodsValue) allGoods.elementAt(i);
+            PeDbGoodsValue game = allGoods.elementAt(i);
             if (game.ddId == code)
             {
                 return game;
@@ -60,8 +60,9 @@ public class PeDbGoodsValue extends PeDbObject implements Serializable
         Vector<PeDbGoodsValue> cache = new Vector<>();
         allGoods.forEach(data ->
         {
-            PeDbGoodsValue value = (PeDbGoodsValue) data;
-            cache.add(value);
+            if (!data.ddState)
+                return;
+            cache.add(data);
         });
         if (appId != null)
         {
@@ -100,19 +101,25 @@ public class PeDbGoodsValue extends PeDbObject implements Serializable
     /**
      * 获取游戏列表
      */
-    private static Vector<PeDbObject> getGoods()
+    private static Vector<PeDbGoodsValue> getGoods()
     {
         CmDbSqlResource sqlResource = CmDbSqlResource.instance();
-        Vector<PeDbObject> objects = new Vector<>();
+        Vector<PeDbGoodsValue> data = new Vector<>();
 
         try
         {
-            objects = PeDbGoodsValue.queryObject(sqlResource, PeDbGoodsValue.class, "");
+            Vector<PeDbObject> objects = PeDbGoodsValue.queryObject(sqlResource, PeDbGoodsValue.class, "");
+            if (objects != null)
+                objects.forEach(element ->
+                {
+                    PeDbGoodsValue value = (PeDbGoodsValue) element;
+                    data.add(value);
+                });
         } catch (Exception e)
         {
             LOG.error(Log4j.getExceptionInfo(e));
         }
-        return objects;
+        return data;
     }
 
     /**

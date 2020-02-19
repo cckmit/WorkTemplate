@@ -46,8 +46,16 @@ public class RedisUtils
             config.setTestOnReturn(Boolean.valueOf(bundle.getProperty("redis.pool.testOnReturn")));
             String host = bundle.getProperty("redis.host");
             int port = Integer.valueOf(bundle.getProperty("redis.port"));
+            int timeout = Integer.valueOf(bundle.getProperty("redis.timeout"));
+            String password = bundle.getProperty("redis.auth");
             AVOID_REPEATABLE_COMMIT_DB = Integer.valueOf(bundle.getProperty("redis.db"));
-            jedisPool = new JedisPool(config, host, port);
+            if (bundle.containsKey("redis.open") && Boolean.valueOf(bundle.getProperty("redis.open")))
+            {
+                jedisPool = new JedisPool(config, host, port, timeout, password);
+            } else
+            {
+                jedisPool = new JedisPool(config, host, port);
+            }
         } catch (Exception e)
         {
             e.printStackTrace();

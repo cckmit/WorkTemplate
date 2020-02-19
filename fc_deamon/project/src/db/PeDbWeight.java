@@ -1,13 +1,20 @@
 package db;
 
 import com.alibaba.fastjson.JSONObject;
+import config.ReadConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import servlet.CmServletListener;
 import tool.CmTool;
+import tool.Log4j;
 
 import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,11 +24,11 @@ import java.util.concurrent.TimeUnit;
 public class PeDbWeight
 {
     //最小阀值
-    public BigDecimal minLimit = new BigDecimal(0.2);
+    private BigDecimal minLimit;
     //最大阀值
-    public BigDecimal maxLimit = new BigDecimal(0.8);
+    private BigDecimal maxLimit;
     //默认群组
-    public int tag = 30;
+    private int tag;
     //地区方位
     public JSONObject ares = new JSONObject();
 
@@ -29,13 +36,10 @@ public class PeDbWeight
 
     private static SendMessageNotice notice = null;
 
-    //报警通知{10}:群组,{1}:标题,{2}:高亮文字,{3}:正常文字,{4}:低灰文字
-    private String noticeUrl = "https://sms2.down10ad.com/smsv2.php?tag={0}&t1={1}&h1={2}&h2={3}&h3={4}";
+    private static Logger LOG = LoggerFactory.getLogger(PeDbWeight.class);
 
     /**
      * 唯一实体类
-     *
-     * @return
      */
     public static PeDbWeight instance()
     {
@@ -52,9 +56,10 @@ public class PeDbWeight
      */
     public void sendNotice(String title, String highTip, String normalTip, String grayTip)
     {
+        //报警通知{10}:群组,{1}:标题,{2}:高亮文字,{3}:正常文字,{4}:低灰文字
+        String noticeUrl = "https://sms2.down10ad.com/smsv2.php?tag={0}&t1={1}&h1={2}&h2={3}&h3={4}";
         String url = MessageFormat.format(noticeUrl, tag, title, highTip, normalTip, grayTip);
-
-        //      CmTool.makeHttpConnect(url);
+        notice.messageUrl.put(title, url);
 
     }
 
@@ -63,16 +68,23 @@ public class PeDbWeight
      */
     public static class SendMessageNotice implements Runnable
     {
-        public Vector<String> messageUrl = new Vector<>();
+        public Map<String, String> messageUrl = new ConcurrentHashMap<>();
 
         @Override
         public void run()
         {
             if (!messageUrl.isEmpty())
             {
-                String message = messageUrl.remove(0);
-                System.out.println(message);
-                CmTool.makeHttpConnect(message);
+                Vector<String> message = new Vector<>(messageUrl.values());
+                messageUrl.clear();
+                try
+                {
+                    message.forEach(CmTool::makeHttpConnect);
+                    LOG.error(JSONObject.toJSONString(message));
+                } catch (Exception e)
+                {
+                    LOG.error(Log4j.getExceptionInfo(e));
+                }
             }
         }
     }
@@ -100,5 +112,21 @@ public class PeDbWeight
         ares.put("1", "华北-北京");
         ares.put("2", "华南-广州");
         ares.put("3", "西南-成都");
+        double min = Double.valueOf(Objects.toString(ReadConfig.get("weight-min"), "0.1"));
+        minLimit = BigDecimal.valueOf(min);
+        double max = Double.valueOf(Objects.toString(ReadConfig.get("weight-max"), "0.9"));
+        maxLimit = BigDecimal.valueOf(max);
+        tag = Integer.valueOf(Objects.toString(ReadConfig.get("weight-tag"), "30"));
     }
+
+    public BigDecimal getMinLimit()
+    {
+        return minLimit;
+    }
+
+    public BigDecimal getMaxLimit()
+    {
+        return maxLimit;
+    }
+
 }

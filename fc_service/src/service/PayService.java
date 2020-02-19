@@ -229,6 +229,7 @@ public class PayService
         {
             // 从微信平台里查询支付订单
             String searchResultXml = CmTool.sendHttps(searchOrderXml, QUERY_URL, CmProjectConfig.getWxP12FilePath(config.ddP12), config.ddP12Password);
+            LOG.debug("查询订单结果:" + searchResultXml);
             XMLHandler parse = XMLHandler.parse(searchResultXml);
             return parse.getXmlMap();
         } catch (Exception e)

@@ -26,8 +26,10 @@ public class WxAnsynCallbackServlet extends CmServletMain implements Serializabl
     {
         try
         {
+            SERVLET_LOG.warn("WxAnsynCallbackServlet:" + content);
             XMLHandler result_xml = XMLHandler.parse(content);
             Map<String, String> xmlMap = result_xml.getXmlMap();
+
             String appId = xmlMap.get("appid");
             PayService service = new PayService(appId);
             service.wxAnsynCallBack(xmlMap);
