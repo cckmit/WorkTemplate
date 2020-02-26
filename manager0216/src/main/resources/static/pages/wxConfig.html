@@ -207,13 +207,12 @@
                         type: 'post',
                         dataType: "json",
                         success: function (res) {
-                            if (res.code === 200) {
-                                layer.msg("刷新成功");
-                                setTimeout(function () {
+                            UIConfig.postMsg(result);
+                            if (result.successed) {
+                                layer.close(index);
+                                setTimeout(function (){
                                     window.location.reload();
-                                }, 800);
-                            } else {
-                                layer.msg('刷新失败，请联系管理员')
+                                }, 1000);
                             }
                         }
                     });

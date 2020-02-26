@@ -98,13 +98,12 @@
                 url: '../manage/games/flushgames',
                 type: 'get',
                 success: function (res) {
-                    if (res.code === 200) {
-                        layer.msg("刷新成功");
-                        setTimeout(function () {
+                    UIConfig.postMsg(result);
+                    if (result.successed) {
+                        layer.close(index);
+                        setTimeout(function (){
                             window.location.reload();
-                        }, 800);
-                    } else {
-                        layer.msg('刷新失败，请联系管理员')
+                        }, 1000);
                     }
                 }
             });
@@ -403,14 +402,12 @@
                                 type: 'post',
                                 dataType: "json",
                                 success: function (result) {
-                                    if (result.code === 200) {
-                                        layer.msg('修改成功');
+                                    UIConfig.postMsg(result);
+                                    if (result.successed) {
                                         layer.close(index);
                                         setTimeout(function (){
                                             window.location.reload();
-                                        }, 500);
-                                    } else {
-                                        layer.msg('修改失败')
+                                        }, 1000);
                                     }
                                 }
                             });
@@ -456,14 +453,12 @@
                                 type: 'post',
                                 dataType: "json",
                                 success: function (result) {
-                                    if (result.code === 200) {
-                                        layer.msg('新增成功');
+                                    UIConfig.postMsg(result);
+                                    if (result.successed) {
                                         layer.close(index);
                                         setTimeout(function (){
                                             window.location.reload();
-                                        }, 700);
-                                    } else {
-                                        layer.msg('新增失败')
+                                        }, 1000);
                                     }
                                 }
                             });
@@ -492,12 +487,9 @@
                         type: 'post',
                         dataType: "json",
                         success: function (result) {
-                            if (result.code === 200) {
-                                layer.msg('删除成功');
+                            UIConfig.postMsg(result);
+                            if (result.successed) {
                                 layer.close(index);
-
-                            } else {
-                                layer.msg('删除失败')
                             }
                         }
                     });

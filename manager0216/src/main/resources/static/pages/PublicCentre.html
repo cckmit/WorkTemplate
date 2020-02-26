@@ -59,15 +59,12 @@
             url: '../manage/public/submitJson',
             type: 'get',
             success: function (res) {
-                if (res.code === 200) { //上传成功
-                    layer.msg('刷新成功');
-                    layer.close(loading);
+                UIConfig.postMsg(result);
+                layer.close(loading);
+                if (result.successed) {
                     setTimeout(function () {
                         window.location.reload();
                     }, 1000);
-                } else {
-                    layer.msg('刷新失败，请联系管理员');
-                    layer.close(loading);
                 }
             }
         });

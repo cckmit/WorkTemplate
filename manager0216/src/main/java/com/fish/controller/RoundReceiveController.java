@@ -7,6 +7,7 @@ import com.fish.protocols.GetResult;
 import com.fish.protocols.PostResult;
 import com.fish.service.RoundReceiveService;
 import com.fish.utils.BaseConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/manage")
-public class RoundReceiveController
-{
+public class RoundReceiveController {
 
     @Autowired
     RoundReceiveService roundReceiveService;
@@ -26,36 +26,26 @@ public class RoundReceiveController
     //查询展示比赛结果
     @ResponseBody
     @GetMapping(value = "/roundreceive")
-    public GetResult getRoundreceive(GetParameter parameter)
-    {
+    public GetResult getRoundreceive(GetParameter parameter) {
         return roundReceiveService.findAll(parameter);
     }
 
     //新增比赛结果
     @ResponseBody
     @PostMapping(value = "/roundreceive/new")
-    public PostResult insertRoundreceive(@RequestBody RoundReceive productInfo)
-    {
+    public PostResult insertRoundreceive(@RequestBody RoundReceive productInfo) {
         PostResult result = new PostResult();
-
         int count = roundReceiveService.insert(productInfo);
-        if (count == 1)
-        {
-
-            result.setMsg("操作成功");
-            return result;
-        } else
-        {
+        if (count != 1) {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 
     @ResponseBody
     @GetMapping(value = "/roundreceive/result")
-    public GetResult searchRoundReceive(HttpServletRequest request, GetParameter parameter)
-    {
+    public GetResult searchRoundReceive(HttpServletRequest request, GetParameter parameter) {
         JSONObject search = new JSONObject();
         String times = request.getParameter("times");
         String userName = request.getParameter("userName");
@@ -63,56 +53,38 @@ public class RoundReceiveController
         String roundCode = request.getParameter("roundCode");
         String ddGroup = request.getParameter("ddGroup");
 
-        if (times != null && times.length() > 0)
-        {
+        if (!StringUtils.isBlank(times)) {
             search.put("times", times);
         }
-        if (userName != null && userName.length() > 0)
-        {
+        if (!StringUtils.isBlank(userName)) {
             search.put("userName", userName);
         }
-        if (gameCode != null && gameCode.length() > 0)
-        {
+        if (!StringUtils.isBlank(gameCode)) {
             search.put("gameCode", gameCode);
         }
-        if (roundCode != null && roundCode.length() > 0)
-        {
+        if (!StringUtils.isBlank(roundCode)) {
             search.put("roundCode", roundCode);
         }
-        if (ddGroup != null && ddGroup.length() > 0)
-        {
+        if (!StringUtils.isBlank(ddGroup)) {
             search.put("ddGroup", ddGroup);
         }
-//        Enumeration<String> keys = request.getParameterNames();
-//        while (keys.hasMoreElements())
-//        {
-//            String key = keys.nextElement();
-//            search.put(key, request.getParameter(key));
-//        }
-        if (search.size() > 0)
+        if (search.size() > 0) {
             parameter.setSearchData(search.toJSONString());
+        }
         return roundReceiveService.findAll(parameter);
     }
 
     //修改比赛结果
     @ResponseBody
     @PostMapping(value = "/roundreceive/edit")
-    public PostResult modifyRoundreceive(@RequestBody RoundReceive productInfo)
-    {
+    public PostResult modifyRoundreceive(@RequestBody RoundReceive productInfo) {
         PostResult result = new PostResult();
         int count = roundReceiveService.updateByPrimaryKeySelective(productInfo);
-        if (count != 0)
-        {
-
-            result.setMsg("操作成功");
-            return result;
-        } else
-        {
+        if (count == 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
-
+        return result;
     }
 
 }

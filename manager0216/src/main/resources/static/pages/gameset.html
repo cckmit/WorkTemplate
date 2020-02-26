@@ -269,17 +269,9 @@
                                 type: 'post',
                                 dataType: "json",
                                 success: function (result) {
-                                    if (result.code === 200) {
-                                        layer.msg('修改成功');
+                                    UIConfig.postMsg(result);
+                                    if (result.successed) {
                                         layer.close(index);
-                                    } else if (result.code === 408) {
-                                        layer.msg('AppID重复，操作失败')
-                                    } else if (result.code === 409) {
-                                        layer.msg('产品名称重复，操作失败')
-                                    } else if (result.code === 410) {
-                                        layer.msg('游戏代号重复，操作失败')
-                                    } else {
-                                        layer.msg('修改失败')
                                     }
                                 }
                             });
@@ -338,18 +330,9 @@
                                 type: 'post',
                                 dataType: "json",
                                 success: function (result) {
-                                    if (result.code === 200) {
-                                        layer.msg('新增成功');
+                                    UIConfig.postMsg(result);
+                                    if (result.successed) {
                                         layer.close(index);
-
-                                    } else if (result.code === 408) {
-                                        layer.msg('AppID重复，操作失败')
-                                    } else if (result.code === 409) {
-                                        layer.msg('产品名称重复，操作失败')
-                                    } else if (result.code === 410) {
-                                        layer.msg('游戏代号重复，操作失败')
-                                    } else {
-                                        layer.msg('新增失败')
                                     }
                                 }
                             });
@@ -378,12 +361,9 @@
                         type: 'post',
                         dataType: "json",
                         success: function (result) {
-                            if (result.code === 200) {
-                                layer.msg('删除成功');
+                            UIConfig.postMsg(result);
+                            if (result.successed) {
                                 layer.close(index);
-
-                            } else {
-                                layer.msg('删除失败')
                             }
                         }
                     });

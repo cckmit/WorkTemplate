@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value = "/manage")
-public class WxConfigController
-{
+public class WxConfigController {
 
     @Autowired
     WxConfigService wxConfigService;
@@ -25,8 +24,7 @@ public class WxConfigController
     //查询展示所有wxconfig信息
     @ResponseBody
     @GetMapping(value = "/wxconfig")
-    public GetResult getWxConfig(GetParameter parameter)
-    {
+    public GetResult getWxConfig(GetParameter parameter) {
         return wxConfigService.findAll(parameter);
     }
 
@@ -34,49 +32,41 @@ public class WxConfigController
     //获取资源图
     @ResponseBody
     @PostMapping(value = "/wxconfig/flushpicture")
-    public PostResult flushResource(@RequestBody JSONObject parameter)
-    {
+    public PostResult flushResource(@RequestBody JSONObject parameter) {
         PostResult result = new PostResult();
         int i = wxConfigService.flushResource(parameter);
-        if (i != 0)
-        {
+        if (i != 0) {
             String res = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
-
-            result.setMsg("操作成功" + res);
-            return result;
-        } else
-        {
+        } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 
     //新增游戏appid、secret信息
     @ResponseBody
     @PostMapping(value = "/wxconfig/new")
-    public PostResult insertWxConfig(@RequestBody WxConfig productInfo)
-    {
+    public PostResult insertWxConfig(@RequestBody WxConfig productInfo) {
         PostResult result = new PostResult();
         int count = wxConfigService.insert(productInfo);
-        if (count == 1)
-        {
-            String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
-            String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
-
-            result.setMsg("操作成功");
-        } else if (count == 3)
-        {
-            result.setSuccessed(false);
-            result.setMsg("AppId重复，操作失败");
-        } else if (count == 4)
-        {
-            result.setSuccessed(false);
-            result.setMsg("产品名称重复，操作失败");
-        } else
-        {
-            result.setSuccessed(false);
-            result.setMsg("操作失败，请联系管理员");
+        switch (count) {
+            case 1:
+                String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
+                String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
+                break;
+            case 3:
+                result.setSuccessed(false);
+                result.setMsg("AppId重复，操作失败");
+                break;
+            case 4:
+                result.setSuccessed(false);
+                result.setMsg("产品名称重复，操作失败");
+                break;
+            default:
+                result.setSuccessed(false);
+                result.setMsg("操作失败，请联系管理员");
+                break;
         }
         return result;
     }
@@ -84,32 +74,28 @@ public class WxConfigController
     //修改游戏appid、secret信息
     @ResponseBody
     @PostMapping(value = "/wxconfig/edit")
-    public PostResult modifyWxConfig(@RequestBody WxConfig productInfo)
-    {
+    public PostResult modifyWxConfig(@RequestBody WxConfig productInfo) {
         PostResult result = new PostResult();
         int count = wxConfigService.updateByPrimaryKeySelective(productInfo);
-        if (count == 1)
-        {
-            String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
-            String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
-
-            result.setMsg("操作成功");
-            return result;
-        } else if (count == 3)
-        {
-            result.setSuccessed(false);
-            result.setMsg("AppId重复，操作失败");
-            return result;
-        } else if (count == 4)
-        {
-            result.setSuccessed(false);
-            result.setMsg("产品名称重复，操作失败");
-            return result;
-        } else
-        {
-            result.setSuccessed(false);
-            result.setMsg("操作失败，请联系管理员");
-            return result;
+        switch (count) {
+            case 1:
+                String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
+                String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
+                break;
+            case 3:
+                result.setSuccessed(false);
+                result.setMsg("AppId重复，操作失败");
+                break;
+            case 4:
+                result.setSuccessed(false);
+                result.setMsg("产品名称重复，操作失败");
+                break;
+            default:
+                result.setSuccessed(false);
+                result.setMsg("操作失败，请联系管理员");
+                break;
         }
+        return result;
     }
+
 }

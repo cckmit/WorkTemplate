@@ -176,12 +176,13 @@ public class ManageUserService implements BaseService<ManageUser> {
                 manageUser.setPassword(XwhTool.getMD5Encode(jsonObject.getString("userName") + newPassword));
             }
             int update = this.manageUserMapper.updateByUserSelf(manageUser);
-            if (update > 0) {
-                updateResult.setMsg("修改成功！");
-            } else {
+            if (update <= 0) {
                 updateResult.setSuccessed(false);
-                updateResult.setMsg("系统错误，！");
+                updateResult.setMsg("系统错误，请联系管理员！");
             }
+        } else {
+            updateResult.setSuccessed(false);
+            updateResult.setMsg("用户名存在！");
         }
         return updateResult;
     }
