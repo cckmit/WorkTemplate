@@ -6,6 +6,7 @@ import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
 import com.fish.protocols.PostResult;
 import com.fish.service.WxConfigService;
+import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class WxConfigController {
     WxConfigService wxConfigService;
     @Autowired
     BaseConfig baseConfig;
+    @Autowired
+    CacheService cacheService;
 
     //查询展示所有wxconfig信息
     @ResponseBody
@@ -79,6 +82,8 @@ public class WxConfigController {
         int count = wxConfigService.updateByPrimaryKeySelective(productInfo);
         switch (count) {
             case 1:
+                // 刷新缓存，微信可加可不加
+                this.cacheService.updateWxConfig(productInfo);
                 String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
                 String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
                 break;

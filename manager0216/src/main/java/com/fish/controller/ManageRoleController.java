@@ -52,7 +52,6 @@ public class ManageRoleController {
         PostResult result = new PostResult();
         int id = this.manageRoleService.insert(manageRole);
         if (id > 0) {
-
             result.setMsg("操作成功");
         } else {
             result.setSuccessed(false);

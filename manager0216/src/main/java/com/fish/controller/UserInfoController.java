@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/manage")
-public class UserInfoController
-{
+public class UserInfoController {
 
     @Autowired
     UserInfoService userInfoService;
@@ -21,8 +20,7 @@ public class UserInfoController
     //展示用户信息
     @ResponseBody
     @GetMapping(value = "/userinfo")
-    public GetResult getUserInfo(GetParameter parameter)
-    {
+    public GetResult getUserInfo(GetParameter parameter) {
         return userInfoService.findAll(parameter);
     }
 

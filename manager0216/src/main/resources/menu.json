@@ -1,4 +1,4 @@
-[
+﻿[
   {
     "name": "产品配置",
     "children": [
@@ -137,6 +137,10 @@
       {
         "name": "买量支出导入",
         "url": "fc_buypay"
+      },
+      {
+	"name": "微信群管理",
+        "url": "wxGroupManager"
       }
     ]
   },
