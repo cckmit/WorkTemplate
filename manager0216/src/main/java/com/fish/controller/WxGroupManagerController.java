@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Controller
 @RequestMapping(value = "/manage")
 public class WxGroupManagerController {
@@ -33,6 +36,11 @@ public class WxGroupManagerController {
     public PostResult modifyWxConfig(@RequestBody WxGroupManager productInfo) {
         PostResult result = new PostResult();
 
+        if (wxGroupManagerService.isUpdateOperateTime(productInfo)){
+            SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            String updateRqCodeTime = format.format(new Date());
+            productInfo.setUpdateQrCodeTime(updateRqCodeTime);
+        }
        int count = wxGroupManagerService.updateWxGroupManager(productInfo);
        if (count == 0){
            result.setSuccessed(false);
@@ -40,8 +48,6 @@ public class WxGroupManagerController {
        }else {
            wxGroupManagerService.updateConfigConfirm(productInfo);
        }
-
-
         return result;
     }
 }

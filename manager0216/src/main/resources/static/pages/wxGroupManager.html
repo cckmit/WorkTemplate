@@ -145,7 +145,7 @@
                 {field: 'describe', width: 120, title: '微信群备注', sort: true},
                 {field: 'ddYes', width: 120, title: '微信群二维码地址', sort: true},
                 {field: 'ddNo', width: 120, title: '客服二维码', sort: true},
-                {field: 'updateTime', width: 180, title: '最新上传时间', sort: true},
+                {field: 'updateQrCodeTime', width: 180, title: '最新上传时间', sort: true},
                 {field: 'ddStatus', width: 120, title: '群二维码状态', sort: true,
                     templet: (d) => {
                         if (d.ddStatus == 1) {
@@ -253,7 +253,7 @@
         </div>
     </div>
 
-    <div class="layui-form-item layui-hide">
+    <div class="layui-form-item ">
         <label class="layui-form-label">群微信名 </label>
         <div class="layui-input-inline">
             <input type="text" id="wxGroupName" name="wxGroupName" lay-verify="required" autocomplete="off"

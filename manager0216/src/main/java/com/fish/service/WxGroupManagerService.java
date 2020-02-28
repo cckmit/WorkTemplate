@@ -17,12 +17,12 @@ public class WxGroupManagerService implements BaseService<WxGroupManager>{
     public List<WxGroupManager> selectAll(GetParameter parameter) {
         //long current = System.currentTimeMillis();
         List<WxGroupManager> recharges;
-        //JSONObject search = getSearchData(parameter.getSearchData());
-        String sql = "select id AS id, ddId AS ddId, `describe` AS `describe`,  ddStatus AS ddStatus, ddYes AS ddYes" +
-                ", ddNo AS ddNo,  updateTime AS updateTime, cdId AS cdId," +
-                "  wxGroupName AS wxGroupName, wxGroupManager AS wxGroupManager, wxNumber AS wxNumber, createTime  AS createTime" +
+        String sql = "select id AS id, ddId AS ddId, `describe` AS `describe`,  ddStatus AS ddStatus, ddYes AS ddYes," +
+                " ddNo AS ddNo,  updateTime AS updateTime, cdId AS cdId," +
+                " wxGroupName AS wxGroupName, wxGroupManager AS wxGroupManager, wxNumber AS wxNumber, " +
+                " createTime  AS createTime, updateQrCodeTime AS updateQrCodeTime" +
                 " FROM config_confirm, wx_group_manager " +
-                "WHERE cdId = ddId";
+                " WHERE cdId = ddId";
         recharges = wxGroupManagerMapper.selectAllConfigSQL(sql);
         return recharges;
     }
@@ -37,9 +37,24 @@ public class WxGroupManagerService implements BaseService<WxGroupManager>{
         return wxGroupManagerMapper.updateConfigConfirm(wxGroupManager);
     }
 
-    public int updateByPrimaryKeySelective(WxGroupManager wxGroupManager){
-        return wxGroupManagerMapper.updateByPrimaryKeySelective(wxGroupManager);
+    /**
+     *  判断是否更新上传时间
+     * @param wxGroupManager
+     * @return
+     */
+    public boolean isUpdateOperateTime(WxGroupManager wxGroupManager){
+        boolean isUpdate = false;
+        WxGroupManager wxGroupManager1 =  wxGroupManagerMapper.selectQrCodeByPrimaryKey(wxGroupManager);
+        if(!wxGroupManager.getDdYes().equals(wxGroupManager1.getDdYes())
+                || !wxGroupManager.getDdNo().equals(wxGroupManager1.getDdNo())){
+            isUpdate = true;
+        }
+        return isUpdate;
     }
+
+   /* public int updateByPrimaryKeySelective(WxGroupManager wxGroupManager){
+        return wxGroupManagerMapper.updateByPrimaryKeySelective(wxGroupManager);
+    }*/
 
     @Override
     public void setDefaultSort(GetParameter parameter) {

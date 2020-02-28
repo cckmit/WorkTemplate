@@ -55,10 +55,15 @@ public class WxGroupManager {
      */
     private String ddNo;
     /**
-     * 更新时间
+     * 更新表的时间
      */
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;
+
+    /**
+     * 更新二维码时间
+     */
+    private String updateQrCodeTime;
 
     public String getId() {
         return id;
@@ -156,6 +161,11 @@ public class WxGroupManager {
         this.updateTime = updateTime;
     }
 
+    public String getUpdateQrCodeTime() {
+        return updateQrCodeTime;
+    }
 
-
+    public void setUpdateQrCodeTime(String updateQrCodeTime) {
+        this.updateQrCodeTime = updateQrCodeTime;
+    }
 }

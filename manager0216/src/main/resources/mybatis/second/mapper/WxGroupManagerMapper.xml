@@ -20,13 +20,16 @@
         select
          ddId, `describe`, ddStatus, ddYes, ddNo, updateTime
          cdId, wxGroupName, wxGroupManager, wxNumber, createTime
-        from  configConfirm, wxGroupManager
+        from  config_Confirm, wx_group_manager
     </select>
 
     <select id="selectAllConfigSQL" resultType="com.fish.dao.second.model.WxGroupManager">
         ${_parameter}
     </select>
 
+    <select id="selectQrCodeByPrimaryKey" resultType="com.fish.dao.second.model.WxGroupManager">
+        select ddYes, ddNo from config_Confirm where ddId = #{ddId,jdbcType=VARCHAR}
+    </select>
     <update id="updateWxGroupManager" parameterType="com.fish.dao.second.model.WxGroupManager">
         update wx_group_manager
         <set>
@@ -41,6 +44,9 @@
             </if>
             <if test="createTime != null">
                 createTime = #{createTime,jdbcType=VARCHAR},
+            </if>
+            <if test="updateQrCodeTime != null">
+                updateQrCodeTime = #{updateQrCodeTime,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id,jdbcType=VARCHAR}
