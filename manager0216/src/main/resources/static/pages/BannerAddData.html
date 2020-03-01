@@ -22,13 +22,13 @@
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
-                            <label class="layui-form-label">游戏代号</label>
+                            <label class="layui-form-label">日期</label>
                             <div class="layui-input-inline" style="width: 6rem;">
                                 <input type="text" class="layui-input" id="gameId" name="gameId">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">游戏名称</label>
+                            <label class="layui-form-label">位置</label>
                             <div class="layui-input-inline" style="width: 6rem;">
                                 <input type="text" class="layui-input" id="gameName" name="gameName">
                             </div>
@@ -39,17 +39,12 @@
                             </button>
                         </div>
 
-                        <div class="layui-btn-group flushPictures" style="float: right">
-                            <button type="button" class="layui-btn" data-type="flushPicture">刷新缩略图</button>
-                        </div>
                     </form>
                 </div>
-
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
                 </div>
-
             </div>
         </div>
     </div>
@@ -58,10 +53,13 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+<!--        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>-->
+<!--        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>-->
+<!--        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>-->
     </div>
+</script>
+<script type="text/html" id="barDetail">
+    <a class="layui-btn  layui-btn-xs" lay-event="detail">查看</a>
 </script>
 <script>
     var operatorurl = '../manage/play';
@@ -76,9 +74,16 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'ddcode',width:'20%', title: '游戏ID', sort: true},
-                {field: 'ddname', width:'20%', title: '游戏名称', sort: true},
-                {field: 'ddshareres', width:'56%', title: '分享JSON', sort: true}
+                {field: '',width:'120', title: '日期', sort: true},
+                {field: '', width:'150', title: '广告位名称', sort: true},
+                {field: '', width:'150', title: '位置', sort: true},
+                {field: '',width:'120', title: '展示次数', sort: true},
+                {field: '', width:'120', title: '点击次数', sort: true},
+                {field: '',width:'120', title: '点击人数', sort: true},
+                {field: '', width:'120', title: '跳转人数', sort: true},
+                {field: '',width:'120', title: '跳转次数', sort: true},
+                {field: '', width:'120', title: '点击率', sort: true},
+                {fixed: 'right', width:'80', align:'center', toolbar: '#barDetail'}
             ]],
             page: true,
             autoSort:false,
@@ -86,44 +91,14 @@
             limit: 20,
             defaultToolbar: ['filter', 'exports']
         });
-        var $ = layui.$, active = {
-            flushPicture: function () { //获取选中数据
-                var checkStatus = table.checkStatus('table-page');
-                var l = checkStatus.data.length;
-                data = checkStatus.data;
-                if (l == 0) {
-                    layer.msg('请选择一行');
-                } else {
-                    var arr =[];
-                    for(var i in data){
-                        arr.push(data[i].ddcode);
-                    }
-                    console.log("gameArry :" +  arr)
-                    var obj ={
-                        "gameList": arr
-                    };
-                    $.ajax({
-                        url: '../manage/games/flushgames',
-                        data: JSON.stringify(obj),
-                        contentType: "application/json; charset=utf-8",
-                        type: 'post',
-                        dataType: "json",
-                        success: function (result) {
-                            UIConfig.postMsg(result);
-                            if (result.successed) {
-                                setTimeout(function () {
-                                    window.location.reload();
-                                }, 1000);
-                            }
-                        }
-                    });
-                }
+        //监听工具条
+        table.on('tool(table-page)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                layer.msg('ID：'+ data.id + ' 的查看操作');
             }
-        };
-        $('.flushPictures .layui-btn').on('click', function () {
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
         });
+
         laydate.render({
             elem: '#times',
             range: true

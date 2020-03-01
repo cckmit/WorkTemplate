@@ -82,13 +82,10 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
 
     @Override
     public List<DataCollect> selectAll(GetParameter parameter) {
-        if (dataCollects == null || dataCollects.size() == 0)
-        {
+        if (dataCollects == null || dataCollects.size() == 0) {
             flushAll();
-        } else
-        {
-            for (DataCollect dataCollect : dataCollects)
-            {
+        } else {
+            for (DataCollect dataCollect : dataCollects) {
                 Date wxDate = dataCollect.getWxDate();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String format = sdf.format(wxDate);
@@ -106,12 +103,10 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
      * @return 时间
      */
     private Date parseDate(String str) {
-        try
-        {
+        try {
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             return format.parse(str);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             LOGGER.error(Log4j.getExceptionInfo(e));
         }
         return new Date();
@@ -119,8 +114,9 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setSort("wxDate");
         parameter.setOrder("desc");
     }
@@ -139,117 +135,87 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<DataCollect> lists = new ArrayList<>();
 
-        if (type == null || type.equals(""))
-        {
-            for (DataCollect dataCollect : Objects.requireNonNull(dataCollects))
-            {
+        if (type == null || type.equals("")) {
+            for (DataCollect dataCollect : Objects.requireNonNull(dataCollects)) {
                 Date wxDate = dataCollect.getWxDate();
                 String format = sdf.format(wxDate);
-                if (StringUtils.isNotEmpty(beginDate))
-                {
-                    if (StringUtils.isNotEmpty(endDate))
-                    {
+                if (StringUtils.isNotEmpty(beginDate)) {
+                    if (StringUtils.isNotEmpty(endDate)) {
                         int start = format.compareTo(beginDate);
                         int end = format.compareTo(endDate);
-                        if (start >= 0 && end <= 0)
-                        {
+                        if (start >= 0 && end <= 0) {
                             lists.add(dataCollect);
                         }
-                    } else
-                    {
+                    } else {
                         int start = format.compareTo(beginDate);
-                        if (start >= 0)
-                        {
+                        if (start >= 0) {
                             lists.add(dataCollect);
                         }
                     }
 
-                } else
-                {
-                    if (StringUtils.isNotEmpty(endDate))
-                    {
+                } else {
+                    if (StringUtils.isNotEmpty(endDate)) {
                         int end = format.compareTo(endDate);
-                        if (end <= 0)
-                        {
+                        if (end <= 0) {
                             lists.add(dataCollect);
                         }
-                    } else
-                    {
+                    } else {
+                        lists.add(dataCollect);
+                    }
+                }
+            }
+        } else if (type.equals("0")) {
+            for (DataCollect dataCollect : Objects.requireNonNull(gamesCollects)) {
+                Date wxDate = dataCollect.getWxDate();
+                String format = sdf.format(wxDate);
+                if (StringUtils.isNotEmpty(beginDate)) {
+                    if (StringUtils.isNotEmpty(endDate)) {
+                        int start = format.compareTo(beginDate);
+                        int end = format.compareTo(endDate);
+                        if (start >= 0 && end <= 0) {
+                            lists.add(dataCollect);
+                        }
+                    } else {
+                        int start = format.compareTo(beginDate);
+                        if (start >= 0) {
+                            lists.add(dataCollect);
+                        }
+                    }
+
+                } else {
+                    if (StringUtils.isNotEmpty(endDate)) {
+                        int end = format.compareTo(endDate);
+                        if (end <= 0) {
+                            lists.add(dataCollect);
+                        }
+                    } else {
                         lists.add(dataCollect);
                     }
                 }
             }
 
-        } else if (type.equals("0"))
-        {
-            for (DataCollect dataCollect : Objects.requireNonNull(gamesCollects))
-            {
-                Date wxDate = dataCollect.getWxDate();
-                String format = sdf.format(wxDate);
-                if (StringUtils.isNotEmpty(beginDate))
-                {
-                    if (StringUtils.isNotEmpty(endDate))
-                    {
-                        int start = format.compareTo(beginDate);
-                        int end = format.compareTo(endDate);
-                        if (start >= 0 && end <= 0)
-                        {
-                            lists.add(dataCollect);
-                        }
-                    } else
-                    {
-                        int start = format.compareTo(beginDate);
-                        if (start >= 0)
-                        {
-                            lists.add(dataCollect);
-                        }
-                    }
-
-                } else
-                {
-                    if (StringUtils.isNotEmpty(endDate))
-                    {
-                        int end = format.compareTo(endDate);
-                        if (end <= 0)
-                        {
-                            lists.add(dataCollect);
-                        }
-                    } else
-                    {
-                        lists.add(dataCollect);
-                    }
-                }
-            }
-
-        } else if (type.equals("1"))
-        {
+        } else if (type.equals("1")) {
             programCollects = new ArrayList<>();
             List<String> dates = productDataMapper.allDate();
             //遍历program数据日期
-            for (String date : dates)
-            {
+            for (String date : dates) {
                 DataCollect dataCollect = new DataCollect();
                 List<WxConfig> wxConfigs = wxConfigMapper.selectAllPrograms();
                 productCountp = wxConfigs.size();
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 Date dateTime = null;
-                try
-                {
+                try {
                     dateTime = simpleDateFormat.parse(date);
-                } catch (ParseException e)
-                {
+                } catch (ParseException e) {
                     e.printStackTrace();
                 }
                 //遍历wx_config中AppId
-                for (WxConfig wxConfig : wxConfigs)
-                {
+                for (WxConfig wxConfig : wxConfigs) {
                     String ddAppId = wxConfig.getDdappid();
                     ProductData productData = productDataMapper.selectByPrimaryKey(ddAppId, dateTime);
                     BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(date, ddAppId);
-                    if (productData != null)
-                    {
-                        if (buyPay != null)
-                        {
+                    if (productData != null) {
+                        if (buyPay != null) {
                             BigDecimal buyCost = buyPay.getBuyCost();
                             buyCostCountp = buyCostCountp.add(buyCost);
                         }
@@ -258,30 +224,25 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                         Integer wxActive = productData.getWxActive();
                         activeCountp += wxActive;
                         BigDecimal adRevenue = productData.getAdRevenue();
-                        if (adRevenue != null)
-                        {
+                        if (adRevenue != null) {
                             adRevenueCountp = adRevenueCountp.add(adRevenue);
                         }
                         BigDecimal wxBannerIncome = productData.getWxBannerIncome();
-                        if (wxBannerIncome != null)
-                        {
+                        if (wxBannerIncome != null) {
                             bannerIncomeCountp = bannerIncomeCountp.add(wxBannerIncome);
                         }
                         BigDecimal wxVideoIncome = productData.getWxVideoIncome();
-                        if (wxVideoIncome != null)
-                        {
+                        if (wxVideoIncome != null) {
                             videoIncomeCountp = videoIncomeCountp.add(wxVideoIncome);
 
                         }
                         Integer wxShareUser = productData.getWxShareUser();
-                        if (wxShareUser != null)
-                        {
+                        if (wxShareUser != null) {
                             shareUserCountp += wxShareUser;
                         }
 
                         Integer wxShareCount = productData.getWxShareCount();
-                        if (wxShareCount != null)
-                        {
+                        if (wxShareCount != null) {
                             shareCountp += wxShareCount;
                         }
 
@@ -298,18 +259,15 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                 dataCollect.setShareUserCount((shareUserCountp == null) ? (0) : shareUserCountp);
                 dataCollect.setShareCount((shareCountp == null) ? (0) : shareCountp);
                 dataCollect.setRevenueCount(new BigDecimal(0));
-                if (activeCountp != 0)
-                {
+                if (activeCountp != 0) {
                     BigDecimal rate = new BigDecimal(shareUserCountp * 10000 / activeCountp);
                     dataCollect.setShareRateCount(rate.divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
                 }
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 Date localDate = null;
-                try
-                {
+                try {
                     localDate = format.parse(date);
-                } catch (ParseException e)
-                {
+                } catch (ParseException e) {
                     e.printStackTrace();
                 }
                 dataCollect.setWxDate(localDate);
@@ -327,42 +285,31 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                 shareCountp = 0;
                 shareRateCountp = new BigDecimal(0);
             }
-            if (programCollects != null)
-            {
-                for (DataCollect dataCollect : Objects.requireNonNull(programCollects))
-                {
+            if (programCollects != null) {
+                for (DataCollect dataCollect : Objects.requireNonNull(programCollects)) {
                     Date wxDate = dataCollect.getWxDate();
                     String format = sdf.format(wxDate);
-                    if (StringUtils.isNotEmpty(beginDate))
-                    {
-                        if (StringUtils.isNotEmpty(endDate))
-                        {
+                    if (StringUtils.isNotEmpty(beginDate)) {
+                        if (StringUtils.isNotEmpty(endDate)) {
                             int start = format.compareTo(beginDate);
                             int end = format.compareTo(endDate);
-                            if (start >= 0 && end <= 0)
-                            {
+                            if (start >= 0 && end <= 0) {
                                 lists.add(dataCollect);
                             }
-                        } else
-                        {
+                        } else {
                             int start = format.compareTo(beginDate);
-                            if (start >= 0)
-                            {
+                            if (start >= 0) {
                                 lists.add(dataCollect);
                             }
                         }
 
-                    } else
-                    {
-                        if (StringUtils.isNotEmpty(endDate))
-                        {
+                    } else {
+                        if (StringUtils.isNotEmpty(endDate)) {
                             int end = format.compareTo(endDate);
-                            if (end <= 0)
-                            {
+                            if (end <= 0) {
                                 lists.add(dataCollect);
                             }
-                        } else
-                        {
+                        } else {
                             lists.add(dataCollect);
                         }
                     }
@@ -381,21 +328,18 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
 
         List<String> dates = minitjWxMapper.dateCash();
         //遍历fc数据日期
-        for (String date : dates)
-        {
+        for (String date : dates) {
             DataCollect dataCollect = new DataCollect();
             List<WxConfig> wxConfigs = wxConfigMapper.selectAll();
             productCount = wxConfigs.size();
             //遍历wx_config中AppId
-            for (WxConfig wxConfig : wxConfigs)
-            {
+            for (WxConfig wxConfig : wxConfigs) {
                 String ddAppId = wxConfig.getDdappid();
                 MinitjWx minitjWx = minitjWxMapper.selectByPrimaryKey(ddAppId, date);
                 BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(date, ddAppId);
 
                 ProductData programData = productDataMapper.selectByAppid(ddAppId, date);
-                if (programData != null)
-                {
+                if (programData != null) {
                     Integer wxActive = programData.getWxActive();
                     activeCount += wxActive;
                     Integer programShareUser = programData.getWxShareUser();
@@ -406,20 +350,16 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                     Integer wxNew = programData.getWxNew();
                     newCount += wxNew;
                     BigDecimal wxBannerIncome = programData.getWxBannerIncome();
-                    if (wxBannerIncome != null)
-                    {
+                    if (wxBannerIncome != null) {
                         bannerIncomeCount = bannerIncomeCount.add(wxBannerIncome);
                     }
                     BigDecimal wxVideoIncome = programData.getWxVideoIncome();
-                    if (wxVideoIncome != null)
-                    {
+                    if (wxVideoIncome != null) {
                         videoIncomeCount = videoIncomeCount.add(wxVideoIncome);
                     }
                 }
-                if (minitjWx != null)
-                {
-                    if (buyPay != null)
-                    {
+                if (minitjWx != null) {
+                    if (buyPay != null) {
                         BigDecimal buyCost = buyPay.getBuyCost();
                         buyCostCount = buyCostCount.add(buyCost);
                     }
@@ -452,18 +392,15 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
             dataCollect.setShareUserCount(shareUserCount);
             dataCollect.setShareCount(shareCount);
 
-            if (activeCount != 0)
-            {
+            if (activeCount != 0) {
                 BigDecimal rate = new BigDecimal(shareUserCount * 10000 / activeCount);
                 dataCollect.setShareRateCount(rate.divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
             }
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date localDate = null;
-            try
-            {
+            try {
                 localDate = format.parse(date);
-            } catch (ParseException e)
-            {
+            } catch (ParseException e) {
                 e.printStackTrace();
             }
             dataCollect.setWxDate(localDate);
@@ -485,21 +422,17 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
         gamesCollects = new ArrayList<>();
 
         //遍历fc数据日期
-        for (String date : dates)
-        {
+        for (String date : dates) {
             DataCollect dataCollectG = new DataCollect();
             List<WxConfig> wxConfigsG = wxConfigMapper.selectAllGames();
             productCountg = wxConfigsG.size();
             //遍历wx_config中AppId
-            for (WxConfig wxConfig : wxConfigsG)
-            {
+            for (WxConfig wxConfig : wxConfigsG) {
                 String ddAppId = wxConfig.getDdappid();
                 MinitjWx minitjWx = minitjWxMapper.selectByPrimaryKey(ddAppId, date);
                 BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(date, ddAppId);
-                if (minitjWx != null)
-                {
-                    if (buyPay != null)
-                    {
+                if (minitjWx != null) {
+                    if (buyPay != null) {
                         BigDecimal buyCost = buyPay.getBuyCost();
                         buyCostCountg = buyCostCount.add(buyCost);
                     }
@@ -531,18 +464,15 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
             dataCollectG.setShareUserCount(shareUserCountg);
             dataCollectG.setShareCount(shareCountg);
 
-            if (activeCountg != 0)
-            {
+            if (activeCountg != 0) {
                 BigDecimal rate = new BigDecimal(shareUserCountg * 10000 / activeCountg);
                 dataCollectG.setShareRateCount(rate.divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
             }
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             Date localDate = null;
-            try
-            {
+            try {
                 localDate = format.parse(date);
-            } catch (ParseException e)
-            {
+            } catch (ParseException e) {
                 e.printStackTrace();
             }
             dataCollectG.setWxDate(localDate);
@@ -562,11 +492,9 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
             shareRateCountg = new BigDecimal(0);
         }
 
-        if (dataCollects.size() > 0)
-        {
+        if (dataCollects.size() > 0) {
             return 1;
-        } else
-        {
+        } else {
             return 0;
         }
     }

@@ -36,7 +36,6 @@ public class WxAddShowService implements BaseService<WxConfig> {
     CacheService cacheService;
 
     @Override
-    //查询所有WxConfig内容
     public List<WxConfig> selectAll(GetParameter parameter) {
         String resPath = baseConfig.getResHost();
         List<WxConfig> wxConfigs = cacheService.getAllWxConfig();
@@ -45,8 +44,9 @@ public class WxAddShowService implements BaseService<WxConfig> {
             String ddAppSkipRes = config.getDdappskipres();
             try
             {
-                if (!JSONObject.isValidObject(ddAppSkipRes))
+                if (!JSONObject.isValidObject(ddAppSkipRes)) {
                     continue;
+                }
                 JSONObject data = JSONObject.parseObject(ddAppSkipRes);
                 if (data.containsKey("list"))
                 {
@@ -56,8 +56,9 @@ public class WxAddShowService implements BaseService<WxConfig> {
                         for (int i = 0; i < list.size(); i++)
                         {
                             JSONObject object = list.getJSONObject(i);
-                            if (object.containsKey("state") && !object.getBoolean("state"))
+                            if (object.containsKey("state") && !object.getBoolean("state")) {
                                 continue;
+                            }
                             if (object.containsKey("local") && object.getBoolean("local"))
                             {
                                 config.setLocal("本地");
@@ -72,9 +73,7 @@ public class WxAddShowService implements BaseService<WxConfig> {
                                     field.setAccessible(true);
                                     field.set(config, icon);
                                 }
-
                             }
-
                         }
                     }
                 }
@@ -86,8 +85,9 @@ public class WxAddShowService implements BaseService<WxConfig> {
                         for (int i = 0; i < list.size(); i++)
                         {
                             JSONObject object = list.getJSONObject(i);
-                            if (object.containsKey("state") && !object.getBoolean("state"))
+                            if (object.containsKey("state") && !object.getBoolean("state")) {
                                 continue;
+                            }
                             if (object.containsKey("local") && object.getBoolean("local"))
                             {
                                 config.setLocal("本地");
@@ -103,7 +103,6 @@ public class WxAddShowService implements BaseService<WxConfig> {
                                     field.set(config, url);
                                 }
                             }
-
                         }
                     }
                 }
@@ -116,13 +115,12 @@ public class WxAddShowService implements BaseService<WxConfig> {
         return wxConfigs;
     }
 
-    //新增WxConfig内容
     public int insert(WxConfig record) {
         int insertAppConfig;
         appConfig.setDdappid(record.getDdappid());
         appConfig.setDdname(record.getProductName());
         appConfig.setDdprogram(record.getProgramType());
-        appConfig.setDdtime(new Timestamp(new Date().getTime()));
+        appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
         try
         {
             insertAppConfig = appConfigMapper.insert(appConfig);
@@ -133,7 +131,7 @@ public class WxAddShowService implements BaseService<WxConfig> {
             //新增判断AppId重复
             insertAppConfig = 3;
         }
-        record.setCreateTime(new Timestamp(new Date().getTime()));
+        record.setCreateTime(new Timestamp(System.currentTimeMillis()));
         String ddAppSkipRes = record.getDdappskipres();
         if (ddAppSkipRes != null)
         {
@@ -154,13 +152,17 @@ public class WxAddShowService implements BaseService<WxConfig> {
     }
 
 
-    //更新产品信息
+    /**
+     *  更新广告位配置
+     * @param record
+     * @return
+     */
     public int updateByPrimaryKeySelective(WxConfig record) {
         int insert;
         appConfig.setDdappid(record.getDdappid());
         appConfig.setDdname(record.getProductName());
         appConfig.setDdprogram(record.getProgramType());
-        appConfig.setDdtime(new Timestamp(new Date().getTime()));
+        appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
         try
         {
             insert = appConfigMapper.updateByPrimaryKeySelective(appConfig);
@@ -180,8 +182,9 @@ public class WxAddShowService implements BaseService<WxConfig> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("ddappid");
     }

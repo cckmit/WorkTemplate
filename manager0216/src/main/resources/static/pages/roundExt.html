@@ -158,6 +158,23 @@
             format: 'yyyy/MM/dd HH:mm:ss'
         });
 
+        $('#front-submit').on('click', function () {
+            let content = $('#ddreward').val();
+            console.log("content:" + content)
+            if (typeof content == 'string') {
+                try {
+                    var obj=JSON.parse(content);
+                    if(typeof obj != 'object' && !obj ){
+                        alert("请检查赛场奖励JSON格式")
+                        return false;
+                    }
+                }catch(e) {
+                    alert("请检查赛场奖励JSON格式")
+                    return false;
+                }
+            }
+        });
+
     })
 
 </script>
@@ -223,7 +240,7 @@
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">赛场奖励</label>
-        <textarea name="ddreward" required lay-verify="required" placeholder="请按照格式输入"
+        <textarea id="ddreward" name="ddreward" required lay-verify="required" placeholder="请按照格式输入"
                   class="layui-textarea"></textarea>
         <span>格式:["名次#名次#类型#数值"]</span><br>
         <span>["1#1#rmb#30","2#2#rmb#10"]</span>

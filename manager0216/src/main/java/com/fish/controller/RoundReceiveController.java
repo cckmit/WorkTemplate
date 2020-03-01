@@ -14,6 +14,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 现金赛制
+ * RoundReceiveController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping(value = "/manage")
 public class RoundReceiveController {

@@ -79,8 +79,9 @@ public class WxConfigService implements BaseService<WxConfig> {
                         {
                             JSONObject jsonObject = JSONObject.parseObject(shareList.toString());
                             String icon = concatUrl(url, jsonObject.getString("url"), config.getDdappid(), "share");
-                            if (icon != null)
+                            if (icon != null) {
                                 config.setJumpDirect(icon);
+                            }
                         }
                     }
                 }
@@ -98,7 +99,7 @@ public class WxConfigService implements BaseService<WxConfig> {
         appConfig.setDdappid(record.getDdappid());
         appConfig.setDdname(record.getProductName());
         appConfig.setDdprogram(record.getProgramType());
-        appConfig.setDdtime(new Timestamp(new Date().getTime()));
+        appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
         try
         {
             insertAppConfig = appConfigMapper.insert(appConfig);
@@ -109,7 +110,7 @@ public class WxConfigService implements BaseService<WxConfig> {
             //新增判断AppId重复
             insertAppConfig = 3;
         }
-        record.setCreateTime(new Timestamp(new Date().getTime()));
+        record.setCreateTime(new Timestamp(System.currentTimeMillis()));
         String ddAppSkipRes = record.getDdappskipres();
         if (ddAppSkipRes != null)
         {
@@ -137,7 +138,7 @@ public class WxConfigService implements BaseService<WxConfig> {
         appConfig.setDdappid(record.getDdappid());
         appConfig.setDdname(record.getProductName());
         appConfig.setDdprogram(record.getProgramType());
-        appConfig.setDdtime(new Timestamp(new Date().getTime()));
+        appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
         try
         {
             insert = appConfigMapper.updateByPrimaryKeySelective(appConfig);
@@ -157,8 +158,9 @@ public class WxConfigService implements BaseService<WxConfig> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("ddappid");
     }

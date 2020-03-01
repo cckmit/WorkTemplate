@@ -95,5 +95,7 @@ config:
   flushCache: https://logic.qinyougames.com/persieService/flush/logic
   flushPublicCache: https://sgame.qinyougames.com/public/flush/logic
   flushOnline: http://129.211.119.249:10085/persieDeamon/query/online
+  uploadJson: {"share":"/data/res.qinyougames.com/persieRes/","public":"/data/tomcat8/apache-public/webapps/public/mui_wxoa_debug/","public-config":"/data/tomcat8/apache-public/webapps/public/mui_wxoa_debug/","qr":"/data/res.qinyougames.com/images/qrcode/","game":"/data/res.qinyougames.com/images/","host-share":"https://res.qinyougames.com/persieRes/",
+               "host-public":"https://res.qinyougames.com/public/mui_wxoa_debug/","host-qr":"https://res.qinyougames.com/images/qrcode/"}
   wxQueryUrl: https://api.mch.weixin.qq.com/pay/orderquery
-  supplementUrl: http://192.168.1.55:8080/persieService/pay/callback
+  supplementUrl: https://logic.qinyougames.com/persieService/pay/callback

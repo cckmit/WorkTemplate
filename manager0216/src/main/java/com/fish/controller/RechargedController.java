@@ -7,7 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+/**
+ * 提现审核
+ * RechargedController
+ * @author
+ * @date
+ */
 @RestController
 @RequestMapping(value = "/manage")
 public class RechargedController

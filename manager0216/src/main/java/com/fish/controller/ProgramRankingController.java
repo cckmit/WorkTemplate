@@ -19,10 +19,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 充值订单
+ * OdersController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping(value = "/manage")
-public class ProgramRankingController
-{
+public class ProgramRankingController {
 
     @Autowired
     ProgramRankingService programRankingService;
@@ -32,14 +38,12 @@ public class ProgramRankingController
     //展示小程序比赛结果
     @ResponseBody
     @GetMapping(value = "/programranking")
-    public GetResult getGroupRanking(GetParameter parameter)
-    {
+    public GetResult getGroupRanking(GetParameter parameter) {
         return programRankingService.findAll(parameter);
     }
 
     @GetMapping(value = "/programranking/result")
-    public void getProgramRankingResult(ShowRanking ranking, HttpServletResponse response)
-    {
+    public void getProgramRankingResult(ShowRanking ranking, HttpServletResponse response) {
         List<ExportResult> rankings = programRankingService.selectResult(ranking);
         String roundName = ranking.getRoundName();
         Date matchdate = ranking.getEndTime();

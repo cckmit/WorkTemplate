@@ -17,6 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 
+/**
+ * 买量支出
+ * Fc_BuyPayController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping(value = "/manage")
 public class Fc_BuyPayController {

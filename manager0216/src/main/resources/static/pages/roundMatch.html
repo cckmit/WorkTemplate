@@ -86,30 +86,33 @@
         <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
     </div>
 </script>
-<script type="text/html" id="imgTpl">
+
+<script type="text/html" id="img0">
+    {{#  if(d.jumpDirect != null){ }}
     <a href="{{ d.jumpDirect }}" target="_blank " title="点击查看">
-        <img lay-src="{{ d.jumpDirect }}" onerror="this.style.display='none'"></a>
+        <img src="{{ d.jumpDirect }}"></a>
+    {{#  } else { }}
+    {{""}}
+    {{#  } }}
 </script>
-<script type="text/javascript">
-    function flushGamePicture() {
-        var $ = layui.jquery;
-        layer.confirm('确认刷新吗', function () {
-            $.ajax({
-                url: '../manage/games/flushgames',
-                type: 'get',
-                success: function (res) {
-                    UIConfig.postMsg(result);
-                    if (result.successed) {
-                        layer.close(index);
-                        setTimeout(function (){
-                            window.location.reload();
-                        }, 1000);
-                    }
-                }
-            });
-        });
-    }
+
+<script type="text/html" id="img1">
+    {{#  if(d.jumpDirect != null){ }}
+    <a href="{{ d.gamePicture0 }}" target="_blank " title="点击查看">
+        <img src="{{ d.gamePicture0 }}" ></a>
+    {{#  } else { }}
+    {{""}}
+    {{#  } }}
 </script>
+<script type="text/html" id="img2">
+    {{#  if(d.jumpDirect != null){ }}
+    <a href="{{ d.gamePicture1 }}" target="_blank " title="点击查看">
+        <img src="{{ d.gamePicture1 }}" ></a>
+    {{#  } else { }}
+    {{""}}
+    {{#  } }}
+</script>
+
 <script>
     var operatorurl = '../manage/roundmatch';
     layui.use(['table', 'laydate', 'form', 'layer','flow'], function () {
@@ -524,7 +527,18 @@
                 {field: 'ddtime', width: 160, title: '配置日期', sort: true},
                 {
                     field: 'jumpDirect', width: 120, title: '资源图', sort: true,
-                    templet: '#imgTpl'
+                    templet: '#img0'
+                },
+                {
+                    field: 'gamePicture0', width: 160, title: '现金赛图片1', sort: true,
+                    templet: '#img1'
+                },
+                {
+                    field: 'gamePicture1', width: 160, title: '现金赛图片2', sort: true,
+                    templet: '#img2'
+                },
+                {
+                    field: 'ddmatchversion', width: 160, title: '产品匹配版本号', sort: true
                 }
             ]],
             page: true,
@@ -574,7 +588,7 @@
 </script>
 
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;">
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;width: 400px;height: 450px;">
 
     <div class="layui-form-item layui-hide">
         <div class="layui-input-inline ">
@@ -625,6 +639,7 @@
         </div>
     </div>
 
+
     <div class="layui-form-item ">
         <label class="layui-form-label">赛场状态</label>
         <div class="layui-input-inline">
@@ -632,16 +647,20 @@
         </div>
     </div>
 
+
     <div class="layui-form-item ">
-
+        <label class="layui-form-label">赛场资源文件</label>
         <div class="layui-input-inline">
-
+            <input type="text" id="ddres" name="ddres"  autocomplete="off"
+                   class="layui-input layui-input">
         </div>
     </div>
+
     <div class="layui-form-item ">
-
+        <label class="layui-form-label">产品匹配版本号</label>
         <div class="layui-input-inline">
-
+            <input type="text" id="ddmatchversion" name="ddmatchversion"  autocomplete="off"
+                   class="layui-input layui-input">
         </div>
     </div>
 

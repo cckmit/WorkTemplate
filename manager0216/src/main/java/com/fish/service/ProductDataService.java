@@ -154,7 +154,7 @@ public class ProductDataService implements BaseService<ProductData> {
                         {
                             ProductData productData = new ProductData();
                             String appId = wxData.getWxAppid();
-                            // WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
+
                             wxConfig = cacheService.getWxConfig(appId);
                             if (wxConfig != null)
                             {
@@ -446,7 +446,7 @@ public class ProductDataService implements BaseService<ProductData> {
     //新增内容
     public int insert(ProductData productData) {
         int insertProgramData;
-        productData.setInsertTime(new Timestamp(new Date().getTime()));
+        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
         insertProgramData = productDataMapper.insert(productData);
         return insertProgramData;
     }
@@ -454,7 +454,7 @@ public class ProductDataService implements BaseService<ProductData> {
     //更新产品信息
     public int updateByPrimaryKeySelective(ProductData productData) {
         int update;
-        productData.setInsertTime(new Timestamp(new Date().getTime()));
+        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
         update = productDataMapper.updateByPrimaryKey(productData);
         return update;
     }
@@ -486,7 +486,6 @@ public class ProductDataService implements BaseService<ProductData> {
                         ProductData productData = new ProductData();
                         for (int x = 0; x < singleSplit.length; x++)
                         {
-                            //System.out.println("我是单条数据 "+x +" :"+singleSplit[x] );
                             if (x == 0)
                             {
                                 mapSingle.put("wx_date", singleSplit[x].trim());
@@ -612,7 +611,7 @@ public class ProductDataService implements BaseService<ProductData> {
                         productData.setWxRemain2(new BigDecimal(wxRemain2));
                         productData.setWxAvgLogin(new BigDecimal(wxAvgLogin));
                         productData.setWxAvgOnline(new BigDecimal(wxAvgOnline));
-                        productData.setInsertTime(new Timestamp(new Date().getTime()));
+                        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
                         lists.add(productData);
                     }
                 }
@@ -659,8 +658,9 @@ public class ProductDataService implements BaseService<ProductData> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setSort("wxDate");
         parameter.setOrder("desc");
     }

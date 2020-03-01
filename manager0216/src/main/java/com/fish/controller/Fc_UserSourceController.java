@@ -12,10 +12,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 用户来源明细
+ * Fc_UserSourceController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping(value = "/manage")
-public class Fc_UserSourceController
-{
+public class Fc_UserSourceController {
 
     @Autowired
     ProductDataService fcProductDataService;
@@ -23,16 +29,14 @@ public class Fc_UserSourceController
     //查询用户来源信息
     @ResponseBody
     @GetMapping(value = "/usersource")
-    public GetResult getUserSource(GetParameter parameter)
-    {
+    public GetResult getUserSource(GetParameter parameter) {
         return fcProductDataService.findAll(parameter);
     }
 
     //搜索用户来源信息
     @ResponseBody
     @PostMapping(value = "/usersource/search")
-    public GetResult searchUserSource(HttpServletRequest request, GetParameter parameter)
-    {
+    public GetResult searchUserSource(HttpServletRequest request, GetParameter parameter) {
         String beginDate = request.getParameter("beginDate");
         String endDate = request.getParameter("endDate");
         String productName = request.getParameter("productName");

@@ -33,10 +33,16 @@ public class PublicCentreService implements BaseService<PublicCentre> {
     @Override
     //查询展示所有游戏信息
     public List<PublicCentre> selectAll(GetParameter parameter) {
-        List<PublicCentre> publicCentre;
-
-        publicCentre = publicCentreMapper.selectAll();
-
+        List<PublicCentre> publicCentre = new ArrayList<>();
+        List<PublicCentre> banners ;
+        List<PublicCentre> recommends ;
+        List<PublicCentre> games ;
+        banners = publicCentreMapper.selectAllBanner();
+        publicCentre.addAll(banners);
+        recommends = publicCentreMapper.selectAllRecommend();
+        publicCentre.addAll(recommends);
+        games = publicCentreMapper.selectAllGame();
+        publicCentre.addAll(games);
         return publicCentre;
     }
 
@@ -107,10 +113,11 @@ public class PublicCentreService implements BaseService<PublicCentre> {
         // 读取原始json文件并进行操作和输出
         try
         {
-            BufferedReader br = new BufferedReader(new FileReader(PublicCentreService.class.getResource("/").getPath() + "config.json"));// 读取原始json文件
-
+            // 读取原始json文件
+            BufferedReader br = new BufferedReader(new FileReader(PublicCentreService.class.getResource("/").getPath() + "config.json"));
+            // 输出新的json文件
             BufferedWriter bw = new BufferedWriter(new FileWriter(
-                    "/data/tomcat8/apache-public/webapps/public/mui_wxoa_gwy/config.json"));// 输出新的json文件
+                    "/data/tomcat8/apache-public/webapps/public/mui_wxoa_debug/config.json"));
             String ws = null;
             StringBuilder sb = new StringBuilder();
             String line;
@@ -154,7 +161,9 @@ public class PublicCentreService implements BaseService<PublicCentre> {
     @Override
     public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
+        {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("ddcode");
     }
@@ -175,5 +184,7 @@ public class PublicCentreService implements BaseService<PublicCentre> {
 
     }
 
-
+    public int deleteSelective(PublicCentre productInfo) {
+        return publicCentreMapper.deleteByPrimaryKey(productInfo.getId());
+    }
 }

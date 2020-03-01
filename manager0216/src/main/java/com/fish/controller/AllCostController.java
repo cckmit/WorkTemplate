@@ -10,10 +10,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * 消耗情况查询
+ * AllCostController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping("/allCost")
-public class AllCostController
-{
+public class AllCostController {
     @Autowired
     AllCostService allCostService;
     @Autowired
@@ -21,15 +27,13 @@ public class AllCostController
 
     @ResponseBody
     @GetMapping
-    public GetResult getAllCost(GetParameter parameter)
-    {
+    public GetResult getAllCost(GetParameter parameter) {
         return allCostService.findAll(parameter);
     }
 
     @ResponseBody
     @GetMapping(value = "/findMatch")
-    public GetResult getMatchCost(GetParameter parameter)
-    {
+    public GetResult getMatchCost(GetParameter parameter) {
         return matchCostService.findAll(parameter);
     }
 }

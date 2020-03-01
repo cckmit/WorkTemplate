@@ -11,10 +11,16 @@ import com.fish.utils.ReadJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 赛制配置
+ * RoundExtController
+ *
+ * @author
+ * @date
+ */
 @RestController
 @RequestMapping(value = "/manage")
-public class RoundExtController
-{
+public class RoundExtController {
 
     @Autowired
     RoundExtService roundExtService;
@@ -24,14 +30,12 @@ public class RoundExtController
 
     //查询展示提现情况
     @GetMapping(value = "/roundext")
-    public GetResult getRecharge(GetParameter parameter)
-    {
+    public GetResult getRecharge(GetParameter parameter) {
         return roundExtService.findAll(parameter);
     }
 
     @PostMapping(value = "/roundext/delete")
-    public PostResult deleteRecharge(@RequestBody Recharge productInfo)
-    {
+    public PostResult deleteRecharge(@RequestBody Recharge productInfo) {
         PostResult result = new PostResult();
         result.setMsg("操作成功");
         return result;
@@ -40,19 +44,16 @@ public class RoundExtController
     //新增赛制配置信息
     @ResponseBody
     @PostMapping(value = "/roundext/new")
-    public PostResult insertRoundExt(@RequestBody RoundExt productInfo)
-    {
+    public PostResult insertRoundExt(@RequestBody RoundExt productInfo) {
         PostResult result = new PostResult();
         int count = roundExtService.insert(productInfo);
         //int count =1;
-        if (count != 0)
-        {
+        if (count != 0) {
             String res = ReadJsonUtil.flushTable("round_ext", baseConfig.getFlushCache());
 
             result.setMsg("操作成功" + res);
             return result;
-        } else
-        {
+        } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
             return result;
@@ -61,18 +62,15 @@ public class RoundExtController
 
     //修改游戏信息
     @PostMapping(value = "/roundext/edit")
-    public PostResult modifyRoundExt(@RequestBody RoundExt productInfo)
-    {
+    public PostResult modifyRoundExt(@RequestBody RoundExt productInfo) {
         PostResult result = new PostResult();
         int count = roundExtService.updateByPrimaryKeySelective(productInfo);
-        if (count != 0)
-        {
+        if (count != 0) {
             String res = ReadJsonUtil.flushTable("round_ext", baseConfig.getFlushCache());
 
             result.setMsg("操作成功" + res);
             return result;
-        } else
-        {
+        } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
             return result;

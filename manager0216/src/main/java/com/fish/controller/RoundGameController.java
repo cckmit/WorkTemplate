@@ -14,74 +14,86 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 常规赛制
+ * RoundGameController
+ *
+ * @author
+ * @date
+ */
 @RestController
 @RequestMapping(value = "/manage")
-public class RoundGameController
-{
+public class RoundGameController {
 
     @Autowired
     RoundGameService roundGameService;
     @Autowired
     BaseConfig baseConfig;
 
-    //查询小游戏赛制情况
+    /**
+     * 查询小游戏赛制情况
+     *
+     * @param parameter
+     * @return
+     */
     @GetMapping(value = "/roundgame")
-    public GetResult getRecharge(GetParameter parameter)
-    {
+    public GetResult getRecharge(GetParameter parameter) {
         return roundGameService.findAll(parameter);
     }
 
     @ResponseBody
     @GetMapping(value = "/roundgame/rounds")
-    public List<RoundExt> getRounds(GetParameter parameter)
-    {
+    public List<RoundExt> getRounds(GetParameter parameter) {
         return roundGameService.selectAllS();
     }
 
     @PostMapping(value = "/roundgame/delete")
-    public PostResult deleteRecharge(@RequestBody Recharge productInfo)
-    {
+    public PostResult deleteRecharge(@RequestBody Recharge productInfo) {
         PostResult result = new PostResult();
 
         result.setMsg("操作成功");
         return result;
     }
 
-    //新增赛制配置信息
+    /**
+     * 新增赛制配置信息
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/roundgame/new")
-    public PostResult insertRoundExt(@RequestBody RoundGame productInfo)
-    {
+    public PostResult insertRoundExt(@RequestBody RoundGame productInfo) {
         PostResult result = new PostResult();
         int count = roundGameService.insert(productInfo);
-        if (count == 1)
-        {
+        if (count == 1) {
             String res = ReadJsonUtil.flushTable("round_game", baseConfig.getFlushCache());
 
             result.setMsg("操作成功" + res);
             return result;
-        } else
-        {
+        } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
             return result;
         }
     }
 
-    //修改游戏信息
+    /**
+     * 修改游戏信息
+     *
+     * @param productInfo
+     * @return
+     */
     @PostMapping(value = "/roundgame/edit")
-    public PostResult modifyRoundExt(@RequestBody RoundGame productInfo)
-    {
+    public PostResult modifyRoundExt(@RequestBody RoundGame productInfo) {
         PostResult result = new PostResult();
         int count = roundGameService.updateByPrimaryKeySelective(productInfo);
-        if (count != 0)
-        {
+        if (count != 0) {
             String res = ReadJsonUtil.flushTable("round_game", baseConfig.getFlushCache());
 
             result.setMsg("操作成功" + res);
             return result;
-        } else
-        {
+        } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
             return result;

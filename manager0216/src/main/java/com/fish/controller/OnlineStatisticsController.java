@@ -9,10 +9,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * 游戏在线人数统计
+ * OnlineStatisticsController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping(value = "/manage")
-public class OnlineStatisticsController
-{
+public class OnlineStatisticsController {
 
     @Autowired
     OnlineService onlineService;
@@ -20,8 +26,7 @@ public class OnlineStatisticsController
     //查询在线情况
     @ResponseBody
     @GetMapping(value = "/online")
-    public GetResult getOnline(GetParameter parameter)
-    {
+    public GetResult getOnline(GetParameter parameter) {
         return onlineService.findAll(parameter);
     }
 }

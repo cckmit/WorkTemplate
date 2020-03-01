@@ -17,6 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 
+/**
+ * 产品数据详情
+ * Fc_ProductDataController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping(value = "/manage")
 public class Fc_ProductDataController {

@@ -76,7 +76,7 @@
             $.ajax({
                 url: '../manage/datacollect/flush',
                 type: 'get',
-                success: function (res) {
+                success: function (result) {
                     UIConfig.postMsg(result);
                     layer.close(loading);
                     if (result.successed) {
