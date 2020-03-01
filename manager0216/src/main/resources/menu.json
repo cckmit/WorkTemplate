@@ -55,6 +55,39 @@
     ]
   },
   {
+    "name": "广告配置",
+    "children": [
+      {
+        "name": "广告位置",
+        "url": "configAdPosition"
+      },
+      {
+        "name": "广告位",
+        "url": "configAdSpace"
+      },
+      {
+        "name": "广告内容",
+        "url": "configAdContent"
+      },
+      {
+        "name": "广告策略",
+        "url": "configAdStrategy"
+      },
+      {
+        "name": "微信广告及策略",
+        "url": "configAdWx"
+      },
+      {
+        "name": "广告类型",
+        "url": "configAdType"
+      },
+      {
+        "name": "广告来源",
+        "url": "configAdSource"
+      }
+    ]
+  },
+  {
     "name": "数据统计",
     "children": [
       {
@@ -139,7 +172,7 @@
         "url": "fc_buypay"
       },
       {
-	"name": "微信群管理",
+        "name": "微信群管理",
         "url": "wxGroupManager"
       }
     ]

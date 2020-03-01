@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigAdTypeMapper">
+
+    <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigAdType">
+        <id column="ddId" property="ddId" jdbcType="INTEGER"/>
+        <result column="ddName" property="ddName" jdbcType="VARCHAR"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="select" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select ddId, ddName, updateTime
+        from config_ad_type
+        where ddId = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select ddId, ddName, updateTime
+        from config_ad_type
+    </select>
+
+    <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdType">
+        insert into config_ad_type (ddName, updateTime)
+        values (#{ddName, jdbcType=VARCHAR}, NOW())
+    </insert>
+
+    <update id="update" parameterType="com.fish.dao.second.model.ConfigAdType">
+        update config_ad_type
+        <set>
+            <if test="ddName != null">
+                ddName = #{ddName, jdbcType=VARCHAR},
+                updateTime = NOW()
+            </if>
+        </set>
+        where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+</mapper>
