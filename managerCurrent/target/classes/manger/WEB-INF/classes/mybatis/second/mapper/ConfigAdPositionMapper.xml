@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigAdPositionMapper" >
+  <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigAdPosition" >
+    <id column="ddId" property="ddId" jdbcType="INTEGER" />
+    <result column="ddName" property="ddName" jdbcType="VARCHAR" />
+    <result column="ddAdTypes" property="ddAdTypes" jdbcType="VARCHAR" />
+    <result column="ddAllowedOperation" property="ddAllowedOperation" jdbcType="BIT" />
+    <result column="ddAdSpaces" property="ddAdSpaces" jdbcType="VARCHAR" />
+    <result column="ddStrategyId" property="ddStrategyId" jdbcType="INTEGER" />
+    <result column="ddStrategyValue" property="ddStrategyValue" jdbcType="VARCHAR" />
+    <result column="ddShowWxAd" property="ddShowWxAd" jdbcType="BIT" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ddId, ddName, ddAdTypes, ddAllowedOperation, ddAdSpaces, ddStrategyId, ddStrategyValue, 
+    ddShowWxAd, updateTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from config_ad_position
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from config_ad_position
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdPosition" >
+    insert into config_ad_position (ddId, ddName, ddAdTypes, 
+      ddAllowedOperation, ddAdSpaces, ddStrategyId, 
+      ddStrategyValue, ddShowWxAd, updateTime
+      )
+    values (#{ddId,jdbcType=INTEGER}, #{ddName,jdbcType=VARCHAR}, #{ddAdTypes,jdbcType=VARCHAR}, 
+      #{ddAllowedOperation,jdbcType=BIT}, #{ddAdSpaces,jdbcType=VARCHAR}, #{ddStrategyId,jdbcType=INTEGER}, 
+      #{ddStrategyValue,jdbcType=VARCHAR}, #{ddShowWxAd,jdbcType=BIT}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.dao.second.model.ConfigAdPosition" >
+    insert into config_ad_position
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ddId != null" >
+        ddId,
+      </if>
+      <if test="ddName != null" >
+        ddName,
+      </if>
+      <if test="ddAdTypes != null" >
+        ddAdTypes,
+      </if>
+      <if test="ddAllowedOperation != null" >
+        ddAllowedOperation,
+      </if>
+      <if test="ddAdSpaces != null" >
+        ddAdSpaces,
+      </if>
+      <if test="ddStrategyId != null" >
+        ddStrategyId,
+      </if>
+      <if test="ddStrategyValue != null" >
+        ddStrategyValue,
+      </if>
+      <if test="ddShowWxAd != null" >
+        ddShowWxAd,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ddId != null" >
+        #{ddId,jdbcType=INTEGER},
+      </if>
+      <if test="ddName != null" >
+        #{ddName,jdbcType=VARCHAR},
+      </if>
+      <if test="ddAdTypes != null" >
+        #{ddAdTypes,jdbcType=VARCHAR},
+      </if>
+      <if test="ddAllowedOperation != null" >
+        #{ddAllowedOperation,jdbcType=BIT},
+      </if>
+      <if test="ddAdSpaces != null" >
+        #{ddAdSpaces,jdbcType=VARCHAR},
+      </if>
+      <if test="ddStrategyId != null" >
+        #{ddStrategyId,jdbcType=INTEGER},
+      </if>
+      <if test="ddStrategyValue != null" >
+        #{ddStrategyValue,jdbcType=VARCHAR},
+      </if>
+      <if test="ddShowWxAd != null" >
+        #{ddShowWxAd,jdbcType=BIT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.ConfigAdPosition" >
+    update config_ad_position
+    <set >
+      <if test="ddName != null" >
+        ddName = #{ddName,jdbcType=VARCHAR},
+      </if>
+      <if test="ddAdTypes != null" >
+        ddAdTypes = #{ddAdTypes,jdbcType=VARCHAR},
+      </if>
+      <if test="ddAllowedOperation != null" >
+        ddAllowedOperation = #{ddAllowedOperation,jdbcType=BIT},
+      </if>
+      <if test="ddAdSpaces != null" >
+        ddAdSpaces = #{ddAdSpaces,jdbcType=VARCHAR},
+      </if>
+      <if test="ddStrategyId != null" >
+        ddStrategyId = #{ddStrategyId,jdbcType=INTEGER},
+      </if>
+      <if test="ddStrategyValue != null" >
+        ddStrategyValue = #{ddStrategyValue,jdbcType=VARCHAR},
+      </if>
+      <if test="ddShowWxAd != null" >
+        ddShowWxAd = #{ddShowWxAd,jdbcType=BIT},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.ConfigAdPosition" >
+    update config_ad_position
+    set ddName = #{ddName,jdbcType=VARCHAR},
+      ddAdTypes = #{ddAdTypes,jdbcType=VARCHAR},
+      ddAllowedOperation = #{ddAllowedOperation,jdbcType=BIT},
+      ddAdSpaces = #{ddAdSpaces,jdbcType=VARCHAR},
+      ddStrategyId = #{ddStrategyId,jdbcType=INTEGER},
+      ddStrategyValue = #{ddStrategyValue,jdbcType=VARCHAR},
+      ddShowWxAd = #{ddShowWxAd,jdbcType=BIT},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </update>
+</mapper>

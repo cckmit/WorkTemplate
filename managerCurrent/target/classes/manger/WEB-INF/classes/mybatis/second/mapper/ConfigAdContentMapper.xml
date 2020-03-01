@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigAdContentMapper" >
+  <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigAdContent" >
+    <id column="ddId" property="ddId" jdbcType="INTEGER" />
+    <result column="ddAdType" property="ddAdType" jdbcType="INTEGER" />
+    <result column="ddWeight" property="ddWeight" jdbcType="INTEGER" />
+    <result column="ddImageUrl" property="ddImageUrl" jdbcType="VARCHAR" />
+    <result column="ddTransitAppId" property="ddTransitAppId" jdbcType="VARCHAR" />
+    <result column="ddTransitAppName" property="ddTransitAppName" jdbcType="VARCHAR" />
+    <result column="ddPromoteAppId" property="ddPromoteAppId" jdbcType="VARCHAR" />
+    <result column="ddPromoteAppName" property="ddPromoteAppName" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ddId, ddAdType, ddWeight, ddImageUrl, ddTransitAppId, ddTransitAppName, ddPromoteAppId, 
+    ddPromoteAppName, updateTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from config_ad_content
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from config_ad_content
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdContent" >
+    insert into config_ad_content (ddId, ddAdType, ddWeight, 
+      ddImageUrl, ddTransitAppId, ddTransitAppName, 
+      ddPromoteAppId, ddPromoteAppName, updateTime
+      )
+    values (#{ddId,jdbcType=INTEGER}, #{ddAdType,jdbcType=INTEGER}, #{ddWeight,jdbcType=INTEGER}, 
+      #{ddImageUrl,jdbcType=VARCHAR}, #{ddTransitAppId,jdbcType=VARCHAR}, #{ddTransitAppName,jdbcType=VARCHAR}, 
+      #{ddPromoteAppId,jdbcType=VARCHAR}, #{ddPromoteAppName,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.dao.second.model.ConfigAdContent" >
+    insert into config_ad_content
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ddId != null" >
+        ddId,
+      </if>
+      <if test="ddAdType != null" >
+        ddAdType,
+      </if>
+      <if test="ddWeight != null" >
+        ddWeight,
+      </if>
+      <if test="ddImageUrl != null" >
+        ddImageUrl,
+      </if>
+      <if test="ddTransitAppId != null" >
+        ddTransitAppId,
+      </if>
+      <if test="ddTransitAppName != null" >
+        ddTransitAppName,
+      </if>
+      <if test="ddPromoteAppId != null" >
+        ddPromoteAppId,
+      </if>
+      <if test="ddPromoteAppName != null" >
+        ddPromoteAppName,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ddId != null" >
+        #{ddId,jdbcType=INTEGER},
+      </if>
+      <if test="ddAdType != null" >
+        #{ddAdType,jdbcType=INTEGER},
+      </if>
+      <if test="ddWeight != null" >
+        #{ddWeight,jdbcType=INTEGER},
+      </if>
+      <if test="ddImageUrl != null" >
+        #{ddImageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ddTransitAppId != null" >
+        #{ddTransitAppId,jdbcType=VARCHAR},
+      </if>
+      <if test="ddTransitAppName != null" >
+        #{ddTransitAppName,jdbcType=VARCHAR},
+      </if>
+      <if test="ddPromoteAppId != null" >
+        #{ddPromoteAppId,jdbcType=VARCHAR},
+      </if>
+      <if test="ddPromoteAppName != null" >
+        #{ddPromoteAppName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.ConfigAdContent" >
+    update config_ad_content
+    <set >
+      <if test="ddAdType != null" >
+        ddAdType = #{ddAdType,jdbcType=INTEGER},
+      </if>
+      <if test="ddWeight != null" >
+        ddWeight = #{ddWeight,jdbcType=INTEGER},
+      </if>
+      <if test="ddImageUrl != null" >
+        ddImageUrl = #{ddImageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="ddTransitAppId != null" >
+        ddTransitAppId = #{ddTransitAppId,jdbcType=VARCHAR},
+      </if>
+      <if test="ddTransitAppName != null" >
+        ddTransitAppName = #{ddTransitAppName,jdbcType=VARCHAR},
+      </if>
+      <if test="ddPromoteAppId != null" >
+        ddPromoteAppId = #{ddPromoteAppId,jdbcType=VARCHAR},
+      </if>
+      <if test="ddPromoteAppName != null" >
+        ddPromoteAppName = #{ddPromoteAppName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.ConfigAdContent" >
+    update config_ad_content
+    set ddAdType = #{ddAdType,jdbcType=INTEGER},
+      ddWeight = #{ddWeight,jdbcType=INTEGER},
+      ddImageUrl = #{ddImageUrl,jdbcType=VARCHAR},
+      ddTransitAppId = #{ddTransitAppId,jdbcType=VARCHAR},
+      ddTransitAppName = #{ddTransitAppName,jdbcType=VARCHAR},
+      ddPromoteAppId = #{ddPromoteAppId,jdbcType=VARCHAR},
+      ddPromoteAppName = #{ddPromoteAppName,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </update>
+</mapper>

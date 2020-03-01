@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigAdWxMapper">
+
+    <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigAdWx">
+        <id column="ddId" property="ddId" jdbcType="INTEGER"/>
+        <result column="ddName" property="ddName" jdbcType="VARCHAR"/>
+        <result column="ddAdUnit" property="ddAdUnit" jdbcType="VARCHAR"/>
+        <result column="ddAllowedShow" property="ddAllowedShow" jdbcType="BOOLEAN"/>
+        <result column="ddTime" property="ddTime" jdbcType="INTEGER"/>
+        <result column="ddStrategyId" property="ddStrategyId" jdbcType="INTEGER"/>
+        <result column="ddStrategyValue" property="ddStrategyValue" jdbcType="VARCHAR"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="select" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select ddId, ddName, ddAdUnit, ddAllowedShow, ddTime, ddStrategyId, ddStrategyValue
+        from config_ad_wx
+        where ddId = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select ddId, ddName, ddAdUnit, ddAllowedShow, ddTime, ddStrategyId, ddStrategyValue
+        from config_ad_wx
+    </select>
+
+    <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdWx">
+        insert into config_ad_wx (ddName, ddAdUnit, ddAllowedShow, ddTime, ddStrategyId, ddStrategyValue)
+        values (#{ddName, jdbcType=VARCHAR}, #{ddAdUnit, jdbcType=VARCHAR}, #{ddAllowedShow, jdbcType=BOOLEAN},
+                #{ddTime, jdbcType=INTEGER}, #{ddStrategyId, jdbcType=INTEGER}, #{ddStrategyValue, jdbcType=VARCHAR},
+                NOW())
+    </insert>
+
+    <update id="update" parameterType="com.fish.dao.second.model.ConfigAdWx">
+        update config_ad_wx
+        <set>
+            ddName = #{ddName, jdbcType=VARCHAR},
+            ddAdUnit = #{ddAdUnit, jdbcType=VARCHAR},
+            ddAllowedShow = #{ddAllowedShow, jdbcType=BOOLEAN},
+            ddTime = #{ddTime, jdbcType=INTEGER},
+            ddStrategyId = #{ddStrategyId, jdbcType=INTEGER},
+            ddStrategyValue = #{ddStrategyValue, jdbcType=VARCHAR},
+            updateTime = NOW()
+        </set>
+        where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+    <update id="delete" parameterType="java.lang.Integer">
+        delete
+        from config_ad_wx
+        where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+</mapper>

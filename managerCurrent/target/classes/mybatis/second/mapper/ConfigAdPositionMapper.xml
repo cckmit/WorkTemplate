@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigAdPositionMapper">
+
+    <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigAdPosition">
+        <id column="ddId" property="ddId" jdbcType="INTEGER"/>
+        <result column="ddName" property="ddName" jdbcType="VARCHAR"/>
+        <result column="ddAdTypes" property="ddAdTypes" jdbcType="VARCHAR"/>
+        <result column="ddAllowedOperation" property="ddAllowedOperation" jdbcType="BOOLEAN"/>
+        <result column="ddAdSpaces" property="ddAdSpaces" jdbcType="VARCHAR"/>
+        <result column="ddStrategyId" property="ddStrategyId" jdbcType="INTEGER"/>
+        <result column="ddStrategyValue" property="ddStrategyValue" jdbcType="VARCHAR"/>
+        <result column="ddShowWxAd" property="ddShowWxAd" jdbcType="BOOLEAN"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ddId, ddName, ddAdTypes, ddAllowedOperation, ddAdSpaces, ddStrategyId, ddStrategyValue, ddShowWxAd, updateTime
+    </sql>
+
+    <select id="select" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from config_ad_position
+        where ddId = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from config_ad_position
+    </select>
+
+    <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdPosition">
+        insert into config_ad_position (ddName, ddAdTypes, ddAllowedOperation, ddAdSpaces, ddStrategyId,
+                                        ddStrategyValue,
+                                        ddShowWxAd, updateTime)
+        values (#{ddName, jdbcType=VARCHAR}, #{ddAdTypes, jdbcType=VARCHAR}, #{ddAllowedOperation, jdbcType=BOOLEAN},
+                #{ddAdSpaces, jdbcType=VARCHAR},
+                #{ddStrategyId, jdbcType=INTEGER}, #{ddStrategyValue, jdbcType=VARCHAR},
+                #{ddShowWxAd, jdbcType=BOOLEAN}, NOW())
+    </insert>
+
+    <update id="update" parameterType="com.fish.dao.second.model.ConfigAdPosition">
+        update config_ad_position
+        <set>
+            ddName = #{ddName, jdbcType=VARCHAR},
+            ddAdTypes = #{ddAdTypes, jdbcType=VARCHAR},
+            ddAllowedOperation = #{ddAllowedOperation, jdbcType=BOOLEAN},
+            ddAdSpaces = #{ddAdSpaces, jdbcType=VARCHAR},
+            ddStrategyId = #{ddStrategyId, jdbcType=INTEGER},
+            ddStrategyValue = #{ddStrategyValue, jdbcType=VARCHAR},
+            ddShowWxAd = #{ddShowWxAd, jdbcType=BOOLEAN},
+            updateTime = NOW()
+        </set>
+        where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+    <update id="delete" parameterType="java.lang.Integer">
+        delete
+        from config_ad_position
+        where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+</mapper>

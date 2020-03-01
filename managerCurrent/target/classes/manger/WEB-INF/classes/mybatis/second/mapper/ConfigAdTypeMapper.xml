@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigAdTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigAdType" >
+    <id column="ddId" property="ddId" jdbcType="INTEGER" />
+    <result column="ddName" property="ddName" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ddId, ddName, updateTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from config_ad_type
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from config_ad_type
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdType" >
+    insert into config_ad_type (ddId, ddName, updateTime
+      )
+    values (#{ddId,jdbcType=INTEGER}, #{ddName,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.dao.second.model.ConfigAdType" >
+    insert into config_ad_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ddId != null" >
+        ddId,
+      </if>
+      <if test="ddName != null" >
+        ddName,
+      </if>
+      <if test="updateTime != null" >
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ddId != null" >
+        #{ddId,jdbcType=INTEGER},
+      </if>
+      <if test="ddName != null" >
+        #{ddName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.ConfigAdType" >
+    update config_ad_type
+    <set >
+      <if test="ddName != null" >
+        ddName = #{ddName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.ConfigAdType" >
+    update config_ad_type
+    set ddName = #{ddName,jdbcType=VARCHAR},
+      updateTime = #{updateTime,jdbcType=TIMESTAMP}
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </update>
+</mapper>
