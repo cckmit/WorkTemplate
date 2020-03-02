@@ -197,16 +197,6 @@
             <artifactId>zip4j</artifactId>
             <version>2.2.8</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.8.1</version>
-        </dependency>
 
     </dependencies>
 
@@ -237,11 +227,12 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <configurationFile>${basedir}/src/main/resources/generator/secondConfig.xml</configurationFile>
+                    <configurationFile>${basedir}/src/main/resources/generator/primaryConfig.xml</configurationFile>
                     <overwrite>true</overwrite>
                     <verbose>true</verbose>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>

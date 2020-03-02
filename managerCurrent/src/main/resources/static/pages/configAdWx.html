@@ -48,18 +48,27 @@
             url: operatorurl,
             cols: [[
                 {type: 'checkbox'},
-                {field: 'ddId', width: 80, title: 'ID', sort: true, align: 'right'},
-                {field: 'ddName', width: 160, title: '名称', sort: true, align: 'center'},
-                {field: 'ddAdUnit', width: 160, title: 'adUint', sort: true},
+                {field: 'ddId', width: 60, title: 'ID', sort: true, align: 'right'},
+                {field: 'ddName', width: 120, title: '名称', sort: true, align: 'center'},
+                {field: 'ddBannerUnit', width: 120, title: 'Banner—unit', sort: true, align: 'center'},
+                {field: 'ddBannerTime', width: 160, title: 'Banner—切换间隔', sort: false, align: 'center'},
                 {
-                    field: 'ddAllowedShow', width: 120, title: '允许运营？', sort: false, align: 'center',
+                    field: 'ddBannerAllowedShow', width: 160, title: 'Banner—允许运营', sort: false, align: 'center',
                     templet: (d) => {
-                        return d.ddAllowedShow ? '是' : '否';
+                        return d.ddBannerAllowedShow ? '是' : '否';
                     }
                 },
-                {field: 'ddTime', width: 120, title: '切换时间', sort: false},
-                {field: 'ddStrategyId', width: 120, title: '策略', sort: false},
-                {field: 'ddStrategyValue', width: 220, title: '策略配置', sort: false},
+                {field: 'ddBannerStrategyId', width: 160, title: 'Banner—策略', sort: false},
+                {field: 'ddBannerStrategyValue', width: 220, title: 'Banner—策略配置', sort: false},
+                {field: 'ddIntUint', width: 120, title: '插屏—unit', sort: true},
+                {
+                    field: 'ddIntAllowedShow', width: 160, title: '插屏—允许运营', sort: false, align: 'center',
+                    templet: (d) => {
+                        return d.ddIntAllowedShow ? '是' : '否';
+                    }
+                },
+                {field: 'ddIntStrategyId', width: 160, title: '插屏—策略', sort: false},
+                {field: 'ddIntStrategyValue', width: 220, title: '插屏—策略配置', sort: false},
                 {field: 'updateTime', width: 220, title: '数据更新时间', sort: true, align: 'center'}
             ]],
             page: true,
@@ -87,36 +96,64 @@
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">广告ID</label>
+        <label class="layui-form-label">Banner—unit</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddAdUnit" name="ddAdUnit" class="layui-input" autocomplete="off"
+            <input type="text" id="ddBannerUnit" name="ddBannerUnit" class="layui-input" autocomplete="off"
                    lay-verify="required">
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">允许运营？</label>
-        <div class="layui-input-inline">
-            <input type="checkbox" checked="" name="ddAllowedShow" lay-skin="switch" lay-text="是|否">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">切换时间</label>
+        <label class="layui-form-label">Banner—切换时间</label>
         <div class="layui-input-inline ">
-            <input type="text" id="ddTime" name="ddTime" class="layui-input" autocomplete="off"
+            <input type="text" id="ddBannerTime" name="ddBannerTime" class="layui-input" autocomplete="off"
                    lay-verify="required|number">
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">策略</label>
+        <label class="layui-form-label">Banner—允许运营</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddStrategyId" name="ddStrategyId" class="layui-input" autocomplete="off"
+            <input type="checkbox" checked="" name="ddBannerAllowedShow" lay-skin="switch" lay-text="是|否">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">Banner—策略</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddBannerStrategyId" name="ddBannerStrategyId" class="layui-input" autocomplete="off"
                    lay-verify="required">
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">策略配置</label>
+        <label class="layui-form-label">Banner—策略配置</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddStrategyValue" name="ddStrategyValue" class="layui-input" autocomplete="off"
+            <input type="text" id="ddBannerStrategyValue" name="ddBannerStrategyValue" class="layui-input"
+                   autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">插屏—unit</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddIntUint" name="ddIntUint" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">插屏—允许运营</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" checked="" name="ddIntAllowedShow" lay-skin="switch" lay-text="是|否">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">插屏—策略</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddIntStrategyId" name="ddIntStrategyId" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">插屏—策略配置</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddIntStrategyValue" name="ddIntStrategyValue" class="layui-input" autocomplete="off"
                    lay-verify="required">
         </div>
     </div>

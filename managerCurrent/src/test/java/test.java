@@ -38,16 +38,16 @@ public class test {
 //        Date date = Date.from(instant);
 //        System.out.println(date);   //sgame.qinyougames.com
 
-//        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name","wx_config");
-//        String res= HttpUtil.post("http://192.168.1.55:8080/persieService/flush/logic", paramMap.toJSONString());
-//        System.out.println("我是返回值 :"+res);
-
-
         JSONObject paramMap = new JSONObject();
-        paramMap.put("name","config_confirm");//deamon , online   persieDeamon  线上
-        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
+        paramMap.put("name","round_match");
+        String res= HttpUtil.post("http://192.168.1.55:8080/persieService/flush/logic", paramMap.toJSONString());
         System.out.println("我是返回值 :"+res);
+
+
+//        JSONObject paramMap = new JSONObject();
+//        paramMap.put("name","config_confirm");//deamon , online   persieDeamon  线上
+//        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
+//        System.out.println("我是返回值 :"+res);
 
 
 //        JSONObject paramMap = new JSONObject();

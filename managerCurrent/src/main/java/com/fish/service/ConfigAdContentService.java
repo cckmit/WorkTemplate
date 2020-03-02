@@ -5,6 +5,7 @@ import com.fish.dao.second.mapper.ConfigAdContentMapper;
 import com.fish.dao.second.model.ConfigAdContent;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
+import com.fish.service.cache.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,8 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
     @Autowired
     ConfigAdContentMapper adContentMapper;
 
+    @Autowired
+    CacheService cacheService;
     @Override
     public void setDefaultSort(GetParameter parameter) { }
 
@@ -45,6 +48,7 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
         }
+        cacheService.updateAllConfigAdContents();
         return result;
     }
 
@@ -61,6 +65,7 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         }
+        cacheService.updateAllConfigAdContents();
         return result;
     }
 
@@ -77,7 +82,25 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         }
+        cacheService.updateAllConfigAdContents();
         return result;
+    }
+    /**
+     * select组件数据
+     *
+     * @param getParameter
+     * @return
+     */
+    public List<ConfigAdContent> selectAllContent(GetParameter getParameter) {
+
+        List<ConfigAdContent> configAdContents = this.adContentMapper.selectAll();
+
+        for (ConfigAdContent configAdContent : configAdContents) {
+            Integer ddId = configAdContent.getDdId();
+            String ddName = configAdContent.getDdTargetAppName();
+            configAdContent.setAdTypeName(ddId + "-" + ddName);
+        }
+        return configAdContents;
     }
 
 }

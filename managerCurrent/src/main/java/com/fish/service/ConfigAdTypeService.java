@@ -6,6 +6,7 @@ import com.fish.dao.second.mapper.ConfigAdTypeMapper;
 import com.fish.dao.second.model.ConfigAdType;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
+import com.fish.service.cache.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +23,8 @@ public class ConfigAdTypeService implements BaseService<ConfigAdType> {
 
     @Autowired
     ConfigAdTypeMapper configAdTypeMapper;
-
+    @Autowired
+    CacheService cacheService;
     @Override
     public void setDefaultSort(GetParameter parameter) { }
 
@@ -50,6 +52,8 @@ public class ConfigAdTypeService implements BaseService<ConfigAdType> {
             postResult.setSuccessed(false);
             postResult.setMsg("操作失败，请联系管理员！");
         }
+
+        cacheService.updateAllConfigAdTypes();
         return postResult;
     }
 
@@ -66,7 +70,24 @@ public class ConfigAdTypeService implements BaseService<ConfigAdType> {
             postResult.setSuccessed(false);
             postResult.setMsg("操作失败，请联系管理员！");
         }
+        cacheService.updateAllConfigAdTypes();
         return postResult;
     }
-
+    /**
+     * select组件数据
+     *
+     * @param getParameter
+     * @return
+     */
+    public List<ConfigAdType> selectAllAdType(GetParameter getParameter)
+    {
+        List<ConfigAdType> configAdTypes = configAdTypeMapper.selectAll();
+        for (ConfigAdType configAdType : configAdTypes) {
+            Integer ddId = configAdType.getDdId();
+            String ddName = configAdType.getDdName();
+            configAdType.setDdName(ddId + "-" + ddName);
+        }
+        cacheService.updateAllConfigAdTypes();
+        return configAdTypeMapper.selectAll();
+    }
 }

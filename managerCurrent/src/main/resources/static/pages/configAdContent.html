@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
     <script src="../layuiadmin/layui/layui.js"></script>
     <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
     <script></script>
 </head>
 <body>
@@ -43,6 +44,46 @@
      */
     layui.use(['table', 'form', 'layer', 'tree'], () => {
         const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+        let typeArr = [];
+        var typeSelect = xmSelect.render({
+            el: '#ddAdType',
+            name: 'ddAdType',
+            language: 'zn',
+            toolbar: {show: true},
+            data: [],
+            radio: false,
+            clickClose: true,
+            autoRow: true,
+            paging: true,
+            pageSize: 5,
+            delay: 500,
+            filterable: true,
+            filterDone: function (val, list) {
+                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+            },
+        });
+
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: '../manage/configAdType/select',
+            success: (res) => {
+
+                res.forEach(function (val, index, arr) {
+                    let context = {name: val.ddName, value: val.ddId, selected: false};
+                    typeArr.push(context);
+                });
+                typeSelect.update(
+                    {
+                        data: typeArr,
+                        autoRow: true,
+                    }
+                );
+            },
+            error: function () {
+                alert("查询失败")
+            }
+        }),
         table.render({
             elem: '#table-page',
             url: operatorurl,
@@ -73,7 +114,7 @@
                 {field: 'ddWeight', width: 120, title: '权重值', sort: true, align: 'center'},
                 {field: 'ddTargetAppId', width: 180, title: '推广AppId', sort: false, align: 'center'},
                 {field: 'ddTargetAppName', width: 180, title: '推广产品名称', sort: false},
-                {field: 'ddImageUrl', width: 150, title: '图片地址', sort: false},
+                {field: 'ddImageUrl', width: 200, title: '图片地址', sort: false},
                 {field: 'ddPromoteAppId', width: 180, title: '跳转AppId', sort: false, align: 'center'},
                 {field: 'ddPromoteAppName', width: 180, title: '跳转产品名称', sort: false},
                 {field: 'updateTime', width: 200, title: '数据更新时间', sort: true, align: 'center'}
@@ -96,50 +137,52 @@
                    placeholder="保存成功后自动生成">
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">类型</label>
-        <div class="layui-input-inline ">
-            <input type="text" id="ddAdType" name="ddAdType" class="layui-input" autocomplete="off"
-                   lay-verify="required|number" placeholder="日后请修改成下拉框">
+
+    <div class="layui-form-item ">
+        <label class="layui-form-label">类型列表 </label>
+        <div class="layui-input-block">
+            <div class="layui-input-inline" style="width: 12rem;"
+                 id="ddAdType" name="ddAdType" lay-filter="ddAdType" autocomplete="off"></div>
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">权重 </label>
+        <label class="layui-form-label">权重 *</label>
         <div class="layui-input-inline">
             <input type="text" id="ddWeight" name="ddWeight" class="layui-input" autocomplete="off"
                    lay-verify="required|number">
         </div>
     </div>
+
     <div class="layui-form-item ">
-        <label class="layui-form-label">图片地址</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddImageUrl" name="ddImageUrl" class="layui-input" autocomplete="off"
-                   lay-verify="required">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">目标AppId</label>
+        <label class="layui-form-label">推广AppId *</label>
         <div class="layui-input-inline ">
             <input type="text" id="ddTargetAppId" name="ddTargetAppId" class="layui-input" autocomplete="off"
                    lay-verify="required">
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">目标AppId名称</label>
+        <label class="layui-form-label">推广AppId名称 *</label>
         <div class="layui-input-inline">
             <input type="text" id="ddTargetAppName" name="ddTargetAppName" class="layui-input" autocomplete="off"
                    lay-verify="required">
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">中转AppId</label>
+        <label class="layui-form-label">图片地址 *</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddImageUrl" name="ddImageUrl" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">跳转AppId *</label>
         <div class="layui-input-inline">
             <input type="text" id="ddPromoteAppId" name="ddPromoteAppId" class="layui-input" autocomplete="off"
                    lay-verify="required">
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">中转App名称</label>
+        <label class="layui-form-label">跳转App名称 *</label>
         <div class="layui-input-inline">
             <input type="text" id="ddPromoteAppName" name="ddPromoteAppName" class="layui-input" autocomplete="off"
                    lay-verify="required">

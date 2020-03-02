@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
     <script src="../layuiadmin/layui/layui.js"></script>
     <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
     <script></script>
 </head>
 <body>
@@ -43,6 +44,86 @@
      */
     layui.use(['table', 'form', 'layer', 'tree'], () => {
         const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+        let typeArr = [];
+        let adArr = [];
+        var typeSelect = xmSelect.render({
+            el: '#ddAdTypes',
+            name: 'ddAdTypes',
+            language: 'zn',
+            toolbar: {show: true},
+            data: [],
+            radio: false,
+            clickClose: true,
+            autoRow: true,
+            paging: true,
+            pageSize: 5,
+            delay: 500,
+            filterable: true,
+            filterDone: function (val, list) {
+                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+            },
+        });
+        var adSelect = xmSelect.render({
+            el: '#ddAdSpaces',
+            name: 'ddAdSpaces',
+            language: 'zn',
+            toolbar: {show: true},
+            data: [],
+            radio: false,
+            clickClose: true,
+            autoRow: true,
+            paging: true,
+            pageSize: 5,
+            delay: 500,
+            filterable: true,
+            filterDone: function (val, list) {
+                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+            },
+        });
+        $(() => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdType/select',
+                success: (res) => {
+
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddName, value: val.ddId, selected: false};
+                        typeArr.push(context);
+                    });
+                    typeSelect.update(
+                        {
+                            data: typeArr,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            }),
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    url: '../manage/configAdSpace/select',
+                    success: (res) => {
+
+                        res.forEach(function (val, index, arr) {
+                            let context = {name: val.ddName, value: val.ddId, selected: false};
+                            adArr.push(context);
+                        });
+                        adSelect.update(
+                            {
+                                data: adArr,
+                                autoRow: true,
+                            }
+                        );
+                    },
+                    error: function () {
+                        alert("查询失败")
+                    }
+                })
+        });
         table.render({
             elem: '#table-page',
             url: operatorurl,
@@ -57,7 +138,7 @@
                         return d.ddAllowedOperation ? '是' : '否';
                     }
                 },
-                {field: 'ddAdSpaces', width: 220, title: '广告位列表', sort: false},
+                {field: 'ddAdSpaces', width: 260, title: '广告位列表', sort: false},
                 {field: 'ddStrategyId', width: 120, title: '策略', sort: false},
                 {field: 'ddStrategyValue', width: 220, title: '策略配置', sort: false},
                 {
@@ -78,7 +159,7 @@
 </script>
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
-      style="padding: 20px 0 0 0;width: 400px;height: 350px;">
+      style="padding: 20px 0 0 0;width: 500px;height: 450px;">
     <div class="layui-form-item">
         <label class="layui-form-label">ID</label>
         <div class="layui-input-inline">
@@ -87,7 +168,7 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">名称</label>
+        <label class="layui-form-label">名称 *</label>
         <div class="layui-input-inline ">
             <input type="text" id="ddName" name="ddName" class="layui-input" autocomplete="off"
                    lay-verify="required">
@@ -95,11 +176,13 @@
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">类型列表 </label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddAdTypes" name="ddAdTypes" class="layui-input" autocomplete="off"
-                   lay-verify="required" placeholder="日后请修改成下拉多选框">
+        <div class="layui-input-block">
+            <div class="layui-input-inline" style="width: 14rem;"
+                 id="ddAdTypes" name="ddAdTypes" lay-filter="ddAdTypes" autocomplete="off"></div>
         </div>
     </div>
+
+
     <div class="layui-form-item ">
         <label class="layui-form-label">允许运营</label>
         <div class="layui-input-inline">
@@ -107,14 +190,15 @@
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">广告位</label>
-        <div class="layui-input-inline ">
-            <input type="text" id="ddAdSpaces" name="ddAdSpaces" class="layui-input" autocomplete="off"
-                   lay-verify="required" placeholder="日后请修改成下拉多选框">
+        <label class="layui-form-label">广告位 </label>
+        <div class="layui-input-block">
+            <div class="layui-input-inline" style="width: 14rem;"
+                 id="ddAdSpaces" name="ddAdSpaces" lay-filter="ddAdSpaces" autocomplete="off"></div>
         </div>
     </div>
+
     <div class="layui-form-item ">
-        <label class="layui-form-label">策略</label>
+        <label class="layui-form-label">策略 *</label>
         <div class="layui-input-inline">
             <input type="text" id="ddStrategyId" name="ddStrategyId" class="layui-input" autocomplete="off"
                    lay-verify="required" placeholder="日后请修改成下拉框">
@@ -124,7 +208,7 @@
         <label class="layui-form-label">策略配置</label>
         <div class="layui-input-inline">
             <input type="text" id="ddStrategyValue" name="ddStrategyValue" class="layui-input" autocomplete="off"
-                   lay-verify="required">
+                   >
         </div>
     </div>
     <div class="layui-form-item ">

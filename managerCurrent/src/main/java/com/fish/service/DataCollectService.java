@@ -330,7 +330,7 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
         //遍历fc数据日期
         for (String date : dates) {
             DataCollect dataCollect = new DataCollect();
-            List<WxConfig> wxConfigs = wxConfigMapper.selectAll();
+            List<WxConfig> wxConfigs = wxConfigMapper.selectGamesAndPrograms();
             productCount = wxConfigs.size();
             //遍历wx_config中AppId
             for (WxConfig wxConfig : wxConfigs) {

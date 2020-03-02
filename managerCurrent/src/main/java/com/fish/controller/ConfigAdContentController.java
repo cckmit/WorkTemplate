@@ -1,6 +1,7 @@
 package com.fish.controller;
 
 import com.fish.dao.second.model.ConfigAdContent;
+import com.fish.dao.second.model.ConfigAdSpace;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
 import com.fish.protocols.PostResult;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * 广告内容管理
@@ -72,4 +75,14 @@ public class ConfigAdContentController {
         return this.adContentService.delete(id);
     }
 
+
+    /**
+     * @param getParameter
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdContent/select")
+    public List<ConfigAdContent> getConfigAdContentSelect(GetParameter getParameter) {
+        return this.adContentService.selectAllContent(getParameter);
+    }
 }

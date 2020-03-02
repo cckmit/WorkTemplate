@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 /**
  * 广告内容管理
  *
@@ -74,4 +76,14 @@ public class ConfigAdSpaceController {
         return this.adSpaceService.delete(id);
     }
 
+
+    /**
+     * @param getParameter
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdSpace/select")
+    public List<ConfigAdSpace> getConfigAdSpaceSelect(GetParameter getParameter) {
+        return this.adSpaceService.selectAllSpace(getParameter);
+    }
 }

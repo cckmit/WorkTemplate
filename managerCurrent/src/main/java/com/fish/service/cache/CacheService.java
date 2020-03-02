@@ -6,7 +6,6 @@ import com.fish.dao.primary.model.*;
 import com.fish.dao.second.mapper.*;
 import com.fish.dao.second.model.*;
 import com.fish.dao.third.mapper.MinitjWxMapper;
-import com.fish.dao.third.model.MinitjWx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +45,11 @@ public class CacheService {
 
     @Autowired
     ConfigAdTypeMapper configAdTypeMapper;
+    @Autowired
+    ConfigAdSpaceMapper configAdSpaceMapper;
+
+    @Autowired
+    ConfigAdContentMapper configAdContentMapper;
 
     private Map<Integer, ArcadeGames> gamesMap = new ConcurrentHashMap<>();
 
@@ -69,7 +73,11 @@ public class CacheService {
     private Map<String, UserAllInfo> userInfoCache = new ConcurrentHashMap<>();
 
     //广告类型
-    private Map<Integer, ConfigAdType>  configdTypeCache = new ConcurrentHashMap<>();
+    private Map<Integer, ConfigAdType> configAdTypeCache = new ConcurrentHashMap<>();
+    //广告位列表
+    private Map<Integer, ConfigAdSpace> configAdSpaceCache = new ConcurrentHashMap<>();
+    //广告内容
+    private Map<Integer, ConfigAdContent> configAdContentCache = new ConcurrentHashMap<>();
 
     /**
      * 从数据库更新全部游戏参数
@@ -187,6 +195,80 @@ public class CacheService {
 
     /////////////////////以上是CC翻新锅的/////////////////////////////
 
+    /**
+     * 从数据库更新全部游戏参数
+     */
+    public void updateAllConfigAdContents() {
+        List<ConfigAdContent> list = this.configAdContentMapper.selectAll();
+        for (ConfigAdContent configAdContent : list) {
+            this.configAdContentCache.put(configAdContent.getDdId(), configAdContent);
+        }
+    }
+
+    /**
+     * 从数据库更新全部游戏参数
+     */
+    public void updateAllConfigAdSpaces() {
+        List<ConfigAdSpace> list = this.configAdSpaceMapper.selectAll();
+        for (ConfigAdSpace configAdSpace: list) {
+            this.configAdSpaceCache.put(configAdSpace.getDdId(), configAdSpace);
+        }
+    }
+
+    /**
+     * 从数据库更新全部游戏参数
+     */
+    public void updateAllConfigAdTypes() {
+        List<ConfigAdType> list = this.configAdTypeMapper.selectAll();
+        for (ConfigAdType configAdType: list) {
+            this.configAdTypeCache.put(configAdType.getDdId(), configAdType);
+        }
+    }
+
+    /**
+     * 通过广告内容ID获取广告位内容
+     *
+     * @param ddId 广告类型I
+     * @return 广告类型
+     */
+    public ConfigAdContent getConfigAdContents(int ddId) {
+        ConfigAdContent contents = getConfigAdContent(ddId);
+        return contents;
+    }
+
+    public ConfigAdContent getConfigAdContent(int ddId) {
+        ConfigAdContent configAdContents = this.configAdContentCache.get(ddId);
+        if (configAdContents == null) {
+            configAdContents = this.configAdContentMapper.select(ddId);
+            if (configAdContents != null) {
+                this.configAdContentCache.put(ddId, configAdContents);
+            }
+        }
+        return configAdContents;
+    }
+
+
+    /**
+     * 通过广告类型ID获取广告参数
+     *
+     * @param ddId 广告类型I
+     * @return 广告类型
+     */
+    public ConfigAdSpace getConfigAdSpaces(int ddId) {
+        ConfigAdSpace spaces = getConfigAdSpace(ddId);
+        return spaces;
+    }
+
+    public ConfigAdSpace getConfigAdSpace(int ddId) {
+        ConfigAdSpace configAdSpaces = this.configAdSpaceCache.get(ddId);
+        if (configAdSpaces == null) {
+            configAdSpaces = this.configAdSpaceMapper.select(ddId);
+            if (configAdSpaces != null) {
+                this.configAdSpaceCache.put(ddId, configAdSpaces);
+            }
+        }
+        return configAdSpaces;
+    }
 
 
     /**
@@ -201,11 +283,11 @@ public class CacheService {
     }
 
     public ConfigAdType getConfigAdTypes(int ddId) {
-        ConfigAdType configAdTypes = this.configdTypeCache.get(ddId);
+        ConfigAdType configAdTypes = this.configAdTypeCache.get(ddId);
         if (configAdTypes == null) {
             configAdTypes = this.configAdTypeMapper.select(ddId);
             if (configAdTypes != null) {
-                this.configdTypeCache.put(ddId, configAdTypes);
+                this.configAdTypeCache.put(ddId, configAdTypes);
             }
         }
         return configAdTypes;
@@ -277,7 +359,6 @@ public class CacheService {
         wxConfigs.forEach(wxConfig -> wxConfigCache.put(wxConfig.getDdappid(), wxConfig));
         return wxConfigs;
     }
-
 
 
     /**
