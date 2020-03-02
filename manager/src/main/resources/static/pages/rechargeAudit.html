@@ -224,15 +224,11 @@
                             type: 'post',
                             dataType: "json",
                             success: function (result) {
-                                if (result.code === 200) {
-                                    layer.msg("审核成功");
-
+                                UIConfig.postMsg(result);
+                                if (result.successed) {
                                     setTimeout(function () {
                                         window.location.reload();
-                                    }, 800);
-                                    //window.location.reload();
-                                } else {
-                                    layer.msg('查询失败')
+                                    }, 1000);
                                 }
                             }
                         });

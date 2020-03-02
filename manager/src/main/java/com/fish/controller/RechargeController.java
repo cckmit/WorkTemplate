@@ -10,36 +10,38 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * 提现记录查询
+ * RechargeController
+ *
+ * @author
+ * @date
+ */
 @RestController
 @RequestMapping(value = "/manage")
-public class RechargeController
-{
+public class RechargeController {
     //提现审核
     @Autowired
     RechargeService rechargeService;
 
     //查询提现情况
     @GetMapping(value = "/recharge")
-    public GetResult getRecharge(GetParameter parameter)
-    {
+    public GetResult getRecharge(GetParameter parameter) {
         return rechargeService.findAll(parameter);
     }
 
     //审核提现接口
     @PostMapping(value = "/recharge/audit")
-    public PostResult auditRecharge(@RequestBody List<Recharge> productInfo)
-    {
+    public PostResult auditRecharge(@RequestBody List<Recharge> productInfo) {
         PostResult result = new PostResult();
         int cash = rechargeService.getCash(productInfo);
-       // int cash =200;
-        if (cash == 200)
-        {
-            result.setCode(200);
+        // int cash =200;
+        if (cash == 200) {
+
             result.setMsg("操作成功");
             return result;
-        } else
-        {
-            result.setCode(404);
+        } else {
+            result.setSuccessed(false);
             result.setMsg("未完全提现成功，请联系管理员");
             return result;
         }
@@ -47,18 +49,15 @@ public class RechargeController
 
     //提现信息
     @PostMapping(value = "/recharge/edit")
-    public PostResult modifyRecharge(@RequestBody Recharge productInfo)
-    {
+    public PostResult modifyRecharge(@RequestBody Recharge productInfo) {
         PostResult result = new PostResult();
         int count = rechargeService.updateByPrimaryKeySelective(productInfo);
-        if (count != 0)
-        {
-            result.setCode(200);
+        if (count != 0) {
+
             result.setMsg("操作成功");
             return result;
-        } else
-        {
-            result.setCode(404);
+        } else {
+            result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
             return result;
         }

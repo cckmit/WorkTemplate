@@ -15,10 +15,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 游戏表
+ * GamesController
+ *
+ * @author
+ * @date
+ */
 @RestController
 @RequestMapping(value = "/manage")
-public class GamesController
-{
+public class GamesController {
 
     @Autowired
     GamesService gamesService;
@@ -27,20 +33,16 @@ public class GamesController
 
     //查询展示所有游戏信息
     @GetMapping(value = "/games")
-    public GetResult getGames(GetParameter parameter)
-    {
+    public GetResult getGames(GetParameter parameter) {
         return gamesService.findAll(parameter);
     }
 
     //查询展示所有checkBoc信息
     @GetMapping(value = "/games/selectBox")
-    public List<CheckBoxData> getGamesBox(GetParameter parameter)
-    {
-
+    public List<CheckBoxData> getGamesBox(GetParameter parameter) {
         List<ArcadeGames> arcadeGames = gamesService.selectAll(parameter);
         List<CheckBoxData> checkBoxDatas = new ArrayList<>();
-        for (ArcadeGames arcadeGame : arcadeGames)
-        {
+        for (ArcadeGames arcadeGame : arcadeGames) {
             CheckBoxData checkBoxData = new CheckBoxData();
             String name = arcadeGame.getDdname();
             Integer code = arcadeGame.getDdcode();
@@ -54,62 +56,48 @@ public class GamesController
     //获取资源图
     @ResponseBody
     @PostMapping(value = "/games/flushgames")
-    public PostResult getGamesResources(@RequestBody JSONObject parameter)
-    {
+    public PostResult getGamesResources(@RequestBody JSONObject parameter) {
         PostResult result = new PostResult();
         int i = gamesService.flushGamesResources(parameter);
-        if (i != 0)
-        {
+        if (i != 0) {
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
-            result.setCode(200);
             result.setMsg("操作成功" + res);
-            return result;
-        } else
-        {
-            result.setCode(404);
+        } else {
+            result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
             return result;
         }
+        return result;
     }
 
     //新增游戏信息
     @PostMapping(value = "/games/new")
-    public PostResult insertGames(@RequestBody ArcadeGames productInfo)
-    {
+    public PostResult insertGames(@RequestBody ArcadeGames productInfo) {
         PostResult result = new PostResult();
         int count = gamesService.insert(productInfo);
-        if (count == 1)
-        {
+        if (count == 1) {
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
-            result.setCode(200);
             result.setMsg("操作成功" + res);
-            return result;
-        } else
-        {
-            result.setCode(404);
+        } else {
+            result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 
     //修改游戏信息
     @PostMapping(value = "/games/edit")
-    public PostResult modifyGames(@RequestBody ArcadeGames productInfo)
-    {
+    public PostResult modifyGames(@RequestBody ArcadeGames productInfo) {
         PostResult result = new PostResult();
         int count = gamesService.updateByPrimaryKeySelective(productInfo);
-        if (count != 0)
-        {
+        if (count != 0) {
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
-            result.setCode(200);
             result.setMsg("操作成功" + res);
-            return result;
-        } else
-        {
-            result.setCode(404);
+        } else {
+            result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 
 }

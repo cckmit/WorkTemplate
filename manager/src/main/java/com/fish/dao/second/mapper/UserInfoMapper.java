@@ -2,8 +2,6 @@ package com.fish.dao.second.mapper;
 
 import com.fish.dao.second.model.UserAllInfo;
 import com.fish.dao.second.model.UserInfo;
-import com.fish.dao.second.model.UserValue;
-import com.fish.protocols.MatchCost;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

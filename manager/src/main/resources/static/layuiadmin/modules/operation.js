@@ -1,24 +1,32 @@
 window.UIConfig = {
     $: layui,
-    // 格式化
+    /**
+     * 性别转换
+     * @param d
+     * @returns {string}
+     */
     formaterSex: (d) => {
-        if (d == 0)
+        if (d == 0) {
             return '女';
-        else if (d == 1)
+        } else if (d == 1) {
             return '男';
-        else
+        } else {
             return '其他';
+        }
     },
+
     formaterBool: (d) => {
-        if (d == 1)
+        if (d == 1) {
             return '小程序';
-        else if (d == 0)
+        } else if (d == 0) {
             return '小游戏';
-        else if (d == 2)
+        } else if (d == 2) {
             return '公众号';
-        else
+        } else {
             return '其他';
+        }
     },
+
     //时间判断
     formatViewEffectTime: (startTime, endTime, real) => {
         let start = new Date(Date.parse(startTime)).getTime();
@@ -30,28 +38,33 @@ window.UIConfig = {
             return '<span style="color: blue">永久</span>';
         return real;
     }, // 刷新缓存
+
     //非正整数，保留2位小数点
-    divideByDecimal:(a,b)=>{
-        if(a == 0 || b == 0 || a == undefined || b == undefined)
+    divideByDecimal: (a, b) => {
+        if (a == 0 || b == 0 || a == undefined || b == undefined) {
             return '-';
-        return (a/b).toFixed(2);
+        }
+        return (a / b).toFixed(2);
     },
+
     //百分比
-    divideByPercent:(a,b)=>{
-        if(a == 0 || b == 0 || a == undefined || b == undefined)
+    divideByPercent: (a, b) => {
+        if (a == 0 || b == 0 || a == undefined || b == undefined) {
             return '--';
-        return (a*100/b).toFixed(1) + "%";
+        }
+        return (a * 100 / b).toFixed(1) + "%";
     },
+
     flushCache: () => {
-        UIConfig.$.post(operatorurl + "?type=flush", {
-            type: 'flush'
-        }, function (data) {
+        UIConfig.$.post(operatorurl + "?type=flush", {type: 'flush'}, function (data) {
             UIConfig.$.messager.alert("提示信息", data);
         })
     },
+
     formatImage: (image) => {
-        if (image == null || image.search('http') == -1)
+        if (image == null || image.search('http') == -1) {
             return image;
+        }
         return `<div><img src="${image}"></div>`;
     },
 
@@ -88,6 +101,7 @@ window.UIConfig = {
         console.log("from", from);
         return from;
     },
+
     cascade: (master, field) => {
         let val = layui.$(master).val();
         for (let i = 0; i < field.length; i++) {
@@ -98,7 +112,6 @@ window.UIConfig = {
             }
         }
     },
-
 
     sumbitFormatData: (data) => {
         let val = {};
@@ -117,6 +130,22 @@ window.UIConfig = {
             }
         });
         return JSON.stringify(val);
+    },
+
+    /**
+     * 服务器返回的提示信息
+     * @param result
+     */
+    postMsg(result) {
+        result && result.msg && layer.msg(result.msg, {icon: result.successed ? 1 : 2});
+    },
+
+    /**
+     * 弹出警告信息
+     * @param msg
+     */
+    warnMsg(msg) {
+        msg && layer.msg(msg, {icon: 0});
     }
 }
 
@@ -125,14 +154,10 @@ layui.config({
 }).extend({
     index: 'lib/index' //主入口模块
 }).use(['index', 'table', 'form'], function () {
-
     /**
      * 监听事件
      */
-    var $ = layui.jquery,
-        form = layui.form,
-        element = layui.element,
-        table = layui.table;
+    const $ = layui.jquery, form = layui.form, element = layui.element, table = layui.table;
 
     // 表格重载
     function table_reload(where_data) {
@@ -149,12 +174,10 @@ layui.config({
         });
     }
 
-
     // 搜索查询
     form.on('submit(front-search)', function (data) {
-        var field = data.field;
         //执行重载
-        table_reload(field);
+        table_reload(data.field);
         return false;
     });
 
@@ -170,86 +193,82 @@ layui.config({
         });
     });
 
-
+    /**
+     * table上操作按钮监听
+     */
     table.on('toolbar(table-page)', function (obj) {
-        var checkStatus = table.checkStatus(obj.config.id);
-        var l = checkStatus.data.length;
-        var row = checkStatus.data[0];
-
+        console.log('table.on ->obj:', obj)
+        const checkStatus = table.checkStatus(obj.config.id);
+        const l = checkStatus.data.length;
+        const editData = checkStatus.data[0];
         switch (obj.event) {
             case 'add':
-                add();
+                edit(editData, 'new');
                 break;
             case 'delete':
                 if (l == 0) {
-                    layer.msg('请选择一行');
-                } else if (l > 1) {
-                    layer.msg('只能删除一行哦');
+                    UIConfig.warnMsg('删除：请至少选择一行!');
                 } else {
-                    deleteRow(row);
+                    deleteData(checkStatus.data);
                 }
                 break;
             case 'update':
                 if (l == 0) {
-                    layer.msg('请选择一行');
+                    UIConfig.warnMsg('修改：请选择一行！');
                 } else if (l > 1) {
-                    layer.msg('只能选择一行');
+                    UIConfig.warnMsg('修改：只能选择一行！');
                 } else {
-                    layer.msg('编辑');
-                    update();
+                    UIConfig.warnMsg('修改：开始修改！');
+                    edit(editData, 'edit');
                 }
                 break;
-
-
+            default:
+                break;
         }
 
-        // 修改
-        function update() {
+        /**
+         * 修改
+         */
+        function edit(editData, type) {
+            console.log(operatorurl, type, JSON.stringify(editData))
             $('#form_table').removeClass('layui-hide').addClass('layui-show');
             layui.layer.open({
                 type: 1,
-                title: '编辑',
+                title: type == 'new' ? '新增' : '编辑',
                 content: $('#form_table'),
                 maxmin: true,
                 shade: 0,
-                area: ['auto', '450px'],
+                area: ['auto', '600px;'],
                 btn: ['确定', '取消'],
                 success: (layero, index) => {
-                    // id
-                    let checkStatus = table.checkStatus('table-page');
-                    let data = UIConfig.formatData(checkStatus.data[0]);
-                    form.val("form_table", data);
-
+                    // 可以在<script></script>内自定义私有的数据处理方法，如果不定义，则按照默认方式初始化数据
+                    const existPrivateFunction = typeof privateLoadEditData !== "undefined" && privateLoadEditData !== null;
+                    if (existPrivateFunction) {
+                        privateLoadEditData(editData, type)
+                    } else {
+                        form.val("form_table", editData);
+                    }
                 },
                 yes: (index, layero) => {
                     // 提交监听
                     form.on('submit(front-submit)', function (data) {
-                        var field = UIConfig.sumbitFormatData(data); //获取提交的字段
-                        var url = operatorurl + "/edit";
+                        const existPrivateFunction = typeof privateSumbitFormatData !== "undefined" && privateSumbitFormatData !== null;
+                        const field = existPrivateFunction ? privateSumbitFormatData(data) : UIConfig.sumbitFormatData(data); //获取提交的字段
                         $.ajax({
-                            url: url,
+                            url: operatorurl + "/" + type,
                             data: field,
                             contentType: "application/json; charset=utf-8",
                             type: 'post',
                             dataType: "json",
                             success: function (result) {
-                                if (result.code === 200) {
-                                    layer.msg('修改成功');
+                                UIConfig.postMsg(result);
+                                if (result.successed) {
                                     layer.close(index);
                                     table_reload();
-                                }else if (result.code === 408){
-                                    layer.msg('AppID重复，操作失败')
-                                }else if (result.code === 409){
-                                    layer.msg('产品名称重复，操作失败')
-                                }else if (result.code === 410){
-                                    layer.msg('游戏代号重复，操作失败')
-                                }else{
-                                    layer.msg('修改失败')
                                 }
                             }
                         });
                     });
-
                     $('#front-submit').trigger('click');
                 },
                 end: () => {
@@ -260,81 +279,47 @@ layui.config({
             });
         }
 
-        // 新增
-        function add() {
-            // 表单元素
-            $('#form_table').removeClass('layui-hide').addClass('layui-show');
+        /**
+         * 删除行
+         * @param dataArray
+         */
+        function deleteData(dataArray) {
+            // 在提示操作者删除数据之前先处理好需要删除的数据，建议在自定义删除内容时，累加一下deleteCount
+            let deleteObj = {deleteCount: 0};
+            // 如果有自定义的方法，则按照自定义的方式处理，否则获取删除数据的ID，且用“,”分隔，在数据库中直接使用in方法删除
+            const existPrivateFunction = typeof privateGetDeleteData !== "undefined" && privateGetDeleteData !== null;
+            if (existPrivateFunction) {
+                privateGetDeleteData(dataArray, deleteObj);
+            } else {
+                dataArray.forEach(data => {
+                    if (deleteObj.deleteIds) {
+                        deleteObj.deleteIds += ',' + data.id;
+                    } else {
+                        deleteObj.deleteIds = data.id;
+                    }
+                    deleteObj.deleteCount++;
+                });
+            }
+            console.log('deleteObj:', deleteObj);
 
-            layui.layer.open({
-                type: 1,
-                content: $('#form_table'),
-                title: '添加',
-                maxmin: true,
-                area: ['auto', '500px'],
-                btn: ['确定', '取消'],
-                success: function (layero, index) {
-                    var checkStatus = table.checkStatus('#table-page');
-                    let data = UIConfig.formatData(checkStatus.data[0]);
-                    form.val("form_table", data);
-                },
-                yes: function (index, layero) {
-                    // 提交监听
-                    form.on('submit(front-submit)', data => {
-                        var field = UIConfig.sumbitFormatData(data); //获取提交的字段
-                        var url = operatorurl + "/new";
-                        $.ajax({
-                            url: url,
-                            data: field,
-                            contentType: "application/json; charset=utf-8",
-                            type: 'post',
-                            dataType: "json",
-                            success: function (result) {
-                                if (result.code === 200) {
-                                    layer.msg('新增成功');
-                                    layer.close(index);
-                                    table_reload();
-                                }else if (result.code === 408){
-                                    layer.msg('AppID重复，操作失败')
-                                }else if (result.code === 409){
-                                    layer.msg('产品名称重复，操作失败')
-                                }else if (result.code === 410){
-                                    layer.msg('游戏代号重复，操作失败')
-                                } else {
-                                    layer.msg('新增失败')
-                                }
-                            }
-                        });
+            if (deleteObj.deleteCount == 0) {
+                UIConfig.warnMsg("当前删除操作未选中任何可删除数据！")
+                return false;
+            }
 
-                    });
-
-                    $('#front-submit').trigger('click');
-                },
-                end: function () {
-                    $("#form_table")[0].reset();
-                    $('#form_table').removeClass('layui-show').addClass('layui-hide')
-                    return false;
-                }
-            });
-        }
-
-        // 删除行
-        function deleteRow(row) {
-            layer.confirm('真的删除行么', function (index) {
+            layer.confirm('当前选中' + deleteObj.deleteCount + '行，确认删除？', function (index) {
                 //向服务端发送删除指令
-                var url = operatorurl + "/delete";
                 $.ajax({
-                    url: url,
-                    data: JSON.stringify(row),
+                    url: operatorurl + '/delete',
+                    data: JSON.stringify(deleteObj),
                     contentType: "application/json; charset=utf-8",
                     type: 'post',
                     dataType: "json",
                     success: function (result) {
-                        if (result.code === 200) {
-                            layer.msg('删除成功');
+                        UIConfig.postMsg(result);
+                        if (result.successed) {
                             layer.close(index);
                             table_reload();
-                        } else {
-                            layer.msg('删除失败')
                         }
                     }
                 });

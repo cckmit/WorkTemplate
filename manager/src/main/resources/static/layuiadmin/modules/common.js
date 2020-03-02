@@ -3,10 +3,10 @@
     var i = (layui.$, layui.layer, layui.laytpl, layui.setter, layui.view, layui.admin);
     i.events.logout = function () {
         i.exit(function () {
-			layui.$.get("../user/logout", {}, function(res) {
+			layui.$.get("../userLog/logout", {}, function(res) {
 				layer.msg(res.msg);
-				location.href = "../index.html";					
-			})            
+				location.href = "../index.html";
+			})
         })
     }, e("common", {})
 });

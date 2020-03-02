@@ -96,6 +96,7 @@ public class ProductDataService implements BaseService<ProductData> {
                                 productData.setWxRegOther(0);
                             }
                             BeanUtils.copyProperties(productData.getMinitjWx(), productData);
+                            productData.setWxBannerIncome(minitjWx.getWxBannerIncome());
                             if (!checkObjFieldIsNull(productData.getMinitjWx()))
                             {
                                 productDatas.add(productData);
@@ -153,7 +154,7 @@ public class ProductDataService implements BaseService<ProductData> {
                         {
                             ProductData productData = new ProductData();
                             String appId = wxData.getWxAppid();
-                            // WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
+
                             wxConfig = cacheService.getWxConfig(appId);
                             if (wxConfig != null)
                             {
@@ -445,7 +446,7 @@ public class ProductDataService implements BaseService<ProductData> {
     //新增内容
     public int insert(ProductData productData) {
         int insertProgramData;
-        productData.setInsertTime(new Timestamp(new Date().getTime()));
+        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
         insertProgramData = productDataMapper.insert(productData);
         return insertProgramData;
     }
@@ -453,7 +454,7 @@ public class ProductDataService implements BaseService<ProductData> {
     //更新产品信息
     public int updateByPrimaryKeySelective(ProductData productData) {
         int update;
-        productData.setInsertTime(new Timestamp(new Date().getTime()));
+        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
         update = productDataMapper.updateByPrimaryKey(productData);
         return update;
     }
@@ -485,7 +486,6 @@ public class ProductDataService implements BaseService<ProductData> {
                         ProductData productData = new ProductData();
                         for (int x = 0; x < singleSplit.length; x++)
                         {
-                            //System.out.println("我是单条数据 "+x +" :"+singleSplit[x] );
                             if (x == 0)
                             {
                                 mapSingle.put("wx_date", singleSplit[x].trim());
@@ -528,29 +528,33 @@ public class ProductDataService implements BaseService<ProductData> {
                             }
                             if (x == 10)
                             {
-                                mapSingle.put("active_up", singleSplit[x].trim());
+                                mapSingle.put("wx_banner_income", singleSplit[x].trim());
                             }
                             if (x == 11)
                             {
-                                mapSingle.put("wx_share_user", singleSplit[x].trim());
+                                mapSingle.put("active_up", singleSplit[x].trim());
                             }
                             if (x == 12)
                             {
-                                mapSingle.put("wx_share_count", singleSplit[x].trim());
+                                mapSingle.put("wx_share_user", singleSplit[x].trim());
                             }
                             if (x == 13)
                             {
-                                mapSingle.put("wx_share_rate", singleSplit[x].trim());
+                                mapSingle.put("wx_share_count", singleSplit[x].trim());
                             }
                             if (x == 14)
                             {
-                                mapSingle.put("wx_remain2", singleSplit[x].trim());
+                                mapSingle.put("wx_share_rate", singleSplit[x].trim());
                             }
                             if (x == 15)
                             {
-                                mapSingle.put("wx_avg_login", singleSplit[x].trim());
+                                mapSingle.put("wx_remain2", singleSplit[x].trim());
                             }
                             if (x == 16)
+                            {
+                                mapSingle.put("wx_avg_login", singleSplit[x].trim());
+                            }
+                            if (x == 17)
                             {
                                 mapSingle.put("wx_avg_online", singleSplit[x].trim());
                             }
@@ -565,6 +569,7 @@ public class ProductDataService implements BaseService<ProductData> {
                         String recharge = mapSingle.get("recharge");
                         String adRevenue = mapSingle.get("ad_revenue");
                         String wxVideoIncome = mapSingle.get("wx_video_income");
+                        String wxBannerIncome = mapSingle.get("wx_banner_income");
                         String activeUp = mapSingle.get("active_up");
                         String wxShareUser = mapSingle.get("wx_share_user");
                         String wxShareCount = mapSingle.get("wx_share_count");
@@ -598,6 +603,7 @@ public class ProductDataService implements BaseService<ProductData> {
                         }
                         productData.setAdRevenue(new BigDecimal(adRevenue));
                         productData.setWxVideoIncome(new BigDecimal(wxVideoIncome));
+                        productData.setWxBannerIncome(new BigDecimal(wxBannerIncome));
                         productData.setActiveUp(new BigDecimal(activeUp));
                         productData.setWxShareUser(Integer.valueOf(wxShareUser));
                         productData.setWxShareCount(Integer.valueOf(wxShareCount));
@@ -605,7 +611,7 @@ public class ProductDataService implements BaseService<ProductData> {
                         productData.setWxRemain2(new BigDecimal(wxRemain2));
                         productData.setWxAvgLogin(new BigDecimal(wxAvgLogin));
                         productData.setWxAvgOnline(new BigDecimal(wxAvgOnline));
-                        productData.setInsertTime(new Timestamp(new Date().getTime()));
+                        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
                         lists.add(productData);
                     }
                 }
@@ -652,8 +658,9 @@ public class ProductDataService implements BaseService<ProductData> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setSort("wxDate");
         parameter.setOrder("desc");
     }

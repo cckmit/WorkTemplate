@@ -13,10 +13,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * 数据汇总
+ * Fc_DataCollectController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping(value = "/manage")
-public class Fc_DataCollectController
-{
+public class Fc_DataCollectController {
 
     @Autowired
     DataCollectService fcDataCollectService;
@@ -24,8 +30,7 @@ public class Fc_DataCollectController
     //查询数据汇总信息
     @ResponseBody
     @GetMapping(value = "/datacollect")
-    public GetResult getDataCollect(GetParameter parameter)
-    {
+    public GetResult getDataCollect(GetParameter parameter) {
         return fcDataCollectService.findAll(parameter);
     }
 
@@ -33,33 +38,24 @@ public class Fc_DataCollectController
     //刷新数据汇总信息
     @ResponseBody
     @GetMapping(value = "/datacollect/flush")
-    public PostResult flushDataCollect(GetParameter parameter)
-    {
+    public PostResult flushDataCollect(GetParameter parameter) {
         PostResult result = new PostResult();
         int count = fcDataCollectService.flushAll();
-        if (count == 1)
-        {
-            result.setCode(200);
-            result.setMsg("操作成功");
-            return result;
-        } else
-        {
-            result.setCode(404);
+        if (count != 1) {
+            result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 
     //搜索数据汇总信息
     @ResponseBody
     @PostMapping(value = "/datacollect/search")
-    public GetResult searchData(HttpServletRequest request, GetParameter parameter)
-    {
+    public GetResult searchData(HttpServletRequest request, GetParameter parameter) {
         String beginDate = request.getParameter("beginDate");
         String endDate = request.getParameter("endDate");
         String type = request.getParameter("type");
-
-        return fcDataCollectService.searchData(beginDate, endDate,type, parameter);
+        return fcDataCollectService.searchData(beginDate, endDate, type, parameter);
     }
 
 }

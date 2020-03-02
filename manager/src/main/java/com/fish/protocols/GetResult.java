@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.util.List;
 
-public class GetResult<T>
-{
+public class GetResult<T> {
     private int count;
     private List<T> data;
     private Object footer;
@@ -14,63 +13,51 @@ public class GetResult<T>
     //折线图统计
     private JSONObject lineData;
 
-    public int getCount()
-    {
+    public int getCount() {
         return count;
     }
 
-    public void setCount(int count)
-    {
+    public void setCount(int count) {
         this.count = count;
     }
 
-    public List<T> getData()
-    {
+    public List<T> getData() {
         return data;
     }
 
-    public void setData(List<T> data)
-    {
+    public void setData(List<T> data) {
         this.data = data;
     }
 
-    public Object getFooter()
-    {
+    public Object getFooter() {
         return footer;
     }
 
-    public void setFooter(Object footer)
-    {
+    public void setFooter(Object footer) {
         this.footer = footer;
     }
 
-    public int getCode()
-    {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(int code)
-    {
+    public void setCode(int code) {
         this.code = code;
     }
 
-    public String getMsg()
-    {
+    public String getMsg() {
         return msg;
     }
 
-    public void setMsg(String msg)
-    {
+    public void setMsg(String msg) {
         this.msg = msg;
     }
 
-    public JSONObject getLineData()
-    {
+    public JSONObject getLineData() {
         return lineData;
     }
 
-    public void setLineData(JSONObject lineData)
-    {
+    public void setLineData(JSONObject lineData) {
         this.lineData = lineData;
     }
 }

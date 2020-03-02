@@ -30,7 +30,7 @@ public class GamesSetService implements BaseService<ArcadeGameSet>
     //查询游戏集合信息
     public List<ArcadeGameSet> selectAll(GetParameter parameter)
     {
-        List<ArcadeGameSet> arcadeGameSets = new ArrayList<>();
+        List<ArcadeGameSet> arcadeGameSets ;
         if ("asc".equals(parameter.getOrder()))
         {
             arcadeGameSets = arcadeGameSetMapper.selectAllByAsc();

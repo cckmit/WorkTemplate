@@ -28,6 +28,7 @@ public class BaseConfig
     private String flushPublicCache;
     //刷新在线人数
     private String flushOnline;
+
     private JSONObject uploadJson;
     //微信查询订单地址
     private String wxQueryUrl;

@@ -17,10 +17,16 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 
+/**
+ * 买量支出
+ * Fc_BuyPayController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping(value = "/manage")
-public class Fc_BuyPayController
-{
+public class Fc_BuyPayController {
 
     @Autowired
     BaseConfig baseConfig;
@@ -30,18 +36,15 @@ public class Fc_BuyPayController
     //查询买量信息
     @ResponseBody
     @GetMapping(value = "/buypay")
-    public GetResult getBuyPay(GetParameter parameter)
-    {
+    public GetResult getBuyPay(GetParameter parameter) {
         return buyPayService.findAll(parameter);
     }
 
     @ResponseBody
     @PostMapping("/buypay/uploadExcel")
-    public JSONObject uploadExcel(@RequestParam("file") MultipartFile file)
-    {
+    public JSONObject uploadExcel(@RequestParam("file") MultipartFile file) {
         JSONObject jsonObject = new JSONObject();
-        try
-        {
+        try {
             String readPath = baseConfig.getExcelSave();
             String originalFilename = file.getOriginalFilename();
             File saveFile = new File(readPath, originalFilename);
@@ -50,8 +53,7 @@ public class Fc_BuyPayController
             readExcel.readFile(saveFile);
             jsonObject.put("context", readExcel.read(0));
             int insert = buyPayService.insertExcel(jsonObject);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -62,79 +64,52 @@ public class Fc_BuyPayController
     //买量搜索
     @ResponseBody
     @PostMapping(value = "/buypay/search")
-    public GetResult searchBuyPay(HttpServletRequest request, GetParameter parameter)
-    {
+    public GetResult searchBuyPay(HttpServletRequest request, GetParameter parameter) {
 
         GetResult result = new GetResult();
         String beginDate = request.getParameter("beginDate");
         String endDate = request.getParameter("endDate");
         String productName = request.getParameter("productName");
         // productDataService.searchData(beginDate,endDate,productName,parameter);
-
         return buyPayService.searchData(beginDate, endDate, productName, parameter);
-
     }
 
     //新增订单信息
     @ResponseBody
     @PostMapping(value = "/buypay/new")
-    public PostResult insertBuyPay(@RequestBody BuyPay productInfo)
-    {
+    public PostResult insertBuyPay(@RequestBody BuyPay productInfo) {
         PostResult result = new PostResult();
-
         int count = buyPayService.insert(productInfo);
         // count =1;
-        if (count == 1)
-        {
-            result.setCode(200);
-            result.setMsg("操作成功");
-            return result;
-        } else
-        {
-            result.setCode(404);
+        if (count == 0) {
+            result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 
     //修改游戏信息
     @ResponseBody
     @PostMapping(value = "/buypay/edit")
-    public PostResult modifyBuyPay(@RequestBody BuyPay productInfo)
-    {
+    public PostResult modifyBuyPay(@RequestBody BuyPay productInfo) {
         PostResult result = new PostResult();
-
         int count = buyPayService.updateByPrimaryKeySelective(productInfo);
-        //int count = 1;
-        if (count != 0)
-        {
-            result.setCode(200);
-            result.setMsg("操作成功");
-            return result;
-        } else
-        {
-            result.setCode(404);
+        if (count == 0) {
+            result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
-
+        return result;
     }
+
     @ResponseBody
     @PostMapping(value = "/buypay/delete")
-    public PostResult deleteBuyPay(@RequestBody BuyPay productInfo)
-    {
+    public PostResult deleteBuyPay(@RequestBody BuyPay productInfo) {
         PostResult result = new PostResult();
-        int count =buyPayService.deleteSelective(productInfo);
-        if (count != 0)
-        {
-            result.setCode(200);
-            result.setMsg("操作成功");
-            return result;
-        } else
-        {
-            result.setCode(404);
+        int count = buyPayService.deleteSelective(productInfo);
+        if (count == 0) {
+            result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 }

@@ -4,7 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
+/**
+ * @author
+ * @pragram: ProductData
+ * @description: fc数据对应展示实体类
+ * @create:
+ */
 public class ProductData
 {
     private String wxAppid;
@@ -12,6 +17,8 @@ public class ProductData
     private Date wxDate;
     private Integer programType;
 
+    //总收入
+    private BigDecimal revenueCount;
     private String wxRegJson;
 
     private String productName;
@@ -22,9 +29,7 @@ public class ProductData
     private BigDecimal activeUp;
     private Integer wxRegOther;
 
-
     private MinitjWx minitjWx;
-
 
     private Integer wxNew;
 
@@ -44,11 +49,14 @@ public class ProductData
 
     private BigDecimal wxVideoIncome;
 
+    private BigDecimal  videoECPM;
+
     private Integer wxBannerShow;
 
     private BigDecimal wxBannerClickrate;
 
     private BigDecimal wxBannerIncome;
+    private BigDecimal  bannerECPM;
 
     private Integer wxRegAd;
 
@@ -394,5 +402,29 @@ public class ProductData
     public void setMinitjWx(MinitjWx minitjWx)
     {
         this.minitjWx = minitjWx;
+    }
+
+    public BigDecimal getVideoECPM() {
+        return videoECPM;
+    }
+
+    public void setVideoECPM(BigDecimal videoECPM) {
+        this.videoECPM = videoECPM;
+    }
+
+    public BigDecimal getBannerECPM() {
+        return bannerECPM;
+    }
+
+    public void setBannerECPM(BigDecimal bannerECPM) {
+        this.bannerECPM = bannerECPM;
+    }
+
+    public BigDecimal getRevenueCount() {
+        return revenueCount;
+    }
+
+    public void setRevenueCount(BigDecimal revenueCount) {
+        this.revenueCount = revenueCount;
     }
 }

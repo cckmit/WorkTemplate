@@ -19,6 +19,7 @@ public interface ArcadeGamesMapper {
 
     //新增修改游戏信息
     int updateGameBySelective(ArcadeGames record);
+
     int  insertGameInfo(ArcadeGames record);
 
     int updateByPrimaryKey(ArcadeGames record);

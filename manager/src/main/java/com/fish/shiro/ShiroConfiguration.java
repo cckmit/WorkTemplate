@@ -14,13 +14,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Configuration
-public class ShiroConfiguration
-{
+public class ShiroConfiguration {
+
     private Logger logger = LoggerFactory.getLogger(ShiroConfiguration.class);
 
     @Bean(name = "shiroFilter")
-    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager)
-    {
+    public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
         logger.info("ShiroConfiguration initialized");
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 
@@ -35,6 +34,7 @@ public class ShiroConfiguration
         //<!-- 过滤链定义，从上向下顺序执行，一般将 /**放在最为下边 -->:这是一个坑呢，一不小心代码就不好使了;
         //<!-- authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问-->
         filterChainDefinitionMap.put("/admin/**", "authc");
+        filterChainDefinitionMap.put("/manage/**", "authc");
         filterChainDefinitionMap.put("/pages/**", "authc");
         filterChainDefinitionMap.put("/user/**", "anon");
         filterChainDefinitionMap.put("/**", "anon");
@@ -51,23 +51,20 @@ public class ShiroConfiguration
     }
 
     @Bean
-    public SecurityManager securityManager()
-    {
+    public SecurityManager securityManager() {
         DefaultWebSecurityManager defaultSecurityManager = new DefaultWebSecurityManager();
         defaultSecurityManager.setRealm(customRealm());
         return defaultSecurityManager;
     }
 
     @Bean
-    public MyRealm customRealm()
-    {
-        return new MyRealm();
+    public ManageUserRealm customRealm() {
+        return new ManageUserRealm();
     }
 
     //开启shiro aop注解支持
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager)
-    {
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
@@ -77,10 +74,10 @@ public class ShiroConfiguration
      * DefaultAdvisorAutoProxyCreator，Spring的一个bean，由Advisor决定对哪些类的方法进行AOP代理。
      */
     @Bean
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator()
-    {
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator defaultAAP = new DefaultAdvisorAutoProxyCreator();
         defaultAAP.setProxyTargetClass(true);
         return defaultAAP;
     }
+
 }

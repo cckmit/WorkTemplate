@@ -76,17 +76,13 @@
             $.ajax({
                 url: '../manage/datacollect/flush',
                 type: 'get',
-                success: function (res) {
-                    if (res.code === 200) { //上传成功
-
-                        layer.msg('刷新成功');
-                        layer.close(loading);
+                success: function (result) {
+                    UIConfig.postMsg(result);
+                    layer.close(loading);
+                    if (result.successed) {
                         setTimeout(function () {
                             window.location.reload();
                         }, 1000);
-                    } else {
-                        layer.msg('刷新失败，请联系管理员');
-                        layer.close(loading);
                     }
                 }
             });
@@ -126,7 +122,7 @@
 
                     },
                     {
-                        field: 'bannerIncomeCount', width: 120, title: 'bannel收入', sort: true
+                        field: 'bannerIncomeCount', width: 120, title: 'banner收入', sort: true
                     },
                     {
                         field: 'buyPay', width: 120, title: '买量支出', sort: true

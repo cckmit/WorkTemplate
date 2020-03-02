@@ -11,17 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/manage")
-public class PayStatisticController
-{
+public class PayStatisticController {
 
     @Autowired
     PayStatisticService payStatisticService;
     @Autowired
     BaseConfig baseConfig;
+
     //查询展示所有游戏信息
     @GetMapping(value = "/statistic")
-    public GetResult getGames(GetParameter parameter)
-    {
+    public GetResult getGames(GetParameter parameter) {
         return payStatisticService.findAll(parameter);
     }
 

@@ -11,10 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 手动补单
+ * SupplementOrderController
+ *
+ * @author
+ * @date
+ */
 @Controller
 @RequestMapping(value = "/manage")
-public class SupplementOrderController
-{
+public class SupplementOrderController {
 
     @Autowired
     SupplementOrderService supplementOrderService;
@@ -24,31 +30,27 @@ public class SupplementOrderController
     //查询展示所有产品信息
     @ResponseBody
     @GetMapping(value = "/supplementorder")
-    public GetResult getSupplementOrder(GetParameter parameter)
-    {
+    public GetResult getSupplementOrder(GetParameter parameter) {
         return supplementOrderService.findAll(parameter);
     }
 
     //新增产品赛制信息
     @ResponseBody
     @PostMapping(value = "/supplementorder/new")
-    public PostResult insertSupplementOrder(@RequestBody SupplementOrder productInfo)
-    {
+    public PostResult insertSupplementOrder(@RequestBody SupplementOrder productInfo) {
         PostResult result = new PostResult();
 
         int count = supplementOrderService.insert(productInfo);
-        if (count == 1)
-        {
+        if (count == 1) {
             String res = ReadJsonUtil.flushTable("user_value", baseConfig.getFlushCache());
-            result.setCode(200);
+
             result.setMsg("操作成功" + res);
             return result;
-        } else
-        {
-            result.setCode(404);
+        } else {
+            result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
             return result;
         }
     }
-    
+
 }

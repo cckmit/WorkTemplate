@@ -21,34 +21,40 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 比赛结果
+ * GameRankingController
+ *
+ * @author
+ * @date
+ */
 @RestController
 @RequestMapping(value = "/manage")
-public class GameRankingController
-{
+public class GameRankingController {
 
     @Autowired
     RankingService rankingService;
     @Autowired
     CacheService cacheService;
+
     //展示比赛结果
     @GetMapping(value = "/ranking")
-    public GetResult getRanking(GetParameter parameter)
-    {
+    public GetResult getRanking(GetParameter parameter) {
         return rankingService.findAll(parameter);
     }
+
     //导出Excel结果
     @GetMapping(value = "/ranking/result")
-    public void getRankingResult(ShowRanking ranking, HttpServletResponse response)
-    {
+    public void getRankingResult(ShowRanking ranking, HttpServletResponse response) {
         List<ExportResult> rankings = rankingService.selectResult(ranking);
         String roundName = ranking.getRoundName();
         Date matchdate = ranking.getMatchdate();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String gameTime = format.format(matchdate);
-        Integer gamesCode  = ranking.getGamesCode();
+        Integer gamesCode = ranking.getGamesCode();
         ArcadeGames games = cacheService.getGames(gamesCode);
         String gameName = games.getDdname();
-        ExcelUtils.writeExcel(rankings,gameTime+"-"+gameName+"-"+roundName, response);
+        ExcelUtils.writeExcel(rankings, gameTime + "-" + gameName + "-" + roundName, response);
     }
 
 }

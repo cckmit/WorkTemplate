@@ -1,42 +1,30 @@
 import cn.hutool.http.HttpUtil;
-import cn.hutool.poi.excel.ExcelWriter;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fish.utils.ExcelUtils;
-import com.fish.utils.ExportResult;
 import com.fish.utils.RedisData;
-import org.apache.poi.ss.usermodel.Workbook;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @MapperScan("com.fish.manger.v5.mapper")
-public class test
-{
+public class test {
 
     @Autowired
     RedisData redisData;
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
 
 
         //https://sgame.qinyougames.com/persieService/flush/logic
@@ -50,16 +38,17 @@ public class test
 //        Date date = Date.from(instant);
 //        System.out.println(date);   //sgame.qinyougames.com
 
-//        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name","wx_config");
-//        String res= HttpUtil.post("http://192.168.1.55:8080/persieService/flush/logic", paramMap.toJSONString());
-//        System.out.println("我是返回值 :"+res);
+        JSONObject paramMap = new JSONObject();
+        paramMap.put("name","round_match");
+        String res= HttpUtil.post("http://192.168.1.55:8080/persieService/flush/logic", paramMap.toJSONString());
+        System.out.println("我是返回值 :"+res);
 
 
 //        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name","deamon");//deamon , online   persieDeamon
+//        paramMap.put("name","config_confirm");//deamon , online   persieDeamon  线上
 //        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //        System.out.println("我是返回值 :"+res);
+
 
 //        JSONObject paramMap = new JSONObject();
 //        paramMap.put("name","games");
@@ -68,32 +57,9 @@ public class test
 
 
 //        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name","notice_system");
-//        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
-//        System.out.println("我是返回值 :"+res);
-
-//        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name","notification");
+//        paramMap.put("name","  round_match");
 //        String res= HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
 //        System.out.println("我是返回值 :"+res);
-
-
-//        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name", "goods_value_ext");
-//        String res = HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
-//        System.out.println("我是返回值 :" + res);
-
-
-
-//        JSONObject paramMap = new JSONObject();
-////        paramMap.put("name", "goods_value_ext");
-////        String res = HttpUtil.post("https://sgame.qinyougames.com/public/flush/logic", paramMap.toJSONString());
-////        System.out.println("我是返回值 :" + res);
-
-//        JSONObject paramMap = new JSONObject();
-//        paramMap.put("name", "rounds");
-//        String res = HttpUtil.post("https://sgame.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
-//        System.out.println("我是返回值 :" + res);
 
       /*  Date now = new Date();
         System.out.println(now);
@@ -112,9 +78,9 @@ public class test
 
 //        calendar.add(Calendar.DAY_OF_MONTH, -1); //设置为前一天
 //        dBefore = calendar.getTime(); //得到前一天的时间
-       // String defaultStartDate = dateFmt.format(dBefore); //格式化前一天
+        // String defaultStartDate = dateFmt.format(dBefore); //格式化前一天
 //        System.out.println("defaultStartDate ："+defaultStartDate);
-      //  defaultStartDate = defaultStartDate.substring(0,10)+" 00:00:00";
+        //  defaultStartDate = defaultStartDate.substring(0,10)+" 00:00:00";
 //        System.out.println("defaultStartDate ："+defaultStartDate);
 //        String defaultEndDate = defaultStartDate.substring(0,10)+" 23:59:59";
 //        System.out.println("defaultEndDate ："+defaultEndDate);
@@ -139,13 +105,6 @@ public class test
 //        System.out.println(time);
 
 
-//        String now = DateFormatUtils.format(calendar.getTime(), "yyyy-MM-dd HH:mm:ss");
-//        System.out.println(now);
-//        String now =  "2019/12/03 - 2019/12/04";
-//        String[] split = now.split("-");
-//        System.out.println(split[0].replace("/","-"));
-//        System.out.println(split[1].trim().replace("/","-"));
-
 //        String url ="http://192.168.1.55:8080/persieRes/wx75f1c4d8cd887fd6/skip/readme.json";
 //        String s = ReadJsonUtil.loadJson(url);
 //        String minify = minify(s);
@@ -163,7 +122,7 @@ public class test
 //        String obtainResultUrl2 = "http://192.168.1.55:8980/persieDeamon/match/match-c160-g0-i3-0.json";
 //        String result2 = HttpUtil.get(obtainResultUrl2);
 //        JSONArray object2 = JSONArray.parseArray(result2);
-//
+
 //        object1.addAll(object2);
 //        // System.out.println(object1.toJSONString());
 //        for (Object object : object1)
@@ -198,85 +157,97 @@ public class test
 //
 //        List<DataCollect> list = (List<DataCollect>) RedisUtils.getList("dataList");
 //        for (DataCollect dataCollect : list) {
-//            String s = dataCollect.toString();
-//            System.out.println(s);
+//            String s = dataCollect.toString();//            System.out.println(s);
 //        }
 
-       // File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "static/p12/userTemplate.xlsx");
+        // File file = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "static/p12/userTemplate.xlsx");
 //       String aa= ResourceUtils.CLASSPATH_URL_PREFIX + "static/p12/1502768571.p12";
 //        System.out.println(aa);
 //        String path = test.class.getResource("/").getPath();
 //        System.out.println(path);
 
-        DateFormat format = new SimpleDateFormat("yyMM-dd HH:mm:ss");
-        Timestamp timestamp = new Timestamp(new Date().getTime());
+//        DateFormat format = new SimpleDateFormat("yyMM-dd HH:mm:ss");
+//        Timestamp timestamp = new Timestamp(new Date().getTime());
+//
+//        String gameTime = format.format(timestamp);
+//        System.out.println(gameTime);
+//
+//        long current=System.currentTimeMillis();    //当前时间毫秒数
+//        long zeroT=current/(1000*3600*24)*(1000*3600*24)- TimeZone.getDefault().getRawOffset();  //今天零点零分零秒的毫秒数
+//        String zero = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(zeroT);
+//        String end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current);
+//
+//        System.out.println(zero);				//	2018-07-23 00:00:00
+//        System.out.println(end);				//	2018-07-23 23:59:59
 
-        String gameTime = format.format(timestamp);
-        System.out.println(gameTime);
-
-        long current=System.currentTimeMillis();    //当前时间毫秒数
-        long zeroT=current/(1000*3600*24)*(1000*3600*24)- TimeZone.getDefault().getRawOffset();  //今天零点零分零秒的毫秒数
-        String zero = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(zeroT);
-        String end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current);
-
-        System.out.println(zero);				//	2018-07-23 00:00:00
-        System.out.println(end);				//	2018-07-23 23:59:59
-
+//        String str="https://res.qinyougames.com/images/qrcode/kf_20200226/";
+//        String [] sz=str.split("/");
+//        System.out.println(sz[sz.length-1]);
+//        String [] sz=str.split("/");
+//        String pngName = sz[sz.length - 1];
+//        System.out.println(pngName);
     }
 
+    public static void getFileName(File f) throws IOException {
+        if (!f.exists() || !f.isDirectory()) {
+            return;
+        }
+        File[] subFiles = f.listFiles();
+        for (int i = 0, ii = subFiles == null ? 0 : subFiles.length; i < ii; i++) {
+            if (subFiles[i].isFile()) {
+                try {
+                    System.out.println(subFiles[i].toString()+"-subFiles[i].toString()");
+                    System.out.println("压缩文件：" + subFiles[i].getAbsolutePath());
+                    String s = subFiles[i].getAbsolutePath().substring(subFiles[i].getAbsolutePath().lastIndexOf("\\")+1);
+                    System.out.println(s);
 
-    public static String minify(String jsonString)
-    {
+                } catch (Exception e) {
+                //System.out.println(e.getMessage());
+                }
+            }
+        }
+    }
+
+    public static String minify(String jsonString) {
         boolean in_string = false;
         boolean in_multiline_comment = false;
         boolean in_singleline_comment = false;
         char string_opener = 'x'; // unused value, just something that makes compiler happy
 
         StringBuilder out = new StringBuilder();
-        for (int i = 0; i < jsonString.length(); i++)
-        {
+        for (int i = 0; i < jsonString.length(); i++) {
             // get next (c) and next-next character (cc)
 
             char c = jsonString.charAt(i);
             String cc = jsonString.substring(i, Math.min(i + 2, jsonString.length()));
 
             // big switch is by what mode we're in (in_string etc.)
-            if (in_string)
-            {
-                if (c == string_opener)
-                {
+            if (in_string) {
+                if (c == string_opener) {
                     in_string = false;
                     out.append(c);
-                } else if (c == '\\')
-                { // no special treatment needed for \\u, it just works like this too
+                } else if (c == '\\') { // no special treatment needed for \\u, it just works like this too
                     out.append(cc);
                     ++i;
                 } else
                     out.append(c);
-            } else if (in_singleline_comment)
-            {
+            } else if (in_singleline_comment) {
                 if (c == '\r' || c == '\n')
                     in_singleline_comment = false;
-            } else if (in_multiline_comment)
-            {
-                if (cc.equals("*/"))
-                {
+            } else if (in_multiline_comment) {
+                if (cc.equals("*/")) {
                     in_multiline_comment = false;
                     ++i;
                 }
-            } else
-            {
+            } else {
                 // we're outside of the special modes, so look for mode openers (comment start, string start)
-                if (cc.equals("/*"))
-                {
+                if (cc.equals("/*")) {
                     in_multiline_comment = true;
                     ++i;
-                } else if (cc.equals("//"))
-                {
+                } else if (cc.equals("//")) {
                     in_singleline_comment = true;
                     ++i;
-                } else if (c == '"' || c == '\'')
-                {
+                } else if (c == '"' || c == '\'') {
                     in_string = true;
                     string_opener = c;
                     out.append(c);
@@ -290,10 +261,8 @@ public class test
     /**
      * 根据 id 生成分表编号的方法
      */
-    public static String generateTableCodeByKey(String key)
-    {
-        if (key.length() < 16)
-        {
+    public static String generateTableCodeByKey(String key) {
+        if (key.length() < 16) {
             return "0";
         }
 
@@ -303,8 +272,7 @@ public class test
         int c2 = key.charAt(index + 2);
         int c3 = key.charAt(index + 3);
         int value = (c0 % 10) * 1000 + (c1 % 10) * 100 + (c2 % 10) * 10 + (c3 % 10);
-        if (value < 0)
-        {
+        if (value < 0) {
             value = -value;
         }
 
@@ -313,8 +281,7 @@ public class test
 
 
     @Test
-    public void testConn() throws SQLException
-    {
+    public void testConn() throws SQLException {
         String time = "1567197702450";
         String timeStamp2Date = timeStampDate(time);
         Date date = new Date();
@@ -322,17 +289,14 @@ public class test
 
     }
 
-    public static String timeStampDate(String time)
-    {
+    public static String timeStampDate(String time) {
         Long timeLong = Long.parseLong(time);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//要转换的时间格式
         Date date;
-        try
-        {
+        try {
             date = sdf.parse(sdf.format(timeLong));
             return sdf.format(date);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

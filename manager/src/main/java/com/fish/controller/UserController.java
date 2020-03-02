@@ -8,39 +8,29 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping(value = "/user")
-public class UserController
-{
+public class UserController {
     @ResponseBody
     @PostMapping("/login")
-    public String login(@RequestParam("username") String username, @RequestParam("password") String password)
-    {
+    public String login(@RequestParam("username") String username, @RequestParam("password") String password) {
         Subject subject = SecurityUtils.getSubject();
         subject.getSession().setTimeout(7200000);
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-        try
-        {
+        try {
             subject.login(token);
-        } catch (UnknownAccountException uae)
-        {
+        } catch (UnknownAccountException uae) {
             return "未知账户";
-        } catch (IncorrectCredentialsException ice)
-        {
+        } catch (IncorrectCredentialsException ice) {
             return "密码不正确";
-        } catch (LockedAccountException lae)
-        {
+        } catch (LockedAccountException lae) {
             return "账户已锁定";
-        } catch (ExcessiveAttemptsException eae)
-        {
+        } catch (ExcessiveAttemptsException eae) {
             return "用户名或密码错误次数过多";
-        } catch (AuthenticationException ae)
-        {
+        } catch (AuthenticationException ae) {
             return "用户名或密码不正确！";
         }
-        if (subject.isAuthenticated())
-        {
+        if (subject.isAuthenticated()) {
             return "登录成功";
-        } else
-        {
+        } else {
             token.clear();
             return "登录失败";
         }
@@ -48,8 +38,7 @@ public class UserController
 
     @ResponseBody
     @GetMapping("/logout")
-    public String select()
-    {
+    public String select() {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
         return "成功登出";

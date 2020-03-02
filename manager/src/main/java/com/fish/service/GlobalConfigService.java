@@ -49,7 +49,7 @@ public class GlobalConfigService implements BaseService<GoodsValue> {
                 int cashNumber = ddvalue / 100;
                 goodsValue.setCostDesc("提现" + cashNumber + "元");
                 goodsValue.setGainDesc(cashNumber + "元");
-                goodsValue.setCashNumber(goodsValue.getDdvalue().toString());
+                goodsValue.setCashNumber(String.valueOf(cashNumber));
             }
             if ("head".equals(goodsType))
             {
@@ -64,7 +64,7 @@ public class GlobalConfigService implements BaseService<GoodsValue> {
 
     //新增展示所有产品信息
     public int insert(GoodsValue record) {
-        record.setInserttime(new Timestamp(new Date().getTime()));
+        record.setInserttime(new Timestamp(System.currentTimeMillis()));
         String goodsType = record.getDdgoodstype();
         if ("recharge".equals(goodsType) || "coin".equals(goodsType))
         {

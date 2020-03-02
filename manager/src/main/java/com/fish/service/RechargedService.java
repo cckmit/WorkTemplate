@@ -2,9 +2,7 @@ package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.*;
-import com.fish.dao.second.model.AllCost;
 import com.fish.dao.second.model.Recharge;
-import com.fish.dao.second.model.UserInfo;
 import com.fish.protocols.GetParameter;
 import com.fish.service.cache.CacheService;
 import com.fish.utils.XwhTool;
@@ -13,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +44,8 @@ public class RechargedService implements BaseService<Recharge>
         List<Recharge> recharges;
         JSONObject search = getSearchData(parameter.getSearchData());
         String sql ="SELECT a.ddCurrent*0.01 AS remainAmount,w.program_type AS programType,w.product_name AS productName,u.ddName AS userName,r.* FROM  \n" +
-                "recharge AS r LEFT JOIN all_cost AS a ON r.ddUid = a.ddUid AND a.ddCostType= 'recharge' AND DATE(a.ddTime) = DATE(r.ddTimes)\n" +
+                "recharge AS r LEFT JOIN all_cost AS a ON r.ddUid = a.ddUid AND a.ddCostType= 'recharge' AND DATE_FORMAT(a.ddTime,\"%Y-%m-%d %h\")\n" +
+                " = DATE_FORMAT(r.ddTimes,\"%Y-%m-%d %h\")\n" +
                 " LEFT JOIN wx_config AS w ON r.ddAppId =w.ddAppId LEFT JOIN user_info AS u ON r.ddUid=u.ddUid";
         System.out.println("查询,耗时:" + (System.currentTimeMillis() - current) + "ms");
         if (search == null || search.getString("times").isEmpty())

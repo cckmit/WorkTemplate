@@ -175,6 +175,9 @@
 
                     },
                     {
+                        field: 'wxBannerIncome', width: 120, title: 'banner收入', sort: true
+                    },
+                    {
                         field: 'activeUp', width: 120, title: '活跃ARPU', sort: true
                     },
                     {
@@ -261,13 +264,15 @@
 
         form.on('submit(export)', function(){
             var excel = layui.excel;
-            var excelDate=[['日期','AppId','产品名称','产品类型','新增','活跃','访问次数','充值','广告收入','视频收入',
+            var excelDate=[['日期','AppId','产品名称','产品类型','新增','活跃','访问次数','充值','广告收入','视频收入','banner收入',
                 '活跃ARPU','分享人数','分享次数','分享率','次留','人均登录次数','人均在线时长'
             ]];
             excel.exportExcel({
                 sheet1: excelDate
             }, '导入模板.xlsx', 'xlsx');
         });
+
+
         laydate.render({
             elem: '#beginDate',
             format: 'yyyy-MM-dd'
@@ -281,7 +286,26 @@
             range: true
         });
     })
+    function privateSumbitFormatData(data) {
+        return UIConfig.sumbitFormatData(data);
+    }
 
+    /**
+     * 删除用户时不允许删除管理员，即使用户选中了也剔除掉
+     * @param dataArray
+     */
+    function privateGetDeleteData(dataArray, deleteObj) {
+        dataArray.forEach(data => {
+
+                if (deleteObj.deleteIds) {
+                    deleteObj.deleteIds += ',' + data.id;
+                } else {
+                    deleteObj.deleteIds = data.id;
+                }
+                deleteObj.deleteCount++;
+
+        });
+    }
 </script>
 
 <!-- 表单元素 -->
@@ -356,6 +380,14 @@
         <label class="layui-form-label">视频收入</label>
         <div class="layui-input-inline">
             <input type="text" id="wxVideoIncome" name="wxVideoIncome" lay-verify="required" autocomplete="off"
+                   class="layui-input layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item ">
+        <label class="layui-form-label">banner收入</label>
+        <div class="layui-input-inline">
+            <input type="text" id="wxBannerIncome" name="wxBannerIncome" lay-verify="required" autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>

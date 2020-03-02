@@ -76,6 +76,7 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
+                {type:'numbers',title:'序号' } ,
                 {field: 'ddid', width: 120, title: '计费点ID', sort: true},
                 {field: 'costDesc', width: 180, title: '计费点描述', sort: true},
                 {field: 'ddcosttype', width: 150, title: '计费点金额', sort: true},
@@ -181,8 +182,8 @@
         <label class="layui-form-label">提现金额 *</label>
         <div class="layui-input-inline">
             <input type="number"  id="cashNumber" name="cashNumber" autocomplete="off"
-                   class="layui-input " placeholder="(元)" >
-        </div>
+                   class="layui-input " placeholder="(元)">
+        </div>(元)
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">状态 *</label>

@@ -107,7 +107,7 @@ public class RechargeService implements BaseService<Recharge>
             recharge.setDdrmbed(new BigDecimal(cashOutCurrent));
 
             Integer programType = recharge.getProgramType();
-            if (programType == 1)
+            if (programType == 1 || programType == 2)
             {
                 rechargeList.add(recharge);
             }
