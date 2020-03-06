@@ -1,15 +1,21 @@
 package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fish.dao.second.mapper.ConfigAdContentMapper;
 import com.fish.dao.second.mapper.ConfigAdPositionMapper;
 import com.fish.dao.second.model.ConfigAdPosition;
-import com.fish.dao.second.model.ConfigAdPosition;
+import com.fish.dao.second.model.ConfigAdSpace;
+import com.fish.dao.second.model.ConfigAdStrategy;
+import com.fish.dao.second.model.ConfigAdType;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
+import com.fish.service.cache.CacheService;
+import com.fish.utils.BaseConfig;
+import com.fish.utils.ReadJsonUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,18 +28,71 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
     @Autowired
     ConfigAdPositionMapper adPositionMapper;
 
-    @Override
-    public void setDefaultSort(GetParameter parameter) { }
+    @Autowired
+    CacheService cacheService;
+
+    @Autowired
+    BaseConfig baseConfig;
 
     @Override
-    public Class getClassInfo() { return null; }
+    public void setDefaultSort(GetParameter parameter) {
+    }
 
     @Override
-    public boolean removeIf(ConfigAdPosition configAdPosition, JSONObject searchData) { return false; }
+    public Class getClassInfo() {
+        return ConfigAdPositionService.class;
+    }
 
     @Override
-    public List selectAll(GetParameter parameter) {
-        List<ConfigAdPosition> list = this.adPositionMapper.selectAll();
+    public boolean removeIf(ConfigAdPosition configAdPosition, JSONObject searchData) {
+        return false;
+    }
+
+    @Override
+    public List<ConfigAdPosition> selectAll(GetParameter parameter) {
+        ConfigAdPosition adPosition = new ConfigAdPosition();
+        if (StringUtils.isNotBlank(parameter.getSearchData())) {
+            JSONObject searchObject = JSONObject.parseObject(parameter.getSearchData());
+            adPosition.setDdAdTypes(searchObject.getString("adType"));
+            adPosition.setDdName(searchObject.getString("name"));
+        }
+        List<ConfigAdPosition> list = this.adPositionMapper.selectAll(adPosition);
+
+        for (ConfigAdPosition configAdPosition : list) {
+            // 处理广告类型
+            if (StringUtils.isNotBlank(configAdPosition.getDdAdTypes())) {
+                String[] adTypeArray = configAdPosition.getDdAdTypes().split(",");
+                String adTypeNames = "";
+                for (String typeId : adTypeArray) {
+                    String adTypeName = this.cacheService.getConfigAdType(Integer.parseInt(typeId)).getDdName();
+                    if (StringUtils.isBlank(adTypeNames)) {
+                        adTypeNames = typeId + "-" + adTypeName;
+                    } else {
+                        adTypeNames += "," + typeId + "-" + adTypeName;
+                    }
+                }
+                configAdPosition.setAdTypeNames(adTypeNames);
+            }
+
+            // 处理广告内容
+            if (StringUtils.isNotBlank(configAdPosition.getDdAdSpaces())) {
+                String[] spaceIdArray = configAdPosition.getDdAdSpaces().split(",");
+                String adSpaceNames = "";
+                for (String spaceId : spaceIdArray) {
+                    String adSpaceName = this.cacheService.getConfigAdSpaces(Integer.parseInt(spaceId)).getDdName();
+                    if (StringUtils.isBlank(adSpaceNames)) {
+                        adSpaceNames = spaceId + "-" + adSpaceName;
+                    } else {
+                        adSpaceNames += "," + spaceId + "-" + adSpaceName;
+                    }
+                }
+                configAdPosition.setAdSpaceNames(adSpaceNames);
+            }
+
+            // 处理策略ID
+            configAdPosition.setAdStrategyNames(
+                    this.cacheService.getConfigAdStrategys(configAdPosition.getDdStrategyId()).getDdName());
+        }
         return list;
     }
 
@@ -49,6 +108,8 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
         if (id <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
+        } else {
+            String res = ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
         }
         return result;
     }
@@ -65,6 +126,8 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
         if (update <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            String res = ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
         }
         return result;
     }
@@ -72,17 +135,32 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
     /**
      * 根据ID删除广告内容
      *
-     * @param id
+     * @param deleteIds
      * @return
      */
-    public PostResult delete(int id) {
+    public PostResult delete(String deleteIds) {
         PostResult result = new PostResult();
-        int delete = this.adPositionMapper.delete(id);
+        int delete = this.adPositionMapper.delete(deleteIds);
         if (delete <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            String res = ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
         }
         return result;
+    }
+
+    /**
+     * 通过ID查询广告位置参数
+     *
+     * @param id 广告位置ID
+     * @return 广告位置配置
+     */
+    public ConfigAdPosition getConfigAdPosition(int id) {
+        if (id == 0) {
+            return null;
+        }
+        return this.adPositionMapper.select(id);
     }
 
 }

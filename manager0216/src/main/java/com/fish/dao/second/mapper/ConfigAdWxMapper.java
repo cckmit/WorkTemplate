@@ -18,7 +18,7 @@ public interface ConfigAdWxMapper {
      * @param id
      * @return
      */
-    List<ConfigAdWx> select(int id);
+    ConfigAdWx select(int id);
 
     /**
      * 查询全部广告类型
@@ -44,10 +44,11 @@ public interface ConfigAdWxMapper {
     int update(ConfigAdWx configAdType);
 
     /**
-     * 删除
-     * @param id
+     * 根据ID删除微信广告配置
+     *
+     * @param deleteIds
      * @return
      */
-    int delete(int id);
+    int delete(String deleteIds);
 
 }

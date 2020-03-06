@@ -3,13 +3,9 @@ package com.fish.service.cache;
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.mapper.*;
 import com.fish.dao.primary.model.*;
-import com.fish.dao.second.mapper.GoodsValueMapper;
-import com.fish.dao.second.mapper.UserInfoMapper;
-import com.fish.dao.second.mapper.UserValueMapper;
-import com.fish.dao.second.mapper.WxConfigMapper;
+import com.fish.dao.second.mapper.*;
 import com.fish.dao.second.model.*;
 import com.fish.dao.third.mapper.MinitjWxMapper;
-import com.fish.dao.third.model.MinitjWx;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +43,15 @@ public class CacheService {
     @Autowired
     UserValueMapper userValueMapper;
 
+    @Autowired
+    ConfigAdTypeMapper configAdTypeMapper;
+    @Autowired
+    ConfigAdSpaceMapper configAdSpaceMapper;
+
+    @Autowired
+    ConfigAdContentMapper configAdContentMapper;
+    @Autowired
+    ConfigAdStrategyMapper configAdStrategyMapper;
     private Map<Integer, ArcadeGames> gamesMap = new ConcurrentHashMap<>();
 
     private Map<String, JSONObject> roundInfoMap = new ConcurrentHashMap<>();
@@ -67,6 +72,16 @@ public class CacheService {
     private Map<String, Integer> userQueryRecord = new ConcurrentHashMap<>();
 
     private Map<String, UserAllInfo> userInfoCache = new ConcurrentHashMap<>();
+
+    //广告类型
+    private Map<Integer, ConfigAdType> configAdTypeCache = new ConcurrentHashMap<>();
+    //广告位列表
+    private Map<Integer, ConfigAdSpace> configAdSpaceCache = new ConcurrentHashMap<>();
+    //广告内容
+    private Map<Integer, ConfigAdContent> configAdContentCache = new ConcurrentHashMap<>();
+
+    //广告策略
+    private Map<Integer, ConfigAdStrategy> configAdStrategyCache = new ConcurrentHashMap<>();
 
     /**
      * 从数据库更新全部游戏参数
@@ -184,6 +199,151 @@ public class CacheService {
 
     /////////////////////以上是CC翻新锅的/////////////////////////////
 
+    /**
+     * 从数据库更新广告策略
+     */
+    public void updateAllConfigAdStrategys() {
+        List<ConfigAdStrategy> list = this.configAdStrategyMapper.selectAll();
+        for (ConfigAdStrategy configAdStrategy : list) {
+            this.configAdStrategyCache.put(configAdStrategy.getDdId(), configAdStrategy);
+        }
+    }
+
+    /**
+     * 从数据库更新广告内容
+     */
+    public void updateAllConfigAdContents() {
+        List<ConfigAdContent> list = this.configAdContentMapper.selectAll(new ConfigAdContent());
+        for (ConfigAdContent configAdContent : list) {
+            this.configAdContentCache.put(configAdContent.getDdId(), configAdContent);
+        }
+    }
+
+    /**
+     * 从数据库更新全部更新广告位数据
+     */
+    public void updateAllConfigAdSpaces() {
+        List<ConfigAdSpace> list = this.configAdSpaceMapper.selectAll(new ConfigAdSpace());
+        for (ConfigAdSpace configAdSpace : list) {
+            this.configAdSpaceCache.put(configAdSpace.getDdId(), configAdSpace);
+        }
+    }
+
+    /**
+     * 从数据库更新全部广告类型
+     */
+    public void updateAllConfigAdTypes() {
+        List<ConfigAdType> list = this.configAdTypeMapper.selectAll();
+        for (ConfigAdType configAdType : list) {
+            this.configAdTypeCache.put(configAdType.getDdId(), configAdType);
+        }
+    }
+
+    /**
+     * 通过广告内容ID获取广告位内容
+     *
+     * @param ddId 广告类型I
+     * @return 广告类型
+     */
+    public ConfigAdStrategy getConfigAdStrategys(int ddId) {
+        ConfigAdStrategy strategy = getConfigAdStrategy(ddId);
+        return strategy;
+    }
+
+    public ConfigAdStrategy getConfigAdStrategy(int ddId) {
+        ConfigAdStrategy configAdStrategys = this.configAdStrategyCache.get(ddId);
+        if (configAdStrategys == null) {
+            configAdStrategys = this.configAdStrategyMapper.select(ddId);
+            if (configAdStrategys != null) {
+                this.configAdStrategyCache.put(ddId, configAdStrategys);
+            }
+        }
+        return configAdStrategys;
+    }
+
+    /**
+     * 通过广告内容ID获取广告位内容
+     *
+     * @param ddId 广告类型I
+     * @return 广告类型
+     */
+    public ConfigAdContent getConfigAdContents(int ddId) {
+        ConfigAdContent contents = getConfigAdContent(ddId);
+        return contents;
+    }
+
+    public ConfigAdContent getConfigAdContent(int ddId) {
+        ConfigAdContent configAdContents = this.configAdContentCache.get(ddId);
+        if (configAdContents == null) {
+            configAdContents = this.configAdContentMapper.select(ddId);
+            if (configAdContents != null) {
+                this.configAdContentCache.put(ddId, configAdContents);
+            }
+        }
+        return configAdContents;
+    }
+
+
+    /**
+     * 通过广告类型ID获取广告参数
+     *
+     * @param ddId 广告类型I
+     * @return 广告类型
+     */
+    public ConfigAdSpace getConfigAdSpaces(int ddId) {
+        ConfigAdSpace spaces = getConfigAdSpace(ddId);
+        return spaces;
+    }
+
+    public ConfigAdSpace getConfigAdSpace(int ddId) {
+        ConfigAdSpace configAdSpaces = this.configAdSpaceCache.get(ddId);
+        if (configAdSpaces == null) {
+            configAdSpaces = this.configAdSpaceMapper.select(ddId);
+            if (configAdSpaces != null) {
+                this.configAdSpaceCache.put(ddId, configAdSpaces);
+            }
+        }
+        return configAdSpaces;
+    }
+
+
+    /**
+     * 通过广告类型ID获取广告参数
+     *
+     * @param ddId 广告类型I
+     * @return 广告类型
+     */
+    public ConfigAdType getConfigAdType(int ddId) {
+        ConfigAdType types = getConfigAdTypes(ddId);
+        return types;
+    }
+
+    public ConfigAdType getConfigAdTypes(int ddId) {
+        ConfigAdType configAdTypes = this.configAdTypeCache.get(ddId);
+        if (configAdTypes == null) {
+            configAdTypes = this.configAdTypeMapper.select(ddId);
+            if (configAdTypes != null) {
+                this.configAdTypeCache.put(ddId, configAdTypes);
+            }
+        }
+        return configAdTypes;
+    }
+
+
+    /**
+     * 通过游戏编号获取游戏参数
+     *
+     * @param gameCode 游戏编号
+     * @return 游戏信息
+     */
+    public ArcadeGames getGames(int gameCode) {
+        ArcadeGames games = getArcadeGames(gameCode);
+        if (games != null) {
+            return games;
+        }
+        return null;
+    }
+
     public UserAllInfo getUserInfo(String uid) {
         if (userInfoCache.isEmpty()) {
             getAllUserInfo();
@@ -234,21 +394,6 @@ public class CacheService {
         List<WxConfig> wxConfigs = wxConfigMapper.selectAll();
         wxConfigs.forEach(wxConfig -> wxConfigCache.put(wxConfig.getDdappid(), wxConfig));
         return wxConfigs;
-    }
-
-
-    /**
-     * 通过游戏编号获取游戏参数
-     *
-     * @param gameCode 游戏编号
-     * @return 游戏信息
-     */
-    public ArcadeGames getGames(int gameCode) {
-        ArcadeGames games = getArcadeGames(gameCode);
-        if (games != null) {
-            return games;
-        }
-        return null;
     }
 
 

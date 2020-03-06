@@ -32,14 +32,24 @@ public class Fc_ProductDataController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询产品信息详情
+    /**
+     * 查询产品信息详情
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/productdata")
     public GetResult getProductData(GetParameter parameter) {
         return fcProductDataService.findAll(parameter);
     }
 
-    //搜索产品信息详情
+    /**
+     * 搜索产品信息详情
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/productdata/search")
     public GetResult searchData(HttpServletRequest request, GetParameter parameter) {
@@ -49,6 +59,12 @@ public class Fc_ProductDataController {
         return fcProductDataService.searchProductData(beginDate, endDate, productName, parameter);
     }
 
+    /**
+     * 上传小程序信息
+     *
+     * @param file
+     * @return
+     */
     @ResponseBody
     @PostMapping("/productdata/uploadExcel")
     public JSONObject uploadExcel(@RequestParam("file") MultipartFile file) {
@@ -61,7 +77,7 @@ public class Fc_ProductDataController {
             ReadExcel readExcel = new ReadExcel();
             readExcel.readFile(saveFile);
             jsonObject.put("context", readExcel.read(0));
-            int insert = fcProductDataService.insertExcel(jsonObject);
+            fcProductDataService.insertExcel(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,13 +113,7 @@ public class Fc_ProductDataController {
 
     @ResponseBody
     @PostMapping(value = "/productdata/delete")
-    public PostResult deleteBuyPay(@RequestBody ProductData productInfo) {
-        PostResult result = new PostResult();
-        int count = fcProductDataService.deleteSelective(productInfo);
-        if (count == 0) {
-            result.setSuccessed(false);
-            result.setMsg("操作失败，请联系管理员");
-        }
-        return result;
+    public PostResult deleteBuyPay(@RequestBody JSONObject jsonObject) {
+        return this.fcProductDataService.delete(jsonObject);
     }
 }

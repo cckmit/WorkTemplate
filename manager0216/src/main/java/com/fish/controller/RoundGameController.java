@@ -41,6 +41,11 @@ public class RoundGameController {
         return roundGameService.findAll(parameter);
     }
 
+    /**
+     * 小游戏赛制下拉框内容
+     *
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/roundgame/rounds")
     public List<RoundExt> getRounds(GetParameter parameter) {
@@ -50,7 +55,6 @@ public class RoundGameController {
     @PostMapping(value = "/roundgame/delete")
     public PostResult deleteRecharge(@RequestBody Recharge productInfo) {
         PostResult result = new PostResult();
-
         result.setMsg("操作成功");
         return result;
     }
@@ -67,8 +71,8 @@ public class RoundGameController {
         PostResult result = new PostResult();
         int count = roundGameService.insert(productInfo);
         if (count == 1) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_game", baseConfig.getFlushCache());
-
             result.setMsg("操作成功" + res);
             return result;
         } else {
@@ -89,8 +93,8 @@ public class RoundGameController {
         PostResult result = new PostResult();
         int count = roundGameService.updateByPrimaryKeySelective(productInfo);
         if (count != 0) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_game", baseConfig.getFlushCache());
-
             result.setMsg("操作成功" + res);
             return result;
         } else {
@@ -98,7 +102,14 @@ public class RoundGameController {
             result.setMsg("操作失败，请联系管理员");
             return result;
         }
-
     }
-
+//    /**
+//     * @param id 游戏场次ID
+//     * @return
+//     */
+//    @ResponseBody
+//    @GetMapping(value = "/roundgame/get")
+//    public RoundGame getConfigAdContent(Integer id) {
+//        return this.roundGameService.select(id);
+//    }
 }

@@ -1,6 +1,8 @@
 package com.fish.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.model.ConfigAdContent;
+import com.fish.dao.second.model.ConfigAdPosition;
 import com.fish.dao.second.model.ConfigAdSpace;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
@@ -14,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * 广告内容管理
@@ -65,13 +69,31 @@ public class ConfigAdSpaceController {
     /**
      * 删除
      *
-     * @param id
+     * @param jsonObject
      * @return
      */
     @ResponseBody
     @PostMapping(value = "/configAdSpace/delete")
-    public PostResult delete(@RequestBody int id) {
-        return this.adSpaceService.delete(id);
+    public PostResult delete(@RequestBody JSONObject jsonObject) {
+        return this.adSpaceService.delete(jsonObject.getString("deleteIds"));
     }
 
+
+    /**
+     * @param getParameter
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdSpace/select")
+    public List<ConfigAdSpace> getConfigAdSpaceSelect(GetParameter getParameter) {
+        return this.adSpaceService.selectAllSpace(getParameter);
+    }
+
+    /**
+     * @param id 广告位置ID
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdSpace/get")
+    public ConfigAdSpace getConfigAdSpace(int id) { return this.adSpaceService.getConfigAdSpace(id); }
 }

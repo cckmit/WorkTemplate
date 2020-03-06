@@ -1,6 +1,7 @@
 package com.fish.controller;
 
 import com.fish.dao.primary.model.SupplementOrder;
+import com.fish.dao.second.model.AllCost;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
 import com.fish.protocols.PostResult;
@@ -39,11 +40,10 @@ public class SupplementOrderController {
     @PostMapping(value = "/supplementorder/new")
     public PostResult insertSupplementOrder(@RequestBody SupplementOrder productInfo) {
         PostResult result = new PostResult();
-
         int count = supplementOrderService.insert(productInfo);
         if (count == 1) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("user_value", baseConfig.getFlushCache());
-
             result.setMsg("操作成功" + res);
             return result;
         } else {
@@ -52,5 +52,15 @@ public class SupplementOrderController {
             return result;
         }
     }
+
+    /**
+     * 查询用户当前金币
+     */
+    @ResponseBody
+    @GetMapping(value = "/supplementorder/query")
+    public SupplementOrder selectCurrentCoinByUid( @RequestParam("uid") String uid) {
+        return supplementOrderService.selectCurrentCoin(uid);
+    }
+
 
 }

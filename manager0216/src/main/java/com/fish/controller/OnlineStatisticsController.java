@@ -23,7 +23,13 @@ public class OnlineStatisticsController {
     @Autowired
     OnlineService onlineService;
 
-    //查询在线情况
+
+    /**
+     * 查询在线情况
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/online")
     public GetResult getOnline(GetParameter parameter) {

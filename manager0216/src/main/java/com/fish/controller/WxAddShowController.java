@@ -50,6 +50,7 @@ public class WxAddShowController {
         PostResult result = new PostResult();
         int count = wxAddShowService.insert(productInfo);
         if (count == 1) {
+            //刷新业务表结构
             String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
             String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
 
@@ -82,6 +83,7 @@ public class WxAddShowController {
         PostResult result = new PostResult();
         int count = wxAddShowService.updateByPrimaryKeySelective(productInfo);
         if (count == 1) {
+            //刷新业务表结构
             String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
             String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
 

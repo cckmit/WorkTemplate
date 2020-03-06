@@ -32,6 +32,13 @@
     where ddGame = #{ddgame,jdbcType=INTEGER} and ddRound = #{ddround,jdbcType=VARCHAR}
   </select>
 
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from round_game
+    where ddCode = #{ddcode,jdbcType=INTEGER}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from round_game
     where ddCode = #{ddcode,jdbcType=INTEGER}

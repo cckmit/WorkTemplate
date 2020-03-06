@@ -36,4 +36,12 @@ public interface WxGroupManagerMapper {
      */
     WxGroupManager selectQrCodeByPrimaryKey(WxGroupManager wxGroupManager);
 
+    /**
+     * 插入历史数据
+     * @param wxGroupManager
+     * @return
+     */
+    int insertHistoryDate(WxGroupManager wxGroupManager);
+
+    int changeStatus(Integer ddStatus);
 }

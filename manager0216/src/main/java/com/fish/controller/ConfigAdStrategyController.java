@@ -1,5 +1,6 @@
 package com.fish.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.model.ConfigAdStrategy;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * 广告内容管理
@@ -68,8 +71,18 @@ public class ConfigAdStrategyController {
      */
     @ResponseBody
     @PostMapping(value = "/configAdStrategy/delete")
-    public PostResult delete(@RequestBody int id) {
-        return this.adStrategyService.delete(id);
+    public PostResult delete(@RequestBody JSONObject jsonObject) {
+        return this.adStrategyService.delete(jsonObject.getString("deleteIds"));
+    }
+
+    /**
+     * @param getParameter
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdStrategy/select")
+    public List<ConfigAdStrategy> getConfigAdStrategySelect(GetParameter getParameter) {
+        return this.adStrategyService.selectAllAdStrategy(getParameter);
     }
 
 }

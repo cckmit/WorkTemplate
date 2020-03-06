@@ -1,11 +1,12 @@
 package com.fish.dao.primary.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class BuyPay
-{
-
+public class BuyPay {
+    private Long id;
 
     private String buyDate;
 
@@ -18,87 +19,80 @@ public class BuyPay
     private Integer buyClickNumber;
 
     private BigDecimal buyClickPrice;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date insertTime;
 
+    public Long getId() {
+        return id;
+    }
 
-    public String getBuyDate()
-    {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getBuyDate() {
         return buyDate;
     }
 
-    public void setBuyDate(String buyDate)
-    {
+    public void setBuyDate(String buyDate) {
         this.buyDate = buyDate == null ? null : buyDate.trim();
     }
 
-    public String getBuyAppId()
-    {
+    public String getBuyAppId() {
         return buyAppId;
     }
 
-    public void setBuyAppId(String buyAppId)
-    {
+    public void setBuyAppId(String buyAppId) {
         this.buyAppId = buyAppId == null ? null : buyAppId.trim();
     }
 
-    public String getBuyProductName()
-    {
+    public String getBuyProductName() {
         return buyProductName;
     }
 
-    public void setBuyProductName(String buyProductName)
-    {
+    public void setBuyProductName(String buyProductName) {
         this.buyProductName = buyProductName == null ? null : buyProductName.trim();
     }
 
-    public BigDecimal getBuyCost()
-    {
+    public BigDecimal getBuyCost() {
         return buyCost;
     }
 
-    public void setBuyCost(BigDecimal buyCost)
-    {
+    public void setBuyCost(BigDecimal buyCost) {
         this.buyCost = buyCost;
     }
 
-    public Integer getBuyClickNumber()
-    {
+    public Integer getBuyClickNumber() {
         return buyClickNumber;
     }
 
-    public void setBuyClickNumber(Integer buyClickNumber)
-    {
+    public void setBuyClickNumber(Integer buyClickNumber) {
         this.buyClickNumber = buyClickNumber;
     }
 
-    public BigDecimal getBuyClickPrice()
-    {
+    public BigDecimal getBuyClickPrice() {
         return buyClickPrice;
     }
 
-    public void setBuyClickPrice(BigDecimal buyClickPrice)
-    {
+    public void setBuyClickPrice(BigDecimal buyClickPrice) {
         this.buyClickPrice = buyClickPrice;
     }
 
-    public Date getInsertTime()
-    {
+    public Date getInsertTime() {
         return insertTime;
     }
 
-    public void setInsertTime(Date insertTime)
-    {
+    public void setInsertTime(Date insertTime) {
         this.insertTime = insertTime;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
         sb.append(", buyDate=").append(buyDate);
         sb.append(", buyAppId=").append(buyAppId);
         sb.append(", buyProductName=").append(buyProductName);

@@ -22,6 +22,11 @@ public class SupplementOrder
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date createTime;
 
+    /**
+     * 展示数据-由uid查询用户当前余额
+     */
+    private Long currentCoin;
+
     public Long getId()
     {
         return id;
@@ -100,6 +105,14 @@ public class SupplementOrder
     public void setCreateTime(Date createTime)
     {
         this.createTime = createTime;
+    }
+
+    public Long getCurrentCoin() {
+        return currentCoin;
+    }
+
+    public void setCurrentCoin(Long currentCoin) {
+        this.currentCoin = currentCoin;
     }
 
     @Override

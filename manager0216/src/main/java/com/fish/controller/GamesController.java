@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 游戏表
+ * 游戏列表 gameList
  * GamesController
  *
  * @author
@@ -31,13 +31,23 @@ public class GamesController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询展示所有游戏信息
+    /**
+     * 查询展示所有游戏信息
+     *
+     * @param parameter
+     * @return
+     */
     @GetMapping(value = "/games")
     public GetResult getGames(GetParameter parameter) {
         return gamesService.findAll(parameter);
     }
 
-    //查询展示所有checkBoc信息
+    /**
+     * 查询games下拉框信息
+     *
+     * @param parameter
+     * @return
+     */
     @GetMapping(value = "/games/selectBox")
     public List<CheckBoxData> getGamesBox(GetParameter parameter) {
         List<ArcadeGames> arcadeGames = gamesService.selectAll(parameter);
@@ -53,13 +63,19 @@ public class GamesController {
         return checkBoxDatas;
     }
 
-    //获取资源图
+    /**
+     * 获取资源图
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/games/flushgames")
     public PostResult getGamesResources(@RequestBody JSONObject parameter) {
         PostResult result = new PostResult();
         int i = gamesService.flushGamesResources(parameter);
         if (i != 0) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
         } else {
@@ -70,12 +86,18 @@ public class GamesController {
         return result;
     }
 
-    //新增游戏信息
+    /**
+     * 新增游戏信息
+     *
+     * @param productInfo
+     * @return
+     */
     @PostMapping(value = "/games/new")
     public PostResult insertGames(@RequestBody ArcadeGames productInfo) {
         PostResult result = new PostResult();
         int count = gamesService.insert(productInfo);
         if (count == 1) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
         } else {
@@ -85,12 +107,18 @@ public class GamesController {
         return result;
     }
 
-    //修改游戏信息
+    /**
+     * 修改游戏信息
+     *
+     * @param productInfo
+     * @return
+     */
     @PostMapping(value = "/games/edit")
     public PostResult modifyGames(@RequestBody ArcadeGames productInfo) {
         PostResult result = new PostResult();
         int count = gamesService.updateByPrimaryKeySelective(productInfo);
         if (count != 0) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
         } else {

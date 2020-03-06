@@ -28,7 +28,12 @@ public class RoundExtController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询展示提现情况
+    /**
+     * 查询赛制
+     *
+     * @param parameter
+     * @return
+     */
     @GetMapping(value = "/roundext")
     public GetResult getRecharge(GetParameter parameter) {
         return roundExtService.findAll(parameter);
@@ -41,7 +46,12 @@ public class RoundExtController {
         return result;
     }
 
-    //新增赛制配置信息
+    /**
+     * 新增赛制配置信息
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/roundext/new")
     public PostResult insertRoundExt(@RequestBody RoundExt productInfo) {
@@ -49,8 +59,8 @@ public class RoundExtController {
         int count = roundExtService.insert(productInfo);
         //int count =1;
         if (count != 0) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_ext", baseConfig.getFlushCache());
-
             result.setMsg("操作成功" + res);
             return result;
         } else {
@@ -60,14 +70,19 @@ public class RoundExtController {
         }
     }
 
-    //修改游戏信息
+    /**
+     * 修改游戏信息
+     *
+     * @param productInfo
+     * @return
+     */
     @PostMapping(value = "/roundext/edit")
     public PostResult modifyRoundExt(@RequestBody RoundExt productInfo) {
         PostResult result = new PostResult();
         int count = roundExtService.updateByPrimaryKeySelective(productInfo);
         if (count != 0) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_ext", baseConfig.getFlushCache());
-
             result.setMsg("操作成功" + res);
             return result;
         } else {

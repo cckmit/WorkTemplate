@@ -5,8 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface RoundGameMapper
-{
+public interface RoundGameMapper {
     int deleteByPrimaryKey(Integer ddcode);
 
     int insert(RoundGame record);
@@ -22,4 +21,6 @@ public interface RoundGameMapper
     List<RoundGame> selectAll();
 
     RoundGame selectByRoundGame(@Param("ddgame") Integer ddgame, @Param("ddround") String ddround);
+
+    RoundGame select(Integer id);
 }

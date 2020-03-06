@@ -5,8 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface OrdersMapper
-{
+public interface OrdersMapper {
     int deleteByPrimaryKey(String ddid);
 
     int insert(Orders record);
@@ -22,6 +21,8 @@ public interface OrdersMapper
     List<Orders> selectAll();
 
     List<Orders> selectBySQL(String sql);
+
     Orders selectResSingle(String str);
+
     List<Orders> selectByTimes(@Param("start") String start, @Param("end") String end);
 }

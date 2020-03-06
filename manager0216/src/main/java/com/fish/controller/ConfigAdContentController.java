@@ -1,5 +1,7 @@
 package com.fish.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.model.ConfigAdContent;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
@@ -7,11 +9,9 @@ import com.fish.protocols.PostResult;
 import com.fish.service.ConfigAdContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 广告内容管理
@@ -63,13 +63,45 @@ public class ConfigAdContentController {
     /**
      * 删除
      *
-     * @param id
+     * @param jsonObject
      * @return
      */
     @ResponseBody
     @PostMapping(value = "/configAdContent/delete")
-    public PostResult delete(@RequestBody int id) {
-        return this.adContentService.delete(id);
+    public PostResult delete(@RequestBody JSONObject jsonObject) {
+        return this.adContentService.delete(jsonObject.getString("deleteIds"));
+    }
+
+
+    /**
+     * @param getParameter
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdContent/select")
+    public List<ConfigAdContent> getConfigAdContentSelect(GetParameter getParameter) {
+        return this.adContentService.selectAllContent(getParameter);
+    }
+
+    /**
+     * @param id 广告位置ID
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdContent/get")
+    public ConfigAdContent getConfigAdContent(Integer id) {
+        return this.adContentService.select(id);
+    }
+
+    /**
+     * 查询指定类型的广告内容
+     *
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdContent/selectByType")
+    public JSONArray getAdContentJsonByType(String adType) {
+        return this.adContentService.getAdContentJsonByType(adType);
     }
 
 }

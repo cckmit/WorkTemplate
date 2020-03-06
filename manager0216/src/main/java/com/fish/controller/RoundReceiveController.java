@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 现金赛制
+ * 获奖记录查询
  * RoundReceiveController
  *
  * @author
@@ -30,14 +30,19 @@ public class RoundReceiveController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询展示比赛结果
+    /**
+     * 查询获奖记录查询
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/roundreceive")
     public GetResult getRoundreceive(GetParameter parameter) {
         return roundReceiveService.findAll(parameter);
     }
 
-    //新增比赛结果
+
     @ResponseBody
     @PostMapping(value = "/roundreceive/new")
     public PostResult insertRoundreceive(@RequestBody RoundReceive productInfo) {

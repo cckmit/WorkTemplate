@@ -33,13 +33,24 @@ public class Fc_BuyPayController {
     @Autowired
     BuyPayService buyPayService;
 
-    //查询买量信息
+    /**
+     * 查询买量信息
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/buypay")
     public GetResult getBuyPay(GetParameter parameter) {
         return buyPayService.findAll(parameter);
     }
 
+    /**
+     * 导入买量信息EXCEL
+     *
+     * @param file
+     * @return
+     */
     @ResponseBody
     @PostMapping("/buypay/uploadExcel")
     public JSONObject uploadExcel(@RequestParam("file") MultipartFile file) {
@@ -52,7 +63,7 @@ public class Fc_BuyPayController {
             ReadExcel readExcel = new ReadExcel();
             readExcel.readFile(saveFile);
             jsonObject.put("context", readExcel.read(0));
-            int insert = buyPayService.insertExcel(jsonObject);
+            buyPayService.insertExcel(jsonObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,12 +72,16 @@ public class Fc_BuyPayController {
         return jsonObject;
     }
 
-    //买量搜索
+    /**
+     * 买量信息搜索
+     *
+     * @param request
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/buypay/search")
     public GetResult searchBuyPay(HttpServletRequest request, GetParameter parameter) {
-
-        GetResult result = new GetResult();
         String beginDate = request.getParameter("beginDate");
         String endDate = request.getParameter("endDate");
         String productName = request.getParameter("productName");
@@ -74,7 +89,12 @@ public class Fc_BuyPayController {
         return buyPayService.searchData(beginDate, endDate, productName, parameter);
     }
 
-    //新增订单信息
+    /**
+     * 新增买量
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/buypay/new")
     public PostResult insertBuyPay(@RequestBody BuyPay productInfo) {
@@ -88,7 +108,12 @@ public class Fc_BuyPayController {
         return result;
     }
 
-    //修改游戏信息
+    /**
+     * 修改买量信息
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/buypay/edit")
     public PostResult modifyBuyPay(@RequestBody BuyPay productInfo) {
@@ -101,15 +126,17 @@ public class Fc_BuyPayController {
         return result;
     }
 
+    /**
+     * 删除买量信息
+     *
+     * @param jsonObject
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/buypay/delete")
-    public PostResult deleteBuyPay(@RequestBody BuyPay productInfo) {
-        PostResult result = new PostResult();
-        int count = buyPayService.deleteSelective(productInfo);
-        if (count == 0) {
-            result.setSuccessed(false);
-            result.setMsg("操作失败，请联系管理员");
-        }
-        return result;
+    public PostResult deleteBuyPay(@RequestBody JSONObject jsonObject) {
+
+        return this.buyPayService.deleteSelective(jsonObject);
+
     }
 }

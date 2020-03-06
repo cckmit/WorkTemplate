@@ -8,7 +8,6 @@ import com.fish.dao.third.mapper.MinitjWxMapper;
 import com.fish.dao.third.model.MinitjWx;
 import com.fish.dao.third.model.ProductData;
 import com.fish.protocols.GetParameter;
-import com.fish.protocols.GetResult;
 import com.fish.service.cache.CacheService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -18,19 +17,14 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import static java.math.BigDecimal.ROUND_HALF_UP;
 
 /**
  * @author
- * @pragram: manger
- * @description: 微信广告数据明细service
+ * @description: 微信广告数据明细
  * @create:
  */
 @Service
@@ -47,6 +41,12 @@ public class WxAddDataService implements BaseService<ProductData> {
     @Autowired
     ProductDataMapper productDataMapper;
 
+    /**
+     * 查询微信广告数据
+     *
+     * @param parameter
+     * @return
+     */
     @Override
     public List<ProductData> selectAll(GetParameter parameter) {
         List<ProductData> productDatas = new ArrayList<>();
@@ -54,7 +54,7 @@ public class WxAddDataService implements BaseService<ProductData> {
         StringBuilder SQL = new StringBuilder(sql);
         List<WxConfig> wxConfigs = cacheService.getAllWxConfig();
         JSONObject search = getSearchData(parameter.getSearchData());
-        if (search == null || (StringUtils.isBlank(search.getString("ddappid"))&&StringUtils.isBlank(search.getString("times")))) {
+        if (search == null || (StringUtils.isBlank(search.getString("ddappid")) && StringUtils.isBlank(search.getString("times")))) {
             for (WxConfig wxConfig : wxConfigs) {
                 ProductData productData = new ProductData();
                 productData.setProductName(wxConfig.getProductName());
@@ -64,8 +64,10 @@ public class WxAddDataService implements BaseService<ProductData> {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 String localDate = formatter.format(beforeDate);
                 try {
+                    //根据AppId和前一天时间查询fc数据源
                     MinitjWx minitjWx = minitjWxMapper.selectByPrimaryKey(ddAppId, localDate);
                     if (minitjWx != null) {
+                        //fc数据源查询结果不为空进行数据赋值以及拼接
                         productData.setMinitjWx(minitjWx);
                         productData.setAdRevenue(minitjWx.getWxBannerIncome().add(minitjWx.getWxVideoIncome()));
                         BigDecimal adRevenue = productData.getAdRevenue();
@@ -78,7 +80,6 @@ public class WxAddDataService implements BaseService<ProductData> {
                         productData.setWxVideoShow(wxVideoShow);
                         productData.setWxVideoClickrate(minitjWx.getWxVideoClickrate());
                         productData.setWxVideoIncome(wxVideoIncome);
-
                         if (wxVideoShow != 0) {
                             productData.setVideoECPM((wxVideoIncome.divide(new BigDecimal(wxVideoShow), 5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
                         } else {
@@ -104,6 +105,7 @@ public class WxAddDataService implements BaseService<ProductData> {
                 }
             }
         } else {
+            //输入搜索条件
             String ddAppId = search.getString("ddappid");
             String times = search.getString("times");
             if (StringUtils.isNotBlank(ddAppId)) {
@@ -114,9 +116,9 @@ public class WxAddDataService implements BaseService<ProductData> {
                 SQL.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
                 SQL.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
             }
+            //根据AppId和前一天时间查询fc数据源
             List<MinitjWx> WxDatas = minitjWxMapper.searchData(SQL.toString());
             for (MinitjWx wxData : WxDatas) {
-
                 ProductData productData = new ProductData();
                 String appId = wxData.getWxAppid();
                 WxConfig wxConfig = cacheService.getWxConfig(appId);
@@ -136,7 +138,6 @@ public class WxAddDataService implements BaseService<ProductData> {
                     productData.setWxVideoShow(wxVideoShow);
                     productData.setWxVideoClickrate(wxData.getWxVideoClickrate());
                     productData.setWxVideoIncome(wxVideoIncome);
-
                     if (wxVideoShow != 0) {
                         productData.setVideoECPM((wxVideoIncome.divide(new BigDecimal(wxVideoShow), 5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
                     } else {
@@ -167,22 +168,6 @@ public class WxAddDataService implements BaseService<ProductData> {
         return productDatas;
     }
 
-    //新增内容
-    public int insert(ProductData productData) {
-        int insertProgramData;
-        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
-        insertProgramData = productDataMapper.insert(productData);
-        return insertProgramData;
-    }
-
-    //更新产品信息
-    public int updateByPrimaryKeySelective(ProductData productData) {
-        int update;
-        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
-        update = productDataMapper.updateByPrimaryKey(productData);
-        return update;
-    }
-
     /**
      * java反射机制判断对象所有属性是否全部为空
      *
@@ -206,11 +191,6 @@ public class WxAddDataService implements BaseService<ProductData> {
         }
     }
 
-    public int insert(MinitjWx record) {
-
-        return minitjWxMapper.insert(record);
-    }
-
     @Override
     public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null) {
@@ -230,10 +210,4 @@ public class WxAddDataService implements BaseService<ProductData> {
         return false;
     }
 
-
-    public int deleteSelective(ProductData productInfo) {
-        Date wxDate = productInfo.getWxDate();
-        int count = productDataMapper.deleteByPrimaryKey(productInfo.getWxAppid(), wxDate);
-        return count;
-    }
 }

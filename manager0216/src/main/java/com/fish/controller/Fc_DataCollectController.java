@@ -27,15 +27,22 @@ public class Fc_DataCollectController {
     @Autowired
     DataCollectService fcDataCollectService;
 
-    //查询数据汇总信息
+    /**
+     * 查询数据汇总信息
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/datacollect")
     public GetResult getDataCollect(GetParameter parameter) {
         return fcDataCollectService.findAll(parameter);
     }
 
-
-    //刷新数据汇总信息
+    /**
+     * 刷新数据汇总信息
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/datacollect/flush")
     public PostResult flushDataCollect(GetParameter parameter) {
@@ -48,7 +55,11 @@ public class Fc_DataCollectController {
         return result;
     }
 
-    //搜索数据汇总信息
+    /**
+     * 搜索数据汇总信息
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/datacollect/search")
     public GetResult searchData(HttpServletRequest request, GetParameter parameter) {

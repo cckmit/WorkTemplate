@@ -6,8 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface BuyPayMapper
-{
+public interface BuyPayMapper {
     int deleteByPrimaryKey(@Param("buyDate") String date, @Param("buyAppId") String appId);
 
     int insert(BuyPay record);

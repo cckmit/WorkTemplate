@@ -13,14 +13,11 @@ import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
 import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
-import com.fish.utils.ZipUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -87,7 +84,6 @@ public class RoundMatchService implements BaseService<RoundMatch> {
                     }
                 }
             }
-
             // 更新赛场信息
             RoundExt roundExt = this.cacheService.getRoundExt(roundMatch.getDdround());
             if (roundExt != null) {
@@ -95,25 +91,23 @@ public class RoundMatchService implements BaseService<RoundMatch> {
                 roundMatch.setDdreward(roundExt.getDdreward());
                 roundMatch.setRoundLength(roundExt.getTip());
             }
-
-            //
-            String ddAppId = roundMatch.getDdappid();
             WxConfig wxConfig = this.cacheService.getWxConfig(roundMatch.getDdappid());
             if (wxConfig != null) {
                 roundMatch.setAppName(wxConfig.getProductName());
             }
+            //获取资源图片信息
             String ddRes = roundMatch.getDdres();
-            if(StringUtils.isNotBlank(ddRes)){
-                String [] sz=ddRes.split("/");
+            if (StringUtils.isNotBlank(ddRes)) {
+                String[] sz = ddRes.split("/");
                 String pngName = sz[sz.length - 1];
-                String gamePicture0 ;
+                String gamePicture0;
                 String gamePicture1;
-                if(ddRes.endsWith(".zip")){
-                     gamePicture0 =url+pngName.substring(0, pngName.lastIndexOf("."))+"/biaoti.png";
-                     gamePicture1 =url+pngName.substring(0, pngName.lastIndexOf("."))+"/bisai.png";
-                }else {
-                     gamePicture0 =url+pngName+"/biaoti.png";
-                     gamePicture1 =url+pngName+"/bisai.png";
+                if (ddRes.endsWith(".zip")) {
+                    gamePicture0 = url + pngName.substring(0, pngName.lastIndexOf(".")) + "/biaoti.png";
+                    gamePicture1 = url + pngName.substring(0, pngName.lastIndexOf(".")) + "/bisai.png";
+                } else {
+                    gamePicture0 = url + pngName + "/biaoti.png";
+                    gamePicture1 = url + pngName + "/bisai.png";
                 }
                 roundMatch.setGamePicture0(gamePicture0);
                 roundMatch.setGamePicture1(gamePicture1);
@@ -122,9 +116,13 @@ public class RoundMatchService implements BaseService<RoundMatch> {
         return roundMatchs;
     }
 
-    //新增小程序赛制配置
+    /**
+     * 新增小程序赛制配置
+     *
+     * @param record
+     * @return
+     */
     public int insert(RoundMatch record) {
-
         String roundSelect = record.getRoundSelect();
         String[] roundSplit;
         roundSplit = roundSelect.split("-");
@@ -153,20 +151,17 @@ public class RoundMatchService implements BaseService<RoundMatch> {
                     Long ddTime = roundExt.getDdtime();
                     Date ddStart = record.getDdstart();
                     Date endDate = new Date(ddStart.getTime() + ddTime * 1000);
-
                     record.setDdend(endDate);
                 }
             }
         }
         record.setDdtime(new Timestamp(System.currentTimeMillis()));
         String appId = record.getAppNameSelect();
-
         record.setDdappid(appId);
         String ddRes = record.getDdres();
         if (StringUtils.isNotBlank(ddRes)) {
-
             String resHost = baseConfig.getResHost();
-            record.setDdres(resHost + ddRes+"/");
+            record.setDdres(resHost + ddRes + "/");
         }
         return roundMatchMapper.insert(record);
     }
@@ -210,7 +205,6 @@ public class RoundMatchService implements BaseService<RoundMatch> {
             }
             record.setDdgame(Integer.parseInt(gameCodeSelect));
         }
-
         record.setDdtime(new Timestamp(System.currentTimeMillis()));
         String appId = record.getAppNameSelect();
         if (appId != null && appId.length() > 0) {
@@ -219,7 +213,7 @@ public class RoundMatchService implements BaseService<RoundMatch> {
         String ddRes = record.getDdres();
         if (StringUtils.isNotBlank(ddRes)) {
             String resHost = baseConfig.getResHost();
-            record.setDdres(resHost + ddRes+"/");
+            record.setDdres(resHost + ddRes + "/");
         }
         return roundMatchMapper.updateByPrimaryKeySelective(record);
     }

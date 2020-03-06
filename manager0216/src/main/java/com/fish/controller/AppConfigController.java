@@ -27,20 +27,31 @@ public class AppConfigController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询展示所有Appconfig信息
+    /**
+     * 查询AppConfig信息
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/appconfig")
     public GetResult getAppConfig(GetParameter parameter) {
         return appConfigService.findAll(parameter);
     }
 
-    //新增游戏appid、secret信息
+    /**
+     * 新增
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/appconfig/new")
     public PostResult insertAppConfig(@RequestBody AppConfig productInfo) {
         PostResult result = new PostResult();
         int count = appConfigService.insert(productInfo);
         if (count == 1) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
         } else {
@@ -50,13 +61,19 @@ public class AppConfigController {
         return result;
     }
 
-    //修改游戏appid、secret信息
+    /**
+     * 更新
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/appconfig/edit")
     public PostResult modifyAppConfig(@RequestBody AppConfig productInfo) {
         PostResult result = new PostResult();
         int count = appConfigService.updateByPrimaryKeySelective(productInfo);
         if (count != 0) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
         } else {

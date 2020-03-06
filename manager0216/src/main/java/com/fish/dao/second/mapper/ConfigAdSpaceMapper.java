@@ -21,32 +21,33 @@ public interface ConfigAdSpaceMapper {
     /**
      * 查询全部广告
      *
+     * @param adSpace
      * @return
      */
-    List<ConfigAdSpace> selectAll();
+    List<ConfigAdSpace> selectAll(ConfigAdSpace adSpace);
 
     /**
      * 新增广告内容
      *
-     * @param adContent
+     * @param adSpace
      * @return
      */
-    int insert(ConfigAdSpace adContent);
+    int insert(ConfigAdSpace adSpace);
 
     /**
      * 修改广告内容
      *
-     * @param adContent
+     * @param adSpace
      * @return
      */
-    int update(ConfigAdSpace adContent);
+    int update(ConfigAdSpace adSpace);
 
     /**
-     * 根据ID删除广告内容
+     * 根据ID删除广告位
      *
-     * @param id
+     * @param deleteIds
      * @return
      */
-    int delete(int id);
+    int delete(String deleteIds);
 
 }

@@ -18,9 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
+/**
+ * 产品信息 Service
+ * WxConfigService
+ *
+ * @author
+ * @date
+ */
 @Service
 public class WxConfigService implements BaseService<WxConfig> {
     private static final Logger logger = LoggerFactory.getLogger(WxConfigService.class);
@@ -45,12 +51,9 @@ public class WxConfigService implements BaseService<WxConfig> {
      * @return url
      */
     public static String concatUrl(String resultUrl, String icon, String... suffers) {
-        if (icon != null)
-        {
-            if (suffers != null)
-            {
-                for (String suffer : suffers)
-                {
+        if (icon != null) {
+            if (suffers != null) {
+                for (String suffer : suffers) {
                     resultUrl = resultUrl.concat(suffer).concat("/");
                 }
             }
@@ -59,24 +62,24 @@ public class WxConfigService implements BaseService<WxConfig> {
         return null;
     }
 
+    /**
+     * 查询所有WxConfig内容
+     *
+     * @param parameter
+     * @return
+     */
     @Override
-    //查询所有WxConfig内容
     public List<WxConfig> selectAll(GetParameter parameter) {
         List<WxConfig> wxConfigs = cacheService.getAllWxConfig();
         String url = baseConfig.getResHost();
-        for (WxConfig config : wxConfigs)
-        {
+        for (WxConfig config : wxConfigs) {
             String ddShareRes = config.getDdshareres();
-            try
-            {
-                if (ddShareRes != null && ddShareRes.length() > 0)
-                {
+            try {
+                if (ddShareRes != null && ddShareRes.length() > 0) {
                     JSONArray shareLists = JSONObject.parseArray(ddShareRes);
-                    for (int i = 0; i < shareLists.size(); i++)
-                    {
+                    for (int i = 0; i < shareLists.size(); i++) {
                         JSONObject shareList = shareLists.getJSONObject(i);
-                        if (shareList != null)
-                        {
+                        if (shareList != null) {
                             JSONObject jsonObject = JSONObject.parseObject(shareList.toString());
                             String icon = concatUrl(url, jsonObject.getString("url"), config.getDdappid(), "share");
                             if (icon != null) {
@@ -85,52 +88,55 @@ public class WxConfigService implements BaseService<WxConfig> {
                         }
                     }
                 }
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return wxConfigs;
     }
 
-    //新增WxConfig内容
+    /**
+     * 新增WxConfig内容
+     *
+     * @param record
+     * @return
+     */
     public int insert(WxConfig record) {
         int insertAppConfig;
         appConfig.setDdappid(record.getDdappid());
         appConfig.setDdname(record.getProductName());
         appConfig.setDdprogram(record.getProgramType());
         appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
-        try
-        {
+        try {
             insertAppConfig = appConfigMapper.insert(appConfig);
             System.out.println("appConfig插入数据" + insertAppConfig);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             //新增判断AppId重复
             insertAppConfig = 3;
         }
         record.setCreateTime(new Timestamp(System.currentTimeMillis()));
         String ddAppSkipRes = record.getDdappskipres();
-        if (ddAppSkipRes != null)
-        {
+        if (ddAppSkipRes != null) {
             String minify = ReadJsonUtil.minify(ddAppSkipRes);
             record.setDdappskipres(minify);
         }
         int insertWxconfig = 0;
-        try
-        {
+        try {
             //新增产品信息
             insertWxconfig = wxConfigMapper.insert(record);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return insertWxconfig;
     }
 
-
-    //更新产品信息
+    /**
+     * 更新产品信息
+     *
+     * @param record
+     * @return
+     */
     public int updateByPrimaryKeySelective(WxConfig record) {
         //产品名称去重
         int insert;
@@ -139,17 +145,14 @@ public class WxConfigService implements BaseService<WxConfig> {
         appConfig.setDdname(record.getProductName());
         appConfig.setDdprogram(record.getProgramType());
         appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
-        try
-        {
+        try {
             insert = appConfigMapper.updateByPrimaryKeySelective(appConfig);
             System.out.println("appConfig插入数据" + insert);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         String ddAppSkipRes = record.getDdappskipres();
-        if (ddAppSkipRes != null)
-        {
+        if (ddAppSkipRes != null) {
             String minify = ReadJsonUtil.minify(ddAppSkipRes);
             record.setDdappskipres(minify);
         }
@@ -172,12 +175,9 @@ public class WxConfigService implements BaseService<WxConfig> {
 
     @Override
     public boolean removeIf(WxConfig wxConfig, JSONObject searchData) {
-
-        if (existValueFalse(searchData.getString("appId"), wxConfig.getDdappid()))
-        {
+        if (existValueFalse(searchData.getString("appId"), wxConfig.getDdappid())) {
             return true;
         }
-
         return existValueFalse(searchData.getString("productsName"), wxConfig.getDdappid());
     }
 
@@ -190,25 +190,23 @@ public class WxConfigService implements BaseService<WxConfig> {
     public int flushResource(JSONObject parameter) {
         int updateWxConfig = 0;
         JSONArray array = parameter.getJSONArray("appList");
-        for (int i = 0; i < array.size(); i++)
-        {
+        for (int i = 0; i < array.size(); i++) {
             String appId = array.getString(i);
             //进行更新数据
+            //获取读取路径
             String sharePath = baseConfig.getReadRes();
             WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
+            //拼接分享json路径
             String share = XwhTool.readFileString(sharePath.concat(appId).concat("/share/readme.json"));
-            if (share != null)
-            {
-                if (StringUtils.isNotEmpty(share))
-                {
+            if (share != null) {
+                if (StringUtils.isNotEmpty(share)) {
                     wxConfig.setDdshareres(share);
                 }
             }
+            //拼接跳转json路径
             String skip = XwhTool.readFileString(sharePath.concat(appId).concat("/skip/readme.json"));
-            if (skip != null)
-            {
-                if (StringUtils.isNotEmpty(skip))
-                {
+            if (skip != null) {
+                if (StringUtils.isNotEmpty(skip)) {
                     wxConfig.setDdappskipres(skip);
                 }
             }

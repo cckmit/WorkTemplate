@@ -1,6 +1,8 @@
 package com.fish.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.model.ConfigAdContent;
+import com.fish.dao.second.model.ConfigAdPosition;
 import com.fish.dao.second.model.ConfigAdWx;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
@@ -65,13 +67,21 @@ public class ConfigAdWxController {
     /**
      * 删除
      *
-     * @param id
+     * @param jsonObject
      * @return
      */
     @ResponseBody
     @PostMapping(value = "/configAdWx/delete")
-    public PostResult delete(@RequestBody int id) {
-        return this.adWxService.delete(id);
+    public PostResult delete(@RequestBody JSONObject jsonObject) {
+        return this.adWxService.delete(jsonObject.getString("deleteIds"));
     }
+
+    /**
+     * @param id 微信广告配置ID
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdWx/get")
+    public ConfigAdWx getConfigAdSpace(int id) { return this.adWxService.getConfigAdWx(id); }
 
 }

@@ -18,9 +18,14 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 废弃
+ *
+ * @author
+ * @date
+ */
 @Service
-public class RankingRecordService implements BaseService<RankingRecord>
-{
+public class RankingRecordService implements BaseService<RankingRecord> {
 
     @Autowired
     RankingRecordMapper rankingRecordMapper;
@@ -35,21 +40,17 @@ public class RankingRecordService implements BaseService<RankingRecord>
 
     @Override
     //查询排名信息
-    public List<RankingRecord> selectAll(GetParameter parameter)
-    {
+    public List<RankingRecord> selectAll(GetParameter parameter) {
         List<ArcadeGames> games = arcadeGamesMapper.selectAll();
-        for (ArcadeGames game : games)
-        {
+        for (ArcadeGames game : games) {
             Integer ddcode = game.getDdcode();
             List<GameRound> gameRounds = gameRoundMapper.selectByDdCode(ddcode);
-            for (GameRound gameRound : gameRounds)
-            {
+            for (GameRound gameRound : gameRounds) {
                 String ddround = gameRound.getDdround();
             }
         }
         List<GameRound> gameRounds = gameRoundMapper.selectAll();
-        for (GameRound gameRound : gameRounds)
-        {
+        for (GameRound gameRound : gameRounds) {
             Integer ddgame = gameRound.getDdgame();
             String ddround = gameRound.getDdround();
             Date ddstart = gameRound.getDdstart();
@@ -57,10 +58,8 @@ public class RankingRecordService implements BaseService<RankingRecord>
             String gameName = arcadeGames.getDdname();//游戏名称
             Rounds rounds = roundsMapper.selectByDdCodeS(ddround);
 
-
             String roundName = rounds.getDdname();
             //rankingRecordMapper.selectExport(roundName,ddgame,0,ddstart);
-
         }
         List<RankingRecord> appConfigs = rankingRecordMapper.selectAll();
         //ddMCode  ddGCode   ddMIndex  ddMDate
@@ -68,43 +67,30 @@ public class RankingRecordService implements BaseService<RankingRecord>
         return appConfigs;
     }
 
-
-    public int insert(RankingRecord record)
-    {
-
+    public int insert(RankingRecord record) {
         return rankingRecordMapper.insert(record);
     }
 
-
-    public int updateByPrimaryKeySelective(RankingRecord record)
-    {
-        record.setDdtime(new Timestamp(new Date().getTime()));
+    public int updateByPrimaryKeySelective(RankingRecord record) {
+        record.setDdtime(new Timestamp(System.currentTimeMillis()));
         return rankingRecordMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
 
     }
 
     @Override
-    public Class<RankingRecord> getClassInfo()
-    {
+    public Class<RankingRecord> getClassInfo() {
         return RankingRecord.class;
     }
 
     @Override
-    public boolean removeIf(RankingRecord record, JSONObject searchData)
-    {
-
-//        if (existValueFalse(searchData.get("appId"), appConfig.getDdappid())) {
-//            return true;
-//        }
-
-//        if (existValueFalse(searchData.get("gameName"), appConfig.getDdname())) {
-//            return true;
-//        }
+    public boolean removeIf(RankingRecord record, JSONObject searchData) {
+        //        if (existValueFalse(searchData.get("gameName"), appConfig.getDdname())) {
+        //            return true;
+        //        }
         return true;
     }
 }

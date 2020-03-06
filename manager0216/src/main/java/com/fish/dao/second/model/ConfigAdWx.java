@@ -1,5 +1,7 @@
 package com.fish.dao.second.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -12,12 +14,27 @@ public class ConfigAdWx {
 
     private int ddId;
     private String ddName;
-    private String ddAdUnit;
-    private boolean ddAllowedShow;
-    private int ddTime;
-    private int ddStrategyId;
-    private String ddStrategyValue;
+    private String ddBannerUnit;
+    private int ddBannerTime;
+    private boolean ddBannerAllowedShow;
+    private int ddBannerStrategyId;
+    private String ddBannerStrategyValue;
+    private String ddIntUint;
+    private boolean ddIntAllowedShow;
+    private int ddIntStrategyId;
+    private String ddIntStrategyValue;
+    @JsonFormat(pattern = "yyyy/MM/dd HH:mm")
     private Date updateTime;
+
+    // 以下是展示参数
+    /**
+     * 微信Banner广告策略
+     */
+    private String ddBannerStrategyName;
+    /**
+     * 微信插屏广告策略
+     */
+    private String ddIntStrategyName;
 
     public int getDdId() { return ddId; }
 
@@ -27,38 +44,55 @@ public class ConfigAdWx {
 
     public void setDdName(String ddName) { this.ddName = ddName; }
 
-    public String getDdAdUnit() { return ddAdUnit; }
+    public String getDdBannerUnit() { return ddBannerUnit; }
 
-    public void setDdAdUnit(String ddAdUnit) { this.ddAdUnit = ddAdUnit; }
+    public void setDdBannerUnit(String ddBannerUnit) { this.ddBannerUnit = ddBannerUnit; }
 
-    public boolean isDdAllowedShow() { return ddAllowedShow; }
+    public int getDdBannerTime() { return ddBannerTime; }
 
-    public void setDdAllowedShow(boolean ddAllowedShow) { this.ddAllowedShow = ddAllowedShow; }
+    public void setDdBannerTime(int ddBannerTime) { this.ddBannerTime = ddBannerTime; }
 
-    public int getDdTime() { return ddTime; }
+    public boolean isDdBannerAllowedShow() { return ddBannerAllowedShow; }
 
-    public void setDdTime(int ddTime) { this.ddTime = ddTime; }
+    public void setDdBannerAllowedShow(boolean ddBannerAllowedShow) { this.ddBannerAllowedShow = ddBannerAllowedShow; }
 
-    public int getDdStrategyId() { return ddStrategyId; }
+    public int getDdBannerStrategyId() { return ddBannerStrategyId; }
 
-    public void setDdStrategyId(int ddStrategyId) {
-        this.ddStrategyId = ddStrategyId;
+    public void setDdBannerStrategyId(int ddBannerStrategyId) { this.ddBannerStrategyId = ddBannerStrategyId; }
+
+    public String getDdBannerStrategyValue() { return ddBannerStrategyValue; }
+
+    public void setDdBannerStrategyValue(String ddBannerStrategyValue) {
+        this.ddBannerStrategyValue = ddBannerStrategyValue;
     }
 
-    public String getDdStrategyValue() {
-        return ddStrategyValue;
-    }
+    public String getDdIntUint() { return ddIntUint; }
 
-    public void setDdStrategyValue(String ddStrategyValue) {
-        this.ddStrategyValue = ddStrategyValue;
-    }
+    public void setDdIntUint(String ddIntUint) { this.ddIntUint = ddIntUint; }
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
+    public boolean isDdIntAllowedShow() { return ddIntAllowedShow; }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+    public void setDdIntAllowedShow(boolean ddIntAllowedShow) { this.ddIntAllowedShow = ddIntAllowedShow; }
+
+    public int getDdIntStrategyId() { return ddIntStrategyId; }
+
+    public void setDdIntStrategyId(int ddIntStrategyId) { this.ddIntStrategyId = ddIntStrategyId; }
+
+    public String getDdIntStrategyValue() { return ddIntStrategyValue; }
+
+    public void setDdIntStrategyValue(String ddIntStrategyValue) { this.ddIntStrategyValue = ddIntStrategyValue; }
+
+    public Date getUpdateTime() { return updateTime; }
+
+    public void setUpdateTime(Date updateTime) { this.updateTime = updateTime; }
+
+    public String getDdBannerStrategyName() { return ddBannerStrategyName; }
+
+    public void setDdBannerStrategyName(
+            String ddBannerStrategyName) { this.ddBannerStrategyName = ddBannerStrategyName; }
+
+    public String getDdIntStrategyName() { return ddIntStrategyName; }
+
+    public void setDdIntStrategyName(String ddIntStrategyName) { this.ddIntStrategyName = ddIntStrategyName; }
 
 }

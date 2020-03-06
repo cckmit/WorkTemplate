@@ -6,59 +6,93 @@ import com.fish.dao.second.model.WxGroupManager;
 import com.fish.protocols.GetParameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+
+/**
+ * 微信群管理 Service
+ * WxGroupManagerService
+ *
+ * @author
+ * @date
+ */
 @Service
-public class WxGroupManagerService implements BaseService<WxGroupManager>{
+public class WxGroupManagerService implements BaseService<WxGroupManager> {
 
     @Autowired
     WxGroupManagerMapper wxGroupManagerMapper;
 
+    /**
+     * 查询
+     *
+     * @param parameter
+     * @return
+     */
     @Override
     public List<WxGroupManager> selectAll(GetParameter parameter) {
-        //long current = System.currentTimeMillis();
-        List<WxGroupManager> recharges;
         String sql = "select id AS id, ddId AS ddId, `describe` AS `describe`,  ddStatus AS ddStatus, ddYes AS ddYes," +
                 " ddNo AS ddNo,  updateTime AS updateTime, cdId AS cdId," +
                 " wxGroupName AS wxGroupName, wxGroupManager AS wxGroupManager, wxNumber AS wxNumber, " +
                 " createTime  AS createTime, updateQrCodeTime AS updateQrCodeTime" +
                 " FROM config_confirm, wx_group_manager " +
                 " WHERE cdId = ddId";
-        recharges = wxGroupManagerMapper.selectAllConfigSQL(sql);
-        return recharges;
+        return wxGroupManagerMapper.selectAllConfigSQL(sql);
     }
 
-    public int updateWxGroupManager(WxGroupManager wxGroupManager){
+    /**
+     * 更新
+     *
+     * @param wxGroupManager
+     * @return
+     */
+    public int updateWxGroupManager(WxGroupManager wxGroupManager) {
 
         return wxGroupManagerMapper.updateWxGroupManager(wxGroupManager);
     }
 
-    public int updateConfigConfirm(WxGroupManager wxGroupManager){
-
+    /**
+     * 更新 ConfigConfirm
+     *
+     * @param wxGroupManager
+     * @return
+     */
+    public int updateConfigConfirm(WxGroupManager wxGroupManager) {
         return wxGroupManagerMapper.updateConfigConfirm(wxGroupManager);
     }
 
     /**
-     *  判断是否更新上传时间
+     * 判断是否更新上传时间
+     *
      * @param wxGroupManager
      * @return
      */
-    public boolean isUpdateOperateTime(WxGroupManager wxGroupManager){
+    public boolean isUpdateOperateTime(WxGroupManager wxGroupManager) {
         boolean isUpdate = false;
-        WxGroupManager wxGroupManager1 =  wxGroupManagerMapper.selectQrCodeByPrimaryKey(wxGroupManager);
-        if(!wxGroupManager.getDdYes().equals(wxGroupManager1.getDdYes())
-                || !wxGroupManager.getDdNo().equals(wxGroupManager1.getDdNo())){
+        WxGroupManager wxGroupManager1 = wxGroupManagerMapper.selectQrCodeByPrimaryKey(wxGroupManager);
+        if (!wxGroupManager.getDdYes().equals(wxGroupManager1.getDdYes())
+                || !wxGroupManager.getDdNo().equals(wxGroupManager1.getDdNo())) {
             isUpdate = true;
         }
         return isUpdate;
     }
 
-   /* public int updateByPrimaryKeySelective(WxGroupManager wxGroupManager){
-        return wxGroupManagerMapper.updateByPrimaryKeySelective(wxGroupManager);
-    }*/
+    /**
+     * 历史记录插入历史表
+     *
+     * @param wxGroupManager
+     * @return
+     */
+    public int insertHistoryDate(WxGroupManager wxGroupManager) {
+        return wxGroupManagerMapper.insertHistoryDate(wxGroupManager);
+    }
+
+    public int changeStatus(Integer ddStatus){
+     return wxGroupManagerMapper.changeStatus(ddStatus);
+    }
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null){
+        if (parameter.getOrder() != null) {
             return;
         }
         parameter.setOrder("desc");

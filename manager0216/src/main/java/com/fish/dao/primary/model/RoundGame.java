@@ -30,7 +30,8 @@ public class RoundGame
     private Date ddend;
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date times;
-    private String jumpDirect;//图片跳转
+    //图片跳转
+    private String jumpDirect;
 
     public String getJumpDirect()
     {

@@ -212,6 +212,12 @@
                     },
                     {
                         field: 'wxAvgOnline', width: 160, title: '人均在线时长', sort: true
+                    },
+                    {
+                        field: 'buyCost', width: 160, title: '买量支出', sort: true
+                    },
+                    {
+                        field: 'buyClickPrice', width: 160, title: '买量单价', sort: true
                     }
 
                 ]
@@ -285,11 +291,34 @@
         });
     })
 
+    function privateSumbitFormatData(data) {
+        return UIConfig.sumbitFormatData(data);
+    }
+
+    /**
+     * 根据wxAppId，wxDate参数删除，重写privateGetDeleteData
+     * @param dataArray
+     */
+    function privateGetDeleteData(dataArray, deleteObj) {
+        dataArray.forEach(data => {
+            console.log('我是deleteIds:', deleteObj.deleteIds);
+            console.log('我是data:', data);
+            console.log('我是data.id:', data.id);
+            if (deleteObj.deleteIds) {
+                deleteObj.deleteIds += ',' + data.wxAppid;
+                deleteObj.wxDate += ',' + data.wxDate;
+            } else {
+                deleteObj.deleteIds = data.wxAppid;
+                deleteObj.wxDate = data.wxDate;
+            }
+            deleteObj.deleteCount++;
+        });
+    }
 </script>
 
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;">
-
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
     <div class="layui-form-item ">
         <label class="layui-form-label">日期</label>
         <div class="layui-input-inline">

@@ -74,7 +74,6 @@ public class RoundMatchController {
     public PostResult deleteRecharge(@RequestBody RoundMatch productInfo) {
         PostResult result = new PostResult();
         int count = 1;
-
         result.setMsg("操作成功");
         return result;
     }
@@ -90,10 +89,9 @@ public class RoundMatchController {
     public PostResult insertRoundExt(@RequestBody RoundMatch productInfo) {
         PostResult result = new PostResult();
         int count = roundMatchService.insert(productInfo);
-        //int count =1;
         if (count == 1) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_match", baseConfig.getFlushCache());
-
             result.setMsg("操作成功" + res);
             return result;
         } else {
@@ -114,8 +112,8 @@ public class RoundMatchController {
         PostResult result = new PostResult();
         int count = roundMatchService.updateByPrimaryKeySelective(productInfo);
         if (count != 0) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_match", baseConfig.getFlushCache());
-
             result.setMsg("操作成功" + res);
             return result;
         } else {
@@ -123,7 +121,5 @@ public class RoundMatchController {
             result.setMsg("操作失败，请联系管理员");
             return result;
         }
-
     }
-
 }

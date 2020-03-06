@@ -18,13 +18,17 @@ public class ConfigAdContent {
     private String ddImageUrl;
     private String ddTargetAppId;
     private String ddTargetAppName;
+    private int ddTargetAppType;
+    private String ddTargetAppPage;
     private String ddPromoteAppId;
     private String ddPromoteAppName;
+    private int ddPromoteAppType;
+    private String ddPromoteAppPage;
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm")
     private Date updateTime;
 
     /**
-     * 展示数据-由ddAdType关联得到的广告类型名称
+     * 展示数据-由ddAdType关联得到的广告内容名称
      */
     private String adTypeName;
 
@@ -52,6 +56,14 @@ public class ConfigAdContent {
 
     public void setDdTargetAppName(String ddTargetAppName) { this.ddTargetAppName = ddTargetAppName;}
 
+    public int getDdTargetAppType() { return ddTargetAppType; }
+
+    public void setDdTargetAppType(int ddTargetAppType) { this.ddTargetAppType = ddTargetAppType; }
+
+    public String getDdTargetAppPage() { return ddTargetAppPage; }
+
+    public void setDdTargetAppPage(String ddTargetAppPage) { this.ddTargetAppPage = ddTargetAppPage; }
+
     public String getDdPromoteAppId() { return ddPromoteAppId; }
 
     public void setDdPromoteAppId(String ddPromoteAppId) { this.ddPromoteAppId = ddPromoteAppId; }
@@ -67,5 +79,13 @@ public class ConfigAdContent {
     public String getAdTypeName() { return adTypeName; }
 
     public void setAdTypeName(String adTypeName) { this.adTypeName = adTypeName; }
+
+    public int getDdPromoteAppType() { return ddPromoteAppType; }
+
+    public void setDdPromoteAppType(int ddPromoteAppType) { this.ddPromoteAppType = ddPromoteAppType; }
+
+    public String getDdPromoteAppPage() { return ddPromoteAppPage; }
+
+    public void setDdPromoteAppPage(String ddPromoteAppPage) { this.ddPromoteAppPage = ddPromoteAppPage; }
 
 }

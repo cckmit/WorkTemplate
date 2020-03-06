@@ -15,8 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-public class RoundReceiveService implements BaseService<RoundReceive>
-{
+public class RoundReceiveService implements BaseService<RoundReceive> {
     @Autowired
     RoundReceiveMapper roundReceiveMapper;
 
@@ -25,25 +24,18 @@ public class RoundReceiveService implements BaseService<RoundReceive>
 
     @Override
     //查询排名信息
-    public List<RoundReceive> selectAll(GetParameter parameter)
-    {
+    public List<RoundReceive> selectAll(GetParameter parameter) {
         List<RoundReceive> roundReceives;
-
-
         JSONObject search = getSearchData(parameter.getSearchData());
-        if (search == null)
-        {
+        if (search == null) {
             roundReceives = roundReceiveMapper.selectAll();
-        } else
-        {
+        } else {
             String times = search.getString("times");
-            if (StringUtils.isNotBlank(times))
-            {
+            if (StringUtils.isNotBlank(times)) {
                 Date[] parse = XwhTool.parseDate(search.getString("times"));
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 roundReceives = roundReceiveMapper.selectSearchTime(format.format(parse[0]), format.format(parse[1]));
-            } else
-            {
+            } else {
                 roundReceives = roundReceiveMapper.selectAll();
             }
         }
@@ -53,46 +45,36 @@ public class RoundReceiveService implements BaseService<RoundReceive>
         record.add(System.currentTimeMillis() - current);
 
         Set<String> users = new HashSet<>();
-        for (RoundReceive roundReceive : roundReceives)
-        {
+        for (RoundReceive roundReceive : roundReceives) {
             users.add(roundReceive.getDduid());
         }
-        for (RoundReceive roundReceive : roundReceives)
-        {
+        for (RoundReceive roundReceive : roundReceives) {
             String dduid = roundReceive.getDduid();
             String ddtype = roundReceive.getDdtype();
-            if("rmb".equals(ddtype)){
-                roundReceive.setDdtotal(roundReceive.getDdtotal()/100);
+            if ("rmb".equals(ddtype)) {
+                roundReceive.setDdtotal(roundReceive.getDdtotal() / 100);
             }
             roundReceive.setUserName(cacheService.getUserName(className, users, dduid));
             ArcadeGames games = cacheService.getGames(roundReceive.getDdgcode());
-            if (games != null)
-            {
+            if (games != null) {
                 roundReceive.setGameName(games.getDdname());
-            } else
-            {
+            } else {
                 roundReceive.setGameName("未知");
             }
             JSONObject roundInfo = cacheService.getRoundInfo(roundReceive.getDdgroup(), roundReceive.getDdmcode());
-            if (roundInfo.containsKey("name"))
-            {
+            if (roundInfo.containsKey("name")) {
                 roundReceive.setRoudName(roundInfo.getString("name"));
-            } else
-            {
+            } else {
                 roundReceive.setRoudName("未知比赛");
             }
-            if (roundInfo.containsKey("time"))
-            {
+            if (roundInfo.containsKey("time")) {
                 roundReceive.setRoudTime(roundInfo.getString("time"));
-            } else
-            {
+            } else {
                 roundReceive.setRoudTime("未知时长");
             }
-            if ((roundInfo.containsKey("code")))
-            {
+            if ((roundInfo.containsKey("code"))) {
                 roundReceive.setRoudCode(roundInfo.getString("code"));
-            } else
-            {
+            } else {
                 roundReceive.setRoudCode("位置赛制");
             }
         }
@@ -101,20 +83,16 @@ public class RoundReceiveService implements BaseService<RoundReceive>
         return roundReceives;
     }
 
-
-    public int insert(RoundReceive record)
-    {
+    public int insert(RoundReceive record) {
         return roundReceiveMapper.insert(record);
     }
 
-    public int updateByPrimaryKeySelective(RoundReceive record)
-    {
+    public int updateByPrimaryKeySelective(RoundReceive record) {
         return roundReceiveMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
         parameter.setOrder("desc");
@@ -122,14 +100,12 @@ public class RoundReceiveService implements BaseService<RoundReceive>
     }
 
     @Override
-    public Class<RoundReceive> getClassInfo()
-    {
+    public Class<RoundReceive> getClassInfo() {
         return RoundReceive.class;
     }
 
     @Override
-    public boolean removeIf(RoundReceive record, JSONObject searchData)
-    {
+    public boolean removeIf(RoundReceive record, JSONObject searchData) {
 
         if (existValueFalse(searchData.getString("userName"), record.getUserName()))
             return true;

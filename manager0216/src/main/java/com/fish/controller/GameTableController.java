@@ -30,20 +30,31 @@ public class GameTableController {
     @Autowired
     CacheService cacheService;
 
-    //查询游戏信息
+    /**
+     * 查询游戏信息
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/play")
     public GetResult getGames(GetParameter parameter) {
         return gamesService.findAll(parameter);
     }
 
-    //新增游戏信息
+    /**
+     * 新增游戏信息
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/play/new")
     public PostResult insertGames(@RequestBody ArcadeGames productInfo) {
         PostResult result = new PostResult();
         int count = gamesService.insertGameInfo(productInfo);
         if (count == 1) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
         } else {
@@ -53,7 +64,12 @@ public class GameTableController {
         return result;
     }
 
-    //修改游戏表信息
+    /**
+     * 修改游戏表信息
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/play/edit")
     public PostResult modifyGames(@RequestBody ArcadeGames productInfo) {
@@ -62,6 +78,7 @@ public class GameTableController {
         if (count != 0) {
             // 刷新缓存，新增可加可不加
             this.cacheService.updateArcadeGames(productInfo);
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
         } else {

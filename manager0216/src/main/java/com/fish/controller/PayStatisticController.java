@@ -9,6 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * 付费实时统计
+ * PayStatisticController
+ *
+ * @author
+ * @date
+ */
 @RestController
 @RequestMapping(value = "/manage")
 public class PayStatisticController {
@@ -18,7 +25,11 @@ public class PayStatisticController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询展示所有游戏信息
+    /**
+     * 查询付费信息
+     * @param parameter
+     * @return
+     */
     @GetMapping(value = "/statistic")
     public GetResult getGames(GetParameter parameter) {
         return payStatisticService.findAll(parameter);

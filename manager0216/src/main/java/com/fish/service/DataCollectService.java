@@ -131,10 +131,15 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
         return false;
     }
 
+    /**
+     * 搜索数据汇总信息
+     *
+     * @param parameter
+     * @return
+     */
     public GetResult searchData(String beginDate, String endDate, String type, GetParameter parameter) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<DataCollect> lists = new ArrayList<>();
-
         if (type == null || type.equals("")) {
             for (DataCollect dataCollect : Objects.requireNonNull(dataCollects)) {
                 Date wxDate = dataCollect.getWxDate();
@@ -152,7 +157,6 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                             lists.add(dataCollect);
                         }
                     }
-
                 } else {
                     if (StringUtils.isNotEmpty(endDate)) {
                         int end = format.compareTo(endDate);
@@ -181,7 +185,6 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                             lists.add(dataCollect);
                         }
                     }
-
                 } else {
                     if (StringUtils.isNotEmpty(endDate)) {
                         int end = format.compareTo(endDate);
@@ -193,7 +196,6 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                     }
                 }
             }
-
         } else if (type.equals("1")) {
             programCollects = new ArrayList<>();
             List<String> dates = productDataMapper.allDate();
@@ -240,12 +242,10 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                         if (wxShareUser != null) {
                             shareUserCountp += wxShareUser;
                         }
-
                         Integer wxShareCount = productData.getWxShareCount();
                         if (wxShareCount != null) {
                             shareCountp += wxShareCount;
                         }
-
                     }
                 }
                 //数据求和后拼接赋值
@@ -302,7 +302,6 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                                 lists.add(dataCollect);
                             }
                         }
-
                     } else {
                         if (StringUtils.isNotEmpty(endDate)) {
                             int end = format.compareTo(endDate);
@@ -321,23 +320,26 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
         return template(lists, parameter);
     }
 
+    /**
+     * 刷新数据汇总信息
+     *
+     * @return
+     */
     public int flushAll() {
         SimpleDateFormat sm = new SimpleDateFormat("yyyy-MM-dd- HH:mm:ss");
         System.out.println("刷新数据汇总" + sm.format(System.currentTimeMillis()));
         dataCollects = new ArrayList<>();
-
         List<String> dates = minitjWxMapper.dateCash();
         //遍历fc数据日期
         for (String date : dates) {
             DataCollect dataCollect = new DataCollect();
-            List<WxConfig> wxConfigs = wxConfigMapper.selectAll();
+            List<WxConfig> wxConfigs = wxConfigMapper.selectGamesAndPrograms();
             productCount = wxConfigs.size();
             //遍历wx_config中AppId
             for (WxConfig wxConfig : wxConfigs) {
                 String ddAppId = wxConfig.getDdappid();
                 MinitjWx minitjWx = minitjWxMapper.selectByPrimaryKey(ddAppId, date);
                 BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(date, ddAppId);
-
                 ProductData programData = productDataMapper.selectByAppid(ddAppId, date);
                 if (programData != null) {
                     Integer wxActive = programData.getWxActive();
@@ -391,7 +393,6 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
             dataCollect.setAdRevenueCount(adRevenueCount);
             dataCollect.setShareUserCount(shareUserCount);
             dataCollect.setShareCount(shareCount);
-
             if (activeCount != 0) {
                 BigDecimal rate = new BigDecimal(shareUserCount * 10000 / activeCount);
                 dataCollect.setShareRateCount(rate.divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
@@ -420,7 +421,6 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
             shareRateCount = new BigDecimal(0);
         }
         gamesCollects = new ArrayList<>();
-
         //遍历fc数据日期
         for (String date : dates) {
             DataCollect dataCollectG = new DataCollect();
@@ -449,7 +449,6 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
                     shareUserCountg += wxShareUser;
                     Integer wxShareCount = minitjWx.getWxShareCount();
                     shareCountg += wxShareCount;
-
                 }
             }
             //数据求和后拼接赋值
@@ -463,7 +462,6 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
             dataCollectG.setAdRevenueCount(adRevenueCountg);
             dataCollectG.setShareUserCount(shareUserCountg);
             dataCollectG.setShareCount(shareCountg);
-
             if (activeCountg != 0) {
                 BigDecimal rate = new BigDecimal(shareUserCountg * 10000 / activeCountg);
                 dataCollectG.setShareRateCount(rate.divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
@@ -491,14 +489,17 @@ public class DataCollectService implements BaseService<DataCollect>, Runnable {
             shareCountg = 0;
             shareRateCountg = new BigDecimal(0);
         }
-
         if (dataCollects.size() > 0) {
             return 1;
         } else {
             return 0;
         }
     }
-
+    /**
+     * 定时数据汇总信息
+     *
+     * @return
+     */
     @Override
     public void run() {
         flushAll();

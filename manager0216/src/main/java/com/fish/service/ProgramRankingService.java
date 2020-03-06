@@ -1,7 +1,6 @@
 package com.fish.service;
 
 import cn.hutool.http.HttpUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.mapper.*;
@@ -18,17 +17,20 @@ import com.fish.utils.XwhTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 充值订单
+ * Service
+ *
+ * @author
+ * @date
+ */
 @Service
-public class ProgramRankingService implements BaseService<ShowRanking>
-{
-
-
+public class ProgramRankingService implements BaseService<ShowRanking> {
     @Autowired
     RankingMapper rankingMapper;
     @Autowired
@@ -57,17 +59,20 @@ public class ProgramRankingService implements BaseService<ShowRanking>
     @Autowired
     CacheService cacheService;
 
+    /**
+     * 查询排名信息
+     *
+     * @param parameter
+     * @return
+     */
     @Override
-    //查询排名信息
-    public List<ShowRanking> selectAll(GetParameter parameter)
-    {
+    public List<ShowRanking> selectAll(GetParameter parameter) {
         List<RoundRecord> roundRecords;
         JSONObject search = getSearchData(parameter.getSearchData());
-        if (search == null || search.getString("times").isEmpty())
-        {
+        //判断是否包含搜索条件
+        if (search == null || search.getString("times").isEmpty()) {
             roundRecords = roundRecordMapper.selectGRank();
-        } else
-        {
+        } else {
             Date[] parse = XwhTool.parseDate(search.getString("times"));
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             roundRecords = roundRecordMapper.selectGRankTime(format.format(parse[0]), format.format(parse[1]));
@@ -75,8 +80,7 @@ public class ProgramRankingService implements BaseService<ShowRanking>
         ArrayList<ShowRanking> shows = new ArrayList<>();
         ShowRanking showRanking;
 
-        for (RoundRecord roundRecord : roundRecords)
-        {
+        for (RoundRecord roundRecord : roundRecords) {
             Date ddSubmit = roundRecord.getDdsubmit();
             Date ddStart = roundRecord.getDdstart();
             Integer ddGame = roundRecord.getDdgame();
@@ -115,11 +119,14 @@ public class ProgramRankingService implements BaseService<ShowRanking>
         return shows;
     }
 
-    public List<ExportResult> selectResult(ShowRanking productInfo)
-    {
-
+    /**
+     * 导出小程序比赛结果
+     *
+     * @param productInfo
+     * @return
+     */
+    public List<ExportResult> selectResult(ShowRanking productInfo) {
         List<ExportResult> exportResults = new ArrayList<>();
-
         Integer ddCode = productInfo.getDdCode();
         Boolean ddGroup = productInfo.getDdGroup();
         Integer ddNumber = productInfo.getDdNumber();
@@ -131,40 +138,31 @@ public class ProgramRankingService implements BaseService<ShowRanking>
         String roundLength = productInfo.getRoundLength();
         int group = 0;
         int num = 0;
-        if (ddGroup)
-        {
+        if (ddGroup) {
             group = 1;
-        } else
-        {
+        } else {
             group = 0;
         }
-        if (ddNumber != null)
-        {
+        if (ddNumber != null) {
             int numbers = ddNumber;
-            if (numbers <= 100)
-            {
+            if (numbers <= 100) {
                 num = 0;
-            } else
-            {
+            } else {
                 num = numbers / 100;
             }
         }
         Integer ddIndex = productInfo.getDdIndex();
         String matchRes = baseConfig.getMatchRes();
         JSONArray allResult = new JSONArray();
-        for (int i = 0; i <= num; i++)
-        {
+        for (int i = 0; i <= num; i++) {
             String obtainResultUrl = matchRes + "match-c" + ddCode + "-g" + group + "-i" + ddIndex + "-" + i + ".json";
             String result = HttpUtil.get(obtainResultUrl);
             JSONArray singleResult = JSONArray.parseArray(result);
             allResult.addAll(singleResult);
-
         }
-        for (Object object : allResult)
-        {
+        for (Object object : allResult) {
             ExportResult exportResult = new ExportResult();
             JSONObject jsonObject = JSONObject.parseObject(object.toString());
-
             Object uid = jsonObject.get("uid");
             Object index = jsonObject.get("index");
             Object name = jsonObject.get("name");
@@ -173,19 +171,18 @@ public class ProgramRankingService implements BaseService<ShowRanking>
             Object type = jsonObject.get("type");
             Object mark = jsonObject.get("mark");
             int reward = Integer.parseInt(value.toString());
-            if (type.toString().equals("rmb"))
-            {
+            if (type.toString().equals("rmb")) {
                 reward = reward / 100;
             }
             exportResult.setRoundName(roundName);
             exportResult.setRoundLength(roundLength);
             exportResult.setIndex(Integer.parseInt(index.toString()));
-            if(name != null ){
+            if (name != null) {
                 exportResult.setName(name.toString());
-            }else {
-                if(ddName != null ) {
+            } else {
+                if (ddName != null) {
                     exportResult.setName(ddName.toString());
-                }else {
+                } else {
                     exportResult.setName("");
                 }
             }
@@ -201,38 +198,8 @@ public class ProgramRankingService implements BaseService<ShowRanking>
         return exportResults;
     }
 
-    public int insert(Ranking record)
-    {
-        Object gameCode = redisUtil.get("gameCode");
-        Object matchCode = redisUtil.get("matchCode");
-        Object day = redisUtil.get("day");
-        Object index = redisUtil.get("index");
-
-        Object uid = redisUtil.get("ddUid");
-        Object ranking = redisUtil.get("ranking");
-        Object mark = redisUtil.get("score");
-
-        Ranking rank = new Ranking();
-        rank.setGamecode(Integer.parseInt(gameCode.toString()));
-        rank.setMark(Long.valueOf(mark.toString()));
-        rank.setMatchid(matchCode.toString());
-        rank.setMatchindex(Integer.parseInt(index.toString()));
-        rank.setRanking(Long.valueOf(ranking.toString()));
-        rank.setUid(uid.toString());
-        rank.setInserttime(new Timestamp(new Date().getTime()));
-        return rankingMapper.insert(record);
-    }
-
-
-    public int updateByPrimaryKeySelective(RankingRecord record)
-    {
-        record.setDdtime(new Timestamp(new Date().getTime()));
-        return rankingRecordMapper.updateByPrimaryKeySelective(record);
-    }
-
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
         parameter.setSort("endTime");
@@ -240,22 +207,18 @@ public class ProgramRankingService implements BaseService<ShowRanking>
     }
 
     @Override
-    public Class<ShowRanking> getClassInfo()
-    {
+    public Class<ShowRanking> getClassInfo() {
         return ShowRanking.class;
     }
 
     @Override
-    public boolean removeIf(ShowRanking record, JSONObject searchData)
-    {
+    public boolean removeIf(ShowRanking record, JSONObject searchData) {
 
-        if (existValueFalse(searchData.getString("appName"), record.getAppId()))
-        {
+        if (existValueFalse(searchData.getString("appName"), record.getAppId())) {
             return true;
         }
 
-        if (existValueFalse(searchData.getString("gameName"), record.getGamesCode()))
-        {
+        if (existValueFalse(searchData.getString("gameName"), record.getGamesCode())) {
             return true;
         }
         String roundName = searchData.getString("roundName");
@@ -263,6 +226,5 @@ public class ProgramRankingService implements BaseService<ShowRanking>
             roundName = roundName.split("-")[0];
         return (existValueFalse(roundName, record.getRoundCode()));
     }
-
 
 }

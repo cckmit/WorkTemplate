@@ -79,7 +79,14 @@ public class ProductData
     private BigDecimal wxShareRate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date insertTime;
-
+    /**
+     * 展示数据-买量支出
+     */
+    private BigDecimal buyCost;
+    /**
+     * 展示数据-买量单价
+     */
+    private BigDecimal buyClickPrice;
     public Integer getProgramType() {
         return programType;
     }
@@ -426,5 +433,21 @@ public class ProductData
 
     public void setRevenueCount(BigDecimal revenueCount) {
         this.revenueCount = revenueCount;
+    }
+
+    public BigDecimal getBuyCost() {
+        return buyCost;
+    }
+
+    public void setBuyCost(BigDecimal buyCost) {
+        this.buyCost = buyCost;
+    }
+
+    public BigDecimal getBuyClickPrice() {
+        return buyClickPrice;
+    }
+
+    public void setBuyClickPrice(BigDecimal buyClickPrice) {
+        this.buyClickPrice = buyClickPrice;
     }
 }

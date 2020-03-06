@@ -35,21 +35,37 @@ public class GamesSetController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询展示所有合集配置信息
+
+    /**
+     * 查询合集配置
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/gameset")
     public GetResult getGameSet(GetParameter parameter) {
         return gamesSetService.findAll(parameter);
     }
 
-    //查询展示所有合集信息
+    /**
+     * 查询合集信息下拉框信息
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/gamesetInfo")
     public List<ArcadeGameSet> getGameInfo(GetParameter parameter) {
         return gamesSetService.selectAll(parameter);
     }
 
-    //查询展示所有appId和游戏名称信息
+    /**
+     * 合集跳转关系
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/gameset/jumpdirect")
     public List<WxConfig> getJumpDirect(GetParameter parameter) {
@@ -66,14 +82,19 @@ public class GamesSetController {
         return wxConfigs;
     }
 
-    //新增合集配置
+    /**
+     * 新增合集配置
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/gameset/new")
     public PostResult insertGameSet(@RequestBody ArcadeGameSet productInfo) {
         PostResult result = new PostResult();
-
         int count = gamesSetService.insert(productInfo);
         if (count == 1) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
             return result;
@@ -88,7 +109,12 @@ public class GamesSetController {
         }
     }
 
-    //修改合集信息
+    /**
+     * 修改合集信息
+     *
+     * @param
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/gameset/edit")
     public PostResult modifyGameSet(@RequestBody ArcadeGameSet productInfo) {
@@ -96,6 +122,7 @@ public class GamesSetController {
         int count = gamesSetService.updateByPrimaryKeySelective(productInfo);
         switch (count) {
             case 1:
+                //刷新业务表结构
                 String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
                 result.setMsg("操作成功" + res);
                 break;

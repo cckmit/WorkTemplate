@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="chs">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+    <script src="../layuiadmin/layui/layui.js"></script>
+    <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
+    <script></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!-- 数据表格 -->
+                <div class="layui-card-body">
+                    <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-table-tool-temp">
+        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
+        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
+        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+    </div>
+</script>
+<script>
+    const operatorurl = '../manage/configAdPosition';
+    let checkedRoles = [];
+    /**
+     * 打开页面时初始化加载数据
+     */
+    layui.use(['table', 'form', 'layer', 'tree'], () => {
+        const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+        let typeArr = [];
+        let adArr = [];
+        let strategyArr = [];
+        var typeSelect = xmSelect.render({
+            el: '#ddAdTypes',
+            name: 'ddAdTypes',
+            language: 'zn',
+            toolbar: {show: true},
+            data: [],
+            radio: false,
+            clickClose: true,
+            autoRow: true,
+            paging: true,
+            pageSize: 5,
+            delay: 500,
+            filterable: true,
+            filterDone: function (val, list) {
+                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+            },
+        });
+        var adSelect = xmSelect.render({
+            el: '#ddAdSpaces',
+            name: 'ddAdSpaces',
+            language: 'zn',
+            toolbar: {show: true},
+            data: [],
+            radio: false,
+            clickClose: true,
+            autoRow: true,
+            paging: true,
+            pageSize: 5,
+            delay: 500,
+            filterable: true,
+            filterDone: function (val, list) {
+                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+            },
+        });
+        var strategySelect = xmSelect.render({
+            el: '#ddStrategyId',
+            name: 'ddStrategyId',
+            language: 'zn',
+            toolbar: {show: true},
+            data: [],
+            radio: false,
+            clickClose: true,
+            autoRow: true,
+            paging: true,
+            pageSize: 5,
+            delay: 500,
+            filterable: true,
+            filterDone: function (val, list) {
+                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+            },
+        });
+        $(() => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdType/select',
+                success: (res) => {
+
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddName, value: val.ddId, selected: false};
+                        typeArr.push(context);
+                    });
+                    typeSelect.update(
+                        {
+                            data: typeArr,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            }),
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    url: '../manage/configAdSpace/select',
+                    success: (res) => {
+
+                        res.forEach(function (val, index, arr) {
+                            let context = {name: val.ddName, value: val.ddId, selected: false};
+                            adArr.push(context);
+                        });
+                        adSelect.update(
+                            {
+                                data: adArr,
+                                autoRow: true,
+                            }
+                        );
+                    },
+                    error: function () {
+                        alert("查询失败")
+                    }
+                }),
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    url: '../manage/configAdStrategy/select',
+                    success: (res) => {
+                        res.forEach(function (val, index, arr) {
+                            let context = {name: val.ddName, value: val.ddId, selected: false};
+                            strategyArr.push(context);
+                        });
+                        strategySelect.update(
+                            {
+                                data: strategyArr,
+                                autoRow: true,
+                            }
+                        );
+                    },
+                    error: function () {
+                        alert("查询失败")
+                    }
+                })
+        });
+        table.render({
+            elem: '#table-page',
+            url: operatorurl,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'ddId', width: 80, title: 'ID', sort: true, align: 'right'},
+                {field: 'ddName', width: 160, title: '名称', sort: true, align: 'center'},
+                {field: 'ddAdTypes', width: 160, title: '类型列表', sort: true},
+                {
+                    field: 'ddAllowedOperation', width: 120, title: '允许运营？', sort: false, align: 'center',
+                    templet: (d) => {
+                        return d.ddAllowedOperation ? '是' : '否';
+                    }
+                },
+                {field: 'ddAdSpaces', width: 260, title: '广告位列表', sort: false},
+                {field: 'adStrategyNames', width: 120, title: '策略', sort: false},
+                {field: 'ddStrategyValue', width: 220, title: '策略配置', sort: false},
+                {
+                    field: 'ddShowWxAd', width: 120, title: '显示微信？', sort: false, align: 'center',
+                    templet: (d) => {
+                        return d.ddShowWxAd ? '是' : '否';
+                    }
+                },
+                {field: 'updateTime', width: 220, title: '数据更新时间', sort: true, align: 'center'}
+            ]],
+            page: true,
+            toolbar: '#toolbar',
+            limit: 30,
+            defaultToolbar: ['filter', 'exports']
+        });
+    })
+
+</script>
+<!-- 表单元素 -->
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 500px;height: 450px;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">ID</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddId" name="ddId" class="layui-input" autocomplete="off" disabled
+                   placeholder="保存成功后自动生成">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">名称 *</label>
+        <div class="layui-input-inline ">
+            <input type="text" id="ddName" name="ddName" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">类型列表 </label>
+        <div class="layui-input-block">
+            <div class="layui-input-inline" style="width: 14rem;"
+                 id="ddAdTypes" name="ddAdTypes" lay-filter="ddAdTypes" autocomplete="off"></div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item ">
+        <label class="layui-form-label">允许运营</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" checked="" name="ddAllowedOperation" lay-skin="switch" lay-text="是|否">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">广告位 </label>
+        <div class="layui-input-block">
+            <div class="layui-input-inline" style="width: 14rem;"
+                 id="ddAdSpaces" name="ddAdSpaces" lay-filter="ddAdSpaces" autocomplete="off"></div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item ">
+        <label class="layui-form-label">策略 </label>
+        <div class="layui-input-block">
+            <div class="layui-input-inline" style="width: 14rem;"
+                 id="ddStrategyId" name="ddStrategyId" lay-filter="ddStrategyId" autocomplete="off"></div>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">策略配置</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddStrategyValue" name="ddStrategyValue" class="layui-input" autocomplete="off"
+                   >
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">微信广告</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" checked="" name="ddShowWxAd" lay-skin="switch" lay-text="展示|不展示">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide" style="text-align:center;">
+        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认"
+               style="text-align:center;">
+    </div>
+</form>
+</body>
+</html>
