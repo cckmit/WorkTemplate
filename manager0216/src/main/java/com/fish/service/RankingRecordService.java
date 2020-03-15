@@ -39,7 +39,6 @@ public class RankingRecordService implements BaseService<RankingRecord> {
     UserInfoMapper userInfoMapper;
 
     @Override
-    //查询排名信息
     public List<RankingRecord> selectAll(GetParameter parameter) {
         List<ArcadeGames> games = arcadeGamesMapper.selectAll();
         for (ArcadeGames game : games) {
@@ -57,13 +56,10 @@ public class RankingRecordService implements BaseService<RankingRecord> {
             ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(ddgame);
             String gameName = arcadeGames.getDdname();//游戏名称
             Rounds rounds = roundsMapper.selectByDdCodeS(ddround);
-
             String roundName = rounds.getDdname();
             //rankingRecordMapper.selectExport(roundName,ddgame,0,ddstart);
         }
         List<RankingRecord> appConfigs = rankingRecordMapper.selectAll();
-        //ddMCode  ddGCode   ddMIndex  ddMDate
-
         return appConfigs;
     }
 
@@ -88,9 +84,6 @@ public class RankingRecordService implements BaseService<RankingRecord> {
 
     @Override
     public boolean removeIf(RankingRecord record, JSONObject searchData) {
-        //        if (existValueFalse(searchData.get("gameName"), appConfig.getDdname())) {
-        //            return true;
-        //        }
         return true;
     }
 }

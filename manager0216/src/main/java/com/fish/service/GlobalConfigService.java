@@ -15,6 +15,13 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
+/**
+ * 全局配置 商品
+ * GlobalConfigService
+ *
+ * @author
+ * @date
+ */
 @Service
 public class GlobalConfigService implements BaseService<GoodsValue> {
 
@@ -81,18 +88,21 @@ public class GlobalConfigService implements BaseService<GoodsValue> {
             record.setDdName("hf" + record.getHeadNumber());
         }
         if (StringUtils.isNotBlank(record.getCoinNumber())) {
+            //购买金币
             String coinNumber = record.getCoinNumber();
             record.setDdValue(Integer.valueOf(coinNumber));
             record.setDdPrice(record.getDdPrice());
             record.setDdDesc("购买" + coinNumber + "金币");
             record.setDdFirst(true);
         } else if (StringUtils.isNotBlank(record.getHeadNumber())) {
+            //购买头像框
             String headNumber = record.getHeadNumber();
             record.setDdValue(Integer.valueOf(headNumber));
             record.setDdPrice(record.getDdPrice());
             record.setDdDesc(record.getDdPrice() + "金币");
             record.setDdFirst(false);
         } else if (StringUtils.isNotBlank(record.getCashNumber())) {
+            //提现
             String cashNumber = record.getCashNumber();
             record.setDdValue(Integer.parseInt(cashNumber) * 100);
             record.setDdPrice(record.getDdPrice());
@@ -150,7 +160,6 @@ public class GlobalConfigService implements BaseService<GoodsValue> {
     public PostResult deleteSelective(JSONObject jsonObject) {
         PostResult result = new PostResult();
         String ddId = jsonObject.getString("deleteIds");
-
         int delete = this.goodsValueMapper.deleteByPrimaryKey(Integer.parseInt(ddId));
         if (delete <= 0) {
             result.setSuccessed(false);

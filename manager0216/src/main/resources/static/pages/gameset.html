@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
-    <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+    <meta content="webkit" name="renderer">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+          name="viewport">
+    <link href="../layuiadmin/layui/css/layui.css" media="all" rel="stylesheet">
+    <link href="../layuiadmin/style/admin.css" media="all" rel="stylesheet">
     <script src="../layuiadmin/layui/layui.js"></script>
     <script src="../layuiadmin/modules/operation.js"></script>
     <script src="../layuiadmin/xm-select.js"></script>
@@ -24,26 +24,26 @@
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
                             <label class="layui-form-label">合集号</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
-                                <input type="text" class="layui-input" id="gameId" name="gameId">
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input class="layui-input" id="gameId" name="gameId" type="text">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">合集名称</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
-                                <input type="text" class="layui-input" id="gameName" name="gameName">
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input class="layui-input" id="gameName" name="gameName" type="text">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="game-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-filter="game-search" lay-submit="">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
                 </div>
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
-                    <table class="layui-hide" lay-filter="table-game" id="table-game"></table>
+                    <table class="layui-hide" id="table-game" lay-filter="table-game"></table>
                 </div>
             </div>
         </div>
@@ -51,15 +51,18 @@
 </div>
 </div>
 
-<script type="text/html" id="toolbar">
+<script id="toolbar" type="text/html">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/gameset';
+    const operatorurl = '../manage/gameset';
     layui.use(['table', 'laydate', 'form', 'layer', 'multiSelect', 'index'], function (arrayLike) {
         var table = layui.table,
             form = layui.form,
@@ -343,7 +346,7 @@
                     },
                     end: function () {
                         $("#form_table")[0].reset();
-                        $('#form_table').removeClass('layui-show').addClass('layui-hide')
+                        $('#form_table').removeClass('layui-show').addClass('layui-hide');
                         return false;
                     }
                 });
@@ -406,27 +409,27 @@
     })
 </script>
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+<form class="layui-form layui-hide" id="form_table" lay-filter="form_table"
       style="padding: 20px 0 0 0;width: 600px;height: 700px;">
     <div class="layui-form-item layui-hide">
         <label class="layui-form-label"></label>
         <div class="layui-input-inline">
-            <input type="text" id="id" name="id" autocomplete="off"
-                   class="layui-input layui-input">
+            <input autocomplete="off" class="layui-input layui-input" id="id" name="id"
+                   type="text">
         </div>
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">游戏合集代号 *</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddcode" name="ddcode" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input ">
+            <input autocomplete="off" class="layui-input layui-input " id="ddcode" lay-verify="required" name="ddcode"
+                   type="text">
         </div>
     </div>
     <div class=" layui-form-item">
         <label class="layui-form-label">合集类型 *</label>
         <div class="layui-input-inline">
-            <select name="ddstate" id="ddState" lay-filter="collect">
-                <option value="false" selected="selected">游戏模式</option>
+            <select id="ddState" lay-filter="collect" name="ddstate">
+                <option selected="selected" value="false">游戏模式</option>
                 <option value="true">壳子模式</option>
             </select>
         </div>
@@ -434,32 +437,32 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">游戏合集名称 *</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddname" name="ddname" autocomplete="off"
-                   lay-verify="required" class="layui-input layui-input">
+            <input autocomplete="off" class="layui-input layui-input" id="ddname" lay-verify="required"
+                   name="ddname" type="text">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">游戏合集新增 *</label>
         <div class="layui-input-inline">
-            <div id="gameBox" name="gameBox" lay-filter="heji"></div>
+            <div id="gameBox" lay-filter="heji" name="gameBox"></div>
         </div>
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">人工排序（以#分隔) *</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddarrange512a" name="ddarrange512a" autocomplete="off"
-                   class="layui-input layui-input">
+            <input autocomplete="off" class="layui-input layui-input" id="ddarrange512a" name="ddarrange512a"
+                   type="text">
         </div>
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">跳转关系 </label>
         <div class="layui-input-inline">
-            <div id="jumpDirect" name="jumpDirect" lay-filter="jumpDirect"></div>
+            <div id="jumpDirect" lay-filter="jumpDirect" name="jumpDirect"></div>
         </div>
     </div>
     <div class="layui-form-item layui-hide" style="text-align:center;">
-        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认"
-               style="text-align:center;">
+        <input id="front-submit" lay-filter="front-submit" lay-submit style="text-align:center;" type="button"
+               value="确认">
     </div>
 </form>
 </body>

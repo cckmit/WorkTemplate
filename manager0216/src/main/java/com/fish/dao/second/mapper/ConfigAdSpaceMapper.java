@@ -27,6 +27,14 @@ public interface ConfigAdSpaceMapper {
     List<ConfigAdSpace> selectAll(ConfigAdSpace adSpace);
 
     /**
+     * 查询全部广告
+     *
+     * @param spaceIds
+     * @return
+     */
+    List<ConfigAdSpace> selectAllByIds(String spaceIds);
+
+    /**
      * 新增广告内容
      *
      * @param adSpace

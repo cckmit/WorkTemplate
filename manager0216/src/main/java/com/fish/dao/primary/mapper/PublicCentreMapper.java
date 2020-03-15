@@ -9,13 +9,9 @@ public interface PublicCentreMapper {
 
     int insert(PublicCentre record);
 
-    int insertSelective(PublicCentre record);
-
     PublicCentre selectByPrimaryKey(Integer id);
 
     int updateByPrimaryKeySelective(PublicCentre record);
-
-    int updateByPrimaryKey(PublicCentre record);
 
     List<PublicCentre> selectAll();
 
@@ -25,4 +21,5 @@ public interface PublicCentreMapper {
 
     List<PublicCentre> selectAllRecommend();
 
+    int updateShowId(PublicCentre publicCentre);
 }

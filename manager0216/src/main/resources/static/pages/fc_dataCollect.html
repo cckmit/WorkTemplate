@@ -24,19 +24,19 @@
 
                         <div class="layui-inline">
                             <label class="layui-form-label">开始日期</label>
-                            <div class="layui-input-inline" style="width: 7rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="beginDate" name="beginDate" placeholder=" - ">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">结束日期</label>
-                            <div class="layui-input-inline" style="width: 7rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="endDate" name="endDate" placeholder=" - ">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">类型</label>
-                            <div class="layui-input-inline" style="width: 8rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <select name="type" id="type">
                                     <option value="">全部</option>
                                     <option value=0>小游戏</option>
@@ -46,8 +46,8 @@
                         </div>
 
                         <div class="layui-inline">
-                            <button id="submit" class="layui-btn" data-type="reload">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button id="submit" class="layui-btn layui-btn-normal" data-type="reload">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     <div class="layui-btn-group " style="float: right">
@@ -90,7 +90,7 @@
     }
 </script>
 <script>
-    var operatorurl = '../manage/datacollect';
+    const operatorurl = '../manage/datacollect';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,

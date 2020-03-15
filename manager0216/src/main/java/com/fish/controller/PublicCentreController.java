@@ -91,16 +91,16 @@ public class PublicCentreController {
     @GetMapping(value = "/public/submitJson")
     public PostResult submitPublicCentre(GetParameter parameter) {
         PostResult result = new PostResult();
-        publicCentreService.selectAllForJson(parameter);
-        int count = 1;
-        if (count != 0) {
-            result.setMsg("操作成功");
-            return result;
-        } else {
+        try {
+            publicCentreService.selectAllForJson(parameter);
+            result.setMsg("更新JSON成功");
+        } catch (Exception e) {
+            e.printStackTrace();
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
+
     }
 
     /**
@@ -114,4 +114,17 @@ public class PublicCentreController {
     public PostResult deleteBuyPay(@RequestBody JSONObject jsonObject) {
         return this.publicCentreService.deleteSelective(jsonObject);
     }
+
+    /**
+     * 更新展示顺序
+     *
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/public/updateShowId")
+    public PostResult updateShowId(@RequestBody JSONObject jsonObject) {
+        return this.publicCentreService.updateShowId(jsonObject);
+    }
+
 }

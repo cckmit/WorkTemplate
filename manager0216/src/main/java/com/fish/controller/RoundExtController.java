@@ -62,12 +62,11 @@ public class RoundExtController {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_ext", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
-            return result;
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 
     /**
@@ -84,11 +83,10 @@ public class RoundExtController {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_ext", baseConfig.getFlushCache());
             result.setMsg("操作成功" + res);
-            return result;
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 }

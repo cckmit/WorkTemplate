@@ -50,12 +50,14 @@
 </div>
 <script type="text/html" id="toolbar">
     <div id="tool" name="tool">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
     </div>
 </script>
 <script>
-    var operatorurl = '../admin/operator/email';
+    const operatorurl = '../admin/operator/email';
     layui.use(['table', 'laydate', 'form', 'layer'], () => {
         var $ = layui.jquery,
             table = layui.table,

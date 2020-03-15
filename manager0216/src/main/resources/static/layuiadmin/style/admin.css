@@ -11,7 +11,7 @@ html #layuicss-layuiAdmin {
 
 html {
     background-color: #f2f2f2;
-    color: #666
+    color: #000
 }
 
 .layadmin-tabsbody-item, [template] {
@@ -622,7 +622,7 @@ html {
 }
 
 .layui-fluid {
-    padding: 15px
+    padding: 3px
 }
 
 .layadmin-header {

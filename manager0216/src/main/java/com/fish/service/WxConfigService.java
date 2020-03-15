@@ -11,6 +11,7 @@ import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
 import com.fish.utils.XwhTool;
+import com.fish.utils.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
- * 产品信息 Service
+ * 产品信息配置 Service
  * WxConfigService
  *
  * @author
@@ -29,7 +30,6 @@ import java.util.List;
  */
 @Service
 public class WxConfigService implements BaseService<WxConfig> {
-    private static final Logger logger = LoggerFactory.getLogger(WxConfigService.class);
     @Autowired
     WxConfigMapper wxConfigMapper;
     @Autowired
@@ -89,7 +89,7 @@ public class WxConfigService implements BaseService<WxConfig> {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("查询产品信息失败" + ", 详细信息:{}", e.getMessage());
             }
         }
         return wxConfigs;
@@ -109,11 +109,9 @@ public class WxConfigService implements BaseService<WxConfig> {
         appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
         try {
             insertAppConfig = appConfigMapper.insert(appConfig);
-            System.out.println("appConfig插入数据" + insertAppConfig);
+            LOGGER.info("appConfig插入数据" + insertAppConfig);
         } catch (Exception e) {
-            e.printStackTrace();
-            //新增判断AppId重复
-            insertAppConfig = 3;
+            LOGGER.error("新增appConfig信息失败" + ", 详细信息:{}", e.getMessage());
         }
         record.setCreateTime(new Timestamp(System.currentTimeMillis()));
         String ddAppSkipRes = record.getDdappskipres();
@@ -126,7 +124,7 @@ public class WxConfigService implements BaseService<WxConfig> {
             //新增产品信息
             insertWxconfig = wxConfigMapper.insert(record);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("新增产品信息失败" + ", 详细信息:{}", e.getMessage());
         }
         return insertWxconfig;
     }
@@ -140,16 +138,15 @@ public class WxConfigService implements BaseService<WxConfig> {
     public int updateByPrimaryKeySelective(WxConfig record) {
         //产品名称去重
         int insert;
-
         appConfig.setDdappid(record.getDdappid());
         appConfig.setDdname(record.getProductName());
         appConfig.setDdprogram(record.getProgramType());
         appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
         try {
             insert = appConfigMapper.updateByPrimaryKeySelective(appConfig);
-            System.out.println("appConfig插入数据" + insert);
+            LOGGER.info("appConfig更新数据：" + insert);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("修改产品信息失败" + ", 详细信息:{}", e.getMessage());
         }
         String ddAppSkipRes = record.getDdappskipres();
         if (ddAppSkipRes != null) {

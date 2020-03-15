@@ -30,13 +30,7 @@ public class WxGroupManagerService implements BaseService<WxGroupManager> {
      */
     @Override
     public List<WxGroupManager> selectAll(GetParameter parameter) {
-        String sql = "select id AS id, ddId AS ddId, `describe` AS `describe`,  ddStatus AS ddStatus, ddYes AS ddYes," +
-                " ddNo AS ddNo,  updateTime AS updateTime, cdId AS cdId," +
-                " wxGroupName AS wxGroupName, wxGroupManager AS wxGroupManager, wxNumber AS wxNumber, " +
-                " createTime  AS createTime, updateQrCodeTime AS updateQrCodeTime" +
-                " FROM config_confirm, wx_group_manager " +
-                " WHERE cdId = ddId";
-        return wxGroupManagerMapper.selectAllConfigSQL(sql);
+        return wxGroupManagerMapper.selectAll();
     }
 
     /**

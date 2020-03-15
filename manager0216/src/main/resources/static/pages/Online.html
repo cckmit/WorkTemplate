@@ -25,19 +25,19 @@
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
                             <label class="layui-form-label">时间范围</label>
-                            <div class="layui-input-inline">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">游戏名称</label>
-                            <div class="layui-input-inline" >
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <div id="gameName" name="gameName" lay-filter="gameName"></div>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">选择曲线</label>
-                            <div class="layui-input-inline">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <select name="lineType" id="lineType">
                                     <option value="">全部</option>
                                     <option value='online'>在线人数</option>
@@ -47,8 +47,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -73,7 +73,7 @@
 </script>
 <script type="text/javascript">
     let object = this;
-    var operatorurl = '../manage/online';
+    const operatorurl = '../manage/online';
     layui.use(['table', 'laydate', 'form', 'layer', 'carousel'], function () {
         var table = layui.table,
             form = layui.form,
@@ -106,7 +106,6 @@
                 dataType: "json",
                 url: '../manage/games/selectBox',
                 success: (res) => {
-                    console.log('selectBox:', res);
                     res.forEach(function (val, index, arr) {
                         gameCodes[val.value] = val.title;
                     });

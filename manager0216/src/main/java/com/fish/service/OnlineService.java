@@ -14,6 +14,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 游戏在线人数统计 Service
+ *
+ * @author
+ * @date
+ */
 @Service
 public class OnlineService implements BaseService<Online> {
 

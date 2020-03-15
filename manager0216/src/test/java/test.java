@@ -38,7 +38,6 @@ public class test
     public static void main(String[] args) throws Exception
     {
 
-
         //https://sgame.qinyougames.com/persieService/flush/logic
         //http://192.168.1.55:8080/persieService/flush/logic
         //persieDeamon   persieService    public
@@ -49,13 +48,10 @@ public class test
 //        Instant instant = localDateTime.atZone(zone).toInstant();
 //        Date date = Date.from(instant);
 //        System.out.println(date);   //sgame.qinyougames.com
-
         JSONObject paramMap = new JSONObject();
-        paramMap.put("name","round_match");
-        String res= HttpUtil.post("http://192.168.1.55:8080/persieService/flush/logic", paramMap.toJSONString());
+        paramMap.put("name","app_config");
+        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
         System.out.println("我是返回值 :"+res);
-
-
 //        JSONObject paramMap = new JSONObject();
 //        paramMap.put("name","deamon");//deamon , online   persieDeamon
 //        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());

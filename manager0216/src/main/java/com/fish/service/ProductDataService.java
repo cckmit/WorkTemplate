@@ -31,6 +31,12 @@ import java.util.*;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
 
+/**
+ * 数据统计-产品数据详情
+ *
+ * @author
+ * @date
+ */
 @Service
 public class ProductDataService implements BaseService<ProductData> {
 
@@ -48,417 +54,200 @@ public class ProductDataService implements BaseService<ProductData> {
     @Autowired
     BuyPayMapper buyPayMapper;
 
+    /**
+     * 获取微信配置表
+     *
+     * @return
+     */
+    private Map<String, WxConfig> getWxConfigMap() {
+        Map<String, WxConfig> wxConfigMap = new HashMap<>();
+        List<WxConfig> allWxConfig = cacheService.getAllWxConfig();
+        allWxConfig.forEach(wxConfig -> {
+            wxConfigMap.put(wxConfig.getDdappid(), wxConfig);
+        });
+        return wxConfigMap;
+    }
+
     @Override
     public List<ProductData> selectAll(GetParameter parameter) {
-        List<ProductData> productDatas = new ArrayList<>();
-        String sql = "select * from minitj_wx where 1 = 1";
-        String sqlProgram = "select * from program_entering where 1 = 1";
-        StringBuilder SQL = new StringBuilder(sql);
-        StringBuilder SQLProgram = new StringBuilder(sqlProgram);
-        List<WxConfig> wxConfigs = cacheService.getAllWxConfig();
+        Map<String, WxConfig> wxConfigMap = getWxConfigMap();
+        Map<String, BuyPay> buyPayMap = getBuyPayMap(parameter);
+        List<ProductData> productDatas = new ArrayList<ProductData>();
         JSONObject search = getSearchData(parameter.getSearchData());
-        if (search == null) {
-            for (WxConfig wxConfig : wxConfigs) {
-                ProductData productData = new ProductData();
+        if (search != null) {
+            //搜索
+            String ddAppId = search.getString("ddappid");
+            String type = search.getString("type");
+            // 先判断有没有根据appId查
+            if (!StringUtils.isBlank(ddAppId)) {
+                WxConfig wxConfig = wxConfigMap.get(ddAppId);
                 if (wxConfig.getProgramType() == 0) {
-                    productData.setProductName(wxConfig.getProductName());
-                    String ddAppId = wxConfig.getDdappid();
-                    LocalDate now = LocalDate.now();
-                    LocalDate beforeDate = now.minusDays(1);
-
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    String localDate = formatter.format(beforeDate);
-                    try {
-                        MinitjWx minitjWx = minitjWxMapper.selectByPrimaryKey(ddAppId, localDate);
-                        BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(localDate, ddAppId);
-                        if (minitjWx != null) {
-                            productData.setProgramType(wxConfig.getProgramType());
-                            Integer wxShareUser = minitjWx.getWxShareUser();
-                            productData.setWxShareUser(wxShareUser);
-                            Integer wxShareCount = minitjWx.getWxShareCount();
-                            productData.setWxShareCount(wxShareCount);
-                            productData.setMinitjWx(minitjWx);
-                            productData.setAdRevenue(minitjWx.getWxBannerIncome().add(minitjWx.getWxVideoIncome()));
-                            BigDecimal adRevenue = productData.getAdRevenue();
-                            Integer wxActive = productData.getMinitjWx().getWxActive();
-                            BigDecimal divide = adRevenue.divide(new BigDecimal(wxActive), 4, ROUND_HALF_UP);
-                            productData.setActiveUp(divide);
-                            String wxRegJson = minitjWx.getWxRegJson();
-                            JSONObject jsonObject = JSONObject.parseObject(wxRegJson);
-                            Integer other = (Integer) jsonObject.get("其他");
-                            if (other != null) {
-                                productData.setWxRegOther(other);
-                            } else {
-                                productData.setWxRegOther(0);
-                            }
-                            BeanUtils.copyProperties(productData.getMinitjWx(), productData);
-                            productData.setWxBannerIncome(minitjWx.getWxBannerIncome());
-                            if (buyPay != null) {
-                                productData.setBuyCost(buyPay.getBuyCost());
-                                productData.setBuyClickPrice(buyPay.getBuyClickPrice());
-                            }
-                            if (!checkObjFieldIsNull(productData.getMinitjWx())) {
-                                productDatas.add(productData);
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap);
                 } else {
-                    String ddAppId = wxConfig.getDdappid();
-                    LocalDate now = LocalDate.now();
-                    LocalDate beforeDate = now.minusDays(1);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    String localDate = formatter.format(beforeDate);
-                    try {
-                        ProductData programData = productDataMapper.selectByAppid(ddAppId, localDate);
-                        BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(localDate, ddAppId);
-                        if (programData != null) {
-                            if (buyPay != null) {
-                                programData.setBuyCost(buyPay.getBuyCost());
-                                programData.setBuyClickPrice(buyPay.getBuyClickPrice());
-                            }
-                            programData.setProgramType(wxConfig.getProgramType());
-                            productDatas.add(programData);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    productDatas = selectPersieDeamon(parameter, ddAppId, buyPayMap);
+                }
+            } else {
+                switch (type) {
+                    case "0":
+                        productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap);
+                        break;
+                    case "1":
+                        productDatas = selectPersieDeamon(parameter, ddAppId, buyPayMap);
+                        break;
+                    default:
+                        // 如果只选了时间
+                        productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap);
+                        List<ProductData> list = selectPersieDeamon(parameter, ddAppId, buyPayMap);
+                        productDatas.addAll(list);
+                        break;
                 }
             }
         } else {
-            String ddAppId = search.getString("ddappid");
-            String times = search.getString("times");
-            String type = search.getString("type");
-            if (StringUtils.isBlank(type)) {
-                if (StringUtils.isNotBlank(ddAppId)) {
-                    WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
-                    Integer programType = wxConfig.getProgramType();
-                    if (programType == 0) {
-                        SQL.append(" and wx_appid =" + "'").append(ddAppId).append("'");
-                        if (StringUtils.isNotBlank(times)) {
-                            String[] split = times.split("-");
-                            SQL.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
-                            SQL.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
-                        }
-                        List<MinitjWx> WxDatas = minitjWxMapper.searchData(SQL.toString());
-                        for (MinitjWx wxData : WxDatas) {
-                            ProductData productData = new ProductData();
-                            String appId = wxData.getWxAppid();
-                            Date wxDate = wxData.getWxDate();
-                            BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxDate.toString(), appId);
-                            wxConfig = cacheService.getWxConfig(appId);
-                            if (wxConfig != null) {
-                                productData.setProgramType(wxConfig.getProgramType());
-                                String ddName = wxConfig.getProductName();
-                                productData.setProductName(ddName);
-                                productData.setMinitjWx(wxData);
-                                productData.setAdRevenue(wxData.getWxBannerIncome().add(wxData.getWxVideoIncome()));
-                                BigDecimal adRevenue = productData.getAdRevenue();
-                                Integer wxActive = productData.getMinitjWx().getWxActive();
-                                try {
-                                    if (!wxActive.equals(0)) {
-                                        BigDecimal divide = adRevenue.divide(new BigDecimal(wxActive), 4, ROUND_HALF_UP);
-                                        productData.setActiveUp(divide.multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
-                                    }
-                                    String wxRegJson = productData.getMinitjWx().getWxRegJson();
-                                    JSONObject jsonObject = null;
-                                    jsonObject = JSONObject.parseObject(wxRegJson);
-                                    if (jsonObject != null) {
-                                        Integer other = (Integer) jsonObject.get("其他");
-                                        if (other != null) {
-                                            productData.setWxRegOther(other);
-                                        } else {
-                                            productData.setWxRegOther(0);
-                                        }
-                                    } else {
-                                        productData.setWxRegOther(0);
-                                    }
-                                    if (buyPay != null) {
-                                        productData.setBuyCost(buyPay.getBuyCost());
-                                        productData.setBuyClickPrice(buyPay.getBuyClickPrice());
-                                    }
-                                    BeanUtils.copyProperties(productData.getMinitjWx(), productData);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                productDatas.add(productData);
-                            }
-                        }
-                        return productDatas;
-                    } else {
-                        SQLProgram.append(" and wx_appid =" + "'").append(ddAppId).append("'");
-                        if (StringUtils.isNotBlank(times)) {
-                            String[] split = times.split("-");
-                            SQLProgram.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
-                            SQLProgram.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
-                            List<ProductData> productData = productDataMapper.searchData(SQLProgram.toString());
-                            for (ProductData productDatum : productData) {
-                                String wxAppid = productDatum.getWxAppid();
-                                Date wxDate = productDatum.getWxDate();
-                                BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxDate.toString(), wxAppid);
-                                if (buyPay != null) {
-                                    productDatum.setBuyCost(buyPay.getBuyCost());
-                                    productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
-                                }
-                            }
-                            productDatas.addAll(productData);
-                            return productDatas;
-                        } else {
-                            List<ProductData> productData = productDataMapper.searchData(SQLProgram.toString());
-                            for (ProductData productDatum : productData) {
-                                String wxAppid = productDatum.getWxAppid();
-                                Date wxDate = productDatum.getWxDate();
-                                BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxDate.toString(), wxAppid);
-                                if (buyPay != null) {
-                                    productDatum.setBuyCost(buyPay.getBuyCost());
-                                    productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
-                                }
-                            }
-                            productDatas.addAll(productData);
-                            return productDatas;
-                        }
-                    }
+            productDatas = selectMinitjWx(parameter, null, wxConfigMap, buyPayMap);
+            List<ProductData> list = selectPersieDeamon(parameter, null, buyPayMap);
+            productDatas.addAll(list);
+        }
+        return productDatas;
+    }
 
-                }
-                if (StringUtils.isNotBlank(times)) {
-                    String[] split = times.split("-");
-                    SQL.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
-                    SQL.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
-                    SQLProgram.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
-                    SQLProgram.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
-                }
-                List<ProductData> programData = productDataMapper.searchData(SQLProgram.toString());
-                productDatas.addAll(programData);
-                List<MinitjWx> WxDatas = minitjWxMapper.searchData(SQL.toString());
-                for (MinitjWx wxData : WxDatas) {
-                    ProductData productData = new ProductData();
-                    String appId = wxData.getWxAppid();
-
-                    Date wxDate = wxData.getWxDate();
-                    BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxDate.toString(), appId);
-                    // WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
-                    WxConfig wxConfig = cacheService.getWxConfig(appId);
-                    if (wxConfig != null) {
-                        productData.setProgramType(wxConfig.getProgramType());
-                        String ddName = wxConfig.getProductName();
-                        productData.setProductName(ddName);
-                        productData.setMinitjWx(wxData);
-                        productData.setAdRevenue(wxData.getWxBannerIncome().add(wxData.getWxVideoIncome()));
-                        BigDecimal adRevenue = productData.getAdRevenue();
-                        Integer wxActive = productData.getMinitjWx().getWxActive();
-                        try {
-                            if (!wxActive.equals(0)) {
-                                BigDecimal divide = adRevenue.divide(new BigDecimal(wxActive), 4, ROUND_HALF_UP);
-                                productData.setActiveUp(divide.multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
-                            }
-                            String wxRegJson = productData.getMinitjWx().getWxRegJson();
-                            JSONObject jsonObject = null;
-                            jsonObject = JSONObject.parseObject(wxRegJson);
-                            if (jsonObject != null) {
-                                Integer other = (Integer) jsonObject.get("其他");
-                                if (other != null) {
-                                    productData.setWxRegOther(other);
-                                } else {
-                                    productData.setWxRegOther(0);
-                                }
-                            } else {
-                                productData.setWxRegOther(0);
-                            }
-                            if (buyPay != null) {
-                                productData.setBuyCost(buyPay.getBuyCost());
-                                productData.setBuyClickPrice(buyPay.getBuyClickPrice());
-                            }
-
-                            BeanUtils.copyProperties(productData.getMinitjWx(), productData);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        productDatas.add(productData);
-                    }
-                }
-            } else {
-                if (type.equals("0")) {
-                    if (StringUtils.isNotBlank(times)) {
-                        String[] split = times.split("-");
-                        SQL.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
-                        SQL.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
-                    }
-                    if (StringUtils.isNotBlank(ddAppId)) {
-                        SQL.append(" and wx_appid =" + "'").append(ddAppId).append("'");
-                        List<MinitjWx> WxDatas = minitjWxMapper.searchData(SQL.toString());
-                        for (MinitjWx wxData : WxDatas) {
-
-                            ProductData productData = new ProductData();
-                            productData.setProgramType(0);
-                            String appId = wxData.getWxAppid();
-                            Date wxDate = wxData.getWxDate();
-                            BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxDate.toString(), appId);
-                            // WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
-                            WxConfig wxConfig = cacheService.getWxConfig(appId);
-                            if (wxConfig != null) {
-                                String ddName = wxConfig.getProductName();
-                                productData.setProductName(ddName);
-                                productData.setMinitjWx(wxData);
-                                productData.setAdRevenue(wxData.getWxBannerIncome().add(wxData.getWxVideoIncome()));
-                                BigDecimal adRevenue = productData.getAdRevenue();
-                                Integer wxActive = productData.getMinitjWx().getWxActive();
-                                try {
-                                    if (!wxActive.equals(0)) {
-                                        BigDecimal divide = adRevenue.divide(new BigDecimal(wxActive), 4, ROUND_HALF_UP);
-                                        productData.setActiveUp(divide.multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
-                                    }
-                                    String wxRegJson = productData.getMinitjWx().getWxRegJson();
-                                    JSONObject jsonObject = null;
-                                    jsonObject = JSONObject.parseObject(wxRegJson);
-                                    if (jsonObject != null) {
-                                        Integer other = (Integer) jsonObject.get("其他");
-                                        if (other != null) {
-                                            productData.setWxRegOther(other);
-                                        } else {
-                                            productData.setWxRegOther(0);
-                                        }
-                                    } else {
-                                        productData.setWxRegOther(0);
-                                    }
-                                    if (buyPay != null) {
-                                        productData.setBuyCost(buyPay.getBuyCost());
-                                        productData.setBuyClickPrice(buyPay.getBuyClickPrice());
-                                    }
-                                    BeanUtils.copyProperties(productData.getMinitjWx(), productData);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                productDatas.add(productData);
-                            }
-                        }
-                    } else {
-                        wxConfigs = cacheService.getAllWxConfig();
-                        for (WxConfig wxConfig : wxConfigs) {
-                            if (wxConfig.getProgramType() == 0) {
-                                String SQLAppId = SQL.toString();
-                                ddAppId = wxConfig.getDdappid();
-                                SQLAppId = SQLAppId + " and wx_appid =" + "'" + ddAppId + "'";
-                                List<MinitjWx> WxDatas = minitjWxMapper.searchData(SQLAppId);
-                                for (MinitjWx wxData : WxDatas) {
-                                    ProductData productData = new ProductData();
-                                    String appId = wxData.getWxAppid();
-                                    wxConfig = cacheService.getWxConfig(appId);
-                                    BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxData.getWxDate().toString(), appId);
-                                    if (wxConfig != null) {
-                                        productData.setProgramType(wxConfig.getProgramType());
-                                        productData.setProductName(wxConfig.getProductName());
-                                        productData.setMinitjWx(wxData);
-                                        productData.setAdRevenue(wxData.getWxBannerIncome().add(wxData.getWxVideoIncome()));
-                                        BigDecimal adRevenue = productData.getAdRevenue();
-                                        Integer wxActive = productData.getMinitjWx().getWxActive();
-                                        try {
-                                            if (!wxActive.equals(0)) {
-                                                BigDecimal divide = adRevenue.divide(new BigDecimal(wxActive), 4, ROUND_HALF_UP);
-                                                productData.setActiveUp(divide.multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
-                                            }
-                                            String wxRegJson = productData.getMinitjWx().getWxRegJson();
-                                            JSONObject jsonObject = null;
-                                            jsonObject = JSONObject.parseObject(wxRegJson);
-                                            if (jsonObject != null) {
-                                                Integer other = (Integer) jsonObject.get("其他");
-                                                if (other != null) {
-                                                    productData.setWxRegOther(other);
-                                                } else {
-                                                    productData.setWxRegOther(0);
-                                                }
-                                            } else {
-                                                productData.setWxRegOther(0);
-                                            }
-                                            if (buyPay != null) {
-                                                productData.setBuyCost(buyPay.getBuyCost());
-                                                productData.setBuyClickPrice(buyPay.getBuyClickPrice());
-                                            }
-                                            BeanUtils.copyProperties(productData.getMinitjWx(), productData);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        productDatas.add(productData);
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-                } else {
-                    if (StringUtils.isNotBlank(ddAppId)) {
-                        SQLProgram.append(" and wx_appid =" + "'").append(ddAppId).append("'");
-                        if (StringUtils.isNotBlank(times)) {
-                            String[] split = times.split("-");
-                            SQLProgram.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
-                            SQLProgram.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
-                            List<ProductData> productData = productDataMapper.searchData(SQLProgram.toString());
-                            for (ProductData productDatum : productData) {
-                                String wxAppid = productDatum.getWxAppid();
-                                Date wxDate = productDatum.getWxDate();
-                                BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxDate.toString(), wxAppid);
-                                if (buyPay != null) {
-                                    productDatum.setBuyCost(buyPay.getBuyCost());
-                                    productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
-                                }
-                            }
-                            productDatas.addAll(productData);
-                            return productDatas;
-                        } else {
-                            List<ProductData> productData = productDataMapper.searchData(SQLProgram.toString());
-                            for (ProductData product : productData) {
-
-                                product.setProgramType(1);
-                                String wxAppid = product.getWxAppid();
-                                Date wxDate = product.getWxDate();
-                                BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxDate.toString(), wxAppid);
-                                if (buyPay != null) {
-                                    product.setBuyCost(buyPay.getBuyCost());
-                                    product.setBuyClickPrice(buyPay.getBuyClickPrice());
-                                }
-                            }
-                            productDatas.addAll(productData);
-                            return productDatas;
-                        }
-                    } else {
-                        if (StringUtils.isNotBlank(times)) {
-                            String[] split = times.split("-");
-                            SQLProgram.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
-                            SQLProgram.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
-                            List<ProductData> productData = productDataMapper.searchData(SQLProgram.toString());
-                            for (ProductData product : productData) {
-
-                                product.setProgramType(1);
-                                String wxAppid = product.getWxAppid();
-                                Date wxDate = product.getWxDate();
-                                BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxDate.toString(), wxAppid);
-                                if (buyPay != null) {
-                                    product.setBuyCost(buyPay.getBuyCost());
-                                    product.setBuyClickPrice(buyPay.getBuyClickPrice());
-                                }
-                            }
-                            productDatas.addAll(productData);
-                            return productDatas;
-                        } else {
-                            List<ProductData> productData = productDataMapper.searchData(SQLProgram.toString());
-                            for (ProductData product : productData) {
-                                product.setProgramType(1);
-                                String wxAppid = product.getWxAppid();
-                                Date wxDate = product.getWxDate();
-                                BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxDate.toString(), wxAppid);
-                                if (buyPay != null) {
-                                    product.setBuyCost(buyPay.getBuyCost());
-                                    product.setBuyClickPrice(buyPay.getBuyClickPrice());
-                                }
-                            }
-                            productDatas.addAll(productData);
-                            return productDatas;
-                        }
-                    }
+    /**
+     * 查询小程序数据
+     *
+     * @param parameter
+     * @param ddAppId
+     * @return
+     */
+    private List<ProductData> selectPersieDeamon(GetParameter parameter, String ddAppId, Map<String, BuyPay> buyPayMap) {
+        List<ProductData> productDatas = new ArrayList<ProductData>();
+        JSONObject search = getSearchData(parameter.getSearchData());
+        // 选小程序的时候查询
+        StringBuilder sqlProgram = new StringBuilder("select * from program_entering where 1 = 1");
+        String times = "";
+        if (search != null) {
+            times = search.getString("times");
+        }
+        if (!StringUtils.isBlank(times)) {
+            String[] split = times.split("-");
+            sqlProgram.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
+            sqlProgram.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
+        } else {
+            sqlProgram.append(" and wx_date =" + "'").append(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1))).append("'");
+        }
+        if (!StringUtils.isBlank(ddAppId)) {
+            sqlProgram.append(" and wx_appid =" + "'").append(ddAppId).append("'");
+        }
+        productDatas = productDataMapper.searchData(sqlProgram.toString());
+        for (ProductData productDatum : productDatas) {
+            String wxAppid = productDatum.getWxAppid();
+            Date wxDate = productDatum.getWxDate();
+            //查询小程序是否存在买量数据
+            if (!buyPayMap.isEmpty()) {
+                BuyPay buyPay = buyPayMap.get(wxAppid);
+                if (buyPay != null) {
+                    productDatum.setBuyCost(buyPay.getBuyCost());
+                    productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
                 }
             }
         }
         return productDatas;
+    }
+
+    /**
+     * 查询小游戏数据
+     *
+     * @param parameter
+     * @param ddAppId   前台输入框传的ddAppId
+     * @return
+     */
+    private List<ProductData> selectMinitjWx(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap, Map<String, BuyPay> buyPayMap) {
+        List<ProductData> productDatas = new ArrayList<>();
+        JSONObject search = getSearchData(parameter.getSearchData());
+        // 小游戏的时候查询
+        StringBuilder sql = new StringBuilder("select * from minitj_wx where 1 = 1");
+        String times = "";
+        if (search != null) {
+            times = search.getString("times");
+        }
+        if (!StringUtils.isBlank(times)) {
+            String[] split = times.split("-");
+            sql.append(" and wx_date >=" + "'").append(split[0].trim()).append("'");
+            sql.append(" and wx_date <=" + "'").append(split[1].trim()).append("'");
+        } else {
+            String time = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+            sql.append(" and wx_date =" + "'").append(time).append("'");
+        }
+        if (!StringUtils.isBlank(ddAppId)) {
+            sql.append(" and wx_appid =" + "'").append(ddAppId).append("'");
+        }
+        List<MinitjWx> WxDatas = minitjWxMapper.searchData(sql.toString());
+        for (MinitjWx wxData : WxDatas) {
+            WxConfig wxConfig = wxConfigMap.get(wxData.getWxAppid());
+            if (wxConfig == null) {
+                continue;
+            }
+            ProductData productData = new ProductData();
+            productData.setMinitjWx(wxData);
+            // 设置data信息
+            productData.setProgramType(wxConfig.getProgramType());
+            productData.setProductName(wxConfig.getProductName());
+            productData.setProductName(wxConfig.getProductName());
+            productData.setAdRevenue(wxData.getWxBannerIncome().add(wxData.getWxVideoIncome()));
+            BigDecimal adRevenue = productData.getAdRevenue();
+            Integer wxActive = wxData.getWxActive();
+            if (!wxActive.equals(0)) {
+                BigDecimal divide = adRevenue.divide(new BigDecimal(wxActive), 4, ROUND_HALF_UP);
+                productData.setActiveUp(divide.multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP));
+            }
+            String wxRegJson = wxData.getWxRegJson();
+            JSONObject jsonObject = JSONObject.parseObject(wxRegJson);
+            if (jsonObject != null) {
+                Integer other = (Integer) jsonObject.get("其他");
+                if (other != null) {
+                    productData.setWxRegOther(other);
+                } else {
+                    productData.setWxRegOther(0);
+                }
+            } else {
+                productData.setWxRegOther(0);
+            }
+            // 判断小游戏是否有买量数据
+            if (!buyPayMap.isEmpty()) {
+                BuyPay buyPay = buyPayMap.get(wxData.getWxAppid());
+                if (buyPay != null) {
+                    productData.setBuyCost(buyPay.getBuyCost());
+                    productData.setBuyClickPrice(buyPay.getBuyClickPrice());
+                }
+            }
+            BeanUtils.copyProperties(wxData, productData);
+            productDatas.add(productData);
+        }
+        return productDatas;
+    }
+
+    /**
+     * 获取买量数据
+     *
+     * @param parameter
+     * @return
+     */
+    private Map<String, BuyPay> getBuyPayMap(GetParameter parameter) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        String beginTime = format.format(new Date());
+        String endTime = format.format(new Date());
+        JSONObject search = getSearchData(parameter.getSearchData());
+        if (search != null) {
+            String times = search.getString("times");
+            if (!StringUtils.isBlank(times)) {
+                beginTime = times.split("-")[0];
+                endTime = times.split("-")[1];
+            }
+        }
+        Map<String, BuyPay> buyPayMap = new HashMap<String, BuyPay>(16);
+        List<BuyPay> buyPays = buyPayMapper.selectBuyPayByDate(beginTime, endTime);
+        buyPays.forEach(buyPay -> {
+            buyPayMap.put(buyPay.getBuyAppId(), buyPay);
+        });
+        return buyPayMap;
     }
 
     /**
@@ -508,66 +297,70 @@ public class ProductDataService implements BaseService<ProductData> {
                 System.out.println("我是singleString :" + singleString);
                 String[] split = singleString.split("], ");
                 for (int j = 0; j < split.length; j++) {
-
                     if (j != 0 && j < split.length) {
                         String single = split[j].substring(1);
                         String[] singleSplit = single.split(",");
                         Map<String, String> mapSingle = new HashMap<>();
                         ProductData productData = new ProductData();
                         for (int x = 0; x < singleSplit.length; x++) {
-                            if (x == 0) {
-                                mapSingle.put("wx_date", singleSplit[x].trim());
-                            }
-                            if (x == 1) {
-                                mapSingle.put("wx_appid", singleSplit[x].trim());
-                            }
-                            if (x == 2) {
-                                mapSingle.put("product_name", singleSplit[x].trim());
-                            }
-                            if (x == 3) {
-                                mapSingle.put("product_type", singleSplit[x].trim());
-                            }
-                            if (x == 4) {
-                                mapSingle.put("wx_new", singleSplit[x].trim());
-                            }
-                            if (x == 5) {
-                                mapSingle.put("wx_active", singleSplit[x].trim());
-                            }
-                            if (x == 6) {
-                                mapSingle.put("wx_visit", singleSplit[x].trim());
-                            }
-                            if (x == 7) {
-                                mapSingle.put("recharge", singleSplit[x].trim());
-                            }
-                            if (x == 8) {
-                                mapSingle.put("ad_revenue", singleSplit[x].trim());
-                            }
-                            if (x == 9) {
-                                mapSingle.put("wx_video_income", singleSplit[x].trim());
-                            }
-                            if (x == 10) {
-                                mapSingle.put("wx_banner_income", singleSplit[x].trim());
-                            }
-                            if (x == 11) {
-                                mapSingle.put("active_up", singleSplit[x].trim());
-                            }
-                            if (x == 12) {
-                                mapSingle.put("wx_share_user", singleSplit[x].trim());
-                            }
-                            if (x == 13) {
-                                mapSingle.put("wx_share_count", singleSplit[x].trim());
-                            }
-                            if (x == 14) {
-                                mapSingle.put("wx_share_rate", singleSplit[x].trim());
-                            }
-                            if (x == 15) {
-                                mapSingle.put("wx_remain2", singleSplit[x].trim());
-                            }
-                            if (x == 16) {
-                                mapSingle.put("wx_avg_login", singleSplit[x].trim());
-                            }
-                            if (x == 17) {
-                                mapSingle.put("wx_avg_online", singleSplit[x].trim());
+                            switch (x) {
+                                case 0:
+                                    mapSingle.put("wx_date", singleSplit[x].trim());
+                                    break;
+                                case 1:
+                                    mapSingle.put("wx_appid", singleSplit[x].trim());
+                                    break;
+                                case 2:
+                                    mapSingle.put("product_name", singleSplit[x].trim());
+                                    break;
+                                case 3:
+                                    mapSingle.put("product_type", singleSplit[x].trim());
+                                    break;
+                                case 4:
+                                    mapSingle.put("wx_new", singleSplit[x].trim());
+                                    break;
+                                case 5:
+                                    mapSingle.put("wx_active", singleSplit[x].trim());
+                                    break;
+                                case 6:
+                                    mapSingle.put("wx_visit", singleSplit[x].trim());
+                                    break;
+                                case 7:
+                                    mapSingle.put("recharge", singleSplit[x].trim());
+                                    break;
+                                case 8:
+                                    mapSingle.put("ad_revenue", singleSplit[x].trim());
+                                    break;
+                                case 9:
+                                    mapSingle.put("wx_video_income", singleSplit[x].trim());
+                                    break;
+
+                                case 10:
+                                    mapSingle.put("wx_banner_income", singleSplit[x].trim());
+                                    break;
+                                case 11:
+                                    mapSingle.put("active_up", singleSplit[x].trim());
+                                    break;
+                                case 12:
+                                    mapSingle.put("wx_share_user", singleSplit[x].trim());
+                                    break;
+                                case 13:
+                                    mapSingle.put("wx_share_count", singleSplit[x].trim());
+                                    break;
+                                case 14:
+                                    mapSingle.put("wx_share_rate", singleSplit[x].trim());
+                                    break;
+                                case 15:
+                                    mapSingle.put("wx_remain2", singleSplit[x].trim());
+                                    break;
+                                case 16:
+                                    mapSingle.put("wx_avg_login", singleSplit[x].trim());
+                                    break;
+                                case 17:
+                                    mapSingle.put("wx_avg_online", singleSplit[x].trim());
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                         String wxDate = mapSingle.get("wx_date");
@@ -588,38 +381,39 @@ public class ProductDataService implements BaseService<ProductData> {
                         String wxRemain2 = mapSingle.get("wx_remain2");
                         String wxAvgLogin = mapSingle.get("wx_avg_login");
                         String wxAvgOnline = mapSingle.get("wx_avg_online");
-
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        Date date = null;
-                        try {
-                            date = simpleDateFormat.parse(wxDate);
-                        } catch (ParseException e) {
-                            e.printStackTrace();
+                        if (StringUtils.isNotBlank(wxDate)) {
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date = null;
+                            try {
+                                date = simpleDateFormat.parse(wxDate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            productData.setWxDate(date);
+                            productData.setWxAppid(wxAppid);
+                            productData.setProductName(productName);
+                            productData.setProgramType(Integer.valueOf(productType));
+                            productData.setWxNew(Integer.valueOf(wxNew));
+                            productData.setWxActive(Integer.valueOf(wxActive));
+                            productData.setWxVisit(Integer.valueOf(wxVisit));
+                            if (recharge != null) {
+                                productData.setRecharge(new BigDecimal(recharge));
+                            } else {
+                                productData.setRecharge(new BigDecimal(0));
+                            }
+                            productData.setAdRevenue(new BigDecimal(adRevenue));
+                            productData.setWxVideoIncome(new BigDecimal(wxVideoIncome));
+                            productData.setWxBannerIncome(new BigDecimal(wxBannerIncome));
+                            productData.setActiveUp(new BigDecimal(activeUp));
+                            productData.setWxShareUser(Integer.valueOf(wxShareUser));
+                            productData.setWxShareCount(Integer.valueOf(wxShareCount));
+                            productData.setWxShareRate(new BigDecimal(wxShareRate));
+                            productData.setWxRemain2(new BigDecimal(wxRemain2));
+                            productData.setWxAvgLogin(new BigDecimal(wxAvgLogin));
+                            productData.setWxAvgOnline(new BigDecimal(wxAvgOnline));
+                            productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
+                            lists.add(productData);
                         }
-                        productData.setWxDate(date);
-                        productData.setWxAppid(wxAppid);
-                        productData.setProductName(productName);
-                        productData.setProgramType(Integer.valueOf(productType));
-                        productData.setWxNew(Integer.valueOf(wxNew));
-                        productData.setWxActive(Integer.valueOf(wxActive));
-                        productData.setWxVisit(Integer.valueOf(wxVisit));
-                        if (recharge != null) {
-                            productData.setRecharge(new BigDecimal(recharge));
-                        } else {
-                            productData.setRecharge(new BigDecimal(0));
-                        }
-                        productData.setAdRevenue(new BigDecimal(adRevenue));
-                        productData.setWxVideoIncome(new BigDecimal(wxVideoIncome));
-                        productData.setWxBannerIncome(new BigDecimal(wxBannerIncome));
-                        productData.setActiveUp(new BigDecimal(activeUp));
-                        productData.setWxShareUser(Integer.valueOf(wxShareUser));
-                        productData.setWxShareCount(Integer.valueOf(wxShareCount));
-                        productData.setWxShareRate(new BigDecimal(wxShareRate));
-                        productData.setWxRemain2(new BigDecimal(wxRemain2));
-                        productData.setWxAvgLogin(new BigDecimal(wxAvgLogin));
-                        productData.setWxAvgOnline(new BigDecimal(wxAvgOnline));
-                        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
-                        lists.add(productData);
                     }
                 }
                 productDataMapper.insertBatch(lists);
@@ -687,7 +481,6 @@ public class ProductDataService implements BaseService<ProductData> {
      * @return 返回结果
      */
     public GetResult searchProductData(String beginDate, String endDate, String productName, GetParameter parameter) {
-        //System.out.println("开始 :" +System.currentTimeMillis());
         ArrayList<ProductData> searchDatas = new ArrayList<>();
         String sql = "select * from minitj_wx where 1 = 1";
         StringBuilder SQL = new StringBuilder(sql);
@@ -707,12 +500,26 @@ public class ProductDataService implements BaseService<ProductData> {
             SQL.append(" and wx_appid =" + "'").append(productName).append("'");
 
         }
-        // System.out.println("拼接sql,耗时:" + (System.currentTimeMillis() - current) + "ms");
-        List<MinitjWx> WxDatas = minitjWxMapper.searchData(SQL.toString());
+        //根据搜索条件查询
+        searchDatas = searchQuery(SQL.toString());
+
+        filterData(searchDatas, parameter);
+        setDefaultSort(parameter);
+        return template(searchDatas, parameter);
+    }
+
+    /**
+     * 根据搜索条件查询
+     *
+     * @param sql
+     * @return
+     */
+    private ArrayList<ProductData> searchQuery(String sql) {
+        ArrayList<ProductData> searchDatas = new ArrayList<>();
+        List<MinitjWx> WxDatas = minitjWxMapper.searchData(sql);
         for (MinitjWx wxData : WxDatas) {
             ProductData productData = new ProductData();
             String appId = wxData.getWxAppid();
-            // WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
             WxConfig wxConfig = cacheService.getWxConfig(appId);
             BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(wxData.getWxDate().toString(), appId);
             if (wxConfig != null) {
@@ -740,21 +547,18 @@ public class ProductDataService implements BaseService<ProductData> {
                     } else {
                         productData.setWxRegOther(0);
                     }
-
                     if (buyPay != null) {
                         productData.setBuyCost(buyPay.getBuyCost());
                         productData.setBuyClickPrice(buyPay.getBuyClickPrice());
                     }
                     BeanUtils.copyProperties(productData.getMinitjWx(), productData);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOGGER.error("ProductDataService异常" + ", 详细信息:{}", e.getMessage());
                 }
                 searchDatas.add(productData);
             }
         }
-        filterData(searchDatas, parameter);
-        setDefaultSort(parameter);
-        return template(searchDatas, parameter);
+        return searchDatas;
     }
 
     /**
@@ -777,7 +581,7 @@ public class ProductDataService implements BaseService<ProductData> {
                 result.setMsg("操作失败，修改广告内容失败！");
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOGGER.error("删除小程序产品数据异常" + ", 详细信息:{}", e.getMessage());
         }
         return result;
     }

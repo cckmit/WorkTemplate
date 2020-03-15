@@ -24,13 +24,13 @@
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
                             <label class="layui-form-label">获奖日期</label>
-                            <div class="layui-input-inline" style="width: 11rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">用户昵称</label>
-                            <div class="layui-input-inline" style="width: 12rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="userName" name="userName">
                             </div>
                         </div>
@@ -44,20 +44,20 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">游戏名称</label>
                             <div class="layui-input-inline">
-                                <div class="layui-input-inline" style="width: 12rem;"
+                                <div class="layui-input-inline" style="width: 14rem;"
                                      id="gameCode" name="gameCodeSelect" lay-filter="gameCode" autocomplete="off"></div>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">赛制名称</label>
                             <div class="layui-input-inline">
-                                <div class="layui-input-inline" style="width: 12rem;"
+                                <div class="layui-input-inline" style="width: 14rem;"
                                      id="roundcode" name="roundSelect" lay-filter="roundcode" autocomplete="off"></div>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">比赛类型</label>
-                            <div class="layui-input-inline" style="width: 8rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <select name="ddgroup" id="ddgroup">
                                     <option value="">-</option>
                                     <option value=true>小程序</option>
@@ -65,10 +65,9 @@
                                 </select>
                             </div>
                         </div>
-                        <button id="submit"  type="button" class="layui-btn" data-type="reload">
-                            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                        <button id="submit"  type="button" class="layui-btn layui-btn-normal" data-type="reload">
+                            <i class="layui-icon layuiadmin-button-btn"></i>查询
                         </button>
-
                     </form>
                 </div>
 
@@ -88,7 +87,7 @@
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/roundreceive';
+    const operatorurl = '../manage/roundreceive';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,

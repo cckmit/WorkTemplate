@@ -2,6 +2,7 @@ package com.fish.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.model.ConfigAdPosition;
+import com.fish.dao.second.model.ConfigAdSpace;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
 import com.fish.protocols.PostResult;
@@ -9,6 +10,8 @@ import com.fish.service.ConfigAdPositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 广告内容管理
@@ -77,6 +80,30 @@ public class ConfigAdPositionController {
      */
     @ResponseBody
     @GetMapping(value = "/configAdPosition/get")
-    public ConfigAdPosition getConfigAdSpace(int id) { return this.adPositionService.getConfigAdPosition(id); }
+    public ConfigAdPosition getConfigAdSpace(int id) {
+        return this.adPositionService.getConfigAdPosition(id);
+    }
+
+    /**
+     * 查询广告位置列表
+     *
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdPosition/selectAll")
+    public List<ConfigAdPosition> select() {
+        return this.adPositionService.selectAll();
+    }
+
+    /**
+     * 根据广告位置ID查询广告位列表
+     *
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdPosition/selectSpaceByPositionId")
+    public List<ConfigAdSpace> selectSpaceByPositionId(int positionId) {
+        return this.adPositionService.selectSpaceByPositionId(positionId);
+    }
 
 }

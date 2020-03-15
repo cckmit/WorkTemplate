@@ -109,25 +109,27 @@ public class BuyPayService implements BaseService<BuyPay> {
                         String buyClickNumber = mapSingle.get("buyClickNumber");
                         String buyClickPrice = mapSingle.get("buyClickPrice");
                         String appId = mapSingle.get("appId");
-                        WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
-                        if (wxConfig != null) {
-                            String ddName = wxConfig.getProductName();
-                            if (productName.equals(ddName)) {
-                                buyPay.setBuyProductName(productName);
-                            } else {
-                                buyPay.setBuyProductName(ddName);
+                        if (StringUtils.isNotBlank(appId)) {
+                            WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
+                            if (wxConfig != null) {
+                                String ddName = wxConfig.getProductName();
+                                if (productName.equals(ddName)) {
+                                    buyPay.setBuyProductName(productName);
+                                } else {
+                                    buyPay.setBuyProductName(ddName);
+                                }
                             }
+                            buyPay.setBuyDate(buyDate);
+                            buyPay.setBuyAppId(appId);
+                            buyPay.setBuyCost(new BigDecimal(buyCost));
+                            buyPay.setBuyClickNumber(Integer.parseInt(buyClickNumber));
+                            buyPay.setBuyClickPrice(new BigDecimal(buyClickPrice));
+                            buyPay.setInsertTime(new Timestamp(System.currentTimeMillis()));
+                            lists.add(buyPay);
                         }
-                        buyPay.setBuyDate(buyDate);
-                        buyPay.setBuyAppId(appId);
-                        buyPay.setBuyCost(new BigDecimal(buyCost));
-                        buyPay.setBuyClickNumber(Integer.parseInt(buyClickNumber));
-                        buyPay.setBuyClickPrice(new BigDecimal(buyClickPrice));
-                        buyPay.setInsertTime(new Timestamp(new Date().getTime()));
-                        lists.add(buyPay);
                     }
                 }
-                buyPayMapper.insertBatch(lists);
+                 buyPayMapper.insertBatch(lists);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -157,7 +159,7 @@ public class BuyPayService implements BaseService<BuyPay> {
         if (wxConfig != null) {
             record.setBuyAppId(wxConfig.getDdappid());
         }
-        record.setInsertTime(new Timestamp(new Date().getTime()));
+        record.setInsertTime(new Timestamp(System.currentTimeMillis()));
         return buyPayMapper.updateByPrimaryKeySelective(record);
     }
 

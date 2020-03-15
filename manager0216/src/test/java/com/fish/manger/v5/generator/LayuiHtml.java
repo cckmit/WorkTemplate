@@ -50,7 +50,7 @@ public class LayuiHtml
     private Set<String> generatorTable()
     {
         Set<String> set = new HashSet<>();
-                set.add("supplement_order");
+                set.add("config_program");
         //        set.add("statistics_pay");
         //        set.add("statistics_user_month");
         //        set.add("statistics_user_day");

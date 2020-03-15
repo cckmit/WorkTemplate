@@ -23,19 +23,19 @@
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 6rem;">类型</label>
+                            <label class="layui-form-label" >类型</label>
                             <div class="layui-input-inline" style="width: 14rem;" id="adType" name="adType"
                                  lay-filter="adType" autocomplete="off"></div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 6rem;">名称</label>
+                            <label class="layui-form-label" >名称</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="name" name="name">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -52,10 +52,11 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i></button>
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="update"><i class="layui-icon">&#xe642;</i>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
         </button>
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon">&#xe640;</i>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
         </button>
     </div>
 </script>

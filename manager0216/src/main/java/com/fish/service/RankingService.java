@@ -77,7 +77,6 @@ public class RankingService implements BaseService<ShowRanking> {
                 showRanking.setDdNumber(roundRecord.getDdresult());
                 showRanking.setMatchdate(roundDate);
                 Integer ddCode = roundRecord.getDdgame();
-                //ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(ddCode);
                 ArcadeGames arcadeGames = cacheService.getArcadeGames(ddCode);
                 if (arcadeGames != null) {
                     String gameName = arcadeGames.getDdname();
@@ -85,7 +84,6 @@ public class RankingService implements BaseService<ShowRanking> {
                 }
                 String ddRound = roundRecord.getDdround();
                 RoundExt roundExt = cacheService.getRoundExt(ddRound);
-                //RoundExt roundExt = roundExtMapper.selectByddCodeS(ddRound);
                 if (roundExt != null) {
                     showRanking.setRoundCode(ddRound);
                     String roundName = roundExt.getDdname();
@@ -168,7 +166,6 @@ public class RankingService implements BaseService<ShowRanking> {
             exportResult.setRoundName(roundName);
             exportResult.setRoundLength(roundLength);
             exportResult.setMatchdate(format);
-
             exportResults.add(exportResult);
         }
         return exportResults;

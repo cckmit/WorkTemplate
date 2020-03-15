@@ -61,6 +61,17 @@ public class ConfigAdContentController {
     }
 
     /**
+     * 复制
+     *
+     * @param configAdContent
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/configAdContent/copy")
+    public PostResult copyConfigAdSource(@RequestBody ConfigAdContent configAdContent) {
+        return this.adContentService.copy(configAdContent);
+    }
+    /**
      * 删除
      *
      * @param jsonObject
@@ -74,6 +85,8 @@ public class ConfigAdContentController {
 
 
     /**
+     * 获取广告内容下拉框
+     *
      * @param getParameter
      * @return
      */

@@ -14,6 +14,12 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 获奖记录查询
+ *
+ * @author
+ * @date
+ */
 @Service
 public class RoundReceiveService implements BaseService<RoundReceive> {
     @Autowired
@@ -23,7 +29,6 @@ public class RoundReceiveService implements BaseService<RoundReceive> {
     CacheService cacheService;
 
     @Override
-    //查询排名信息
     public List<RoundReceive> selectAll(GetParameter parameter) {
         List<RoundReceive> roundReceives;
         JSONObject search = getSearchData(parameter.getSearchData());

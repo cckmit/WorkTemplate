@@ -91,17 +91,7 @@ public class RoundGameService implements BaseService<RoundGame> {
      * @return
      */
     public int insert(RoundGame record) {
-        String roundSelect = record.getRoundSelect();
-        String[] roundSplit = roundSelect.split("-");
-        String gameCodeSelect = record.getGameCodeSelect();
-        if (gameCodeSelect != null && gameCodeSelect.length() > 0) {
-            record.setDdgame(Integer.parseInt(gameCodeSelect));
-        }
-        if (roundSplit.length > 0) {
-            record.setDdround(roundSplit[0]);
-            record.setDdname(roundSplit[1]);
-        }
-        record.setTimes(new Timestamp(System.currentTimeMillis()));
+        updateRoundGame(record);
         return roundGameMapper.insert(record);
     }
 
@@ -112,17 +102,7 @@ public class RoundGameService implements BaseService<RoundGame> {
      * @return
      */
     public int updateByPrimaryKeySelective(RoundGame record) {
-        String roundSelect = record.getRoundSelect();
-        String[] roundSplit = roundSelect.split("-");
-        String gameCodeSelect = record.getGameCodeSelect();
-        if (gameCodeSelect != null && gameCodeSelect.length() > 0) {
-            record.setDdgame(Integer.parseInt(gameCodeSelect));
-        }
-        if (roundSplit.length > 0) {
-            record.setDdround(roundSplit[0]);
-            record.setDdname(roundSplit[1]);
-        }
-        record.setTimes(new Timestamp(System.currentTimeMillis()));
+        updateRoundGame(record);
         return roundGameMapper.updateByPrimaryKeySelective(record);
     }
 
@@ -182,5 +162,25 @@ public class RoundGameService implements BaseService<RoundGame> {
             round.setDdcode(ddCode + "-" + ddName);
         }
         return roundExt;
+    }
+
+    /**
+     * 更新或新增时统一处理（提取的之前的老的代码块）
+     *
+     * @param roundGame
+     */
+    private void updateRoundGame(RoundGame roundGame) {
+
+        if (!StringUtils.isBlank(roundGame.getGameCodeSelect())) {
+            roundGame.setDdgame(Integer.parseInt(roundGame.getGameCodeSelect()));
+        }
+        if (!StringUtils.isBlank(roundGame.getRoundSelect())) {
+            String[] roundSplit = roundGame.getRoundSelect().split("-");
+            if (roundSplit.length > 0) {
+                roundGame.setDdround(roundSplit[0]);
+                roundGame.setDdname(roundSplit[1]);
+            }
+        }
+        roundGame.setTimes(new Timestamp(System.currentTimeMillis()));
     }
 }

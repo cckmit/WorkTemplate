@@ -22,6 +22,7 @@ public class ArcadeGameSet
 
     private String ddcontent512a;
 
+
     private String dddesc;
     private String dddesc512u;
 

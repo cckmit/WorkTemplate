@@ -44,8 +44,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -64,7 +64,8 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div type="button" class="layui-btn" lay-event="add">补单</div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>补单
+        </button>
     </div>
 </script>
 <script>
@@ -86,7 +87,7 @@
             console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
         },
     });
-    var operatorurl = '../manage/supplementorder';
+    const operatorurl = '../manage/supplementorder';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,

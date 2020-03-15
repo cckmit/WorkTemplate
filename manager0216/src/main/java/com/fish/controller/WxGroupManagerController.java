@@ -80,7 +80,11 @@ public class WxGroupManagerController {
     @PostMapping(value = "/wxgroup/change")
     public PostResult changeStatus(@RequestBody JSONObject jsonObject) {
         PostResult result = new PostResult();
-        Integer ddStatus = jsonObject.getInteger("ddStatus");
+        boolean status = jsonObject.getBoolean("ddStatus");
+        Integer ddStatus = 0;
+        if (status){
+            ddStatus = 1;
+        }
         int count = wxGroupManagerService.changeStatus(ddStatus);
         if (count <= 0) {
             result.setSuccessed(false);

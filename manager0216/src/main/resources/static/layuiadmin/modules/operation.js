@@ -224,6 +224,16 @@ layui.config({
                     edit(editData, 'edit');
                 }
                 break;
+            case 'copy':
+                if (l === 0) {
+                    UIConfig.warnMsg('复制：请选择一行！');
+                } else if (l > 1) {
+                    UIConfig.warnMsg('复制：只能选择一行！');
+                } else {
+                    UIConfig.warnMsg('复制：开始修改！');
+                    edit(editData, 'copy');
+                }
+                break;
             default:
                 break;
         }
@@ -233,14 +243,27 @@ layui.config({
          */
         function edit(editData, type) {
             console.log(operatorurl, type, JSON.stringify(editData));
+            var title;
+            switch (type) {
+                case 'new':
+                    title ='新增';
+                    break;
+                case 'edit':
+                    title ='编辑';
+                    break;
+                case 'copy':
+                    title ='复制';
+                    break;
+            }
             $('#form_table').removeClass('layui-hide').addClass('layui-show');
             layui.layer.open({
                 type: 1,
-                title: type === 'new' ? '新增' : '编辑',
+                title:title,
                 content: $('#form_table'),
                 maxmin: true,
                 shade: 0,
-                area: ['620px', '700px;'],
+                area: ['38%', '60%'],
+                offset: ['15%', '20%'],
                 btn: ['确定', '取消'],
                 btnAlign: 'c',
                 success: (layero, index) => {

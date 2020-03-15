@@ -7,15 +7,11 @@ import java.util.List;
 public interface GoodsValueMapper {
     int deleteByPrimaryKey(Integer ddId);
 
-    int insert(GoodsValue record);
-
     int insertSelective(GoodsValue record);
 
     GoodsValue selectByPrimaryKey(Integer ddId);
 
     int updateByPrimaryKeySelective(GoodsValue record);
-
-    int updateByPrimaryKey(GoodsValue record);
 
     List<GoodsValue> selectAll();
 }

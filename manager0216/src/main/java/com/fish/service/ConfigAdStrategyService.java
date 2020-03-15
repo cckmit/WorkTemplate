@@ -1,9 +1,7 @@
 package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fish.dao.second.mapper.ConfigAdContentMapper;
 import com.fish.dao.second.mapper.ConfigAdStrategyMapper;
-import com.fish.dao.second.model.ConfigAdStrategy;
 import com.fish.dao.second.model.ConfigAdStrategy;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
@@ -57,7 +55,7 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
         } else {
-            String res = ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
+            ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
         cacheService.updateAllConfigAdStrategys();
         return result;
@@ -76,7 +74,7 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
-            String res = ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
+            ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
         cacheService.updateAllConfigAdStrategys();
         return result;
@@ -95,21 +93,20 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
-            String res = ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
+            ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
         cacheService.updateAllConfigAdStrategys();
         return result;
     }
 
     public List<ConfigAdStrategy> selectAllAdStrategy(GetParameter getParameter) {
-        {
-            List<ConfigAdStrategy> configAdadStrategys = adStrategyMapper.selectAll();
-            for (ConfigAdStrategy configAdStrategy : configAdadStrategys) {
-                Integer ddId = configAdStrategy.getDdId();
-                String ddName = configAdStrategy.getDdName();
-                configAdStrategy.setDdName(ddId + "-" + ddName);
-            }
-            return configAdadStrategys;
+        List<ConfigAdStrategy> configAdStrategies = adStrategyMapper.selectAll();
+        for (ConfigAdStrategy configAdStrategy : configAdStrategies) {
+            Integer ddId = configAdStrategy.getDdId();
+            String ddName = configAdStrategy.getDdName();
+            configAdStrategy.setDdName(ddId + "-" + ddName);
         }
+        return configAdStrategies;
     }
+
 }

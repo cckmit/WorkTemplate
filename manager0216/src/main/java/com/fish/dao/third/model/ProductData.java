@@ -4,27 +4,26 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 /**
  * @author
  * @pragram: ProductData
  * @description: fc数据对应展示实体类
  * @create:
  */
-public class ProductData
-{
+public class ProductData {
     private String wxAppid;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date wxDate;
     private Integer programType;
-
-    //总收入
+    /*** 总收入*/
     private BigDecimal revenueCount;
     private String wxRegJson;
 
     private String productName;
     private BigDecimal recharge;
+    /*** 广告收入*/
     private BigDecimal adRevenue;
-
 
     private BigDecimal activeUp;
     private Integer wxRegOther;
@@ -49,14 +48,14 @@ public class ProductData
 
     private BigDecimal wxVideoIncome;
 
-    private BigDecimal  videoECPM;
+    private BigDecimal videoECPM;
 
     private Integer wxBannerShow;
 
     private BigDecimal wxBannerClickrate;
 
     private BigDecimal wxBannerIncome;
-    private BigDecimal  bannerECPM;
+    private BigDecimal bannerECPM;
 
     private Integer wxRegAd;
 
@@ -87,6 +86,7 @@ public class ProductData
      * 展示数据-买量单价
      */
     private BigDecimal buyClickPrice;
+
     public Integer getProgramType() {
         return programType;
     }
@@ -111,303 +111,243 @@ public class ProductData
         this.wxAppid = wxAppid;
     }
 
-    public String getWxRegJson()
-    {
+    public String getWxRegJson() {
         return wxRegJson;
     }
 
-    public void setWxRegJson(String wxRegJson)
-    {
+    public void setWxRegJson(String wxRegJson) {
         this.wxRegJson = wxRegJson;
     }
 
-    public Integer getWxNew()
-    {
+    public Integer getWxNew() {
         return wxNew;
     }
 
-    public void setWxNew(Integer wxNew)
-    {
+    public void setWxNew(Integer wxNew) {
         this.wxNew = wxNew;
     }
 
-    public Integer getWxActive()
-    {
+    public Integer getWxActive() {
         return wxActive;
     }
 
-    public void setWxActive(Integer wxActive)
-    {
+    public void setWxActive(Integer wxActive) {
         this.wxActive = wxActive;
     }
 
-    public Integer getWxVisit()
-    {
+    public Integer getWxVisit() {
         return wxVisit;
     }
 
-    public void setWxVisit(Integer wxVisit)
-    {
+    public void setWxVisit(Integer wxVisit) {
         this.wxVisit = wxVisit;
     }
 
-    public BigDecimal getWxAvgLogin()
-    {
+    public BigDecimal getWxAvgLogin() {
         return wxAvgLogin;
     }
 
-    public void setWxAvgLogin(BigDecimal wxAvgLogin)
-    {
+    public void setWxAvgLogin(BigDecimal wxAvgLogin) {
         this.wxAvgLogin = wxAvgLogin;
     }
 
-    public BigDecimal getWxAvgOnline()
-    {
+    public BigDecimal getWxAvgOnline() {
         return wxAvgOnline;
     }
 
-    public void setWxAvgOnline(BigDecimal wxAvgOnline)
-    {
+    public void setWxAvgOnline(BigDecimal wxAvgOnline) {
         this.wxAvgOnline = wxAvgOnline;
     }
 
-    public BigDecimal getWxRemain2()
-    {
+    public BigDecimal getWxRemain2() {
         return wxRemain2;
     }
 
-    public void setWxRemain2(BigDecimal wxRemain2)
-    {
+    public void setWxRemain2(BigDecimal wxRemain2) {
         this.wxRemain2 = wxRemain2;
     }
 
-    public Integer getWxVideoShow()
-    {
+    public Integer getWxVideoShow() {
         return wxVideoShow;
     }
 
-    public void setWxVideoShow(Integer wxVideoShow)
-    {
+    public void setWxVideoShow(Integer wxVideoShow) {
         this.wxVideoShow = wxVideoShow;
     }
 
-    public BigDecimal getWxVideoClickrate()
-    {
+    public BigDecimal getWxVideoClickrate() {
         return wxVideoClickrate;
     }
 
-    public void setWxVideoClickrate(BigDecimal wxVideoClickrate)
-    {
+    public void setWxVideoClickrate(BigDecimal wxVideoClickrate) {
         this.wxVideoClickrate = wxVideoClickrate;
     }
 
-    public BigDecimal getWxVideoIncome()
-    {
+    public BigDecimal getWxVideoIncome() {
         return wxVideoIncome;
     }
 
-    public void setWxVideoIncome(BigDecimal wxVideoIncome)
-    {
+    public void setWxVideoIncome(BigDecimal wxVideoIncome) {
         this.wxVideoIncome = wxVideoIncome;
     }
 
-    public Integer getWxBannerShow()
-    {
+    public Integer getWxBannerShow() {
         return wxBannerShow;
     }
 
-    public void setWxBannerShow(Integer wxBannerShow)
-    {
+    public void setWxBannerShow(Integer wxBannerShow) {
         this.wxBannerShow = wxBannerShow;
     }
 
-    public BigDecimal getWxBannerClickrate()
-    {
+    public BigDecimal getWxBannerClickrate() {
         return wxBannerClickrate;
     }
 
-    public void setWxBannerClickrate(BigDecimal wxBannerClickrate)
-    {
+    public void setWxBannerClickrate(BigDecimal wxBannerClickrate) {
         this.wxBannerClickrate = wxBannerClickrate;
     }
 
-    public BigDecimal getWxBannerIncome()
-    {
+    public BigDecimal getWxBannerIncome() {
         return wxBannerIncome;
     }
 
-    public void setWxBannerIncome(BigDecimal wxBannerIncome)
-    {
+    public void setWxBannerIncome(BigDecimal wxBannerIncome) {
         this.wxBannerIncome = wxBannerIncome;
     }
 
-    public Integer getWxRegAd()
-    {
+    public Integer getWxRegAd() {
         return wxRegAd;
     }
 
-    public void setWxRegAd(Integer wxRegAd)
-    {
+    public void setWxRegAd(Integer wxRegAd) {
         this.wxRegAd = wxRegAd;
     }
 
-    public Integer getWxRegJump()
-    {
+    public Integer getWxRegJump() {
         return wxRegJump;
     }
 
-    public void setWxRegJump(Integer wxRegJump)
-    {
+    public void setWxRegJump(Integer wxRegJump) {
         this.wxRegJump = wxRegJump;
     }
 
-    public Integer getWxRegSearch()
-    {
+    public Integer getWxRegSearch() {
         return wxRegSearch;
     }
 
-    public void setWxRegSearch(Integer wxRegSearch)
-    {
+    public void setWxRegSearch(Integer wxRegSearch) {
         this.wxRegSearch = wxRegSearch;
     }
 
-    public Integer getWxRegApp()
-    {
+    public Integer getWxRegApp() {
         return wxRegApp;
     }
 
-    public void setWxRegApp(Integer wxRegApp)
-    {
+    public void setWxRegApp(Integer wxRegApp) {
         this.wxRegApp = wxRegApp;
     }
 
-    public Integer getWxRegCode()
-    {
+    public Integer getWxRegCode() {
         return wxRegCode;
     }
 
-    public void setWxRegCode(Integer wxRegCode)
-    {
+    public void setWxRegCode(Integer wxRegCode) {
         this.wxRegCode = wxRegCode;
     }
 
-    public Integer getWxRegSession()
-    {
+    public Integer getWxRegSession() {
         return wxRegSession;
     }
 
-    public void setWxRegSession(Integer wxRegSession)
-    {
+    public void setWxRegSession(Integer wxRegSession) {
         this.wxRegSession = wxRegSession;
     }
 
-    public BigDecimal getWxActiveWomen()
-    {
+    public BigDecimal getWxActiveWomen() {
         return wxActiveWomen;
     }
 
-    public void setWxActiveWomen(BigDecimal wxActiveWomen)
-    {
+    public void setWxActiveWomen(BigDecimal wxActiveWomen) {
         this.wxActiveWomen = wxActiveWomen;
     }
 
-    public Integer getWxShareUser()
-    {
+    public Integer getWxShareUser() {
         return wxShareUser;
     }
 
-    public void setWxShareUser(Integer wxShareUser)
-    {
+    public void setWxShareUser(Integer wxShareUser) {
         this.wxShareUser = wxShareUser;
     }
 
-    public Integer getWxShareCount()
-    {
+    public Integer getWxShareCount() {
         return wxShareCount;
     }
 
-    public void setWxShareCount(Integer wxShareCount)
-    {
+    public void setWxShareCount(Integer wxShareCount) {
         this.wxShareCount = wxShareCount;
     }
 
-    public BigDecimal getWxShareRate()
-    {
+    public BigDecimal getWxShareRate() {
         return wxShareRate;
     }
 
-    public void setWxShareRate(BigDecimal wxShareRate)
-    {
+    public void setWxShareRate(BigDecimal wxShareRate) {
         this.wxShareRate = wxShareRate;
     }
 
-    public Date getWxDate()
-    {
+    public Date getWxDate() {
         return wxDate;
     }
 
-    public void setWxDate(Date wxDate)
-    {
+    public void setWxDate(Date wxDate) {
         this.wxDate = wxDate;
     }
 
-    public Integer getWxRegOther()
-    {
+    public Integer getWxRegOther() {
         return wxRegOther;
     }
 
-    public void setWxRegOther(Integer wxRegOther)
-    {
+    public void setWxRegOther(Integer wxRegOther) {
         this.wxRegOther = wxRegOther;
     }
 
-    public String getProductName()
-    {
+    public String getProductName() {
         return productName;
     }
 
-    public void setProductName(String productName)
-    {
+    public void setProductName(String productName) {
         this.productName = productName;
     }
 
-    public BigDecimal getRecharge()
-    {
+    public BigDecimal getRecharge() {
         return recharge;
     }
 
-    public void setRecharge(BigDecimal recharge)
-    {
+    public void setRecharge(BigDecimal recharge) {
         this.recharge = recharge;
     }
 
-    public BigDecimal getAdRevenue()
-    {
+    public BigDecimal getAdRevenue() {
         return adRevenue;
     }
 
-    public void setAdRevenue(BigDecimal adRevenue)
-    {
+    public void setAdRevenue(BigDecimal adRevenue) {
         this.adRevenue = adRevenue;
     }
 
-    public BigDecimal getActiveUp()
-    {
+    public BigDecimal getActiveUp() {
         return activeUp;
     }
 
-    public void setActiveUp(BigDecimal activeUp)
-    {
+    public void setActiveUp(BigDecimal activeUp) {
         this.activeUp = activeUp;
     }
 
-    public MinitjWx getMinitjWx()
-    {
+    public MinitjWx getMinitjWx() {
         return minitjWx;
     }
 
-    public void setMinitjWx(MinitjWx minitjWx)
-    {
+    public void setMinitjWx(MinitjWx minitjWx) {
         this.minitjWx = minitjWx;
     }
 

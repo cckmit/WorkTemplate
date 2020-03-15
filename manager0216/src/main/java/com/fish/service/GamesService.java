@@ -12,7 +12,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 游戏  Service
+ *
+ * @author
+ * @date
+ */
 @Service
 public class GamesService implements BaseService<ArcadeGames> {
 
@@ -30,13 +35,8 @@ public class GamesService implements BaseService<ArcadeGames> {
      * @return
      */
     @Override
-    //
     public List<ArcadeGames> selectAll(GetParameter parameter) {
-        List<ArcadeGames> arcadeGames = new ArrayList<>();
-
-        arcadeGames = arcadeGamesMapper.selectAll();
-
-        return arcadeGames;
+        return arcadeGamesMapper.selectAll();
     }
 
     /**
@@ -46,7 +46,6 @@ public class GamesService implements BaseService<ArcadeGames> {
      * @return
      */
     public int insert(ArcadeGames record) {
-
         return arcadeGamesMapper.insert(record);
     }
 
@@ -112,7 +111,6 @@ public class GamesService implements BaseService<ArcadeGames> {
         int updateGames = 0;
         System.out.println(parameter);
         //      String url = "http://192.168.1.55:8980/persieDeamon/match/"+"{"+ddcode+"}/"+"{"+ddcode+"}.json";
-        String shareUrl = "";
         String resHost = baseConfig.getResHost();
         StringBuilder url = new StringBuilder(resHost + "g");
         JSONArray array = parameter.getJSONArray("gameList");

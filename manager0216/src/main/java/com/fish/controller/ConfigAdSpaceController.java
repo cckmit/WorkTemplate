@@ -80,13 +80,12 @@ public class ConfigAdSpaceController {
 
 
     /**
-     * @param getParameter
      * @return
      */
     @ResponseBody
-    @GetMapping(value = "/configAdSpace/select")
-    public List<ConfigAdSpace> getConfigAdSpaceSelect(GetParameter getParameter) {
-        return this.adSpaceService.selectAllSpace(getParameter);
+    @GetMapping(value = "/configAdSpace/selectAllSpace")
+    public List<ConfigAdSpace> selectAllSpace() {
+        return this.adSpaceService.selectAllSpace();
     }
 
     /**
@@ -96,4 +95,18 @@ public class ConfigAdSpaceController {
     @ResponseBody
     @GetMapping(value = "/configAdSpace/get")
     public ConfigAdSpace getConfigAdSpace(int id) { return this.adSpaceService.getConfigAdSpace(id); }
+
+    /**
+     * 通过广告位ID查询广告内容列表
+     *
+     * @param spaceId
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdSpace/selectContentBySpaceId")
+    public List<ConfigAdContent> selectContentBySpaceId(int spaceId) {
+        return this.adSpaceService.selectContentBySpaceId(spaceId);
+    }
+
+
 }

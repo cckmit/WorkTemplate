@@ -37,8 +37,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -54,36 +54,32 @@
 </div>
 </div>
 
-<script type="text/html" id="toolbar">
-    <div class="layui-table-tool-temp">
-    </div>
-</script>
-
 <script>
-    var operatorurl = '../manage/wxAddData';
+    const operatorurl = '../manage/wxAddData';
+    /**
+     * 产品名称查询框
+     */
+    let appSelect = xmSelect.render({
+        el: '#ddappid',
+        name: 'ddappid',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+        },
+    });
+    //产品名称数组
+    let appNames = [];
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             layer = layui.layer,
             laydate = layui.laydate;
         var $ = layui.$;
-        var appNames = [];
-        var appSelect = xmSelect.render({
-            el: '#ddappid',
-            name: 'ddappid',
-            language: 'zn',
-            toolbar: {show: true},
-            data: [],
-            radio: true,
-            clickClose: true,
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
         $(() => {
             $.ajax({
                 type: "get",
@@ -160,7 +156,7 @@
             ],
             page: true,
             toolbar: '#toolbar',
-            limit: 10,
+            limit: 30,
             defaultToolbar: ['filter', 'exports'],
             statusName: 'status',//数据状态的字段名称，默认：code
             statusCode: 200 //成功的状态码，默认：0

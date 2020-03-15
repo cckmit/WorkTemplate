@@ -45,7 +45,7 @@ public class WxGroupManager {
     /**
      *  二维码状态 0：关闭；1开启
      */
-    private Integer ddStatus;
+    private boolean ddStatus;
     /**
      *  微信群二维码地址
      */
@@ -129,11 +129,11 @@ public class WxGroupManager {
         this.describe = describe;
     }
 
-    public Integer getDdStatus() {
+    public boolean getDdStatus() {
         return ddStatus;
     }
 
-    public void setDdStatus(Integer ddStatus) {
+    public void setDdStatus(boolean ddStatus) {
         this.ddStatus = ddStatus;
     }
 

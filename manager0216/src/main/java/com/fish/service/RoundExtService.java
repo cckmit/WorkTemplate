@@ -5,6 +5,7 @@ import com.fish.dao.primary.mapper.RoundExtMapper;
 import com.fish.dao.primary.model.RoundExt;
 import com.fish.protocols.GetParameter;
 import com.fish.utils.XwhTool;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,7 @@ public class RoundExtService implements BaseService<RoundExt> {
         }
         return roundExts;
     }
+
     /**
      * 新增
      *
@@ -52,26 +54,14 @@ public class RoundExtService implements BaseService<RoundExt> {
      * @return
      */
     public int insert(RoundExt record) {
-        String ddReward = record.getDdreward();
-        if (ddReward == null || ddReward.length() == 0 || "0".equals(ddReward)) {
-            ddReward = "['0#0#coin#0']";
-            record.setDdreward(ddReward);
-        }
-        String roundLength = record.getRoundLength();
-        String timeValue = roundLength.substring(0, roundLength.length() - 1);
-        String timeFormat = roundLength.substring(roundLength.length() - 1);
-        if ("s".equalsIgnoreCase(timeFormat)) {
-            record.setDdtime(Long.parseLong(timeValue));
-            record.setTip(timeValue + "秒");
-        } else if ("m".equalsIgnoreCase(timeFormat)) {
-            record.setTip(timeValue + "分钟");
-            record.setDdtime(Long.parseLong(timeValue) * 60);
-        } else if ("h".equalsIgnoreCase(timeFormat)) {
-            record.setTip(timeValue + "小时");
-            record.setDdtime(Long.parseLong(timeValue) * 60 * 60);
-        } else if ("d".equalsIgnoreCase(timeFormat)) {
-            record.setTip(timeValue + "天");
-            record.setDdtime(Long.parseLong(timeValue) * 60 * 60 * 24);
+
+        //更新比赛奖励字段
+        updateddReward(record);
+
+        // 如果修改了比赛时长
+        if (!StringUtils.isBlank(record.getRoundLength())) {
+            // 更新比赛时长
+            updateRoundTimeLength(record);
         }
         Boolean ddgroup = record.getDdgroup();
         if (ddgroup) {
@@ -96,28 +86,14 @@ public class RoundExtService implements BaseService<RoundExt> {
      * @return
      */
     public int updateByPrimaryKeySelective(RoundExt record) {
-        String ddReward = record.getDdreward();
-        if (ddReward == null || ddReward.length() == 0 || "0".equals(ddReward)) {
-            ddReward = "['0#0#coin#0']";
-            record.setDdreward(ddReward);
-        }
-        String roundLength = record.getRoundLength();
-        if (roundLength != null && roundLength.length() > 0) {
-            String timeValue = roundLength.substring(0, roundLength.length() - 1);
-            String timeFormat = roundLength.substring(roundLength.length() - 1);
-            if ("s".equalsIgnoreCase(timeFormat)) {
-                record.setDdtime(Long.parseLong(timeValue));
-                record.setTip(timeValue + "秒");
-            } else if ("m".equalsIgnoreCase(timeFormat)) {
-                record.setTip(timeValue + "分钟");
-                record.setDdtime(Long.parseLong(timeValue) * 60);
-            } else if ("h".equalsIgnoreCase(timeFormat)) {
-                record.setTip(timeValue + "小时");
-                record.setDdtime(Long.parseLong(timeValue) * 60 * 60);
-            } else if ("d".equalsIgnoreCase(timeFormat)) {
-                record.setTip(timeValue + "天");
-                record.setDdtime(Long.parseLong(timeValue) * 60 * 60 * 24);
-            }
+
+        //更新比赛奖励字段
+        updateddReward(record);
+
+        // 如果修改了比赛时长
+        if (!StringUtils.isBlank(record.getRoundLength())) {
+            // 更新比赛时长
+            updateRoundTimeLength(record);
         }
         record.setInserttime(new Timestamp(System.currentTimeMillis()));
         return roundExtMapper.updateByPrimaryKeySelective(record);
@@ -147,5 +123,49 @@ public class RoundExtService implements BaseService<RoundExt> {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 更新赛场奖励
+     *
+     * @param record
+     */
+    private void updateddReward(RoundExt record) {
+        String ddReward = record.getDdreward();
+        if (ddReward == null || ddReward.length() == 0 || "0".equals(ddReward)) {
+            ddReward = "['0#0#coin#0']";
+            record.setDdreward(ddReward);
+        }
+    }
+
+    /**
+     * 更新比赛时长
+     *
+     * @param record
+     */
+    private void updateRoundTimeLength(RoundExt record) {
+        String roundLength = record.getRoundLength().toLowerCase();
+        String timeValue = roundLength.substring(0, roundLength.length() - 1);
+        String timeFormat = roundLength.substring(roundLength.length() - 1);
+        switch (timeFormat) {
+            case "s":
+                record.setDdtime(Long.parseLong(timeValue));
+                record.setTip(timeValue + "秒");
+                break;
+            case "m":
+                record.setTip(timeValue + "分钟");
+                record.setDdtime(Long.parseLong(timeValue) * 60);
+                break;
+            case "h":
+                record.setTip(timeValue + "小时");
+                record.setDdtime(Long.parseLong(timeValue) * 60 * 60);
+                break;
+            case "d":
+                record.setTip(timeValue + "天");
+                record.setDdtime(Long.parseLong(timeValue) * 60 * 60 * 24);
+                break;
+            default:
+                break;
+        }
     }
 }

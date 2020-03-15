@@ -1,12 +1,15 @@
 package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fish.dao.second.mapper.ConfigAdContentMapper;
 import com.fish.dao.second.mapper.ConfigAdSpaceMapper;
 import com.fish.dao.second.model.ConfigAdContent;
 import com.fish.dao.second.model.ConfigAdSpace;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
 import com.fish.service.cache.CacheService;
+import com.fish.utils.BaseConfig;
+import com.fish.utils.ReadJsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +27,13 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
     ConfigAdSpaceMapper adSpaceMapper;
 
     @Autowired
+    ConfigAdContentMapper adContentMapper;
+
+    @Autowired
     CacheService cacheService;
+
+    @Autowired
+    BaseConfig baseConfig;
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
@@ -90,6 +99,8 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
         if (id <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
         cacheService.updateAllConfigAdSpaces();
         return result;
@@ -107,6 +118,8 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
         if (update <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
         cacheService.updateAllConfigAdSpaces();
         return result;
@@ -124,6 +137,8 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
         if (delete <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
         cacheService.updateAllConfigAdSpaces();
         return result;
@@ -133,17 +148,10 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
     /**
      * select组件数据
      *
-     * @param getParameter
      * @return
      */
-    public List<ConfigAdSpace> selectAllSpace(GetParameter getParameter) {
-        List<ConfigAdSpace> configAdSpaces = this.adSpaceMapper.selectAll(new ConfigAdSpace());
-        for (ConfigAdSpace configAdSpace : configAdSpaces) {
-            Integer ddId = configAdSpace.getDdId();
-            String ddName = configAdSpace.getDdName();
-            configAdSpace.setDdName(ddId + "-" + ddName);
-        }
-        return configAdSpaces;
+    public List<ConfigAdSpace> selectAllSpace() {
+        return this.adSpaceMapper.selectAll(new ConfigAdSpace());
     }
 
     /**
@@ -154,5 +162,23 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
      */
     public ConfigAdSpace getConfigAdSpace(int id) {
         return id == 0 ? null : this.adSpaceMapper.select(id);
+    }
+
+    /**
+     * 通过广告位查询广告内容列表
+     *
+     * @param spaceId
+     * @return
+     */
+    public List<ConfigAdContent> selectContentBySpaceId(int spaceId) {
+        ConfigAdSpace configAdSpace = this.adSpaceMapper.select(spaceId);
+        if (configAdSpace != null && StringUtils.isNotBlank(configAdSpace.getDdAdContents())) {
+            System.out.println("configAdSpace.getDdAdContents():" + configAdSpace.getDdAdContents());
+            List<ConfigAdContent> adContentList = this.adContentMapper.selectContentBySpaceId(
+                    configAdSpace.getDdAdContents());
+            System.out.println(adContentList.size());
+            return adContentList;
+        }
+        return null;
     }
 }

@@ -75,24 +75,13 @@ public class WxConfigController {
     public PostResult insertWxConfig(@RequestBody WxConfig productInfo) {
         PostResult result = new PostResult();
         int count = wxConfigService.insert(productInfo);
-        switch (count) {
-            case 1:
-                //刷新业务表结构
-                String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
-                String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
-                break;
-            case 3:
-                result.setSuccessed(false);
-                result.setMsg("AppId重复，操作失败");
-                break;
-            case 4:
-                result.setSuccessed(false);
-                result.setMsg("产品名称重复，操作失败");
-                break;
-            default:
+        if (count != 0) {
+            //刷新业务表结构
+            String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
+            String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
+        }else {
                 result.setSuccessed(false);
                 result.setMsg("操作失败，请联系管理员");
-                break;
         }
         return result;
     }
@@ -108,26 +97,15 @@ public class WxConfigController {
     public PostResult modifyWxConfig(@RequestBody WxConfig productInfo) {
         PostResult result = new PostResult();
         int count = wxConfigService.updateByPrimaryKeySelective(productInfo);
-        switch (count) {
-            case 1:
-                // 刷新缓存，微信可加可不加
-                this.cacheService.updateWxConfig(productInfo);
-                //刷新业务表结构
-                String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
-                String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
-                break;
-            case 3:
-                result.setSuccessed(false);
-                result.setMsg("AppId重复，操作失败");
-                break;
-            case 4:
-                result.setSuccessed(false);
-                result.setMsg("产品名称重复，操作失败");
-                break;
-            default:
+        if (count != 0) {
+            // 刷新缓存，微信可加可不加
+            this.cacheService.updateWxConfig(productInfo);
+            //刷新业务表结构
+            String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
+            String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
+        }else {
                 result.setSuccessed(false);
                 result.setMsg("操作失败，请联系管理员");
-                break;
         }
         return result;
     }

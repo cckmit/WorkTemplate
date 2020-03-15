@@ -64,11 +64,12 @@ public class Fc_BuyPayController {
             readExcel.readFile(saveFile);
             jsonObject.put("context", readExcel.read(0));
             buyPayService.insertExcel(jsonObject);
+            jsonObject.put("code", 200);
         } catch (Exception e) {
             e.printStackTrace();
+            jsonObject.put("code", 400);
         }
 
-        jsonObject.put("code", 200);
         return jsonObject;
     }
 

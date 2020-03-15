@@ -83,4 +83,13 @@ public class AppConfigController {
         return result;
     }
 
+    /**
+     * @param id 审核AppID
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/appconfig/get")
+    public AppConfig getGameSets(String id) {
+        return this.appConfigService.select(id);
+    }
 }

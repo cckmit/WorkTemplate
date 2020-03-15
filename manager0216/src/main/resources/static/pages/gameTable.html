@@ -23,22 +23,21 @@
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
                             <label class="layui-form-label">游戏代号</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="gameId" name="gameId">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">游戏名称</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="gameName" name="gameName">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
-
                         <div class="layui-btn-group flushPictures" style="float: right">
                             <button type="button" class="layui-btn" data-type="flushPicture">刷新缩略图</button>
                         </div>
@@ -58,13 +57,16 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/play';
+    const operatorurl = '../manage/play';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
@@ -140,6 +142,7 @@
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
       style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+
     <div class="layui-form-item layui-hide">
         <label class="layui-form-label"></label>
         <div class="layui-input-inline">

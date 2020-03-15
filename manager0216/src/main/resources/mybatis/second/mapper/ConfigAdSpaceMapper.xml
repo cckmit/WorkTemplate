@@ -35,6 +35,13 @@
         </if>
     </select>
 
+    <select id="selectAllByIds" parameterType="java.lang.String"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from config_ad_space
+        where ddId in (${spaceIds, jdbcType=VARCHAR})
+    </select>
+
     <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdSpace">
         insert into config_ad_space (ddName, ddAdType, ddAllowedOperation, ddAdContents, updateTime)
         values (#{ddName, jdbcType=VARCHAR}, #{ddAdType, jdbcType=INTEGER},

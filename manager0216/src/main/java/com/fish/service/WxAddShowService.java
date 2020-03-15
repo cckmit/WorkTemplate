@@ -19,6 +19,12 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 广告位配置 Service
+ *
+ * @author
+ * @date
+ */
 @Service
 public class WxAddShowService implements BaseService<WxConfig> {
 
@@ -39,37 +45,30 @@ public class WxAddShowService implements BaseService<WxConfig> {
     public List<WxConfig> selectAll(GetParameter parameter) {
         String resPath = baseConfig.getResHost();
         List<WxConfig> wxConfigs = cacheService.getAllWxConfig();
-        for (WxConfig config : wxConfigs)
-        {
+        for (WxConfig config : wxConfigs) {
             String ddAppSkipRes = config.getDdappskipres();
-            try
-            {
+            try {
                 if (!JSONObject.isValidObject(ddAppSkipRes)) {
                     continue;
                 }
                 JSONObject data = JSONObject.parseObject(ddAppSkipRes);
-                if (data.containsKey("list"))
-                {
+                //解析JSON的list信息
+                if (data.containsKey("list")) {
                     JSONArray list = data.getJSONArray("list");
-                    if (list != null)
-                    {
-                        for (int i = 0; i < list.size(); i++)
-                        {
+                    if (list != null) {
+                        for (int i = 0; i < list.size(); i++) {
                             JSONObject object = list.getJSONObject(i);
                             if (object.containsKey("state") && !object.getBoolean("state")) {
                                 continue;
                             }
-                            if (object.containsKey("local") && object.getBoolean("local"))
-                            {
+                            if (object.containsKey("local") && object.getBoolean("local")) {
                                 config.setLocal("本地");
                                 continue;
                             }
                             String icon = WxConfigService.concatUrl(resPath, object.getString("icon"), config.getDdappid(), "skip");
-                            if (icon != null)
-                            {
+                            if (icon != null) {
                                 Field field = WxConfig.class.getDeclaredField("list" + (i + 1));
-                                if (field != null)
-                                {
+                                if (field != null) {
                                     field.setAccessible(true);
                                     field.set(config, icon);
                                 }
@@ -77,28 +76,23 @@ public class WxAddShowService implements BaseService<WxConfig> {
                         }
                     }
                 }
-                if (data.containsKey("banner"))
-                {
+                //解析JSON的banner信息
+                if (data.containsKey("banner")) {
                     JSONArray list = data.getJSONArray("banner");
-                    if (list != null)
-                    {
-                        for (int i = 0; i < list.size(); i++)
-                        {
+                    if (list != null) {
+                        for (int i = 0; i < list.size(); i++) {
                             JSONObject object = list.getJSONObject(i);
                             if (object.containsKey("state") && !object.getBoolean("state")) {
                                 continue;
                             }
-                            if (object.containsKey("local") && object.getBoolean("local"))
-                            {
+                            if (object.containsKey("local") && object.getBoolean("local")) {
                                 config.setLocal("本地");
                                 continue;
                             }
                             String url = WxConfigService.concatUrl(resPath, object.getString("url"), config.getDdappid(), "skip");
-                            if (url != null)
-                            {
+                            if (url != null) {
                                 Field field = WxConfig.class.getDeclaredField("banner" + (i + 1));
-                                if (field != null)
-                                {
+                                if (field != null) {
                                     field.setAccessible(true);
                                     field.set(config, url);
                                 }
@@ -106,54 +100,16 @@ public class WxAddShowService implements BaseService<WxConfig> {
                         }
                     }
                 }
-
-            } catch (Exception e)
-            {
-                LOGGER.error(Log4j.getExceptionInfo(e));
+            } catch (Exception e) {
+                LOGGER.error("查询广告位置数据失败" + e.getMessage());
             }
         }
         return wxConfigs;
     }
 
-    public int insert(WxConfig record) {
-        int insertAppConfig;
-        appConfig.setDdappid(record.getDdappid());
-        appConfig.setDdname(record.getProductName());
-        appConfig.setDdprogram(record.getProgramType());
-        appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
-        try
-        {
-            insertAppConfig = appConfigMapper.insert(appConfig);
-            System.out.println("appConfig插入数据" + insertAppConfig);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-            //新增判断AppId重复
-            insertAppConfig = 3;
-        }
-        record.setCreateTime(new Timestamp(System.currentTimeMillis()));
-        String ddAppSkipRes = record.getDdappskipres();
-        if (ddAppSkipRes != null)
-        {
-            String minify = ReadJsonUtil.minify(ddAppSkipRes);
-            record.setDdappskipres(minify);
-        }
-        int insertWxconfig = 0;
-        try
-        {
-            //新增产品信息
-            insertWxconfig = wxConfigMapper.insert(record);
-            System.out.println("wx插入数据 :" + insertWxconfig);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return insertWxconfig;
-    }
-
-
     /**
-     *  更新广告位配置
+     * 更新广告位配置
+     *
      * @param record
      * @return
      */
@@ -163,17 +119,14 @@ public class WxAddShowService implements BaseService<WxConfig> {
         appConfig.setDdname(record.getProductName());
         appConfig.setDdprogram(record.getProgramType());
         appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
-        try
-        {
+        try {
             insert = appConfigMapper.updateByPrimaryKeySelective(appConfig);
             System.out.println("appConfig插入数据" + insert);
-        } catch (Exception e)
-        {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOGGER.error("appConfig更新数据失败" + ", 详细信息:{}", e.getMessage());
         }
         String ddAppSkipRes = record.getDdappskipres();
-        if (ddAppSkipRes != null)
-        {
+        if (ddAppSkipRes != null) {
             String minify = ReadJsonUtil.minify(ddAppSkipRes);
             record.setDdappskipres(minify);
         }
@@ -196,8 +149,7 @@ public class WxAddShowService implements BaseService<WxConfig> {
 
     @Override
     public boolean removeIf(WxConfig wxConfig, JSONObject searchData) {
-        if (existValueFalse(searchData.getString("appId"), wxConfig.getDdappid()))
-        {
+        if (existValueFalse(searchData.getString("appId"), wxConfig.getDdappid())) {
             return true;
         }
         return existValueFalse(searchData.getString("productsName"), wxConfig.getDdappid());

@@ -77,9 +77,20 @@ public class ProgramRankingService implements BaseService<ShowRanking> {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             roundRecords = roundRecordMapper.selectGRankTime(format.format(parse[0]), format.format(parse[1]));
         }
+        //获奖记录处理
+        ArrayList<ShowRanking> shows = roundRecordsDeal(roundRecords);
+        return shows;
+    }
+
+    /**
+     * 获奖记录处理
+     *
+     * @param roundRecords
+     * @return
+     */
+    private ArrayList<ShowRanking> roundRecordsDeal(List<RoundRecord> roundRecords) {
         ArrayList<ShowRanking> shows = new ArrayList<>();
         ShowRanking showRanking;
-
         for (RoundRecord roundRecord : roundRecords) {
             Date ddSubmit = roundRecord.getDdsubmit();
             Date ddStart = roundRecord.getDdstart();
@@ -132,12 +143,17 @@ public class ProgramRankingService implements BaseService<ShowRanking> {
         Integer ddNumber = productInfo.getDdNumber();
         Date matchdate = productInfo.getEndTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //赛制结束时间
         String format = sdf.format(matchdate);
+        //赛制编号
         String roundCode = productInfo.getRoundCode();
+        //赛制名称
         String roundName = productInfo.getRoundName();
+        //赛制时长
         String roundLength = productInfo.getRoundLength();
         int group = 0;
         int num = 0;
+        //判断类型 小程序or小游戏
         if (ddGroup) {
             group = 1;
         } else {
@@ -155,11 +171,29 @@ public class ProgramRankingService implements BaseService<ShowRanking> {
         String matchRes = baseConfig.getMatchRes();
         JSONArray allResult = new JSONArray();
         for (int i = 0; i <= num; i++) {
+            //获取比赛结果
             String obtainResultUrl = matchRes + "match-c" + ddCode + "-g" + group + "-i" + ddIndex + "-" + i + ".json";
             String result = HttpUtil.get(obtainResultUrl);
             JSONArray singleResult = JSONArray.parseArray(result);
             allResult.addAll(singleResult);
         }
+        //比赛结果处理
+        exportResults = allResultDeal(allResult, format, roundName, roundLength);
+
+        return exportResults;
+    }
+
+    /**
+     * 比赛结果处理
+     *
+     * @param allResult
+     * @param format
+     * @param roundName
+     * @param roundLength
+     * @return
+     */
+    private List<ExportResult> allResultDeal(JSONArray allResult, String format, String roundName, String roundLength) {
+        List<ExportResult> exportResults = new ArrayList<>();
         for (Object object : allResult) {
             ExportResult exportResult = new ExportResult();
             JSONObject jsonObject = JSONObject.parseObject(object.toString());

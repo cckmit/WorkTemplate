@@ -49,6 +49,8 @@ public class CacheService {
     ConfigAdSpaceMapper configAdSpaceMapper;
 
     @Autowired
+    ConfigAdPositionMapper configAdPositionMapper;
+    @Autowired
     ConfigAdContentMapper configAdContentMapper;
     @Autowired
     ConfigAdStrategyMapper configAdStrategyMapper;
@@ -75,6 +77,8 @@ public class CacheService {
 
     //广告类型
     private Map<Integer, ConfigAdType> configAdTypeCache = new ConcurrentHashMap<>();
+    //广告位置列表
+    private Map<Integer, ConfigAdPosition> configAdPositionCache = new ConcurrentHashMap<>();
     //广告位列表
     private Map<Integer, ConfigAdSpace> configAdSpaceCache = new ConcurrentHashMap<>();
     //广告内容
@@ -246,11 +250,6 @@ public class CacheService {
      * @return 广告类型
      */
     public ConfigAdStrategy getConfigAdStrategys(int ddId) {
-        ConfigAdStrategy strategy = getConfigAdStrategy(ddId);
-        return strategy;
-    }
-
-    public ConfigAdStrategy getConfigAdStrategy(int ddId) {
         ConfigAdStrategy configAdStrategys = this.configAdStrategyCache.get(ddId);
         if (configAdStrategys == null) {
             configAdStrategys = this.configAdStrategyMapper.select(ddId);
@@ -267,12 +266,24 @@ public class CacheService {
      * @param ddId 广告类型I
      * @return 广告类型
      */
-    public ConfigAdContent getConfigAdContents(int ddId) {
-        ConfigAdContent contents = getConfigAdContent(ddId);
-        return contents;
+    public ConfigAdPosition getConfigAdPositions(int ddId) {
+        ConfigAdPosition configAdPosition = this.configAdPositionCache.get(ddId);
+        if (configAdPosition == null) {
+            configAdPosition = this.configAdPositionMapper.select(ddId);
+            if (configAdPosition != null) {
+                this.configAdPositionCache.put(ddId, configAdPosition);
+            }
+        }
+        return configAdPosition;
     }
 
-    public ConfigAdContent getConfigAdContent(int ddId) {
+    /**
+     * 通过广告内容ID获取广告位内容
+     *
+     * @param ddId 广告类型I
+     * @return 广告类型
+     */
+    public ConfigAdContent getConfigAdContents(int ddId) {
         ConfigAdContent configAdContents = this.configAdContentCache.get(ddId);
         if (configAdContents == null) {
             configAdContents = this.configAdContentMapper.select(ddId);
@@ -283,7 +294,6 @@ public class CacheService {
         return configAdContents;
     }
 
-
     /**
      * 通过广告类型ID获取广告参数
      *
@@ -291,11 +301,6 @@ public class CacheService {
      * @return 广告类型
      */
     public ConfigAdSpace getConfigAdSpaces(int ddId) {
-        ConfigAdSpace spaces = getConfigAdSpace(ddId);
-        return spaces;
-    }
-
-    public ConfigAdSpace getConfigAdSpace(int ddId) {
         ConfigAdSpace configAdSpaces = this.configAdSpaceCache.get(ddId);
         if (configAdSpaces == null) {
             configAdSpaces = this.configAdSpaceMapper.select(ddId);
@@ -306,18 +311,12 @@ public class CacheService {
         return configAdSpaces;
     }
 
-
     /**
      * 通过广告类型ID获取广告参数
      *
      * @param ddId 广告类型I
      * @return 广告类型
      */
-    public ConfigAdType getConfigAdType(int ddId) {
-        ConfigAdType types = getConfigAdTypes(ddId);
-        return types;
-    }
-
     public ConfigAdType getConfigAdTypes(int ddId) {
         ConfigAdType configAdTypes = this.configAdTypeCache.get(ddId);
         if (configAdTypes == null) {
@@ -328,7 +327,6 @@ public class CacheService {
         }
         return configAdTypes;
     }
-
 
     /**
      * 通过游戏编号获取游戏参数
@@ -375,7 +373,6 @@ public class CacheService {
         return goodsValue;
     }
 
-
     public UserValue getUserValue(String uid) {
         if (userValueCache.isEmpty()) {
             getAllUserValue();
@@ -395,7 +392,6 @@ public class CacheService {
         wxConfigs.forEach(wxConfig -> wxConfigCache.put(wxConfig.getDdappid(), wxConfig));
         return wxConfigs;
     }
-
 
     /**
      * 获取赛制信息

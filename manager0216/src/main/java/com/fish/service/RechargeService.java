@@ -35,7 +35,6 @@ import static com.fish.utils.tool.CmTool.createNonceStr;
  */
 @Service
 public class RechargeService implements BaseService<Recharge> {
-    //提现审核
     private static final Logger LOG = LoggerFactory.getLogger(RechargeService.class);
     @Autowired
     RechargeMapper rechargeMapper;
@@ -55,7 +54,7 @@ public class RechargeService implements BaseService<Recharge> {
     AllCostMapper allCostMapper;
 
     /**
-     * 查询提现申请
+     * 查询所有提现记录
      *
      * @param parameter
      * @return
@@ -102,11 +101,10 @@ public class RechargeService implements BaseService<Recharge> {
                 recharge.setRemainAmount(0);
             }
             //String reChargeSql ="SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '" + dduid + "' AND ddTimes <= '" + ddTime + "' ";
-            String reChargeSql = String.format("SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '%s' AND ddTimes <= '%s' ", dduid, ddTime);
-            int cashOutCurrent = rechargeMapper.selectCashOut(reChargeSql);
+          //  String reChargeSql = String.format("SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '%s' AND ddTimes <= '%s' ", dduid, ddTime);
+            int cashOutCurrent = rechargeMapper.selectCashOut(dduid,ddTime);
             //已提现金额
             recharge.setDdrmbed(new BigDecimal(cashOutCurrent));
-
             Integer programType = recharge.getProgramType();
             if (programType == 1 || programType == 2) {
                 rechargeList.add(recharge);
@@ -220,9 +218,6 @@ public class RechargeService implements BaseService<Recharge> {
                 BigDecimal ddrmb = recharge.getDdrmb().multiply(num100);
                 int rmb = ddrmb.intValue();
                 com.fish.dao.second.model.WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(ddappid);
-
-                //System.out.println(orderId + "rmb:" + rmb + "wxConfig:" + wxConfig + "oppenId:" + oppenId + "描述:" + wxConfig.getProductName() + "-赛事奖金提现" + rmb / 100 + "元" + "hostAddress:" + "129.211.119.249");
-
                 LOG.info("当前订单提现金额：" + rmb / 100 + "元, 用户Uid ：" + dduid + " ,产品名 : " + wxConfig.getProductName());
                 Map<String, String> backCharge = recharge(orderId, rmb, wxConfig, oppenId, wxConfig.getProductName() + "-赛事奖金提现" + rmb / 100 + "元", "129.211.119.249");
                 String return_code = backCharge.get("return_code");

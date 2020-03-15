@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="chs">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+    <script src="../layuiadmin/layui/layui.js"></script>
+    <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
+    <script></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!-- 搜索表单 -->
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <form class="layui-form-item" id="search-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">日期</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="dateNum" name="dateNum" placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">AppId</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="appId" name="appId">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">版本</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="version" name="version">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;"></label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">广告位置</label>
+                            <div class="layui-input-inline" style="width: 14rem;" id="adPosition" name="adPosition"
+                                 lay-filter="adPosition" autocomplete="off"></div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">广告位</label>
+                            <div class="layui-input-inline" style="width: 14rem;" id="adSpace" name="adSpace"
+                                 lay-filter="adSpace" autocomplete="off"></div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">广告内容</label>
+                            <div class="layui-input-inline" style="width: 14rem;" id="adContent" name="adContent"
+                                 lay-filter="adContent" autocomplete="off"></div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layuiadmin-btn-useradmin layui-btn-sm" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!-- 数据表格 -->
+                <div class="layui-card-body">
+                    <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const operatorurl = '../manage/adValue';
+
+    // 广告位置数组
+    let positionOptionArr = [];
+    /**
+     * 级联查询框-广告位置
+     */
+    let searchPositionSelect = xmSelect.render({
+        el: '#adPosition',
+        name: 'adPosition',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        layVerify: 'required',
+        on: function (data) {
+            if (data && data.arr && data.arr.length > 0) {
+                changeSpaceSelect(data.arr[0].value);
+            } else {
+                searchSpaceSelect.update({
+                    data: [],
+                    autoRow: true,
+                });
+            }
+        }
+    });
+
+    /**
+     * 级联查询框-广告位
+     */
+    let searchSpaceSelect = xmSelect.render({
+        el: '#adSpace',
+        name: 'adSpace',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        layVerify: 'required',
+        on: function (data) {
+            if (data && data.arr && data.arr.length > 0) {
+                changeContentSelect(data.arr[0].value);
+            } else {
+                searchContentSelect.update({
+                    data: [],
+                    autoRow: true,
+                });
+            }
+        }
+    });
+    /**
+     * 级联查询框-广告内容
+     */
+    let searchContentSelect = xmSelect.render({
+        el: '#adContent',
+        name: 'adContent',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        layVerify: 'required'
+    });
+
+    /**
+     * 打开页面时初始化加载数据
+     */
+    layui.use(['table', 'form', 'laydate'], () => {
+        const $ = layui.$, table = layui.table, form = layui.form, laydate = layui.laydate;
+        table.render({
+            elem: '#table-page',
+            url: operatorurl,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'dateNum', width: 120, title: '日期', sort: true, align: 'center'},
+                {field: 'appId', width: 180, title: 'appId', sort: true, align: 'left'},
+                {field: 'appId', width: 180, title: 'app名称', sort: true, align: 'left'},
+                {field: 'version', width: 100, title: '版本', sort: true, align: 'center'},
+                {field: 'positionName', width: 140, title: '广告位置', sort: false, align: 'left'},
+                {field: 'spaceName', width: 140, title: '广告位', sort: false, align: 'left'},
+                {field: 'contentName', width: 140, title: '广告内容', sort: false, align: 'left'},
+                {field: 'adShowIndex', width: 140, title: '展示位置序号', sort: false, align: 'center'},
+                {field: 'showNum', width: 140, title: '展示次数', sort: true, align: 'right'},
+                {field: 'clickNum', width: 140, title: '点击次数', sort: true, align: 'right'},
+                {field: 'promoteShowNum', width: 140, title: '中转App展示次数', sort: true, align: 'right'},
+                {field: 'promoteClickNum', width: 140, title: '中转App点击次数', sort: true, align: 'right'},
+                {field: 'targetShowNum', width: 140, title: '目标App展示次数', sort: true, align: 'right'}
+            ]],
+            page: true,
+            toolbar: '#toolbar',
+            limit: 30,
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-160'
+        });
+
+        // 渲染时间查询框
+        laydate.render({
+            elem: '#dateNum',
+            range: true
+        });
+
+        // 初始化数据
+        $(() => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdPosition/selectAll',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddId + ' - ' + val.ddName, value: val.ddId, selected: false};
+                        positionOptionArr.push(context);
+                    });
+                    searchPositionSelect.update({
+                        data: positionOptionArr,
+                        autoRow: true,
+                    });
+                },
+                error: function () {
+                    layer.msg("广告类型列表查询失败，请联系管理员！", {icon: 2});
+                }
+            });
+        });
+    });
+
+    /**
+     * 根据广告位置查询相关联广告位
+     * @param positionId
+     */
+    function changeSpaceSelect(positionId) {
+        layui.use('form', () => {
+            // 处理广告内容
+            layui.$.get('../manage/configAdPosition/selectSpaceByPositionId', {"positionId": positionId}, (data) => {
+                let spaceOptionArr = [];
+                data && data.forEach((val, index, arr) => {
+                    let context = {name: val.ddId + ' - ' + val.ddName, value: val.ddId, selected: index === 0};
+                    spaceOptionArr.push(context);
+                });
+                searchSpaceSelect.update({
+                    data: spaceOptionArr,
+                    autoRow: true,
+                });
+            });
+        });
+    }
+
+    function changeContentSelect(spaceId) {
+        layui.use('form', () => {
+            // 处理广告内容
+            layui.$.get('../manage/configAdSpace/selectContentBySpaceId', {"spaceId": spaceId}, (data) => {
+                let contentOptionArr = [];
+                data && data.forEach((val, index, arr) => {
+                    let context = {
+                        name: val.ddId + ' - ' + val.ddTargetAppName,
+                        value: val.ddId,
+                        selected: index === 0
+                    };
+                    contentOptionArr.push(context);
+                });
+                searchContentSelect.update({
+                    data: contentOptionArr,
+                    autoRow: true,
+                });
+            });
+        });
+    }
+</script>
+</body>
+</html>

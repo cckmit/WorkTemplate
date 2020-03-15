@@ -23,8 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class SupplementOrderService implements BaseService<SupplementOrder>
-{
+public class SupplementOrderService implements BaseService<SupplementOrder> {
 
     @Autowired
     UserValueMapper userValueMapper;
@@ -38,16 +37,24 @@ public class SupplementOrderService implements BaseService<SupplementOrder>
     @Autowired
     AllCostMapper allCostMapper;
 
+    /**
+     * 查询所有补单信息
+     *
+     * @param parameter
+     * @return
+     */
     @Override
-    //查询所有补单信息
-    public List<SupplementOrder> selectAll(GetParameter parameter)
-    {
+    public List<SupplementOrder> selectAll(GetParameter parameter) {
         return supplementOrderMapper.selectAll();
     }
 
-    //新增补单信息
-    public int insert(SupplementOrder record)
-    {
+    /**
+     * 新增补单信息
+     *
+     * @param record
+     * @return
+     */
+    public int insert(SupplementOrder record) {
         UserValue userValue = new UserValue();
         String userId = record.getUserid();
         Integer coinCount = record.getCoinCount();
@@ -56,21 +63,19 @@ public class SupplementOrderService implements BaseService<SupplementOrder>
         Integer orCoin = userValues.getDdcoincount();
         String ddName = userInfo.getDdname();
         //昵称  乱码报错
-        if(StringUtils.isNotBlank(ddName)){
+        if (StringUtils.isNotBlank(ddName)) {
             record.setUsername(ddName);
         }
         //手动拼接appName
         String appId = record.getAppid();
         WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(appId);
-        if (wxConfig != null)
-        {
+        if (wxConfig != null) {
             String productName = wxConfig.getProductName();
             Integer programType = wxConfig.getProgramType();
-            if (StringUtils.isNotBlank(productName))
-            {
+            if (StringUtils.isNotBlank(productName)) {
                 record.setAppname(productName);
             }
-            if(programType !=null){
+            if (programType != null) {
                 record.setProgramType(programType);
             }
         }
@@ -86,8 +91,7 @@ public class SupplementOrderService implements BaseService<SupplementOrder>
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
+    public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
         parameter.setOrder("desc");
@@ -95,37 +99,40 @@ public class SupplementOrderService implements BaseService<SupplementOrder>
     }
 
     @Override
-    public Class<SupplementOrder> getClassInfo()
-    {
+    public Class<SupplementOrder> getClassInfo() {
         return SupplementOrder.class;
     }
 
     @Override
-    public boolean removeIf(SupplementOrder record, JSONObject searchData)
-    {
+    public boolean removeIf(SupplementOrder record, JSONObject searchData) {
 
-        if (existTimeFalse(record.getCreateTime(), searchData.getString("times")))
-        {
+        if (existTimeFalse(record.getCreateTime(), searchData.getString("times"))) {
             return true;
         }
-        if (existValueFalse(searchData.getString("name"), record.getUsername()))
-        {
+        if (existValueFalse(searchData.getString("name"), record.getUsername())) {
             return true;
         }
         return (existValueFalse(searchData.getString("uid"), record.getUserid()));
     }
 
-
+    /**
+     * 查询当前用户信息
+     *
+     * @param uid
+     * @return
+     */
     public SupplementOrder selectCurrentCoin(String uid) {
         SupplementOrder supplementOrder = new SupplementOrder();
         String uidSql = String.format(" SELECT * FROM all_cost WHERE ddUid ='%s' ORDER BY id DESC LIMIT 0,1", uid);
+        //查询当前用户金币
         AllCost allCost = this.allCostMapper.selectCurrentCoin(uidSql);
+        //查询当前用户信息
         UserInfo userInfo = userInfoMapper.selectByDdUid(uid);
-        if(allCost !=null ){
+        if (allCost != null) {
             supplementOrder.setCurrentCoin(allCost.getDdcurrent());
             supplementOrder.setAppid(allCost.getDdappid());
         }
-        if(userInfo !=null){
+        if (userInfo != null) {
             supplementOrder.setUsername(userInfo.getDdname());
         }
         return supplementOrder;

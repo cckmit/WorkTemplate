@@ -22,7 +22,5 @@ public interface ArcadeGameSetMapper {
 
     ArcadeGameSet selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKey(ArcadeGameSet record);
-
     int updateByPrimaryKeySelective(ArcadeGameSet record);
 }

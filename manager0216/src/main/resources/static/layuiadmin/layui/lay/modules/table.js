@@ -123,7 +123,7 @@
         }, d = [];
         "object" == typeof a.defaultToolbar && layui.each(a.defaultToolbar, function (e, t) {
             var i = r[t];
-            i && d.push('<div class="layui-inline" title="' + i.title + '" lay-event="' + i.layEvent + '"><i class="layui-icon ' + i.icon + '"></i></div>')
+            i && d.push('<div class="layui-inline" title="' + i.title + '" lay-event="' + i.layEvent + '"><i class="layui-icon ' + i.icon + '" style="color: #1E9FFF;"></i></div>')
         }), e.layTool.find(".layui-table-tool-self").html(d.join(""))
     }, I.prototype.setParentCol = function (e, t) {
         var i = this, a = i.config, l = i.layHeader.find('th[data-key="' + a.index + "-" + t + '"]'),

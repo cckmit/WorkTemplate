@@ -30,14 +30,12 @@
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">赛制名称</label>
-                            <div class="layui-input-inline">
-                                <div class="layui-input-inline" style="width: 12rem;"
+                                <div class="layui-input-inline" style="width: 14rem;"
                                      id="roundcode" name="roundSelect" lay-filter="roundcode" autocomplete="off"></div>
-                            </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-filter="front-search" lay-submit="">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-filter="front-search" lay-submit="" style="width: 55px;">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -56,9 +54,12 @@
 
 <script id="toolbar" type="text/html">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <!--<button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>-->
     </div>
 </script>
 <script>
@@ -146,7 +147,9 @@
                 ]],
                 page: true,
                 toolbar: '#toolbar',
-                defaultToolbar: ['filter', 'exports']
+                limit: 30,
+                defaultToolbar: ['filter', 'exports'],
+                height: 'full-20'
             });
 
         laydate.render({

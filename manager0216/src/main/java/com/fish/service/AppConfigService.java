@@ -16,6 +16,13 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 审核配置
+ * AppConfigService
+ *
+ * @author
+ * @date
+ */
 @Service
 public class AppConfigService implements BaseService<AppConfig> {
 
@@ -76,7 +83,7 @@ public class AppConfigService implements BaseService<AppConfig> {
      * @return
      */
     public int updateByPrimaryKeySelective(AppConfig record) {
-        record.setDdtime(new Timestamp(new Date().getTime()));
+        record.setDdtime(new Timestamp(System.currentTimeMillis()));
         return appConfigMapper.updateByPrimaryKeySelective(record);
     }
 
@@ -110,5 +117,15 @@ public class AppConfigService implements BaseService<AppConfig> {
             return true;
         }
         return existValueFalse(searchData.getString("gameCode"), appConfig.getDdcode());
+    }
+
+    /**
+     * 审核合集下拉框
+     *
+     * @param AppId
+     * @return
+     */
+    public AppConfig select(String AppId) {
+        return appConfigMapper.selectByPrimaryKey(AppId);
     }
 }

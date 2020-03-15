@@ -22,28 +22,28 @@
                 <!-- 搜索表单 -->
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
-                        <div class="layui-inline">
+                        <div class="layui-inline" style="">
                             <label class="layui-form-label">时间范围</label>
-                            <div class="layui-input-inline" style="width: 12rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input class="layui-input" id="searchTimes" name="searchTimes" placeholder=" - "
                                        type="text">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">游戏名称</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="gameName" name="gameName">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">赛制名称</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="roundName" name="roundName">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">状态</label>
-                            <div class="layui-input-inline" style="width: 7rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <select name="ddstate" id="ddstate">
                                     <option value="">全部状态</option>
                                     <option value="true">开启</option>
@@ -52,9 +52,9 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit=""
-                                    lay-filter="condition-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
+                                    lay-filter="condition-search" style="width: 55px;">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -76,9 +76,12 @@
 </div>
 <script id="toolbar" type="text/html">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
     </div>
 </script>
 <script type="text/html" id="imgTpl">
@@ -439,7 +442,9 @@
             ]],
             page: true,
             toolbar: '#toolbar',
-            defaultToolbar: ['filter', 'exports']
+            limit: 30,
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-20'
         });
         laydate.render({
             elem: '#searchTimes',

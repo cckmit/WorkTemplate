@@ -1,87 +1,80 @@
 package com.fish.protocols;
 
-public class GetParameter
-{
-    //查询类型
+public class GetParameter {
+    /**
+     * 查询类型
+     */
     private String datagrid;
-    //查询条件
+    /**
+     * 查询条件
+     */
     private String searchData;
-    //排序信息
+    /**
+     * 排序信息
+     */
     private String sort;
     private String order;
 
     private int page;
     private int limit;
-    //是否为excel导出模式
+    /**
+     * 是否为excel导出模式
+     */
     private boolean excel;
 
-    public String getDatagrid()
-    {
+    public String getDatagrid() {
         return datagrid;
     }
 
-    public void setDatagrid(String datagrid)
-    {
+    public void setDatagrid(String datagrid) {
         this.datagrid = datagrid;
     }
 
-    public String getSearchData()
-    {
+    public String getSearchData() {
         return searchData;
     }
 
-    public void setSearchData(String searchData)
-    {
+    public void setSearchData(String searchData) {
         this.searchData = searchData;
     }
 
-    public String getSort()
-    {
+    public String getSort() {
         return sort;
     }
 
-    public void setSort(String sort)
-    {
+    public void setSort(String sort) {
         this.sort = sort;
     }
 
-    public String getOrder()
-    {
+    public String getOrder() {
         return order;
     }
 
-    public void setOrder(String order)
-    {
+    public void setOrder(String order) {
         this.order = order;
     }
 
-    public int getPage()
-    {
+    public int getPage() {
         return page;
     }
 
-    public void setPage(int page)
-    {
+    public void setPage(int page) {
         this.page = page;
     }
 
-    public int getLimit()
-    {
+    public int getLimit() {
         return limit;
     }
 
-    public void setLimit(int limit)
-    {
+    public void setLimit(int limit) {
         this.limit = limit;
     }
 
-    public boolean isExcel()
-    {
+    public boolean isExcel() {
         return excel;
     }
 
-    public void setExcel(boolean excel)
-    {
+    public void setExcel(boolean excel) {
         this.excel = excel;
     }
 }

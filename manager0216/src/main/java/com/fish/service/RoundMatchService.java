@@ -63,7 +63,7 @@ public class RoundMatchService implements BaseService<RoundMatch> {
 
         this.cacheService.updateAllWxConfig();
 
-        int index = 1;
+        //int index = 1;
         for (RoundMatch roundMatch : roundMatchs) {
             // 更新游戏信息
             ArcadeGames arcadeGames = this.cacheService.getArcadeGames(roundMatch.getDdgame());
@@ -71,6 +71,7 @@ public class RoundMatchService implements BaseService<RoundMatch> {
                 continue;
             }
             roundMatch.setGameName(arcadeGames.getDdname());
+            // 判断资源分享JSON字串
             if (StringUtils.isNotBlank(arcadeGames.getDdshareres())) {
                 JSONArray shareLists = JSONObject.parseArray(arcadeGames.getDdshareres());
                 for (int i = 0; i < shareLists.size(); i++) {
@@ -123,48 +124,10 @@ public class RoundMatchService implements BaseService<RoundMatch> {
      * @return
      */
     public int insert(RoundMatch record) {
-        String roundSelect = record.getRoundSelect();
-        String[] roundSplit;
-        roundSplit = roundSelect.split("-");
-        String gameCodeSelect = record.getGameCodeSelect();
-        Integer gameCode = 0;
-        if (gameCodeSelect != null && gameCodeSelect.length() > 0) {
-            gameCode = Integer.parseInt(gameCodeSelect);
-            record.setDdgame(gameCode);
-            ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(gameCode);
-            Integer isPk = arcadeGames.getDdispk();
-            if (isPk == 1) {
-                if (roundSplit.length > 0) {
-                    String ddCode = roundSplit[0];
-                    record.setDdround(ddCode);
-                    RoundExt roundExt = roundExtMapper.selectByddCodeG(ddCode);
-                    Long ddTime = roundExt.getDdtime();
-                    Date ddStart = record.getDdstart();
-                    Date endDate = new Date(ddStart.getTime() + ddTime * 1000 + 300 * 1000);
-                    record.setDdend(endDate);
-                }
-            } else {
-                if (roundSplit.length > 0) {
-                    String ddCode = roundSplit[0];
-                    record.setDdround(ddCode);
-                    RoundExt roundExt = roundExtMapper.selectByddCodeG(ddCode);
-                    Long ddTime = roundExt.getDdtime();
-                    Date ddStart = record.getDdstart();
-                    Date endDate = new Date(ddStart.getTime() + ddTime * 1000);
-                    record.setDdend(endDate);
-                }
-            }
-        }
-        record.setDdtime(new Timestamp(System.currentTimeMillis()));
-        String appId = record.getAppNameSelect();
-        record.setDdappid(appId);
-        String ddRes = record.getDdres();
-        if (StringUtils.isNotBlank(ddRes)) {
-            String resHost = baseConfig.getResHost();
-            record.setDdres(resHost + ddRes + "/");
-        }
+        updateOrInsertRoundMatch(record, "insert");
         return roundMatchMapper.insert(record);
     }
+
 
     /**
      * 修改小程序赛制配置
@@ -173,48 +136,8 @@ public class RoundMatchService implements BaseService<RoundMatch> {
      * @return
      */
     public int updateByPrimaryKeySelective(RoundMatch record) {
-        String roundSelect = record.getRoundSelect();
-        String[] roundSplit;
-        roundSplit = roundSelect.split("-");
-        String gameCodeSelect = record.getGameCodeSelect();
-        if (gameCodeSelect != null && gameCodeSelect.length() > 0) {
-            int gameCode = Integer.parseInt(gameCodeSelect);
-            ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(gameCode);
-            Integer isPk = arcadeGames.getDdispk();
-            if (isPk == 1) {
-                //更新开始时间、结束时间
-                if (roundSplit.length > 0) {
-                    String ddCode = roundSplit[0];
-                    record.setDdround(ddCode);
-                    RoundExt roundExt = roundExtMapper.selectByddCodeG(ddCode);
-                    Long ddTime = roundExt.getDdtime();
-                    Date ddStart = record.getDdstart();
-                    Date endDate = new Date(ddStart.getTime() + ddTime * 1000 + 300 * 1000);
-                    record.setDdend(endDate);
-                }
-            } else {
-                if (roundSplit.length > 0) {
-                    String ddCode = roundSplit[0];
-                    record.setDdround(ddCode);
-                    RoundExt roundExt = roundExtMapper.selectByddCodeG(ddCode);
-                    Long ddTime = roundExt.getDdtime();
-                    Date ddStart = record.getDdstart();
-                    Date endDate = new Date(ddStart.getTime() + ddTime * 1000);
-                    record.setDdend(endDate);
-                }
-            }
-            record.setDdgame(Integer.parseInt(gameCodeSelect));
-        }
-        record.setDdtime(new Timestamp(System.currentTimeMillis()));
-        String appId = record.getAppNameSelect();
-        if (appId != null && appId.length() > 0) {
-            record.setDdappid(appId);
-        }
-        String ddRes = record.getDdres();
-        if (StringUtils.isNotBlank(ddRes)) {
-            String resHost = baseConfig.getResHost();
-            record.setDdres(resHost + ddRes + "/");
-        }
+        updateOrInsertRoundMatch(record, "update");
+
         return roundMatchMapper.updateByPrimaryKeySelective(record);
     }
 
@@ -290,5 +213,56 @@ public class RoundMatchService implements BaseService<RoundMatch> {
      */
     public List<WxConfig> getAppName() {
         return wxConfigMapper.selectAll();
+    }
+
+    /**
+     * 更新或者插入数据的时候统一处理数据（根据之前的方法提取的）
+     *
+     * @param record
+     * @param type   类型判断是新增还是修改
+     */
+    private void updateOrInsertRoundMatch(RoundMatch record, String type) {
+        String METHOD_TYPE = "update";
+        String[] roundSplit = record.getRoundSelect().split("-");
+        if (!StringUtils.isBlank(record.getGameCodeSelect())) {
+            Integer gameCode = Integer.parseInt(record.getGameCodeSelect());
+            record.setDdgame(Integer.parseInt(record.getGameCodeSelect()));
+            ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(gameCode);
+            if (arcadeGames.getDdispk() == 1) {
+                if (roundSplit.length > 0) {
+                    String ddCode = roundSplit[0];
+                    record.setDdround(ddCode);
+                    RoundExt roundExt = roundExtMapper.selectByddCodeG(ddCode);
+                    Long ddTime = roundExt.getDdtime();
+                    Date ddStart = record.getDdstart();
+                    Date endDate = new Date(ddStart.getTime() + ddTime * 1000 + 300 * 1000);
+                    record.setDdend(endDate);
+                }
+            } else {
+                if (roundSplit.length > 0) {
+                    String ddCode = roundSplit[0];
+                    record.setDdround(ddCode);
+                    RoundExt roundExt = roundExtMapper.selectByddCodeG(ddCode);
+                    Long ddTime = roundExt.getDdtime();
+                    Date ddStart = record.getDdstart();
+                    Date endDate = new Date(ddStart.getTime() + ddTime * 1000);
+                    record.setDdend(endDate);
+                }
+            }
+            // 更新的时候赋值，更具之前的修改逻辑写的
+            if (METHOD_TYPE.equals(type)) {
+                record.setDdgame(Integer.parseInt(record.getGameCodeSelect()));
+            }
+        }
+        record.setDdtime(new Timestamp(System.currentTimeMillis()));
+        String appId = record.getAppNameSelect();
+        if (appId != null && appId.length() > 0) {
+            record.setDdappid(appId);
+        }
+        String ddRes = record.getDdres();
+        if (StringUtils.isNotBlank(ddRes)) {
+            String resHost = baseConfig.getResHost();
+            record.setDdres(resHost + ddRes + "/");
+        }
     }
 }

@@ -11,6 +11,10 @@
         "url": "appConfig"
       },
       {
+        "name": "合集跳转配置",
+        "url": "configProgram"
+      },
+      {
         "name": "广告位配置",
         "url": "wxAddShow"
       },
@@ -21,6 +25,10 @@
       {
         "name": "全局配置",
         "url": "ArcadeGlobalconfig"
+      },
+      {
+        "name": "资源上传统一接口",
+        "url": "uploadCdn"
       }
     ]
   },
@@ -128,6 +136,10 @@
       {
         "name": "微信广告数据明细",
         "url": "fc_wxAddData"
+      },
+      {
+        "name": "广告数据查询",
+        "url": "adValue"
       }
     ]
   },

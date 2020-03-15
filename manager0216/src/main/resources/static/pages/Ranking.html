@@ -45,10 +45,9 @@
                         </div>
 
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
-
                         </div>
                         <div class="layui-btn-group demoTable">
                             <button type="button" class="layui-btn" data-type="getCheckData">比赛结果导出</button>
@@ -73,7 +72,7 @@
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/ranking';
+    const operatorurl = '../manage/ranking';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,

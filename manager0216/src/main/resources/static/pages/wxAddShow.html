@@ -12,9 +12,7 @@
     <script src="../layuiadmin/layui/layui.js"></script>
     <script src="../layuiadmin/modules/operation.js"></script>
     <script src="../layuiadmin/xm-select.js"></script>
-    <script>
-
-    </script>
+    <script></script>
 </head>
 <body>
 <div class="layui-fluid">
@@ -37,8 +35,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -61,9 +59,8 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
     </div>
 </script>
 <script type="text/html" id="imgTpl1">
@@ -88,31 +85,37 @@
 </script>
 
 <script>
-    var operatorurl = '../manage/wxadd';
+    const operatorurl = '../manage/wxadd';
+
+    /**
+     * 产品名称查询框
+     */
+    let appSelect = xmSelect.render({
+        el: '#productsName',
+        name: 'productsName',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+            console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+        },
+    });
+    //产品名称数组
+    let appNames = [];
+
     layui.use(['table', 'laydate', 'form', 'layer', 'upload', 'flow'], function () {
         var table = layui.table,
             form = layui.form,
             layer = layui.layer,
             laydate = layui.laydate, flow = layui.flow;
         var $ = layui.$;
-        var appNames = [];
-        var appSelect = xmSelect.render({
-            el: '#productsName',
-            name: 'productsName',
-            language: 'zn',
-            toolbar: {show: true},
-            data: [],
-            radio: true,
-            clickClose: true,
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
         $.ajax({
             type: "get",
             dataType: "json",
@@ -121,17 +124,17 @@
 
                 res.forEach(function (val, index, arr) {
                     //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
-                    var type ;
-                    if(val.programType ===0){
-                        type ="小游戏";
+                    let type;
+                    if (val.programType === 0) {
+                        type = "小游戏";
                     }
-                    if(val.programType ===1){
-                        type ="小程序";
+                    if (val.programType === 1) {
+                        type = "小程序";
                     }
-                    if(val.programType ===2){
-                        type ="公众号";
+                    if (val.programType === 2) {
+                        type = "公众号";
                     }
-                    let context = {name: val.productName+"（"+type+")", value: val.ddappid, selected: false};
+                    let context = {name: val.productName + "（" + type + ")", value: val.ddappid, selected: false};
                     appNames.push(context);
                 });
                 appSelect.update(
@@ -151,29 +154,29 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {type:'numbers',title:'序号' } ,
-                {field: 'productName', width: 120, title: '产品名称', sort: true},
+                {type: 'numbers', title: '序号'},
+                {field: 'productName', width: 120, title: '产品名称', align: 'center'},
                 {field: 'ddappid', width: 180, title: 'appId', sort: true},
-                {field: 'local', width: 120, title: '资源图', sort: true},
-                {field: 'ddappskipres', width: 550, title: '跳转资源', sort: true},
+                {field: 'local', width: 120, title: '资源图', align: 'center'},
+                {field: 'ddappskipres', width: 550, title: '跳转资源'},
                 {
-                    field: 'banner1', width: 120, title: '游戏跳转1', sort: true,
+                    field: 'banner1', width: 120, title: '游戏跳转1',
                     templet: '#imgTpl1'
                 },
                 {
-                    field: 'banner2', width: 120, title: '游戏跳转2', sort: true,
+                    field: 'banner2', width: 120, title: '游戏跳转2',
                     templet: '#imgTpl2'
                 },
                 {
-                    field: 'banner3', width: 120, title: '游戏跳转3', sort: true,
+                    field: 'banner3', width: 120, title: '游戏跳转3',
                     templet: '#imgTpl3'
                 },
                 {
-                    field: 'list1', width: 120, title: '游戏跳转4', sort: true,
+                    field: 'list1', width: 120, title: '游戏跳转4',
                     templet: '#imgTpl4'
                 },
                 {
-                    field: 'list2', width: 120, title: '游戏跳转5', sort: true,
+                    field: 'list2', width: 120, title: '游戏跳转5',
                     templet: '#imgTpl5'
                 }
 
@@ -192,7 +195,6 @@
             elem: '#createTime',
             format: 'yyyy/MM/dd HH:mm'
         });
-
     })
 
 </script>
@@ -207,7 +209,6 @@
                    class="layui-input layui-disabled" disabled>
         </div>
     </div>
-
     <div class="layui-form-item ">
         <label class="layui-form-label">appId *</label>
         <div class="layui-input-inline">
@@ -215,14 +216,12 @@
                    class="layui-input layui-disabled" disabled>
         </div>
     </div>
-
     <div class="layui-form-item ">
         <label class="layui-form-label">跳转资源</label>
         <textarea name="ddappskipres"
                   class="layui-textarea"></textarea>
         <span>请按JSON格式输入</span><br>
     </div>
-
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">
     </div>

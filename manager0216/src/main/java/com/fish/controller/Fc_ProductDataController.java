@@ -9,6 +9,8 @@ import com.fish.service.ProductDataService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadExcel;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,7 @@ import java.io.File;
 @Controller
 @RequestMapping(value = "/manage")
 public class Fc_ProductDataController {
+    private final static Logger logger = LoggerFactory.getLogger(Fc_ProductDataController.class);
     @Autowired
     ProductDataService fcProductDataService;
     @Autowired
@@ -79,13 +82,18 @@ public class Fc_ProductDataController {
             jsonObject.put("context", readExcel.read(0));
             fcProductDataService.insertExcel(jsonObject);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("上传小程序数据失败" + e.getMessage());
         }
         jsonObject.put("code", 200);
         return jsonObject;
     }
 
-    //新增游戏appid、secret信息
+    /**
+     * 新增小程序产品广告信息
+     *
+     * @param productData
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/productdata/new")
     public PostResult insertProductData(@RequestBody ProductData productData) {
@@ -98,7 +106,12 @@ public class Fc_ProductDataController {
         return result;
     }
 
-    //修改游戏appid、secret信息
+    /**
+     * 修改小程序产品广告信息
+     *
+     * @param productData
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/productdata/edit")
     public PostResult modifyProductData(@RequestBody ProductData productData) {
@@ -111,6 +124,12 @@ public class Fc_ProductDataController {
         return result;
     }
 
+    /**
+     * 删除小程序产品广告信息
+     *
+     * @param jsonObject
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/productdata/delete")
     public PostResult deleteBuyPay(@RequestBody JSONObject jsonObject) {

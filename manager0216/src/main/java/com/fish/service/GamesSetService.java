@@ -15,7 +15,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * 合集配置  Service
+ *
+ * @author
+ * @date
+ */
 @Service
 public class GamesSetService implements BaseService<ArcadeGameSet> {
     @Autowired
@@ -70,6 +75,7 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("查询GamesSetService失败" + ", 详细信息:{}", e.getMessage());
             }
             arcadeGameSet.setDdcontent512a(ddContents);
             String ddappid = arcadeGameSet.getDdappid();
@@ -92,7 +98,6 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
      * @return
      */
     public int insert(ArcadeGameSet record) {
-        //新增判断是否游戏编号重复
         ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(record.getDdcode());
         if (!org.springframework.util.StringUtils.isEmpty(arcadeGameSet)) {
             return 5;
@@ -138,7 +143,6 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
                 record.setDdname(productName);
             }
         }
-        System.out.println("我是插入合集内容 :" + XwhTool.getJSONByFastJSON(record));
         return arcadeGameSetMapper.insert(record);
     }
 
@@ -188,7 +192,6 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
                 }
             }
         }
-        System.out.println("我是修改ddContents :" + XwhTool.getJSONByFastJSON(record));
         record.setDdcontent512a(ddContents);
         if (ddName != null) {
             record.setDddesc(ddName);

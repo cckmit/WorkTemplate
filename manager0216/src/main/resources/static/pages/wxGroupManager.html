@@ -40,7 +40,8 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
     </div>
 </script>
 <script>
@@ -54,11 +55,11 @@
 
         form.on('switch(switchTest)', function (data) {
             let switchStatus = data.elem.checked;//判断开关状态
-            let statusObj = {ddStatus: 0};
+            let statusObj = {ddStatus: false};
             let id = data.othis.parents('tr').find("td :first").text();
             console.log(id);
             if (switchStatus) {
-                statusObj.ddStatus = 1;
+                statusObj.ddStatus = true;
             }
             $.ajax({
                 url: operatorurl + '/change',
@@ -96,11 +97,12 @@
                 {
                     field: 'ddStatus', width: 180, title: '群二维码状态', sort: true,
                     templet: (d) => {
-                        if (d.ddStatus == 1) {
-                            return '<input type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="开启|关闭">';
-                        } else if (d.ddStatus == 0) {
-                            //"<input type=\"checkbox\"  name=\"close\"  value = {{d.ddState}} lay-skin=\"switch\" lay-text=\"开启|关闭\" lay-filter=\"state\" {{ d.ddState == '0' ? 'checked' : '' }}>"
-                            return '<input type="checkbox" checked="" name="close" lay-skin="switch" lay-filter="switchTest" lay-text="开启|关闭">';
+                        if (d.ddStatus) {
+                            
+                            return '<input type="checkbox" checked="checked" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="开启|关闭">';
+                        } else {
+                           
+                            return '<input type="checkbox" name="close" lay-skin="switch" lay-filter="switchTest" lay-text="开启|关闭">';
                         }
                     }
                 },
@@ -126,6 +128,7 @@
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
       style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+
     <div class="layui-form-item layui-hide">
         <label class="layui-form-label">ID *</label>
         <div class="layui-input-inline">
@@ -196,10 +199,12 @@
                    class="layui-input layui-input">
         </div>
     </div>
+
     <div class="layui-form-item ">
         <label class="layui-form-label">群二维码状态</label>
         <div class="layui-input-inline">
-            <input type="checkbox" checked="" name="ddStatus" lay-skin="switch" lay-text="开启|关闭">
+            <input type="checkbox" checked="" id="ddStatus"  name="ddStatus" lay-skin="switch" lay-text="开启|关闭">
+
         </div>
     </div>
 

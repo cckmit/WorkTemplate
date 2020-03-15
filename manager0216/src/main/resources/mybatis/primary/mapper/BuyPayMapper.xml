@@ -140,6 +140,14 @@
         from buy_pay
         where buy_date = #{buyDate,jdbcType=VARCHAR} and buy_app_id = #{buyAppId,jdbcType=VARCHAR}
     </select>
+
+    <select id="selectBuyPayByDate" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from buy_pay
+        where DATE(buy_date)  BETWEEN #{beginTime} and #{endTime}
+    </select>
+
     <select id="selectSearch" resultMap="BaseResultMap">
          ${_parameter}
     </select>

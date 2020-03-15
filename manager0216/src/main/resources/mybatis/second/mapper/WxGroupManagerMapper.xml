@@ -8,7 +8,6 @@
         <result column="wx_group_manager" jdbcType="VARCHAR" property="wxGroupManager"/>
         <result column="wx_number" jdbcType="VARCHAR" property="wxNumber"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>-->
-
         <!-- config_confirm 部分 -->
         <result column="describe" jdbcType="VARCHAR" property="describe"/>
         <result column="ddStatus" jdbcType="VARCHAR" property="ddStatus"/>
@@ -18,13 +17,11 @@
     </resultMap>
     <select id="selectAll" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-         ddId, `describe`, ddStatus, ddYes, ddNo, updateTime
-         cdId, wxGroupName, wxGroupManager, wxNumber, createTime
-        from  config_confirm, wx_group_manager
-    </select>
-
-    <select id="selectAllConfigSQL" resultType="com.fish.dao.second.model.WxGroupManager">
-        ${_parameter}
+         c.ddId AS ddId, c.describe AS `describe`, c.ddStatus AS ddStatus, c.ddYes AS ddYes, c.ddNo AS ddNo,
+         c.updateTime AS updateTime, w.cdId AS cdId, w.wxGroupName AS wxGroupName, w.wxGroupManager AS wxGroupManager,
+         w.createTime AS createTime, w.updateQrCodeTime AS updateQrCodeTime
+        from  config_confirm c, wx_group_manager w
+        WHERE c.ddId = w.cdId
     </select>
 
     <select id="selectQrCodeByPrimaryKey" resultType="com.fish.dao.second.model.WxGroupManager">

@@ -36,6 +36,14 @@ public interface ConfigAdContentMapper {
     List<ConfigAdContent> selectAllByType(int adType);
 
     /**
+     * 通过广告内容ID查询广告内容详情
+     *
+     * @param contentIds
+     * @return
+     */
+    List<ConfigAdContent> selectContentBySpaceId(String contentIds);
+
+    /**
      * 新增广告内容
      *
      * @param adContent

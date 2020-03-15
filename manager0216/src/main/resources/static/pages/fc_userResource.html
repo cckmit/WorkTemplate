@@ -23,24 +23,24 @@
                 <div class="demoTable layui-card-header layuiadmin-card-header-auto">
                     <div class="layui-inline">
                         <label class="layui-form-label">开始日期</label>
-                        <div class="layui-input-inline" style="width: 7rem;">
+                        <div class="layui-input-inline" style="width: 14rem;">
                             <input type="text" class="layui-input" id="beginDate" name="beginDate" placeholder=" - ">
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">结束日期</label>
-                        <div class="layui-input-inline" style="width: 7rem;">
+                        <div class="layui-input-inline" style="width: 14rem;">
                             <input type="text" class="layui-input" id="endDate" name="endDate" placeholder=" - ">
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">产品名称</label>
-                        <div class="layui-input-inline" style="width: 6rem;">
+                        <div class="layui-input-inline" style="width: 14rem;">
                             <input type="text" class="layui-input" id="productName" name="productName">
                         </div>
                     </div>
-                    <button id="submit" class="layui-btn" data-type="reload">
-                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    <button id="submit" class="layui-btn layui-btn-normal" data-type="reload">
+                        <i class="layui-icon layuiadmin-button-btn"></i>查询
                     </button>
                 </div>
                 <!-- 数据表格 -->
@@ -59,7 +59,7 @@
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/productdata';
+    const operatorurl = '../manage/productdata';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,

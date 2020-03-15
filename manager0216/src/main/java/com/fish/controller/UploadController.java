@@ -180,6 +180,7 @@ public class UploadController {
                         SQL = SQL.concat(" where ddCode in(").concat(gameCode).concat(")");
                     }
                     gamesMapper.updateSQL(SQL);
+                    ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
                 }
             } else {
                 jsonObject.put("imageURL", readPath.replace("/data/", "https://") + originalFilename);

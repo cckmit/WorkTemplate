@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.AdValueMapper">
+    <resultMap id="BaseResultMap" type="com.fish.dao.second.model.AdValue">
+        <result column="dateNum" property="dateNum" jdbcType="INTEGER"/>
+        <result column="appId" property="appId" jdbcType="VARCHAR"/>
+        <result column="version" property="version" jdbcType="VARCHAR"/>
+        <result column="adPositionId" property="adPositionId" jdbcType="INTEGER"/>
+        <result column="adSpaceId" property="adSpaceId" jdbcType="INTEGER"/>
+        <result column="adContentId" property="adContentId" jdbcType="INTEGER"/>
+        <result column="adShowIndex" property="adShowIndex" jdbcType="INTEGER"/>
+        <result column="showNum" property="showNum" jdbcType="INTEGER"/>
+        <result column="clickNum" property="clickNum" jdbcType="INTEGER"/>
+        <result column="promoteShowNum" property="promoteShowNum" jdbcType="INTEGER"/>
+        <result column="promoteClickNum" property="promoteClickNum" jdbcType="INTEGER"/>
+        <result column="targetShowNum" property="targetShowNum" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        dateNum, appId, version, adPositionId, adSpaceId, adContentId, adShowIndex,
+        sum(showNum) as showNum, sum(clickNum) as clickNum, sum(promoteShowNum) as promoteShowNum, sum(promoteClickNum) as promoteClickNum, sum(targetShowNum) as targetShowNum
+    </sql>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from ad_value
+        where dateNum between #{beginDate, jdbcType=INTEGER} and #{endDate, jdbcType=INTEGER}
+        <if test="adValue.appId != null and adValue.appId != ''">
+            and appId like concat('%',#{adValue.appId, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="adValue.version != null and adValue.version != ''">
+            and version = #{adValue.version, jdbcType=VARCHAR}
+        </if>
+        <if test="adValue.adPositionId != 0">
+            and adPositionId = #{adValue.adPositionId, jdbcType=INTEGER}
+        </if>
+        <if test="adValue.adSpaceId != 0">
+            and adSpaceId = #{adValue.adSpaceId, jdbcType=INTEGER}
+        </if>
+        <if test="adValue.adContentId != 0">
+            and adContentId = #{adValue.adContentId, jdbcType=INTEGER}
+        </if>
+        group by dateNum, appId, version, adPositionId, adSpaceId, adContentId, adShowIndex
+    </select>
+
+</mapper>

@@ -2,10 +2,9 @@ package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.ConfigAdPositionMapper;
+import com.fish.dao.second.mapper.ConfigAdSpaceMapper;
 import com.fish.dao.second.model.ConfigAdPosition;
 import com.fish.dao.second.model.ConfigAdSpace;
-import com.fish.dao.second.model.ConfigAdStrategy;
-import com.fish.dao.second.model.ConfigAdType;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
 import com.fish.service.cache.CacheService;
@@ -15,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +25,9 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
 
     @Autowired
     ConfigAdPositionMapper adPositionMapper;
+
+    @Autowired
+    ConfigAdSpaceMapper adSpaceMapper;
 
     @Autowired
     CacheService cacheService;
@@ -64,7 +65,7 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
                 String[] adTypeArray = configAdPosition.getDdAdTypes().split(",");
                 String adTypeNames = "";
                 for (String typeId : adTypeArray) {
-                    String adTypeName = this.cacheService.getConfigAdType(Integer.parseInt(typeId)).getDdName();
+                    String adTypeName = this.cacheService.getConfigAdTypes(Integer.parseInt(typeId)).getDdName();
                     if (StringUtils.isBlank(adTypeNames)) {
                         adTypeNames = typeId + "-" + adTypeName;
                     } else {
@@ -109,7 +110,7 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
         } else {
-            String res = ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
+            ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
         }
         return result;
     }
@@ -127,7 +128,7 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
-            String res = ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
+            ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
         }
         return result;
     }
@@ -145,7 +146,7 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
-            String res = ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
+            ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
         }
         return result;
     }
@@ -161,6 +162,29 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
             return null;
         }
         return this.adPositionMapper.select(id);
+    }
+
+    /**
+     * 查询广告位置查询下拉框选项
+     *
+     * @return
+     */
+    public List<ConfigAdPosition> selectAll() {
+        return this.adPositionMapper.selectAll(new ConfigAdPosition());
+    }
+
+    /**
+     * 根据广告位置查询广告位内容
+     *
+     * @param positionId
+     * @return
+     */
+    public List<ConfigAdSpace> selectSpaceByPositionId(int positionId) {
+        ConfigAdPosition configAdPosition = this.adPositionMapper.select(positionId);
+        if (configAdPosition != null && StringUtils.isNotBlank(configAdPosition.getDdAdSpaces())) {
+            return this.adSpaceMapper.selectAllByIds(configAdPosition.getDdAdSpaces());
+        }
+        return null;
     }
 
 }

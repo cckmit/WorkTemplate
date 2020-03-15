@@ -42,7 +42,7 @@
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">类型</label>
-                            <div class="layui-input-inline" style="width:12rem;">
+                            <div class="layui-input-inline" style="width:14rem;">
                                 <select name="payState" id="payState">
                                     <option value="">全部</option>
                                     <option value=0>小游戏</option>
@@ -52,8 +52,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -74,7 +74,7 @@
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/statistic';
+    const operatorurl = '../manage/statistic';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
@@ -214,7 +214,6 @@
                     layer.alert(JSON.stringify(data));
                     break;
             }
-            ;
         });
     })
 </script>

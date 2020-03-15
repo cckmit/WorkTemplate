@@ -1,5 +1,6 @@
 package com.fish.dao.third.mapper;
 
+import com.fish.dao.second.model.AdValue;
 import com.fish.dao.third.model.MinitjWx;
 import org.apache.ibatis.annotations.Param;
 
@@ -23,6 +24,8 @@ public interface MinitjWxMapper {
     int updateByPrimaryKey(MinitjWx record);
 
     List<MinitjWx> searchData(String sql);
+
+    List<MinitjWx> searchDatas(@Param("wxAppid") String wxAppid, @Param("beginTime") String beginTime, @Param("endTime") String endTime);
 
     List<String> dateCash();
 }

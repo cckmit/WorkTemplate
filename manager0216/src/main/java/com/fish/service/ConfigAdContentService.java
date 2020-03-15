@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -67,8 +68,9 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
         if (id <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
-        String res = ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         cacheService.updateAllConfigAdContents();
         return result;
     }
@@ -85,8 +87,29 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
         if (update <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
-        String res = ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
+        cacheService.updateAllConfigAdContents();
+        return result;
+    }
+
+    /**
+     * 复制广告内容
+     *
+     * @param adContent
+     * @return
+     */
+    public PostResult copy(ConfigAdContent adContent) {
+        PostResult result = new PostResult();
+        adContent.setDdId(0);
+        int update = this.adContentMapper.insert(adContent);
+        if (update <= 0) {
+            result.setSuccessed(false);
+            result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
+        }
         cacheService.updateAllConfigAdContents();
         return result;
     }
@@ -103,8 +126,9 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
         if (delete <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
-        String res = ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         cacheService.updateAllConfigAdContents();
         return result;
     }

@@ -23,19 +23,19 @@
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 6rem;">类型</label>
+                            <label class="layui-form-label" >类型</label>
                             <div class="layui-input-inline" style="width: 14rem;" id="adType" name="adType"
                                  lay-filter="adType" autocomplete="off"></div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 6rem;">名称</label>
+                            <label class="layui-form-label" >名称</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="name" name="name">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -52,10 +52,11 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i></button>
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="update"><i class="layui-icon">&#xe642;</i>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
         </button>
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon">&#xe640;</i>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
         </button>
     </div>
 </script>
@@ -165,8 +166,10 @@
             ]],
             page: true,
             autoSort: false,
+            limit: 30,
             toolbar: '#toolbar',
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-20'
         });
 
         // 初始化数据
@@ -194,7 +197,7 @@
             $.ajax({
                 type: "get",
                 dataType: "json",
-                url: '../manage/configAdSpace/select',
+                url: '../manage/configAdSpace/selectAllSpace',
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
                         let context = {name: val.ddName, value: val.ddId, selected: false};
@@ -275,7 +278,7 @@
 
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
-      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+      style="padding: 20px 0 0 0;width: 600px;height: 550px;">
     <div class="layui-form-item">
         <label class="layui-form-label">ID</label>
         <div class="layui-input-inline">

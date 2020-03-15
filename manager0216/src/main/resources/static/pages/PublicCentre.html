@@ -22,34 +22,31 @@
                 <!-- 搜索表单 -->
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
-
-
                         <div class="layui-btn-group " style="float: left">
                             <button type="button" class="layui-btn" onclick="submitJson()">提交JSON</button>
                         </div>
                     </form>
-
                 </div>
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
-</div>
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
     </div>
 </script>
 <script type="text/javascript">
-
     function submitJson() {
         var $ = layui.jquery;
         var loading = layer.load(0, {
@@ -58,7 +55,7 @@
         $.ajax({
             url: '../manage/public/submitJson',
             type: 'get',
-            success: function (res) {
+            success: function (result) {
                 UIConfig.postMsg(result);
                 layer.close(loading);
                 if (result.successed) {
@@ -71,39 +68,40 @@
     }
 </script>
 <script>
-    let operatorurl = '../manage/public';
+    const operatorurl = '../manage/public';
+
+    /**
+     * 合集下拉选择框
+     */
+    let setSelect = xmSelect.render({
+        el: '#skipSet',
+        name: 'skipSet',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+        },
+    });
+    //合集数据
+    let gameSets = [];
+
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
             layer = layui.layer,
             laydate = layui.laydate;
         var $ = layui.$;
-        var gameSets = [];
-        var setSelect = xmSelect.render({
-            el: '#skipSet',
-            name: 'skipSet',
-            language: 'zn',
-            toolbar: {show: true},
-            data: [],
-            radio: true,
-            clickClose: true,
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
         $.ajax({
             type: "get",
             dataType: "json",
             url: '../manage/gamesetInfo',
             success: (res) => {
-
                 res.forEach(function (val, index, arr) {
-
                     let context = {name: val.ddcode + "（" + val.ddname + ")", value: val.ddcode, selected: false};
                     gameSets.push(context);
                 });
@@ -123,9 +121,9 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {type: 'numbers', title: '序号'},
+                {type: 'numbers', width: 60, title: '序号'},
                 {
-                    field: 'recommendType', width: 120, title: '推荐位类型', sort: true,
+                    field: 'recommendType', width: 220, title: '推荐位类型', align: 'center',
                     templet: (d) => {
                         if (d.recommendType === 0) {
                             return 'banner';
@@ -137,11 +135,10 @@
                             return '未知';
                     }
                 },
-                {field: 'showId', width: 120, title: '展示位顺序', sort: true},
-
-                {field: 'recommendName', width: 150, title: '推荐位名称', sort: true},
+                {field: 'showId', width: 180, title: '展示位顺序', edit: 'text', align: 'center'},
+                {field: 'recommendName', width: 220, title: '推荐位名称', edit: 'text', align: 'center'},
                 {
-                    field: 'skipType', width: 120, title: '跳转类型', sort: true,
+                    field: 'skipType', width: 180, title: '跳转类型', align: 'center',
                     templet: (d) => {
                         if (d.skipType === 1) {
                             return '合集';
@@ -152,20 +149,16 @@
                     }
                 },
                 {
-                    field: 'skipSet', width: 120, title: '跳转集合', sort: true,
+                    field: 'skipSet', width: 160, title: '跳转集合', align: 'center',
                     templet: (d) => {
                         if (d.skipSet === 0) {
                             return '无';
-                        }  else
+                        } else
                             return d.skipSet;
                     }
                 },
-                {
-                    field: 'resourceName', width: 160, title: '图片名称', sort: true
-                },
-                {
-                    field: 'detailName', width: 160, title: '详情名称', sort: true
-                }
+                {field: 'resourceName', width: 220, title: '图片名称', edit: 'text', align: 'center'},
+                {field: 'detailName', width: 220, title: '详情名称', edit: 'text', align: 'center'}
             ]],
             page: true,
             toolbar: '#toolbar',
@@ -173,39 +166,67 @@
             defaultToolbar: ['filter', 'exports']
         });
 
-
         laydate.render({
             elem: '#times',
             range: true
         });
+        //校验是否为图片格式结尾
         String.prototype.endWith = function (endStr) {
             var d = this.length - endStr.length;
             return (d >= 0 && this.lastIndexOf(endStr) == d)
-        }
+        };
         let img = ".img";
         let gif = ".gif";
         let png = ".png";
         $('#front-submit').on('click', function () {
             let content = $('#resourceName').val();
-            console.log("content:" + content)
             if (!content.endWith(img) && !content.endWith(gif) && !content.endWith(png)) {
-                alert("图片名称 请检查后缀填写")
+                alert("图片名称 请检查后缀填写");
                 return false;
             }
         });
+        //根据跳转合集显示不同输入框
         form.on('select(skipType)', function (data) {
-            console.log("data:" + data.value)
             if (data.value === "0") {
                 $("#jumpSets").addClass("layui-hide");
             } else if (data.value === "1") {
                 $('#jumpSets').removeClass('layui-hide');
             }
         });
+        table.on('edit(table-page)', function (obj) {
+            console.log(JSON.stringify(obj));
+            const value = obj.value //得到修改后的值
+                , data = obj.data //得到所在行所有键值
+                , field = obj.field; //得到字段
+            if (isNaN(obj.value)) {
+                layer.msg('操作失败，请输入大于0的数字！', {icon: 2});
+                return false;
+            } else {
+                if (Number.parseInt(obj.value) < 0) {
+                    layer.msg('操作失败，请输入大于0的数字！', {icon: 2});
+                    return false;
+                } else {
+                    const saveData = {id: data.id, showId: Number.parseInt(obj.value)};
+                    layer.msg('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + JSON.stringify(saveData));
+                    $.ajax({
+                        url: operatorurl + "/updateShowId",
+                        data: JSON.stringify(saveData),
+                        contentType: "application/json; charset=utf-8",
+                        type: 'post',
+                        dataType: "json",
+                        success: function (result) {
+                            console.log(result);
+                            UIConfig.postMsg(result);
+                        }
+                    });
+                }
+            }
+        });
     })
 </script>
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
-      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+      style="padding: 20px 0 0 0;width: 600px;height: 450px;">
     <div class="layui-form-item layui-hide">
         <label class="layui-form-label"></label>
         <div class="layui-input-inline">
@@ -213,7 +234,6 @@
                    class="layui-input layui-input">
         </div>
     </div>
-
     <div class="layui-form-item ">
         <label class="layui-form-label">展示位顺序 *</label>
         <div class="layui-input-inline">
@@ -249,7 +269,7 @@
             </select>
         </div>
     </div>
-    <div class="layui-form-item layui-hide"  id="jumpSets">
+    <div class="layui-form-item layui-hide" id="jumpSets">
         <label class="layui-form-label">跳转合集</label>
         <div class="layui-input-inline" style="width: 18rem;">
             <div id="skipSet" name="skipSet" lay-filter="skipSet"></div>
@@ -262,7 +282,6 @@
                    class="layui-input ">
         </div>
     </div>
-
     <div class="layui-form-item ">
         <label class="layui-form-label">详情名称 </label>
         <div class="layui-input-inline">

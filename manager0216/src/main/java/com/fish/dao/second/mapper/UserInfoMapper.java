@@ -8,12 +8,6 @@ import java.util.List;
 
 public interface UserInfoMapper
 {
-    int deleteByPrimaryKey(Integer id);
-
-    int insert(UserInfo record);
-
-    int insertSelective(UserInfo record);
-
     UserInfo selectByPrimaryKey(Integer id);
 
     UserInfo selectByDdUid(String uid);
@@ -22,17 +16,8 @@ public interface UserInfoMapper
 
     List<UserInfo> selectByDdName(String ddName);
 
-    int updateByPrimaryKeySelective(UserInfo record);
-
-    int updateByPrimaryKey(UserInfo record);
-
     List<UserAllInfo> selectAll();
 
-    List<UserAllInfo> selectBySQL(String SQL);
+    List<UserAllInfo> selectByRegister(@Param("ddname") String ddname, @Param("dduid") String dduid,@Param("ddoid") String ddoid);
 
-    List<UserAllInfo> selectByRegister(@Param("start") String start, @Param("end") String end);
-
-    List<UserAllInfo> selectByLogin(@Param("start") String start, @Param("end") String end);
-
-    List<UserAllInfo> selectByTime(@Param("registerstart") String registerstart, @Param("registerend") String registerend,@Param("loginstart") String loginstart, @Param("loginend") String loginend);
 }

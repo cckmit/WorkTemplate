@@ -59,6 +59,12 @@
         where ddAdType = #{ddAdType, jdbcType=INTEGER}
     </select>
 
+    <select id="selectContentBySpaceId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from config_ad_content
+        where ddId in (${contentIds, jdbcType=VARCHAR})
+    </select>
 
     <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdContent">
         insert into config_ad_content (ddAdType, ddWeight, ddImageUrl, ddTargetAppId, ddTargetAppName, ddTargetAppType,

@@ -45,95 +45,118 @@ public class PayStatisticService implements BaseService<ShowPayStatistic> {
         JSONObject search = getSearchData(parameter.getSearchData());
         //判断是否存在查询条件
         if (search == null || (search.getString("start").isEmpty() && search.getString("end").isEmpty())) {
-            //当前时间毫秒数
-            long current = System.currentTimeMillis();
-            //今天零点零分零秒的毫秒数
-            long zeroT = current / (1000 * 3600 * 24) * (1000 * 3600 * 24) - TimeZone.getDefault().getRawOffset();
-            String zero = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(zeroT);
-            String end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current);
-            String cur = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current);
-            String sql = "SELECT ddAppId FROM orders WHERE ddTrans >='" + zero + "' AND ddTrans <='" + end + "' AND ddOrder !='null' GROUP BY ddAppId";
-            List<Orders> pays = ordersMapper.selectBySQL(sql);
-            for (Orders orders : pays) {
+            //无查询条件查询
+            payStatistics = noSearchQuery();
+        } else {
+            payStatistics = searchQuery(search);
+        }
+        return payStatistics;
+    }
+
+    /**
+     * 条件查询
+     *
+     * @param search
+     * @return
+     */
+    private List<ShowPayStatistic> searchQuery(JSONObject search) {
+        List<ShowPayStatistic> payStatistics = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String start = search.getString("start");
+        String end = search.getString("end");
+        //根据搜索时间查询含有订单支付成功日期
+        List<Orders> pays = ordersMapper.selectDdTransByTime(start, end);
+        for (Orders pay : pays) {
+            Date ddtrans = pay.getDdtrans();
+            String time = format.format(ddtrans);
+            //根据日期查询当前AppId
+            List<Orders> appIds = ordersMapper.selectAppIdByTime(time);
+            for (Orders appId : appIds) {
                 ShowPayStatistic payStatistic = new ShowPayStatistic();
-                String ddappid = orders.getDdappid();
-                String payMoney = "SELECT SUM(ddPrice)AS ddPrice ,COUNT(DISTINCT ddUid)AS ddGid  FROM orders WHERE ddTrans >='" + zero + "' AND ddTrans <='" + end + "' AND ddOrder !='null' AND  ddAppId ='" + ddappid + "'";
-                Orders payMoneys = ordersMapper.selectResSingle(payMoney);
+                String ddappid = appId.getDdappid();
+                //根据日期，AppId查询全部支付金额
+                Orders payMoneys = ordersMapper.selectPayByTimeAndAppId(time, ddappid);
                 BigDecimal countPrice = payMoneys.getDdprice();
                 Integer ddgid = payMoneys.getDdgid();
                 int up = countPrice.intValue() / ddgid;
+                //支付总金额
                 payStatistic.setPayMoney(countPrice.intValue());
+                //支付用户数
                 payStatistic.setPayUsers(ddgid);
                 payStatistic.setPayUp(up + "");
                 payStatistic.setDdappid(ddappid);
                 WxConfig wxConfig = cacheService.getWxConfig(ddappid);
                 String productName = wxConfig.getProductName();
                 Integer programType = wxConfig.getProgramType();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                Date date = null;
-                try {
-                    date = simpleDateFormat.parse(cur);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
                 payStatistic.setProductName(productName);
                 payStatistic.setProductType(programType);
-                payStatistic.setDdtrans(date);
-                payStatistics.add(payStatistic);
-            }
-        } else {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String start = search.getString("start");
-            String end = search.getString("end");
-            String sql = "SELECT DATE(ddTrans) AS ddTrans FROM orders WHERE ddTrans >='" + start + "' AND ddTrans <='" + end + "' AND ddOrder !='null' GROUP BY DATE(ddTrans) ORDER BY ddTrans ASC";
-            List<Orders> pays = ordersMapper.selectBySQL(sql);
-            for (Orders pay : pays) {
-                Date ddtrans = pay.getDdtrans();
-                String time = format.format(ddtrans);
-                String payAppId = "SELECT ddAppId FROM orders WHERE DATE(ddTrans) ='" + time + "' AND ddOrder !='null' GROUP BY ddAppId";
-                List<Orders> appIds = ordersMapper.selectBySQL(payAppId);
-                for (Orders appId : appIds) {
-                    ShowPayStatistic payStatistic = new ShowPayStatistic();
-                    String ddappid = appId.getDdappid();
-                    String payMoney = "SELECT SUM(ddPrice)AS ddPrice ,COUNT(DISTINCT ddUid)AS ddGid  FROM orders WHERE DATE(ddTrans) ='" + time + "'  AND ddOrder !='null' AND  ddAppId ='" + ddappid + "'";
-                    Orders payMoneys = ordersMapper.selectResSingle(payMoney);
-                    BigDecimal countPrice = payMoneys.getDdprice();
-                    Integer ddgid = payMoneys.getDdgid();
-                    int up = countPrice.intValue() / ddgid;
-                    payStatistic.setPayMoney(countPrice.intValue());
-                    payStatistic.setPayUsers(ddgid);
-                    payStatistic.setPayUp(up + "");
-                    payStatistic.setDdappid(ddappid);
-                    WxConfig wxConfig = cacheService.getWxConfig(ddappid);
-                    String productName = wxConfig.getProductName();
-                    Integer programType = wxConfig.getProgramType();
-
-                    payStatistic.setProductName(productName);
-                    payStatistic.setProductType(programType);
-                    payStatistic.setDdtrans(ddtrans);
-                    String ddAppId = search.getString("productName");
-                    String payState = search.getString("payState");
-                    if (ddAppId != null && ddAppId.length() > 0) {
-                        if (payState != null && payState.length() > 0) {
-                            if (ddAppId.equals(ddappid) && (Integer.valueOf(payState).equals(programType))) {
-                                payStatistics.add(payStatistic);
-                            }
-                        } else {
-                            if (ddAppId.equals(ddappid)) {
-                                payStatistics.add(payStatistic);
-                            }
+                payStatistic.setDdtrans(ddtrans);
+                //根据条件过滤不符合数据
+                String ddAppId = search.getString("productName");
+                String payState = search.getString("payState");
+                if (ddAppId != null && ddAppId.length() > 0) {
+                    if (payState != null && payState.length() > 0) {
+                        if (ddAppId.equals(ddappid) && (Integer.valueOf(payState).equals(programType))) {
+                            payStatistics.add(payStatistic);
                         }
                     } else {
-                        if (payState != null && payState.length() > 0) {
-                            if (Integer.valueOf(payState).equals(programType)) {
-                                payStatistics.add(payStatistic);
-                            }
-                        } else {
+                        if (ddAppId.equals(ddappid)) {
                             payStatistics.add(payStatistic);
                         }
                     }
+                } else {
+                    if (payState != null && payState.length() > 0) {
+                        if (Integer.valueOf(payState).equals(programType)) {
+                            payStatistics.add(payStatistic);
+                        }
+                    } else {
+                        payStatistics.add(payStatistic);
+                    }
                 }
             }
+        }
+        return payStatistics;
+    }
+
+    /**
+     * 无条件查询
+     *
+     * @return
+     */
+    private List<ShowPayStatistic> noSearchQuery() {
+        List<ShowPayStatistic> payStatistics = new ArrayList<>();
+        //当前时间
+        String cur = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis());
+        //根据日期查询当前AppId
+        List<Orders> pays = ordersMapper.selectAppIdByTime(cur);
+        for (Orders orders : pays) {
+            ShowPayStatistic payStatistic = new ShowPayStatistic();
+            String ddappid = orders.getDdappid();
+            //根据日期，AppId查询全部支付金额
+            Orders payMoneys = ordersMapper.selectPayByTimeAndAppId(cur, ddappid);
+            BigDecimal countPrice = payMoneys.getDdprice();
+            Integer ddgid = payMoneys.getDdgid();
+            int up = countPrice.intValue() / ddgid;
+            //支付总金额
+            payStatistic.setPayMoney(countPrice.intValue());
+            //支付用户数
+            payStatistic.setPayUsers(ddgid);
+            payStatistic.setPayUp(up + "");
+            payStatistic.setDdappid(ddappid);
+            WxConfig wxConfig = cacheService.getWxConfig(ddappid);
+            String productName = wxConfig.getProductName();
+            Integer programType = wxConfig.getProgramType();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = null;
+            try {
+                date = simpleDateFormat.parse(cur);
+            } catch (ParseException e) {
+                LOGGER.error("PayStatisticService时间转换失败" + ", 详细信息:{}", e.getMessage());
+            }
+            payStatistic.setProductName(productName);
+            payStatistic.setProductType(programType);
+            payStatistic.setDdtrans(date);
+            payStatistics.add(payStatistic);
         }
         return payStatistics;
     }
@@ -153,10 +176,6 @@ public class PayStatisticService implements BaseService<ShowPayStatistic> {
 
     @Override
     public boolean removeIf(ShowPayStatistic showPayStatistic, JSONObject searchData) {
-        //        if (existValueFalse(searchData.getString("productName"), orders.getOrders().getDdappid()))
-        //        {
-        //            return true;
-        //        }
         return false;
     }
 }

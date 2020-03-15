@@ -5,11 +5,8 @@ import com.fish.dao.second.model.WxConfig;
 import java.util.List;
 
 public interface WxConfigMapper {
-    int deleteByPrimaryKey(String ddappid);
 
     int insert(WxConfig record);
-
-    int insertSelective(WxConfig record);
 
     WxConfig selectByPrimaryKey(String ddappid);
 

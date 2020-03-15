@@ -22,15 +22,15 @@
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
-                            <label class="layui-form-label">计费点金额</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
+                            <label class="layui-form-label" >计费点金额</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="money" name="money">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">类型</label>
-                            <div class="layui-input-inline" style="width: 12rem;">
-                                <select name="type" id="type">
+                            <label class="layui-form-label" style="width: 2rem;">类型</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <select name="type" id="type" >
                                     <option value=""> -</option>
                                     <option value="coin">金币</option>
                                     <option value="recharge">提现</option>
@@ -39,8 +39,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -58,13 +58,16 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
     </div>
 </script>
 <script>
-    let operatorurl = '../manage/globalConfig';
+    const operatorurl = '../manage/globalConfig';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
@@ -76,7 +79,7 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {type: 'numbers', title: '序号'},
+                {type: 'numbers',width: 60, title: '序号' },
                 {field: 'ddId', width: 180, title: '计费点ID', sort: true},
                 {field: 'costDesc', width: 220, title: '计费点描述', sort: true},
                 {field: 'ddCostType', width: 180, title: '计费点金额', sort: true},

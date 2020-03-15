@@ -33,8 +33,8 @@
                             <input class="layui-input" id="productName" name="productName" type="text">
                         </div>
                     </div>
-                    <button class="layui-btn" data-type="reload" id="submit">
-                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    <button class="layui-btn layui-btn-normal" data-type="reload" id="submit">
+                        <i class="layui-icon layuiadmin-button-btn"></i>查询
                     </button>
                 </div>
                 <!-- 数据表格 -->
@@ -53,7 +53,7 @@
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/productdata';
+    const operatorurl = '../manage/productdata';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,

@@ -21,11 +21,19 @@ public interface BuyPayMapper {
 
     BuyPay selectByAppIdAndDate(@Param("buyDate") String date, @Param("buyAppId") String appId);
 
+    /**
+     * 通过时间段查买量数据
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    List<BuyPay> selectBuyPayByDate(@Param("beginTime") String beginTime,@Param("endTime") String endTime);
+
     BigDecimal selectCountBuyCost(String date);
 
     List<BuyPay> selectAll();
 
-    void insertBatch(List<BuyPay> lists);
+    int insertBatch(List<BuyPay> lists);
 
     List<BuyPay> selectSearch(String SQL);
 }
