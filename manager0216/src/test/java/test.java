@@ -49,7 +49,7 @@ public class test
 //        Date date = Date.from(instant);
 //        System.out.println(date);   //sgame.qinyougames.com
         JSONObject paramMap = new JSONObject();
-        paramMap.put("name","app_config");
+        paramMap.put("name","wx_config");
         String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
         System.out.println("我是返回值 :"+res);
 //        JSONObject paramMap = new JSONObject();

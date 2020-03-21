@@ -10,8 +10,8 @@ import com.fish.utils.XwhTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+
 /**
  * 游戏  Service
  *
@@ -81,8 +81,9 @@ public class GamesService implements BaseService<ArcadeGames> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("ddcode");
     }
@@ -109,10 +110,6 @@ public class GamesService implements BaseService<ArcadeGames> {
      */
     public int flushGamesResources(JSONObject parameter) {
         int updateGames = 0;
-        System.out.println(parameter);
-        //      String url = "http://192.168.1.55:8980/persieDeamon/match/"+"{"+ddcode+"}/"+"{"+ddcode+"}.json";
-        String resHost = baseConfig.getResHost();
-        StringBuilder url = new StringBuilder(resHost + "g");
         JSONArray array = parameter.getJSONArray("gameList");
         for (int i = 0; i < array.size(); i++) {
             int gameCode = array.getInteger(i);
@@ -127,7 +124,7 @@ public class GamesService implements BaseService<ArcadeGames> {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("刷新资源图异常" + ", 详细信息:{}", e.getMessage());
             }
         }
         return updateGames;

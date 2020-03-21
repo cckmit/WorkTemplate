@@ -23,36 +23,36 @@
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
-                            <label class="layui-form-label" >类型</label>
+                            <label class="layui-form-label">类型</label>
                             <div class="layui-input-inline" style="width: 14rem;" id="adType" name="adType"
                                  lay-filter="adType" autocomplete="off"></div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" >推广AppId</label>
+                            <label class="layui-form-label">推广AppId</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="targetAppId" name="targetAppId">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" >推广App名称</label>
+                            <label class="layui-form-label">推广App名称</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="targetAppName" name="targetAppName">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" >中转AppId</label>
+                            <label class="layui-form-label">中转AppId</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="promoteAppId" name="promoteAppId">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" >中转App名称</label>
+                            <label class="layui-form-label">中转App名称</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="promoteAppName" name="promoteAppName">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -134,7 +134,7 @@
             url: operatorurl,
             cols: [[
                 {type: 'checkbox'},
-                {field: 'ddId', width: 80, title: 'ID', sort: true, align: 'right'},
+                {field: 'ddId', width: 60, title: 'ID', sort: true, align: 'right'},
                 {
                     field: 'ddAdType', width: 100, title: '类型', sort: true, align: 'center',
                     templet: (d) => {
@@ -169,6 +169,24 @@
                         return d.ddTargetAppType === 1 ? '小游戏' : '小程序';
                     }
                 },
+                {
+                    field: 'ddTargetEnvVersion',
+                    width: 140,
+                    title: '推广App版本',
+                    sort: false,
+                    align: 'center',
+                    templet: (d) => {
+                        let ddTargetEnvVersionName = '未知';
+                        if (d.ddTargetEnvVersion === 'develop') {
+                            ddTargetEnvVersionName = '开发版';
+                        } else if (d.ddTargetEnvVersion === 'trial') {
+                            ddTargetEnvVersionName = '体验版';
+                        } else if (d.ddTargetEnvVersion === 'release') {
+                            ddTargetEnvVersionName = '正式版';
+                        }
+                        return ddTargetEnvVersionName;
+                    }
+                },
                 {field: 'ddTargetAppPage', width: 140, title: '推广App页面', sort: false},
                 {field: 'ddImageUrl', width: 120, title: '图片资源', sort: false, align: 'center', templet: '#imgShow'},
                 {field: 'ddImageUrl', width: 140, title: '图片地址', sort: false, hide: true},
@@ -182,6 +200,24 @@
                     align: 'center',
                     templet: (d) => {
                         return d.ddPromoteAppType === 1 ? '小游戏' : '小程序';
+                    }
+                },
+                {
+                    field: 'ddPromoteEnvVersion',
+                    width: 140,
+                    title: '推广App版本',
+                    sort: false,
+                    align: 'center',
+                    templet: (d) => {
+                        let ddPromoteEnvVersionName = '未知';
+                        if (d.ddPromoteEnvVersion === 'develop') {
+                            ddPromoteEnvVersionName = '开发版';
+                        } else if (d.ddPromoteEnvVersion === 'trial') {
+                            ddPromoteEnvVersionName = '体验版';
+                        } else if (d.ddPromoteEnvVersion === 'release') {
+                            ddPromoteEnvVersionName = '正式版';
+                        }
+                        return ddPromoteEnvVersionName;
                     }
                 },
                 {field: 'ddPromoteAppPage', width: 140, title: '中转App页面', sort: false},
@@ -282,11 +318,21 @@
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">中转App类型</label>
+        <label class="layui-form-label">推广App类型</label>
         <div class="layui-input-inline">
             <select id="ddTargetAppType" name="ddTargetAppType" lay-verify="required">
                 <option value="1" selected>小游戏</option>
                 <option value="2">小程序</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">推广App版本</label>
+        <div class="layui-input-inline">
+            <select id="ddTargetEnvVersion" name="ddTargetEnvVersion" lay-verify="required">
+                <option value="develop">开发版</option>
+                <option value="trial">体验版</option>
+                <option value="release" selected>正式版</option>
             </select>
         </div>
     </div>
@@ -323,6 +369,16 @@
             <select id="ddPromoteAppType" name="ddPromoteAppType" lay-verify="required">
                 <option value="1" selected>小游戏</option>
                 <option value="2">小程序</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">推广App版本</label>
+        <div class="layui-input-inline">
+            <select id="ddPromoteEnvVersion" name="ddPromoteEnvVersion" lay-verify="required">
+                <option value="develop">开发版</option>
+                <option value="trial">体验版</option>
+                <option value="release" selected>正式版</option>
             </select>
         </div>
     </div>

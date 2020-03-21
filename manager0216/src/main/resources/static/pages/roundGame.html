@@ -416,7 +416,7 @@
             url: operatorurl + '?datagrid=data',
             autoSort: false,
             cols: [[
-                {type: 'checkbox'},
+                {type: 'checkbox',fixed: 'left'},
                 {field: 'ddcode', width: 120, title: '序列号', sort: true},
                 {field: 'gameName', width: 120, title: '游戏名称', sort: true},
                 {field: 'roundName', width: 120, title: '赛制名称', sort: true},
@@ -444,7 +444,7 @@
             toolbar: '#toolbar',
             limit: 30,
             defaultToolbar: ['filter', 'exports'],
-            height: 'full-20'
+            height: 'full-160'
         });
         laydate.render({
             elem: '#searchTimes',

@@ -33,6 +33,28 @@ public class DataCollect implements Serializable {
     /*** 分享率*/
     private BigDecimal shareRateCount;
 
+    /**
+     * 查询的开始和结束时间
+     */
+    public String beginTime;
+    public String endTime;
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
     public Date getWxDate() {
         return wxDate;
     }

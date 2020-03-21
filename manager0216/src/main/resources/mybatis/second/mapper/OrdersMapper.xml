@@ -42,11 +42,29 @@
         <include refid="Base_Column_List"/>
         from orders where DATE(ddTime) between '${start}' and '${end}' order by ddTime desc
     </select>
-
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from orders
     where ddId = #{ddid,jdbcType=VARCHAR}
   </delete>
+    <!--查询付费统计-->
+    <select id="queryBuyStatis" resultMap="BaseResultMap">
+        SELECT
+        DATE(o.ddTrans) AS ddTrans, SUM(o.ddPrice) AS ddPrice, COUNT(DISTINCT o.ddUid) AS payUsers,o.ddAppId AS ddAppId
+        FROM orders o, persie.wx_config w
+        <where>
+            DATE(ddTrans) BETWEEN #{start} AND #{end} AND ddOrder !='null'
+            AND o.ddAppId = w.ddAppId
+            <if test="ddappid != null and ddappid !=''">
+                AND o.ddAppId = #{ddappid}
+            </if>
+            <if test="payState != null and payState !=''">
+                AND w.program_type = #{payState}
+            </if>
+        </where>
+        GROUP BY DATE(o.ddTrans),o.ddAppId
+        ORDER BY o.ddTrans ASC
+    </select>
+
     <insert id="insert" parameterType="com.fish.dao.second.model.Orders">
     insert into orders (ddId, ddUid, ddGId, 
       ddType, ddAccount, ddOrder, 
@@ -202,16 +220,4 @@
       ddAppId = #{ddappid,jdbcType=VARCHAR}
     where ddId = #{ddid,jdbcType=VARCHAR}
   </update>
-
-    <select id="selectDdTransByTime" resultType="com.fish.dao.second.model.Orders" parameterType="java.lang.String">
-        SELECT DATE(ddTrans) AS ddTrans FROM orders WHERE ddTrans &gt;='${start}' AND ddTrans &lt;='${end}' AND
-        ddOrder !='null' GROUP BY DATE(ddTrans) ORDER BY ddTrans ASC
-    </select>
-    <select id="selectAppIdByTime" resultType="com.fish.dao.second.model.Orders" parameterType="java.lang.String">
-        SELECT ddAppId FROM orders WHERE DATE(ddTrans) ='${time}' AND ddOrder !='null' GROUP BY ddAppId
-    </select>
-    <select id="selectPayByTimeAndAppId" resultType="com.fish.dao.second.model.Orders" parameterType="java.lang.String">
-        SELECT SUM(ddPrice)AS ddPrice ,COUNT(DISTINCT ddUid)AS ddGid  FROM orders WHERE DATE(ddTrans) ='${time}' AND
-         ddOrder !='null' AND  ddAppId ='${appId}'
-    </select>
 </mapper>

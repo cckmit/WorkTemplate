@@ -19,10 +19,12 @@ public class ConfigAdContent {
     private String ddTargetAppId;
     private String ddTargetAppName;
     private int ddTargetAppType;
+    private String ddTargetEnvVersion;
     private String ddTargetAppPage;
     private String ddPromoteAppId;
     private String ddPromoteAppName;
     private int ddPromoteAppType;
+    private String ddPromoteEnvVersion;
     private String ddPromoteAppPage;
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm")
     private Date updateTime;
@@ -60,6 +62,10 @@ public class ConfigAdContent {
 
     public void setDdTargetAppType(int ddTargetAppType) { this.ddTargetAppType = ddTargetAppType; }
 
+    public String getDdTargetEnvVersion() { return ddTargetEnvVersion; }
+
+    public void setDdTargetEnvVersion(String ddTargetEnvVersion) { this.ddTargetEnvVersion = ddTargetEnvVersion; }
+
     public String getDdTargetAppPage() { return ddTargetAppPage; }
 
     public void setDdTargetAppPage(String ddTargetAppPage) { this.ddTargetAppPage = ddTargetAppPage; }
@@ -83,6 +89,10 @@ public class ConfigAdContent {
     public int getDdPromoteAppType() { return ddPromoteAppType; }
 
     public void setDdPromoteAppType(int ddPromoteAppType) { this.ddPromoteAppType = ddPromoteAppType; }
+
+    public String getDdPromoteEnvVersion() { return ddPromoteEnvVersion; }
+
+    public void setDdPromoteEnvVersion(String ddPromoteEnvVersion) { this.ddPromoteEnvVersion = ddPromoteEnvVersion; }
 
     public String getDdPromoteAppPage() { return ddPromoteAppPage; }
 

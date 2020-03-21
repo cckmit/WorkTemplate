@@ -53,7 +53,7 @@ public class AppConfigController {
         if (count == 1) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
+            result.setMsg("操作成功");
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
@@ -75,7 +75,7 @@ public class AppConfigController {
         if (count != 0) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
+            result.setMsg("操作成功");
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");

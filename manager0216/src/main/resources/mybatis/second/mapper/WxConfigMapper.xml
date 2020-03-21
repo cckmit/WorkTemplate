@@ -10,6 +10,7 @@
         <result column="ddKey" jdbcType="VARCHAR" property="ddkey"/>
         <result column="ddP12" jdbcType="VARCHAR" property="ddp12"/>
         <result column="ddShareRes" jdbcType="VARCHAR" property="ddshareres"/>
+        <result column="ddSubscribe" jdbcType="VARCHAR" property="ddSubscribe"/>
         <result column="ddAppSkipRes" jdbcType="VARCHAR" property="ddappskipres"/>
         <result column="program_type" jdbcType="INTEGER" property="programType"/>
         <result column="origin_id" jdbcType="VARCHAR" property="originId"/>
@@ -22,9 +23,10 @@
         <result column="belong_company" jdbcType="VARCHAR" property="belongCompany"/>
         <result column="clear_company" jdbcType="VARCHAR" property="clearCompany"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+
     </resultMap>
     <sql id="Base_Column_List">
-    ddAppId, ddAppSecret, product_name, ddMchId, ddP12Password, ddKey, ddP12, ddShareRes, 
+    ddAppId, ddAppSecret, product_name, ddMchId, ddP12Password, ddKey, ddP12, ddShareRes, ddSubscribe,
     ddAppSkipRes, program_type, origin_id, origin_name, add_id, account, password, code_manager, 
     manager_wechat, belong_company, clear_company, create_time
   </sql>
@@ -41,14 +43,14 @@
     <insert id="insert" parameterType="com.fish.dao.second.model.WxConfig">
     insert into wx_config (ddAppId, ddAppSecret, product_name, 
       ddMchId, ddP12Password, ddKey, 
-      ddP12, ddShareRes, ddAppSkipRes, 
+      ddP12, ddShareRes,ddSubscribe, ddAppSkipRes,
       program_type, origin_id, origin_name, 
       add_id, account, password, 
       code_manager, manager_wechat, belong_company, 
       clear_company, create_time)
     values (#{ddappid,jdbcType=VARCHAR}, #{ddappsecret,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR}, 
       #{ddmchid,jdbcType=VARCHAR}, #{ddp12password,jdbcType=VARCHAR}, #{ddkey,jdbcType=VARCHAR}, 
-      #{ddp12,jdbcType=VARCHAR}, #{ddshareres,jdbcType=VARCHAR}, #{ddappskipres,jdbcType=VARCHAR}, 
+      #{ddp12,jdbcType=VARCHAR}, #{ddshareres,jdbcType=VARCHAR}, #{ddSubscribe,jdbcType=VARCHAR}, #{ddappskipres,jdbcType=VARCHAR},
       #{programType,jdbcType=INTEGER}, #{originId,jdbcType=VARCHAR}, #{originName,jdbcType=VARCHAR}, 
       #{addId,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{codeManager,jdbcType=VARCHAR}, #{managerWechat,jdbcType=VARCHAR}, #{belongCompany,jdbcType=VARCHAR}, 
@@ -80,6 +82,9 @@
             </if>
             <if test="ddshareres != null">
                 ddShareRes,
+            </if>
+            <if test="ddSubscribe != null">
+                ddSubscribe,
             </if>
             <if test="ddappskipres != null">
                 ddAppSkipRes,
@@ -143,6 +148,9 @@
             <if test="ddshareres != null">
                 #{ddshareres,jdbcType=VARCHAR},
             </if>
+            <if test="ddSubscribe != null">
+                #{ddSubscribe,jdbcType=VARCHAR},
+            </if>
             <if test="ddappskipres != null">
                 #{ddappskipres,jdbcType=VARCHAR},
             </if>
@@ -205,6 +213,9 @@
             <if test="ddshareres != null">
                 ddShareRes = #{ddshareres,jdbcType=VARCHAR},
             </if>
+            <if test="ddSubscribe != null">
+                ddSubscribe = #{ddSubscribe,jdbcType=VARCHAR},
+            </if>
             <if test="ddappskipres != null">
                 ddAppSkipRes = #{ddappskipres,jdbcType=VARCHAR},
             </if>
@@ -253,6 +264,7 @@
       ddKey = #{ddkey,jdbcType=VARCHAR},
       ddP12 = #{ddp12,jdbcType=VARCHAR},
       ddShareRes = #{ddshareres,jdbcType=VARCHAR},
+      ddSubscribe = #{ddSubscribe,jdbcType=VARCHAR},
       ddAppSkipRes = #{ddappskipres,jdbcType=VARCHAR},
       program_type = #{programType,jdbcType=INTEGER},
       origin_id = #{originId,jdbcType=VARCHAR},
@@ -276,17 +288,17 @@
     <select id="selectAllGames" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from wx_config where  program_type = 0
+        from wx_config where program_type = 0
     </select>
     <select id="selectGamesAndPrograms" resultType="com.fish.dao.second.model.WxConfig">
         select
         <include refid="Base_Column_List"/>
-        from wx_config where  program_type != 2
+        from wx_config where program_type != 2
     </select>
     <select id="selectAllPrograms" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from wx_config where  program_type = 1
+        from wx_config where program_type = 1
     </select>
     <select id="selectByProductName" parameterType="java.lang.String" resultMap="BaseResultMap">
         select

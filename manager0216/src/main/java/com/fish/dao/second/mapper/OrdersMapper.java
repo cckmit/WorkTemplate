@@ -17,14 +17,17 @@ public interface OrdersMapper {
 
     List<Orders> selectBySQL(String sql);
 
-
     Orders selectResSingle(String str);
 
     List<Orders> selectByTimes(@Param("start") String start, @Param("end") String end);
 
-
-    List<Orders> selectDdTransByTime(String start,String end);
-
-    List<Orders> selectAppIdByTime(String time);
-    Orders selectPayByTimeAndAppId(String time,String appId);
+    /**
+     * 查询实时付费统计
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    List<Orders> queryBuyStatis(@Param("start") String start, @Param("end") String end,
+                                @Param("ddappid") String ddappid, @Param("payState") String payState);
 }

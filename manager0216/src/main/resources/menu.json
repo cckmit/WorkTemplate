@@ -11,7 +11,7 @@
         "url": "appConfig"
       },
       {
-        "name": "合集跳转配置",
+        "name": "产品合集配置",
         "url": "configProgram"
       },
       {
@@ -25,6 +25,10 @@
       {
         "name": "全局配置",
         "url": "ArcadeGlobalconfig"
+      },
+      {
+        "name": "订阅配置",
+        "url": "configSubscribe"
       },
       {
         "name": "资源上传统一接口",
@@ -70,6 +74,10 @@
     "name": "广告配置",
     "children": [
       {
+        "name": "广告合集配置",
+        "url": "configAdCombination"
+      },
+      {
         "name": "广告位置配置",
         "url": "configAdPosition"
       },
@@ -86,8 +94,8 @@
         "url": "configAdStrategy"
       },
       {
-        "name": "微信广告及策略",
-        "url": "configAdWx"
+        "name": "App广告配置",
+        "url": "configAdApp"
       },
       {
         "name": "广告类型",

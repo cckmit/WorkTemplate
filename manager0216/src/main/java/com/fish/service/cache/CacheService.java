@@ -54,6 +54,9 @@ public class CacheService {
     ConfigAdContentMapper configAdContentMapper;
     @Autowired
     ConfigAdStrategyMapper configAdStrategyMapper;
+    @Autowired
+    ConfigAdCombinationMapper configAdCombinationMapper;
+
     private Map<Integer, ArcadeGames> gamesMap = new ConcurrentHashMap<>();
 
     private Map<String, JSONObject> roundInfoMap = new ConcurrentHashMap<>();
@@ -86,6 +89,10 @@ public class CacheService {
 
     //广告策略
     private Map<Integer, ConfigAdStrategy> configAdStrategyCache = new ConcurrentHashMap<>();
+    /**
+     * 广告组合配置缓存
+     */
+    private Map<Integer, ConfigAdCombination> configAdCombinationMap = new ConcurrentHashMap<>();
 
     /**
      * 从数据库更新全部游戏参数
@@ -326,6 +333,35 @@ public class CacheService {
             }
         }
         return configAdTypes;
+    }
+
+    /**
+     * 通过ID获取广告组合配置
+     *
+     * @param id
+     * @return
+     */
+    public ConfigAdCombination getConfigAdCombination(int id) {
+        if (this.configAdCombinationMap.isEmpty()) {
+            this.configAdCombinationMapper.selectAll();
+        }
+        ConfigAdCombination configAdCombination = this.configAdCombinationMap.get(id);
+        if (configAdCombination == null) {
+            configAdCombination = this.configAdCombinationMapper.select(id);
+            if (configAdCombination != null) {
+                this.configAdCombinationMap.put(id, configAdCombination);
+            }
+        }
+        return configAdCombination;
+    }
+
+    /**
+     * 更新广告组合配置缓存
+     *
+     * @param configAdCombination
+     */
+    public void updateConfigAdCombination(ConfigAdCombination configAdCombination) {
+        this.configAdCombinationMap.put(configAdCombination.getDdId(), configAdCombination);
     }
 
     /**

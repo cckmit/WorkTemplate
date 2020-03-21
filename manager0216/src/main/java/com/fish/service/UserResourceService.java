@@ -60,6 +60,7 @@ public class UserResourceService implements BaseService<ProductData> {
         }
         return productDatas;
     }
+
     public int insert(MinitjWx record) {
 
         return minitjWxMapper.insert(record);

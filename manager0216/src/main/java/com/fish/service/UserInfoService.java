@@ -127,8 +127,11 @@ public class UserInfoService implements BaseService<UserAllInfo> {
             after.add(Calendar.DATE, 1);
             before.setTime(startTime);
             before.add(Calendar.DATE, -1);
+            //搜索结束时间在数据时间之前
             boolean before1 = userAllInfo.getDdregistertime().before(after.getTime());
+            //搜索开始时间在数据时间之后
             boolean after2 = userAllInfo.getDdregistertime().after(before.getTime());
+            //符合条件返回false展示数据
             return !(before1 && after2);
         }
         return false;

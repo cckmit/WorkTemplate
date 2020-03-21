@@ -16,6 +16,9 @@ public class ProductData {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date wxDate;
     private Integer programType;
+
+    /*** 产品数量*/
+    private Integer productCount;
     /*** 总收入*/
     private BigDecimal revenueCount;
     private String wxRegJson;
@@ -86,6 +89,36 @@ public class ProductData {
      * 展示数据-买量单价
      */
     private BigDecimal buyClickPrice;
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    /**
+     * 查询开始和结束时间
+     */
+    private String beginTime;
+    private String endTime;
+
+    public Integer getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(Integer productCount) {
+        this.productCount = productCount;
+    }
 
     public Integer getProgramType() {
         return programType;

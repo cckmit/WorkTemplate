@@ -13,7 +13,7 @@ public class ShowPayStatistic
     private String productName;
     private Integer productType;
 
-    private Integer payMoney;
+    private Double payMoney;
     private Integer payUsers;
     private String payUp;
 
@@ -43,6 +43,27 @@ public class ShowPayStatistic
     private String ddoid;
 
     private String ddappid;
+    /**
+     * 查询的开始和结束时间
+     */
+    private String beginTime;
+    private String endTime;
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
 
     public String getDdid() {
         return ddid;
@@ -140,11 +161,11 @@ public class ShowPayStatistic
         this.ddappid = ddappid;
     }
 
-    public Integer getPayMoney() {
+    public Double getPayMoney() {
         return payMoney;
     }
 
-    public void setPayMoney(Integer payMoney) {
+    public void setPayMoney(Double payMoney) {
         this.payMoney = payMoney;
     }
 

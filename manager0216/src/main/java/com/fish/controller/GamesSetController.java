@@ -74,7 +74,7 @@ public class GamesSetController {
             String ddappid = wxConfig.getDdappid();
             if (StringUtils.isNotBlank((wxConfig.getProductName()))) {
                 String productName = wxConfig.getProductName();
-                wxConfig.setJumpDirect(ddappid + "-" + productName);
+                wxConfig.setJumpDirect(productName + "-" + ddappid);
             } else {
                 wxConfig.setJumpDirect(ddappid);
             }
@@ -96,7 +96,7 @@ public class GamesSetController {
         if (count == 1) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
+            result.setMsg("操作成功");
             return result;
         } else if (count == 5) {
             result.setSuccessed(false);
@@ -124,7 +124,7 @@ public class GamesSetController {
             case 1:
                 //刷新业务表结构
                 String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
-                result.setMsg("操作成功" + res);
+                result.setMsg("操作成功");
                 break;
             case 5:
                 result.setSuccessed(false);

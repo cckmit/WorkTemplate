@@ -148,6 +148,23 @@
         where DATE(buy_date)  BETWEEN #{beginTime} and #{endTime}
     </select>
 
+    <select id="queryByPayCollectByDate" resultType="com.fish.dao.primary.model.BuyPay">
+        SELECT
+            b.buy_date AS buyDate,
+            SUM(b.buy_cost) AS buyCost
+        FROM buy_pay b
+        <if test="type !=null and type !=''">
+            , persie.wx_config w
+        </if>
+        WHERE DATE(b.buy_date) BETWEEN #{beginTime}  AND #{endTime}
+        <if test="type !=null and type !=''">
+            AND b.buy_app_id = w.ddAppId
+            AND w.program_type = #{type}
+        </if>
+        GROUP BY b.buy_date
+        ORDER BY b.buy_date
+    </select>
+
     <select id="selectSearch" resultMap="BaseResultMap">
          ${_parameter}
     </select>

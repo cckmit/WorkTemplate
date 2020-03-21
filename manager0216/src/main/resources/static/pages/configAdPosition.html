@@ -145,17 +145,14 @@
             cols: [[
                 {type: 'checkbox'},
                 {field: 'ddId', width: 80, title: 'ID', sort: true, align: 'right'},
-                {field: 'ddName', width: 160, title: '名称', sort: true, align: 'center'},
-                {field: 'adTypeNames', width: 160, title: '类型列表', sort: true},
+                {field: 'ddName', width: 240, title: '名称', sort: true, align: 'left'},
+                {field: 'adTypeNames', width: 200, title: '类型列表', sort: true},
                 {
                     field: 'ddAllowedOperation', width: 120, title: '允许运营？', sort: false, align: 'center',
                     templet: (d) => {
                         return d.ddAllowedOperation ? '是' : '否';
                     }
                 },
-                {field: 'adSpaceNames', width: 260, title: '广告位列表', sort: false},
-                {field: 'adStrategyNames', width: 120, title: '策略类型', sort: false, align: 'center'},
-                {field: 'ddStrategyValue', width: 220, title: '策略配置', sort: false},
                 {
                     field: 'ddShowWxAd', width: 120, title: '显示微信？', sort: false, align: 'center',
                     templet: (d) => {
@@ -247,29 +244,6 @@
                     data: newTypeOptionArray,
                     autoRow: true,
                 });
-
-                // 处理广告位
-                const spaceArray = data && data.ddAdSpaces ? data.ddAdSpaces.split(',') : [];
-                let newSpaceOptionArr = [];
-                spaceOptionArr.forEach((val, index, arr) => {
-                    val.selected = spaceArray.indexOf(val.value.toString()) > -1;
-                    newSpaceOptionArr.push(val);
-                });
-                spaceSelect.update({
-                    data: newSpaceOptionArr,
-                    autoRow: true,
-                });
-
-                // 处理广告策略
-                let newStrategyOptionArr = [];
-                strategyOptionArr.forEach((val, index, arr) => {
-                    val.selected = data && val.value === data.ddStrategyId;
-                    newStrategyOptionArr.push(val);
-                });
-                strategySelect.update({
-                    data: newStrategyOptionArr,
-                    autoRow: true,
-                });
                 form.val("form_table", editData);
             });
         });
@@ -302,11 +276,6 @@
         <div class="layui-input-inline">
             <input type="checkbox" checked="" name="ddAllowedOperation" lay-skin="switch" lay-text="是|否">
         </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">广告位 </label>
-        <div class="layui-input-inline"
-             id="ddAdSpaces" name="ddAdSpaces" lay-filter="ddAdSpaces" autocomplete="off"></div>
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">策略类型</label>

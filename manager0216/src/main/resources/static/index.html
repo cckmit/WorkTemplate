@@ -60,7 +60,6 @@
 				//提交
 				form.on('submit(LAY-user-login-submit)', function(obj) {
 					$.post("userLog/login", obj.field, function(result) {
-						console.log(result)
 						layer.msg(result.msg, {icon: result.code == 0 ? 1 : 2});
 						if (result.code == 0){
 							location.href = 'pages/init.html';

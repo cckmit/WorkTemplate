@@ -48,7 +48,7 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -235,28 +235,6 @@
                 }, 800);
             }
 
-        })
-        $('#submit').click(function () {
-            let beginDate = $('#beginDate').val()
-            let endDate = $('#endDate').val()
-            let ddAppId = $('#ddAppId').val()
-            console.log("beginDate :" + beginDate)
-            console.log("endDate :" + endDate)
-            console.log("productName :" + ddAppId)
-            table.reload('table-page', {
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                    , limit: 20
-                },
-                url: '../manage/productdata/search',
-                method: "post",
-                where: {
-                    "beginDate": beginDate,
-                    "endDate": endDate,
-                    "productName": productName
-                }
-                , page: {curr: 1}
-            });
         })
         form.on('submit(export)', function () {
             var excel = layui.excel;

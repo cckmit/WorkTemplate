@@ -34,26 +34,17 @@
                                 <div id="gameName" name="gameName"></div>
                             </div>
                         </div>
-
-                        <!--    <div class="layui-inline">
-                                <label class="layui-form-label">正式合集</label>
-                                <div class="layui-input-inline" style="width: 14rem;">
-                                    <input type="text" class="layui-input" id="gameCode" name="gameCode">
-                                </div>
-                            </div>-->
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
                 </div>
-
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
                 </div>
-
             </div>
         </div>
     </div>
@@ -175,16 +166,6 @@
                 }
             });
         });
-
-        form.on('select(gameType)', function (data) {
-            if (data.value == true) {
-                $("#ddcheckcode").attr("disabled", "true");
-                form.render('select');
-            } else {
-                $("#ddcheckcode").removeAttr("disabled");
-                form.render('select');//select是固定写法 不是选择器
-            }
-        });
         table.render({
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',
@@ -207,16 +188,6 @@
                     }
                 },
                 {field: 'ddappid', width: 180, title: 'AppId', sort: true},
-                /*{field: 'ddcode', width: 180, title: '正式合集', sort: true,
-                    templet: (d) => {
-                        if (d.ddcode != null && d.ddcode != 0){
-                        return  "("+d.ddcode + "-" + d.codename+")";
-                        }else {
-                            return "";
-                        }
-                        //     return "开启";
-                        // return "关闭";
-                    }},*/
                 {field: 'ddcheckversion', width: 120, title: '审核版本号', sort: true},
                 {
                     field: 'ddcheckcode', width: 180, title: '审核合集', sort: true,
@@ -260,13 +231,10 @@
             const queryData = {id: type === 'new' ? 0 : editData.ddappid};
             console.log("editData.ddappid:" + editData.ddappid);
             $.get(operatorurl + '/get', queryData, function (data) {
-                console.log(data);
-                console.log("ddcheckcode" + data.ddcheckcode);
-                // 处理广告类型
+                // 处理合集类型
                 let newGameSetsOptionArray = [];
                 gameSetsOptionArr.forEach((val, index, arr) => {
-                    console.log("val.value-" + val.value + ",ddcheckcode-" + data.ddcode);
-                    val.selected = data && val.value === data.ddcode;
+                    val.selected = data && val.value === data.ddcheckcode;
                     newGameSetsOptionArray.push(val);
                 });
                 gameSetsSelect.update({
@@ -306,32 +274,20 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">小程序类型</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddprogram" name="ddprogram" autocomplete="off"
-                   class="layui-input layui-disabled" disabled lay-filter="gameType">
+            <select name="ddprogram" lay-filter="" class="layui-input layui-disabled" disabled>
+                <option value=1>小程序</option>
+                <option value=0>小游戏</option>
+                <option value=2>公众号</option>
+            </select>
         </div>
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">审核版本</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddcheckversion" name="ddcheckversion" autocomplete="off"
+            <input type="text" id="ddcheckversion" name="ddcheckversion"  autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>
-    <!--    <div class="layui-form-item ">
-            <label class="layui-form-label">小程序链接</label>
-            <div class="layui-input-inline">
-                <input type="text" id="ddgameurl" name="ddgameurl"  autocomplete="off"
-                       class="layui-input layui-input">
-            </div>
-        </div>-->
-
-    <!--    <div class="layui-form-item ">
-            <label class="layui-form-label">正式合集</label>
-            <select name="ddcode" id="ddcode">
-                &lt;!&ndash;            <option value="1001">(1001-合集)</option>&ndash;&gt;
-                &lt;!&ndash;            <option value="8000">(8000-合集)</option>&ndash;&gt;
-            </select>
-        </div>-->
     <div class="layui-form-item ">
         <label class="layui-form-label">审核合集</label>
         <div class="layui-input-inline"

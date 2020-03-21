@@ -5,19 +5,16 @@
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="ddCode" property="ddcode" jdbcType="INTEGER"/>
         <result column="ddName" property="ddname" jdbcType="VARCHAR"/>
-
         <result column="ddSingleCoin" property="ddsinglecoin" jdbcType="INTEGER"/>
         <result column="ddMultiCoin" property="ddmulticoin" jdbcType="INTEGER"/>
         <result column="ddMaxPlayer" property="ddmaxplayer" jdbcType="INTEGER"/>
         <result column="ddIsPk" property="ddispk" jdbcType="INTEGER"/>
         <result column="ddAvailable" property="ddavailable" jdbcType="INTEGER"/>
         <result column="ddTitle" property="ddtitle" jdbcType="VARCHAR"/>
-
         <result column="ddRoleCount" property="ddrolecount" jdbcType="INTEGER"/>
         <result column="ddRocker" property="ddrocker" jdbcType="INTEGER"/>
         <result column="ddEngine" property="ddengine" jdbcType="INTEGER"/>
         <result column="ddResolution" property="ddresolution" jdbcType="INTEGER"/>
-
         <result column="ddAutoSelect" property="ddautoselect" jdbcType="BIT"/>
         <result column="ddFriendUrl" property="ddfriendurl" jdbcType="VARCHAR"/>
         <result column="ddShareRes" property="ddshareres" jdbcType="VARCHAR"/>
@@ -38,12 +35,6 @@
         <include refid="Base_Column_List"/>
         from games
     </select>
-    <select id="selectByGameName" resultType="com.fish.dao.primary.model.ArcadeGames">
-        select
-        <include refid="Base_Column_List"/>
-        from games where ddName = #{ddname,jdbcType=VARCHAR}
-    </select>
-
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from games
     where id = #{id,jdbcType=INTEGER}
@@ -72,7 +63,6 @@
             <if test="ddcode != null">
                 ddCode,
             </if>
-
             <if test="ddname != null">
                 ddName,
             </if>
@@ -94,10 +84,6 @@
             <if test="ddtitle != null">
                 ddTitle,
             </if>
-
-
-
-
             <if test="ddrolecount != null">
                 ddRoleCount,
             </if>
@@ -110,7 +96,6 @@
             <if test="ddresolution != null">
                 ddResolution,
             </if>
-
             <if test="ddautoselect != null">
                 ddAutoSelect,
             </if>
@@ -128,7 +113,6 @@
             <if test="ddcode != null">
                 #{ddcode,jdbcType=INTEGER},
             </if>
-
             <if test="ddname != null">
                 #{ddname,jdbcType=VARCHAR},
             </if>
@@ -150,11 +134,6 @@
             <if test="ddtitle != null">
                 #{ddtitle,jdbcType=VARCHAR},
             </if>
-
-
-
-
-
             <if test="ddrolecount != null">
                 #{ddrolecount,jdbcType=INTEGER},
             </if>
@@ -188,7 +167,6 @@
             <if test="ddname != null">
                 ddName= #{ddname,jdbcType=VARCHAR},
             </if>
-
             <if test="ddsinglecoin != null">
                 ddSingleCoin = #{ddsinglecoin,jdbcType=INTEGER},
             </if>
@@ -208,9 +186,6 @@
             <if test="ddtitle != null">
                 ddTitle = #{ddtitle,jdbcType=VARCHAR},
             </if>
-
-
-
 
             <if test="ddrolecount != null">
                 ddRoleCount = #{ddrolecount,jdbcType=INTEGER},
@@ -240,23 +215,17 @@
     <update id="updateByPrimaryKey" parameterType="com.fish.dao.primary.model.ArcadeGames">
     update games
     set ddCode = #{ddcode,jdbcType=INTEGER},
-
-       ddName = #{ddname,jdbcType=VARCHAR},
+      ddName = #{ddname,jdbcType=VARCHAR},
       ddSingleCoin = #{ddsinglecoin,jdbcType=INTEGER},
       ddMultiCoin = #{ddmulticoin,jdbcType=INTEGER},
       ddMaxPlayer = #{ddmaxplayer,jdbcType=INTEGER},
       ddIsPk = #{ddispk,jdbcType=INTEGER},
       ddAvailable = #{ddavailable,jdbcType=INTEGER},
        ddTitle = #{ddtitle,jdbcType=VARCHAR},
-
-
-
-
       ddRoleCount = #{ddrolecount,jdbcType=INTEGER},
       ddRocker = #{ddrocker,jdbcType=INTEGER},
       ddEngine = #{ddengine,jdbcType=INTEGER},
       ddResolution = #{ddresolution,jdbcType=INTEGER},
-
       ddAutoSelect = #{ddautoselect,jdbcType=BIT},
       ddFriendUrl = #{ddfriendurl,jdbcType=VARCHAR},
     ddShareRes = #{ddshareres,jdbcType=VARCHAR}
@@ -277,7 +246,7 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateSQL" parameterType="java.lang.String" >
+    <update id="updateSQL" parameterType="java.lang.String">
         ${_parameter}
     </update>
     <insert id="insertGameInfo" parameterType="com.fish.dao.primary.model.ArcadeGames">
@@ -312,10 +281,6 @@
             <if test="ddtitle != null">
                 ddTitle,
             </if>
-
-
-
-
             <if test="ddrolecount != null">
                 ddRoleCount,
             </if>
@@ -346,7 +311,6 @@
             <if test="ddcode != null">
                 #{ddcode,jdbcType=INTEGER},
             </if>
-
             <if test="ddname != null">
                 #{ddname,jdbcType=VARCHAR},
             </if>
@@ -368,10 +332,6 @@
             <if test="ddtitle != null">
                 #{ddtitle,jdbcType=VARCHAR},
             </if>
-
-
-
-
             <if test="ddrolecount != null">
                 #{ddrolecount,jdbcType=INTEGER},
             </if>
@@ -384,7 +344,6 @@
             <if test="ddresolution != null">
                 #{ddresolution,jdbcType=INTEGER},
             </if>
-
             <if test="ddautoselect != null">
                 #{ddautoselect,jdbcType=BIT},
             </if>

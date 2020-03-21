@@ -41,8 +41,8 @@ public class ServletListener implements ServletContextListener
         DateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
         long initDelay = getTimeMillis("15:15:00") - System.currentTimeMillis();
         initDelay = initDelay > 0 ? initDelay : oneDay + initDelay;
-        executorService.scheduleAtFixedRate(updateDataCollect, initDelay, oneDay, TimeUnit.MILLISECONDS);
-        System.out.println("执行汇总数据刷新 时间："+dateFormat.format(System.currentTimeMillis()));
+      //  executorService.scheduleAtFixedRate(updateDataCollect, initDelay, oneDay, TimeUnit.MILLISECONDS);
+      //  System.out.println("执行汇总数据刷新 时间："+dateFormat.format(System.currentTimeMillis()));
     }
 
     private static long getTimeMillis(String time)

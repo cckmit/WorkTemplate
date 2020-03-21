@@ -12,6 +12,7 @@
     <script src="../layuiadmin/layui/layui.js"></script>
     <script src="../layuiadmin/modules/operation.js"></script>
     <script src="../layuiadmin/xm-select.js"></script>
+
     <script></script>
 </head>
 <body>
@@ -35,7 +36,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-normal" lay-filter="game-search" lay-submit="">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-filter="front-search"
+                                    lay-submit="">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -43,7 +45,7 @@
                 </div>
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
-                    <table class="layui-hide" id="table-game" lay-filter="table-game"></table>
+                    <table class="layui-hide" id="table-page" lay-filter="table-page"></table>
                 </div>
             </div>
         </div>
@@ -63,45 +65,32 @@
 </script>
 <script>
     const operatorurl = '../manage/gameset';
+
+    let boxSelect = xmSelect.render({
+        el: '#select',
+        name: 'select',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+            console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+        },
+    });
+    //合集数据
+    let allGameSets = [];
+    //合集下拉框数据
+    var selectData = [];
     layui.use(['table', 'laydate', 'form', 'layer', 'multiSelect', 'index'], function (arrayLike) {
         var table = layui.table,
             form = layui.form,
             layer = layui.layer,
             $ = layui.jquery,
             laydate = layui.laydate;
-        var allGameSets = [];
-        let jumpArr = [];
-        var boxSelect = xmSelect.render({
-            el: '#gameBox',
-            name: 'select',
-            language: 'zn',
-            toolbar: {show: true},
-            data: [],
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
-        var jumpSelect = xmSelect.render({
-            el: '#jumpDirect',
-            language: 'zn',
-            toolbar: {show: true},
-            name: 'jumpDirect',
-            data: [],
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            max: 1,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log("搜索完毕, 搜索关键词:" + val + "过滤数据: " + list.length + "}个");
-            },
-        });
         $(() => {
             $.ajax({
                 type: "get",
@@ -111,15 +100,14 @@
                     res.forEach(function (val, index, arr) {
                         allGameSets.push(val);
                     });
-                    let data = [];
                     for (let i = 0; i < allGameSets.length; i++) {
                         let val = allGameSets[i];
                         let context = {name: val.title, value: val.value, selected: false};
-                        data.push(context);
+                        selectData.push(context);
                     }
                     boxSelect.update(
                         {
-                            data: data,
+                            data: selectData,
                             autoRow: true,
                         }
                     );
@@ -128,267 +116,24 @@
                     alert("查询失败")
                 }
             },);
-            $.ajax({
-                type: "get",
-                dataType: "json",
-                url: '../manage/gameset/jumpdirect',
-                success: (res) => {
-
-                    res.forEach(function (val, index, arr) {
-                        // console.log("val.ddappid :"+val.ddappid);
-                        let context = {name: val.jumpDirect, value: val.jumpDirect, selected: false};
-                        jumpArr.push(context);
-                    });
-                    jumpSelect.update(
-                        {
-                            data: jumpArr,
-                            autoRow: true,
-                        }
-                    );
-                },
-                error: function () {
-                    alert("查询失败")
-                }
-            });
         });
 
-        // 表格重载
-        function table_reload(where_data) {
-            if (where_data instanceof Object) {
-                where_data = JSON.stringify(where_data);
-            }
-            table.reload('table-game', {
-                where: { //设定异步数据接口的额外参数，任意设
-                    'searchData': where_data,
-                },
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                }
-            });
-        }
-
-        table.on('toolbar(table-game)', function (obj) {
-            var checkStatus = table.checkStatus(obj.config.id);
-            var l = checkStatus.data.length;
-            var row = checkStatus.data[0];
-
-            switch (obj.event) {
-                case 'add':
-                    jumpSelect.update(
-                        {
-                            data: jumpArr,
-                            autoRow: true,
-                        }
-                    );
-                    add();
-                    break;
-                case 'delete':
-                    if (l == 0) {
-                        layer.msg('请选择一行');
-                    } else if (l > 1) {
-                        layer.msg('只能删除一行哦');
-                    } else {
-                        deleteRow(row);
-                    }
-                    break;
-                case 'update':
-                    if (l == 0) {
-                        layer.msg('请选择一行');
-                    } else if (l > 1) {
-                        layer.msg('只能选择一行');
-                    } else {
-                        layer.msg('编辑');
-                        var keys = row.gameBox;
-                        // console.log('default:', keys, allGameSets);
-                        let data = [];
-                        for (let i = 0; i < allGameSets.length; i++) {
-                            let val = allGameSets[i];
-                            // console.log('default select:', keys.indexOf(val.value));
-                            let context = {
-                                name: val.title,
-                                value: val.value,
-                                selected: keys.indexOf(val.value + "") >= 0
-                            };
-                            data.push(context);
-                        }
-                        var direct = row.ddappid;
-                        let directData = [];
-                        for (let i = 0; i < jumpArr.length; i++) {
-                            let a = jumpArr[i];
-                            var result = (direct == a.value);
-                            //console.log(" === a --："+result+"-"+typeof (result))
-                            let context = {
-                                name: a.value,
-                                value: a.value,
-                                selected: result
-                            };
-                            directData.push(context);
-                        }
-                        jumpSelect.update(
-                            {
-                                data: directData,
-                                autoRow: true,
-                            }
-                        );
-                        boxSelect.update(
-                            {
-                                data: data,
-                                autoRow: true,
-                            }
-                        );
-                        update();
-                    }
-                    break;
-            }
-
-            // 修改
-            function update() {
-                $('#form_table').removeClass('layui-hide').addClass('layui-show');
-                layui.layer.open({
-                    type: 1,
-                    title: '编辑',
-                    content: $('#form_table'),
-                    maxmin: true,
-                    shade: 0,
-                    area: ['auto', '550px'],
-                    btn: ['确定', '取消'],
-
-                    success: (layero, index) => {
-                        // id
-                        let checkStatus = table.checkStatus('table-game');
-                        let data = UIConfig.formatData(checkStatus.data[0]);
-                        form.val("form_table", data);
-
-                    },
-                    yes: (index, layero) => {
-                        // 提交监听
-                        form.on('submit(front-submit)', function (data) {
-                            var field = UIConfig.sumbitFormatData(data); //获取提交的字段
-                            var url = operatorurl + "/edit";
-                            $.ajax({
-                                url: url,
-                                data: field,
-                                contentType: "application/json; charset=utf-8",
-                                type: 'post',
-                                dataType: "json",
-                                success: function (result) {
-                                    UIConfig.postMsg(result);
-                                    if (result.successed) {
-                                        layer.close(index);
-                                    }
-                                }
-                            });
-                        });
-
-                        $('#front-submit').trigger('click');
-                    },
-                    end: () => {
-
-                        $("#form_table")[0].reset();
-                        $('#form_table').removeClass('layui-show').addClass('layui-hide');
-                        table.reload('table-game');
-                        return false;
-                    }
-                });
-            }
-
-            // 新增
-            function add() {
-                // 表单元素
-                $('#form_table').removeClass('layui-hide').addClass('layui-show');
-                let data = [];
-                for (let i = 0; i < allGameSets.length; i++) {
-                    let val = allGameSets[i];
-                    let context = {name: val.title, value: val.value, selected: false};
-                    data.push(context);
-                }
-                // console.log('data', data);
-                boxSelect.update(
-                    {
-                        data: data,
-                        autoRow: true,
-                    }
-                );
-                layui.layer.open({
-                    type: 1,
-                    content: $('#form_table'),
-                    title: '添加',
-                    maxmin: true,
-                    area: ['auto', '550px'],
-                    btn: ['确定', '取消'],
-                    success: function (layero, index) {
-                        var checkStatus = table.checkStatus('#table-game');
-                        let data = UIConfig.formatData(checkStatus.data[0]);
-                        form.val("form_table", data);
-                    },
-                    yes: function (index, layero) {
-                        // 提交监听
-                        form.on('submit(front-submit)', data => {
-                            var field = UIConfig.sumbitFormatData(data); //获取提交的字段
-                            var url = operatorurl + "/new";
-                            $.ajax({
-                                url: url,
-                                data: field,
-                                contentType: "application/json; charset=utf-8",
-                                type: 'post',
-                                dataType: "json",
-                                success: function (result) {
-                                    UIConfig.postMsg(result);
-                                    if (result.successed) {
-                                        layer.close(index);
-                                    }
-                                }
-                            });
-
-                        });
-
-                        $('#front-submit').trigger('click');
-                    },
-                    end: function () {
-                        $("#form_table")[0].reset();
-                        $('#form_table').removeClass('layui-show').addClass('layui-hide');
-                        return false;
-                    }
-                });
-            }
-
-            // 删除行
-            function deleteRow(row) {
-                layer.confirm('真的删除行么', function (index) {
-                    //向服务端发送删除指令
-                    var url = operatorurl + "/delete";
-                    $.ajax({
-                        url: url,
-                        data: JSON.stringify(row),
-                        contentType: "application/json; charset=utf-8",
-                        type: 'post',
-                        dataType: "json",
-                        success: function (result) {
-                            UIConfig.postMsg(result);
-                            if (result.successed) {
-                                layer.close(index);
-                            }
-                        }
-                    });
-                });
-            }
-        });
         table.render({
-            elem: '#table-game',
+            elem: '#table-page',
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-
-                {field: 'ddcode', width: '20%', title: '游戏集代号', sort: true},
+                {field: 'ddcode', width: 250, title: '游戏集代号', sort: true},
                 {
-                    field: 'ddstate', width: '20%', title: '合集类型', sort: true, templet: (d) => {
+                    field: 'ddstate', width: 250, title: '合集类型', sort: true,
+                    templet: (d) => {
                         if (d.ddstate == true)
                             return "壳子模式";
                         return "游戏模式";
                     }
                 },
-                {field: 'ddname', width: '25%', title: '游戏合集名称', sort: true},
-                {field: 'ddcontent512a', width: '25%', title: '游戏合集内容', sort: true}
+                {field: 'ddname', width: 300, title: '游戏合集名称', sort: true},
+                {field: 'ddcontent512a', width: 350, title: '游戏合集内容', sort: true}
             ]],
             page: true,
             limit: 20,
@@ -399,14 +144,43 @@
             elem: '#times',
             range: true
         });
-        // 搜索查询
-        form.on('submit(game-search)', function (data) {
-            var field = data.field;
-            //执行重载
-            table_reload(field);
-            return false;
-        });
     })
+
+    /**
+     * 渲染部分下拉框选项
+     * @param editData
+     * @param type
+     */
+    function privateLoadEditData(editData, type) {
+        layui.use(['form', 'layer'], () => {
+            const $ = layui.$, form = layui.form, layer = layui.layer;
+            const queryData = {id: type === 'new' ? 0 : editData.ddappid};
+            console.log("editData.gameBox---" + editData.gameBox)
+            // 编辑游戏合集内容
+            if (type !== 'new') {
+                let newGameSets = [];
+                for (let i = 0; i < allGameSets.length; i++) {
+                    let val = allGameSets[i];
+                    let context = {
+                        name: val.title,
+                        value: val.value,
+                        selected: editData.select.indexOf(val.value.toString()) > -1
+                    };
+                    newGameSets.push(context);
+                }
+                boxSelect.update({
+                    data: newGameSets,
+                    autoRow: true,
+                });
+            } else {
+                boxSelect.update({
+                    data: selectData,
+                    autoRow: true,
+                });
+            }
+            form.val("form_table", editData);
+        });
+    }
 </script>
 <!-- 表单元素 -->
 <form class="layui-form layui-hide" id="form_table" lay-filter="form_table"
@@ -428,9 +202,9 @@
     <div class=" layui-form-item">
         <label class="layui-form-label">合集类型 *</label>
         <div class="layui-input-inline">
-            <select id="ddState" lay-filter="collect" name="ddstate">
-                <option selected="selected" value="false">游戏模式</option>
-                <option value="true">壳子模式</option>
+            <select id="ddstate" lay-filter="" name="ddstate">
+                <option value=0>游戏模式</option>
+                <option value=1>壳子模式</option>
             </select>
         </div>
     </div>
@@ -444,7 +218,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">游戏合集新增 *</label>
         <div class="layui-input-inline">
-            <div id="gameBox" lay-filter="heji" name="gameBox"></div>
+            <div id="select" name="select"></div>
         </div>
     </div>
     <div class="layui-form-item ">
@@ -452,12 +226,6 @@
         <div class="layui-input-inline">
             <input autocomplete="off" class="layui-input layui-input" id="ddarrange512a" name="ddarrange512a"
                    type="text">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">跳转关系 </label>
-        <div class="layui-input-inline">
-            <div id="jumpDirect" lay-filter="jumpDirect" name="jumpDirect"></div>
         </div>
     </div>
     <div class="layui-form-item layui-hide" style="text-align:center;">

@@ -108,5 +108,17 @@ public class ConfigAdSpaceController {
         return this.adSpaceService.selectContentBySpaceId(spaceId);
     }
 
+    /**
+     * 通过广告位ID查询一个类型的广告内容
+     *
+     * @param spaceId
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdSpace/selectTypeContentBySpaceId")
+    public List<ConfigAdContent> selectTypeContentBySpaceId(int spaceId) {
+        return this.adSpaceService.selectTypeContentBySpaceId(spaceId);
+    }
+
 
 }

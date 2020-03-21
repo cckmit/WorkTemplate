@@ -61,8 +61,8 @@
                                  lay-filter="adContent" autocomplete="off"></div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin layui-btn-sm" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -82,7 +82,7 @@
     // 广告位置数组
     let positionOptionArr = [];
     /**
-     * 级联查询框-广告位置
+     *  广告位置
      */
     let searchPositionSelect = xmSelect.render({
         el: '#adPosition',
@@ -93,21 +93,12 @@
         clickClose: true,
         autoRow: true,
         delay: 500,
-        layVerify: 'required',
-        on: function (data) {
-            if (data && data.arr && data.arr.length > 0) {
-                changeSpaceSelect(data.arr[0].value);
-            } else {
-                searchSpaceSelect.update({
-                    data: [],
-                    autoRow: true,
-                });
-            }
-        }
+        layVerify: 'required'
     });
-
+    // 广告位数组
+    let spaceOptionArr = [];
     /**
-     * 级联查询框-广告位
+     *  广告位
      */
     let searchSpaceSelect = xmSelect.render({
         el: '#adSpace',
@@ -118,20 +109,12 @@
         clickClose: true,
         autoRow: true,
         delay: 500,
-        layVerify: 'required',
-        on: function (data) {
-            if (data && data.arr && data.arr.length > 0) {
-                changeContentSelect(data.arr[0].value);
-            } else {
-                searchContentSelect.update({
-                    data: [],
-                    autoRow: true,
-                });
-            }
-        }
+        layVerify: 'required'
     });
+    // 广告内容数组
+    let contentOptionArr = [];
     /**
-     * 级联查询框-广告内容
+     *  广告内容
      */
     let searchContentSelect = xmSelect.render({
         el: '#adContent',
@@ -154,10 +137,10 @@
             elem: '#table-page',
             url: operatorurl,
             cols: [[
-                {type: 'checkbox'},
-                {field: 'dateNum', width: 120, title: '日期', sort: true, align: 'center'},
+                {type: 'numbers', title: '序号'},
+                {field: 'hourNum', width: 120, title: '日期', sort: true, align: 'center'},
                 {field: 'appId', width: 180, title: 'appId', sort: true, align: 'left'},
-                {field: 'appId', width: 180, title: 'app名称', sort: true, align: 'left'},
+                {field: 'appName', width: 140, title: '产品名称', sort: true, align: 'left'},
                 {field: 'version', width: 100, title: '版本', sort: true, align: 'center'},
                 {field: 'positionName', width: 140, title: '广告位置', sort: false, align: 'left'},
                 {field: 'spaceName', width: 140, title: '广告位', sort: false, align: 'left'},
@@ -199,53 +182,48 @@
                     });
                 },
                 error: function () {
-                    layer.msg("广告类型列表查询失败，请联系管理员！", {icon: 2});
+                    layer.msg("广告位置列表查询失败，请联系管理员！", {icon: 2});
+                }
+            });
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdSpace/selectAllSpace',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddId + ' - ' + val.ddName, value: val.ddId, selected: false};
+                        spaceOptionArr.push(context);
+                    });
+                    searchSpaceSelect.update({
+                        data: spaceOptionArr,
+                        autoRow: true,
+                    });
+                },
+                error: function () {
+                    layer.msg("广告位列表查询失败，请联系管理员！", {icon: 2});
+                }
+            });
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdContent/select',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddId + ' - ' + val.ddTargetAppName, value: val.ddId, selected: false};
+                        contentOptionArr.push(context);
+                    });
+                    searchContentSelect.update({
+                        data: contentOptionArr,
+                        autoRow: true,
+                    });
+                },
+                error: function () {
+                    layer.msg("广告内容列表查询失败，请联系管理员！", {icon: 2});
                 }
             });
         });
     });
 
-    /**
-     * 根据广告位置查询相关联广告位
-     * @param positionId
-     */
-    function changeSpaceSelect(positionId) {
-        layui.use('form', () => {
-            // 处理广告内容
-            layui.$.get('../manage/configAdPosition/selectSpaceByPositionId', {"positionId": positionId}, (data) => {
-                let spaceOptionArr = [];
-                data && data.forEach((val, index, arr) => {
-                    let context = {name: val.ddId + ' - ' + val.ddName, value: val.ddId, selected: index === 0};
-                    spaceOptionArr.push(context);
-                });
-                searchSpaceSelect.update({
-                    data: spaceOptionArr,
-                    autoRow: true,
-                });
-            });
-        });
-    }
-
-    function changeContentSelect(spaceId) {
-        layui.use('form', () => {
-            // 处理广告内容
-            layui.$.get('../manage/configAdSpace/selectContentBySpaceId', {"spaceId": spaceId}, (data) => {
-                let contentOptionArr = [];
-                data && data.forEach((val, index, arr) => {
-                    let context = {
-                        name: val.ddId + ' - ' + val.ddTargetAppName,
-                        value: val.ddId,
-                        selected: index === 0
-                    };
-                    contentOptionArr.push(context);
-                });
-                searchContentSelect.update({
-                    data: contentOptionArr,
-                    autoRow: true,
-                });
-            });
-        });
-    }
 </script>
 </body>
 </html>

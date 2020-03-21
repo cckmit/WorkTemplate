@@ -8,7 +8,7 @@ package com.fish.dao.second.model;
  */
 public class AdValue {
 
-    private int dateNum;
+    private int hourNum;
     private String appId;
     private String version;
     private int adPositionId;
@@ -34,14 +34,14 @@ public class AdValue {
      * 广告内容
      */
     private String contentName;
+    /**
+     * app名称
+     */
+    private String appName;
 
-    public int getDateNum() {
-        return dateNum;
-    }
+    public int getHourNum() { return hourNum; }
 
-    public void setDateNum(int dateNum) {
-        this.dateNum = dateNum;
-    }
+    public void setHourNum(int hourNum) { this.hourNum = hourNum; }
 
     public String getAppId() {
         return appId;
@@ -153,5 +153,13 @@ public class AdValue {
 
     public void setContentName(String contentName) {
         this.contentName = contentName;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 }

@@ -10,7 +10,6 @@ import com.fish.dao.primary.model.PublicCentre;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
 import com.fish.service.cache.CacheService;
-import com.fish.utils.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,7 +80,7 @@ public class PublicCentreService implements BaseService<PublicCentre> {
                     new FileReader(PublicCentreService.class.getResource("/").getPath() + "config.json"));
             // 输出新的json文件
             BufferedWriter bw = new BufferedWriter(
-                    new FileWriter("/data/tomcat8/apache-public/webapps/public/mui_wxoa_debug/config.json"));
+                    new FileWriter("/data/tomcat8/apache-public/webapps/public/mui_wxoa/config.json"));
             String ws = null;
             StringBuilder sb = new StringBuilder();
             String line;
@@ -116,22 +115,25 @@ public class PublicCentreService implements BaseService<PublicCentre> {
             String img = publicGame.getResourceName();
             ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(skipSet);
             String content = arcadeGameSet.getDdcontent512a();
-            String name = arcadeGameSet.getDdname();
-            ArcadeGames game = cacheService.getGames(Integer.valueOf(content));
-            Integer isPk = game.getDdispk();
-            if (isPk == 1) {
-                flag = "pk";
-            } else {
-                flag = "team";
+            String[] splitGame = content.split("#");
+            for (String gameCode : splitGame) {
+                ArcadeGames game = cacheService.getGames(Integer.parseInt(gameCode));
+                String name = game.getDdname();
+                Integer isPk = game.getDdispk();
+                if (isPk == 1) {
+                    flag = "pk";
+                } else {
+                    flag = "team";
+                }
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("gameid", Integer.parseInt(gameCode));
+                jsonObject.put("icon", "images/game/" + img);
+                jsonObject.put("name", name);
+                jsonObject.put("desc", name);
+                jsonObject.put("flag", flag);
+                jsonObject.put("checkVersion", "");
+                games.add(jsonObject);
             }
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("gameid", Integer.valueOf(content));
-            jsonObject.put("icon", "images/game/" + img);
-            jsonObject.put("name", name);
-            jsonObject.put("desc", name);
-            jsonObject.put("flag", flag);
-            jsonObject.put("checkVersion", "");
-            games.add(jsonObject);
         }
         return games;
     }

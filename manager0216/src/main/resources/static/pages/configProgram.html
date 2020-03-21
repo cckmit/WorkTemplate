@@ -29,7 +29,7 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -60,7 +60,7 @@
 <script>
     const operatorurl = '../manage/configProgram';
     /**
-     * 产品名称查询框
+     * 产品名称搜索框
      */
     let appSelect = xmSelect.render({
         el: '#appId',
@@ -76,6 +76,7 @@
         filterDone: function (val, list) {
         }
     });
+
     //产品名称数组
     let appNames = [];
     /**
@@ -97,15 +98,56 @@
     });
     //合集数组
     let gameSetsOptionArr = [];
-
-
+    /**
+     * 产品名称编辑框
+     */
+    var appNameSelect = xmSelect.render({
+        el: '#ddAppId',
+        disabled: true,
+        name: 'ddAppId',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+        },
+        on: function (data) {
+            //change, 此次选择变化的数据,数组
+            let item = data.change[0];
+            if (item != null) {
+                layui.jquery.get('../manage/wxconfig/get?ddAppId=' + item.value, function (data) {
+                    let typeName = "";
+                    switch (data.programType) {
+                        case 0:
+                            typeName = '小游戏';
+                            break;
+                        case 1:
+                            typeName = '小程序';
+                            break;
+                        case 2:
+                            typeName = '公众号';
+                            break;
+                    }
+                    layui.jquery('#type').val(typeName);
+                })
+            }
+        }
+    });
+    //产品名称数组
+    var appIdNames = [];
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         let table = layui.table,
             form = layui.form,
             layer = layui.layer,
             laydate = layui.laydate;
         let $ = layui.$;
-        //加载组建数据
+
+        //加载组件数据
         $(() => {
             $.ajax({
                 type: "get",
@@ -166,6 +208,26 @@
                     alert("查询失败")
                 }
             });
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/roundmatch/appname',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.productName + "-" + val.ddappid, value: val.ddappid, selected: false};
+                        appIdNames.push(context);
+                    });
+                    appNameSelect.update(
+                        {
+                            data: appIdNames,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            });
         });
         table.render({
             elem: '#table-page',
@@ -174,7 +236,7 @@
                 {type: 'checkbox'},
                 {field: 'productName', width: 120, title: '产品名称', sort: true},
                 {field: 'ddAppId', width: 180, title: 'AppId', sort: true},
-                {field: 'ddMinVer', width: 180, title: 'ddMinVer', sort: true},
+                {field: 'ddMinVer', width: 180, title: '最低版本号', sort: true},
                 {
                     field: 'programType', width: 150, title: '类型', sort: true,
                     templet: (d) => {
@@ -210,7 +272,16 @@
             elem: '#times',
             range: true
         });
-
+        //提交JSON格式检测
+        $('#front-submit').on('click', function () {
+            let ddUrl = $('#ddUrl').val();
+            var RegUrl = new RegExp();
+            RegUrl.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\?\/.=]+$");
+            if (!(ddUrl.substr(0, 7).toLowerCase() == "http://") && ddUrl !== "") {
+                alert("请以正确链接地址输入小程序链接");
+                return false;
+            }
+        });
     })
 
     /**
@@ -221,10 +292,16 @@
     function privateLoadEditData(editData, type) {
         layui.use(['form', 'layer'], () => {
             const $ = layui.$, form = layui.form, layer = layui.layer;
-            const queryData = {id: type === 'new' ? 0 : editData.ddId};
-            console.log(editData.ddAppId + "-" + editData.ddMinVer)
+            //设置修改状态版本号不可编辑
+            if (type === 'edit') {
+                $("#ddMinVer").addClass("layui-disabled");
+                $("#ddMinVer").attr("disabled", true);
+            }
+            if (type === 'new') {
+                $("#ddMinVer").removeClass("layui-disabled");
+                $("#ddMinVer").attr("disabled", false);
+            }
             $.get(operatorurl + '/get?ddAppId=' + editData.ddAppId + '&ddMinVer=' + editData.ddMinVer, function (data) {
-                console.log(data);
                 // 处理广告类型
                 let newGameSetsOptionArr = [];
                 gameSetsOptionArr.forEach((val, index, arr) => {
@@ -235,19 +312,28 @@
                     data: newGameSetsOptionArr,
                     autoRow: true,
                 });
+                let newAppIdOptionArr = [];
+                appIdNames.forEach((val, index, arr) => {
+                    val.selected = data && val.value === data.ddAppId;
+                    val.disabled = true;
+                    newAppIdOptionArr.push(val);
+                    val.disabled = false;
+                });
+                appNameSelect.update({
+                    data: newAppIdOptionArr,
+                    autoRow: true,
+                });
                 form.val("form_table", editData);
             });
         });
     }
+
     /**
      * 根据ddAppId，ddMinVer参数删除，重写privateGetDeleteData
      * @param dataArray
      */
     function privateGetDeleteData(dataArray, deleteObj) {
         dataArray.forEach(data => {
-            console.log('我是deleteIds:', deleteObj.deleteIds);
-            console.log('我是data:', data);
-            console.log('我是data.id:', data.id);
             if (deleteObj.deleteIds) {
                 deleteObj.deleteIds += ',' + data.ddAppId;
                 deleteObj.ddMinVer += ',' + data.ddMinVer;
@@ -263,10 +349,16 @@
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;">
     <div class="layui-form-item ">
-        <label class="layui-form-label">AppId</label>
+        <label class="layui-form-label">产品名称</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddAppId" name="ddAppId" lay-verify="required" autocomplete="off"
-                   class="layui-input ">
+            <div id="ddAppId" lay-filter="ddAppId" name="ddAppId"></div>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-inline">
+            <input type="text" id="type" name="type" autocomplete="off"
+                   class="layui-input layui-input" disabled>
         </div>
     </div>
     <div class="layui-form-item ">
@@ -277,16 +369,16 @@
         </div>
     </div>
     <div class="layui-form-item ">
+        <label class="layui-form-label">正式合集</label>
+        <div class="layui-input-inline"
+             id="ddCode" name="ddCode" lay-filter="ddCode" autocomplete="off"></div>
+    </div>
+    <div class="layui-form-item ">
         <label class="layui-form-label">小程序链接</label>
         <div class="layui-input-inline">
             <input type="text" id="ddUrl" name="ddUrl" autocomplete="off"
                    class="layui-input layui-input">
         </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">正式合集</label>
-        <div class="layui-input-inline"
-             id="ddCode" name="ddCode" lay-filter="ddCode" autocomplete="off"></div>
     </div>
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">

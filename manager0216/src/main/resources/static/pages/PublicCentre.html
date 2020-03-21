@@ -136,7 +136,7 @@
                     }
                 },
                 {field: 'showId', width: 180, title: '展示位顺序', edit: 'text', align: 'center'},
-                {field: 'recommendName', width: 220, title: '推荐位名称', edit: 'text', align: 'center'},
+                {field: 'recommendName', width: 220, title: '推荐位名称', align: 'center'},
                 {
                     field: 'skipType', width: 180, title: '跳转类型', align: 'center',
                     templet: (d) => {
@@ -157,8 +157,8 @@
                             return d.skipSet;
                     }
                 },
-                {field: 'resourceName', width: 220, title: '图片名称', edit: 'text', align: 'center'},
-                {field: 'detailName', width: 220, title: '详情名称', edit: 'text', align: 'center'}
+                {field: 'resourceName', width: 220, title: '图片名称', align: 'center'},
+                {field: 'detailName', width: 220, title: '详情名称', align: 'center'}
             ]],
             page: true,
             toolbar: '#toolbar',
@@ -198,7 +198,7 @@
             const value = obj.value //得到修改后的值
                 , data = obj.data //得到所在行所有键值
                 , field = obj.field; //得到字段
-            if (isNaN(obj.value)) {
+            if (Number.isNaN(obj.value)) {
                 layer.msg('操作失败，请输入大于0的数字！', {icon: 2});
                 return false;
             } else {
@@ -207,7 +207,6 @@
                     return false;
                 } else {
                     const saveData = {id: data.id, showId: Number.parseInt(obj.value)};
-                    layer.msg('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + JSON.stringify(saveData));
                     $.ajax({
                         url: operatorurl + "/updateShowId",
                         data: JSON.stringify(saveData),

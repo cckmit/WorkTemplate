@@ -173,11 +173,21 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
     public List<ConfigAdContent> selectContentBySpaceId(int spaceId) {
         ConfigAdSpace configAdSpace = this.adSpaceMapper.select(spaceId);
         if (configAdSpace != null && StringUtils.isNotBlank(configAdSpace.getDdAdContents())) {
-            System.out.println("configAdSpace.getDdAdContents():" + configAdSpace.getDdAdContents());
-            List<ConfigAdContent> adContentList = this.adContentMapper.selectContentBySpaceId(
-                    configAdSpace.getDdAdContents());
-            System.out.println(adContentList.size());
-            return adContentList;
+            return this.adContentMapper.selectContentBySpaceId(configAdSpace.getDdAdContents());
+        }
+        return null;
+    }
+
+    /**
+     * 通过广告位查询广告内容列表
+     *
+     * @param spaceId
+     * @return
+     */
+    public List<ConfigAdContent> selectTypeContentBySpaceId(int spaceId) {
+        ConfigAdSpace configAdSpace = this.adSpaceMapper.select(spaceId);
+        if (configAdSpace != null) {
+            return this.adContentMapper.selectAllByType(configAdSpace.getDdAdType());
         }
         return null;
     }

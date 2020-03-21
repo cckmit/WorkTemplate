@@ -130,7 +130,7 @@
             cols: [[
                 {type: 'checkbox'},
                 {field: 'ddId', width: 80, title: 'ID', sort: true, align: 'right'},
-                {field: 'ddName', width: 180, title: '名称', sort: true, align: 'center'},
+                {field: 'ddName', width: 240, title: '名称', sort: true, align: 'left'},
                 {
                     field: 'ddAdType', width: 160, title: '类型', sort: true,
                     templet: (d) => {
@@ -154,7 +154,6 @@
                         return d.ddAllowedOperation ? '是' : '否';
                     }
                 },
-                {field: 'adContentNames', width: 700, title: '广告内容列表', sort: false},
                 {field: 'updateTime', width: 220, title: '数据更新时间', sort: true, align: 'center'}
             ]],
             page: true,
@@ -282,7 +281,7 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">类型列表</label>
+        <label class="layui-form-label">类型</label>
         <div class="layui-input-inline" id="ddAdType" name="ddAdType" lay-filter="ddAdType" autocomplete="off"></div>
     </div>
     <div class="layui-form-item ">
@@ -291,11 +290,6 @@
             <input type="checkbox" checked="" name="ddAllowedOperation" lay-skin="switch"
                    lay-text="是|否">
         </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">广告内容</label>
-        <div class="layui-input-inline"
-             id="ddAdContents" name="ddAdContents" lay-filter="ddAdContents" autocomplete="off"></div>
     </div>
     <div class="layui-form-item layui-hide" style="text-align:center;">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认"

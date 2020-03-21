@@ -7,14 +7,16 @@ import com.fish.dao.primary.model.ArcadeGames;
 import com.fish.dao.second.mapper.WxConfigMapper;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
+import com.fish.service.cache.CacheService;
 import com.fish.utils.HexToStringUtil;
-import com.fish.utils.XwhTool;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
 /**
  * 合集配置  Service
  *
@@ -29,6 +31,8 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
     ArcadeGamesMapper arcadeGamesMapper;
     @Autowired
     WxConfigMapper wxConfigMapper;
+    @Autowired
+    CacheService cacheService;
 
     /**
      * 查询
@@ -47,10 +51,8 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
             arcadeGameSets = arcadeGameSetMapper.selectAll();
         }
         for (ArcadeGameSet arcadeGameSet : arcadeGameSets) {
-            String name = arcadeGameSet.getDdname();
-            String desc = arcadeGameSet.getDddesc();
             String content = arcadeGameSet.getDdcontent512a();
-            String ddContents = "";
+            StringBuilder ddContents = new StringBuilder();
             List<String> gameBox = new ArrayList<>();
             try {
                 //处理展示游戏合集内容
@@ -60,32 +62,27 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
                     if (StringUtils.isNotBlank(ddCode)) {
                         gameBox.add(ddCode);
                         ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(Integer.valueOf(ddCode));
-                        String ddname = StringUtils.isBlank(arcadeGames.getDdname()) ? "" :
-                                arcadeGames.getDdname();
+                        String ddName = StringUtils.isBlank(arcadeGames.getDdname()) ? "" : arcadeGames.getDdname();
                         if (ddContents.length() > 0) {
-                            ddContents = ddContents + ",";
+                            ddContents.append(",");
                         }
-                        ddContents = ddContents + ddname;
+                        ddContents.append(ddName);
                     }
-                    arcadeGameSet.setGameBox(gameBox);
-                }
-                arcadeGameSet.setDdname(name);
-                if (desc != null) {
-                    arcadeGameSet.setDddesc(desc);
+                    arcadeGameSet.setSelect(gameBox.toString());
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 LOGGER.error("查询GamesSetService失败" + ", 详细信息:{}", e.getMessage());
             }
-            arcadeGameSet.setDdcontent512a(ddContents);
-            String ddappid = arcadeGameSet.getDdappid();
-            WxConfig wxConfigName = wxConfigMapper.selectByPrimaryKey(ddappid);
-            if (wxConfigName != null) {
-                if (StringUtils.isNotBlank(wxConfigName.getProductName())) {
-                    arcadeGameSet.setDdappid(arcadeGameSet.getDdappid() + "-" + wxConfigName.getProductName());
+            arcadeGameSet.setDdcontent512a(ddContents.toString());
+            if (StringUtils.isNotBlank(arcadeGameSet.getDdappid())) {
+                WxConfig wxConfigName = cacheService.getWxConfig(arcadeGameSet.getDdappid());
+                if (wxConfigName != null) {
+                    if (StringUtils.isNotBlank(wxConfigName.getProductName())) {
+                        arcadeGameSet.setDdappid(arcadeGameSet.getDdappid() + "-" + wxConfigName.getProductName());
+                    } else {
+                        arcadeGameSet.setDdappid(arcadeGameSet.getDdappid());
+                    }
                 }
-            } else {
-                arcadeGameSet.setDdappid(arcadeGameSet.getDdappid());
             }
         }
         return arcadeGameSets;
@@ -98,51 +95,37 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
      * @return
      */
     public int insert(ArcadeGameSet record) {
+        //新增判断是否游戏编号重复
         ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(record.getDdcode());
         if (!org.springframework.util.StringUtils.isEmpty(arcadeGameSet)) {
             return 5;
         }
-        List<String> gameBox = new ArrayList<>();
+        //获取提交的合集下拉框数据
         String select = record.getSelect();
         String[] split = select.split(",");
-        for (int i = 0; i < split.length; i++) {
-            gameBox.add(split[i]);
-        }
-        String ddContents = "";
-        String ddName = "";
+        List<String> gameBox = new ArrayList<>(Arrays.asList(split));
+        StringBuilder ddContents = new StringBuilder();
+        StringBuilder ddName = new StringBuilder();
         if (gameBox.size() >= 1) {
             for (String box : gameBox) {
                 if (!"".equals(box)) {
                     ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(Integer.valueOf(box));
                     String ddname = arcadeGames.getDdname();
                     if (ddName.length() > 0) {
-                        ddName = ddName + ",";
+                        ddName.append(",");
                     }
-                    ddName = ddName + ddname;
+                    ddName.append(ddname);
                     if (ddContents.length() > 0) {
-                        ddContents = ddContents + "#";
+                        ddContents.append("#");
                     }
-                    ddContents = ddContents + box;
+                    ddContents.append(box);
                 }
             }
         }
-        record.setDdcontent512a(ddContents);
-        if (ddName != null) {
-            record.setDddesc512u(HexToStringUtil.getStringToHex(ddName));
-            record.setDddesc(ddName);
-        }
-        if (StringUtils.isNotBlank(record.getJumpDirect())) {
-            String jumpDirect = record.getJumpDirect();
-            String[] split1 = jumpDirect.split("-");
-            record.setDdappid(split1[0]);
-            String s = split1[0];
-            WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(s);
-            record.setDdappid(s);
-            if (StringUtils.isNotBlank(wxConfig.getProductName())) {
-                String productName = wxConfig.getProductName();
-                record.setDdname(productName);
-            }
-        }
+        record.setDdcontent512a(ddContents.toString());
+        record.setDddesc512u(HexToStringUtil.getStringToHex(ddName.toString()));
+        record.setDddesc(ddName.toString());
+
         return arcadeGameSetMapper.insert(record);
     }
 
@@ -153,64 +136,49 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
      * @return
      */
     public int updateByPrimaryKeySelective(ArcadeGameSet record) {
-        //新增判断是否游戏编号重复
-        //        ArcadeGameSet  arcadeGameSet= arcadeGameSetMapper.selectByPrimaryKey(record.getDdcode());
-        //        if (!org.springframework.util.StringUtils.isEmpty(arcadeGameSet)) {
-        //            return 5;
-        //        }
         List<ArcadeGameSet> arcadeGameSets = arcadeGameSetMapper.selectAll();
         List<ArcadeGameSet> arcadeGameSetOthers = new ArrayList<>();
         for (ArcadeGameSet arcadeGameSetSingle : arcadeGameSets) {
-            if (!record.getId().equals(arcadeGameSetSingle.getId()))
+            if (!record.getId().equals(arcadeGameSetSingle.getId())) {
                 arcadeGameSetOthers.add(arcadeGameSetSingle);
+            }
         }
         for (ArcadeGameSet arcadeGameSetOther : arcadeGameSetOthers) {
-            if (record.getDdcode().equals(arcadeGameSetOther.getDdcode()))
+            if (record.getDdcode().equals(arcadeGameSetOther.getDdcode())) {
                 return 5;
+            }
         }
-        List<String> gameBox = new ArrayList<>();
         String select = record.getSelect();
-        String[] split = select.split(",");
-        for (int i = 0; i < split.length; i++) {
-            gameBox.add(split[i]);
-        }
-        String ddContents = "";
-        String ddName = "";
+        String[] split = select.substring(1, select.length() - 1).split(",");
+        List<String> gameBox = new ArrayList<>(Arrays.asList(split));
+        StringBuilder ddContents = new StringBuilder();
+        StringBuilder ddName = new StringBuilder();
         if (gameBox.size() >= 1) {
             for (String box : gameBox) {
                 if (!"".equals(box)) {
                     ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(Integer.valueOf(box));
                     String ddname = arcadeGames.getDdname();
                     if (ddName.length() > 0) {
-                        ddName = ddName + ",";
+                        ddName.append(",");
                     }
-                    ddName = ddName + ddname;
+                    ddName.append(ddname);
                     if (ddContents.length() > 0) {
-                        ddContents = ddContents + "#";
+                        ddContents.append("#");
                     }
-                    ddContents = ddContents + box;
+                    ddContents.append(box);
                 }
             }
         }
-        record.setDdcontent512a(ddContents);
-        if (ddName != null) {
-            record.setDddesc(ddName);
-        }
-        if (StringUtils.isNotBlank(record.getJumpDirect())) {
-            String jumpDirect = record.getJumpDirect();
-            String[] split1 = jumpDirect.split("-");
-            String appId = split1[0];
-            record.setDdappid(appId);
-        } else {
-            record.setDdappid("");
-        }
+        record.setDdcontent512a(ddContents.toString());
+        record.setDddesc(ddName.toString());
         return arcadeGameSetMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("ddcode");
     }

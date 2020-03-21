@@ -37,6 +37,26 @@
     <select id="allDate" resultType="String">
     SELECT wx_date FROM  program_entering GROUP BY  wx_date ORDER BY  wx_date DESC
   </select>
+    
+    <select id="queryProgramByDate"  resultType="com.fish.dao.third.model.ProductData">
+        SELECT
+            p.wx_date AS wxDate,
+            COUNT(p.wx_appid) AS productCount,
+            SUM(p.wx_new) AS wxNew,
+            SUM(p.wx_active) AS wxActive,
+            SUM(p.ad_revenue) AS adRevenue,
+            SUM(p.wx_video_income) AS wxVideoIncome,
+            SUM(p.wx_banner_income) AS wxBannerIncome,
+            SUM(p.wx_share_user) AS wxShareUser,
+            SUM(p.wx_share_count) AS wxShareCount,
+            SUM(wx_video_income + wx_banner_income) AS revenueCount
+        FROM
+            program_entering p
+        WHERE DATE(p.wx_date) BETWEEN #{beginTime} AND #{endTime}
+        GROUP BY wxDate
+        ORDER BY wxDate ASC
+    </select>
+
     <select id="selectByAppid" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -44,9 +64,6 @@
         where wx_date = #{wxDate,jdbcType=VARCHAR}
         and wx_appid = #{wxAppid,jdbcType=VARCHAR}
     </select>
-    <select id="searchData" resultMap="BaseResultMap" parameterType="string">
-     ${_parameter}
-  </select>
     <delete id="deleteByPrimaryKey" parameterType="com.fish.dao.third.model.ProductData">
     delete from program_entering
     where wx_date = #{wxDate,jdbcType=DATE}
@@ -297,4 +314,15 @@
         wx_avg_login = values(wx_avg_login),
         wx_avg_online = values(wx_avg_online)
     </insert>
+    <select id="searchProgramData" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from program_entering
+        where wx_date &gt;= #{start}  and wx_date &lt;= #{end}
+        <where>
+            <if test="wxAppid != null and wxAppid !=''">
+                AND wx_appid = #{wxAppid}
+            </if>
+        </where>
+    </select>
 </mapper>

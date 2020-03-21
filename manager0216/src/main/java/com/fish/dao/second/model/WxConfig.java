@@ -8,8 +8,10 @@ import java.util.Date;
 @Component
 public class WxConfig
 {
+    private String ddSubscribe;
 
     private String ddshareres;
+
     private String ddappskipres;
 
     private String ddappid;
@@ -57,6 +59,13 @@ public class WxConfig
     private String list2;
     private String local;
 
+    public String getDdSubscribe() {
+        return ddSubscribe;
+    }
+
+    public void setDdSubscribe(String ddSubscribe) {
+        this.ddSubscribe = ddSubscribe;
+    }
 
     public String getLocal()
     {

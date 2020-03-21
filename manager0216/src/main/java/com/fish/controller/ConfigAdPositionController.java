@@ -1,5 +1,6 @@
 package com.fish.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.model.ConfigAdPosition;
 import com.fish.dao.second.model.ConfigAdSpace;
@@ -80,9 +81,7 @@ public class ConfigAdPositionController {
      */
     @ResponseBody
     @GetMapping(value = "/configAdPosition/get")
-    public ConfigAdPosition getConfigAdSpace(int id) {
-        return this.adPositionService.getConfigAdPosition(id);
-    }
+    public ConfigAdPosition getConfigAdSpace(int id) { return this.adPositionService.getConfigAdPosition(id); }
 
     /**
      * 查询广告位置列表

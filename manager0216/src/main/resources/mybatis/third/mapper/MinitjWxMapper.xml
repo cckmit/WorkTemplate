@@ -40,6 +40,21 @@
     <sql id="Blob_Column_List">
     wx_reg_json
   </sql>
+    <select id="queryMinitjWxByDate" resultType="com.fish.dao.third.model.MinitjWx">
+        SELECT
+            m.wx_date AS wxDate,
+            m.wx_appid AS wxAppid,
+            m.wx_new AS wxNew,
+            m.wx_active AS wxActive,
+            m.wx_video_income AS wxVideoIncome,
+            m.wx_banner_income AS wxBannerIncome,
+            m.wx_share_user AS wxShareUser,
+            m.wx_share_count AS wxShareCount
+        FROM
+            minitj_wx m
+        WHERE DATE(m.wx_date) BETWEEN #{beginTime} AND #{endTime}
+        ORDER BY m.wx_date ASC
+    </select>
     <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="map">
         select
         <include refid="Base_Column_List"/>

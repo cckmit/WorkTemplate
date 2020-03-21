@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-sm" lay-submit="" lay-filter="front-search" >
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search" >
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -133,7 +133,7 @@
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',
             cols: [[
-                {type: 'checkbox'},
+                {type: 'checkbox', fixed: 'left'},
                 {type: 'numbers', title: '序号'},
                 {field: 'productName', width: 120, title: '产品名称', sort: true},
                 {field: 'ddappid', width: 180, title: 'appId', sort: true},
@@ -173,13 +173,15 @@
                             '<img lay-src="' + d.jumpDirect + '" style="max-width: 100px;line-height:100px!important;"/>' +
                             '</a>';
                     }
-                }
+                },
+                {field: 'ddSubscribe', width: 300, title: '订阅配置', sort: true}
             ]],
             page: true,
             autoSort: false,
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports'],
-            limit: 30
+            limit: 30,
+            height: 'full-20'
         });
         var $ = layui.$, active = {
             flushPicture: function () { //获取选中数据
@@ -232,31 +234,29 @@
         $('#front-submit').on('click', function () {
             let shareRes = $('#ddshareres').val();
             let appSkipRes = $('#ddappskipres').val();
-            if (typeof shareRes == 'string') {
-                try {
-                    var objShareRes = JSON.parse(shareRes);
-                    if (typeof objShareRes != 'object' && !objShareRes) {
-                        alert("请检查分享资源JSON格式");
-                        return false;
-                    }
-                } catch (e) {
-                    alert("请检查分享资源JSON格式");
-                    return false;
-                }
-            }
-            if (typeof appSkipRes == 'string') {
-                try {
-                    var objAppSkipRes = JSON.parse(appSkipRes);
-                    if (typeof objAppSkipRes != 'object' && !objAppSkipRes) {
-                        alert("请检查跳转资源JSON格式");
-                        return false;
-                    }
-                } catch (e) {
-                    alert("请检查跳转资源JSON格式");
-                    return false;
-                }
+            let ddSubscribe = $('#ddSubscribe').val();
+            let shareResState = verify(shareRes, '分享资源');
+            let appSkipResState = verify(appSkipRes, '跳转资源');
+            let ddSubscribeState = verify(ddSubscribe, '订阅配置');
+            if (shareResState === false || appSkipResState === false || ddSubscribeState === false) {
+                return false;
             }
         });
+
+        function verify(content, name) {
+            if (typeof content == 'string') {
+                try {
+                    var objContent = JSON.parse(content);
+                    if (typeof objContent != 'object' && !objContent) {
+                        alert("请检查" + name + "JSON格式");
+                        return false;
+                    }
+                } catch (e) {
+                    alert("请检查" + name + "JSON格式");
+                    return false;
+                }
+            }
+        }
     })
 
 </script>
@@ -288,7 +288,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">小程序类型 *</label>
         <div class="layui-input-inline">
-            <select name="programType" lay-filter="aihao">
+            <select name="programType" lay-filter="">
                 <option value=1>小程序</option>
                 <option value=0>小游戏</option>
                 <option value=2>公众号</option>
@@ -382,6 +382,12 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">跳转资源</label>
         <textarea id="ddappskipres" name="ddappskipres"
+                  class="layui-textarea"></textarea>
+        <span>请按JSON格式输入</span><br>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">订阅配置</label>
+        <textarea id="ddSubscribe" name="ddSubscribe"
                   class="layui-textarea"></textarea>
         <span>请按JSON格式输入</span><br>
     </div>

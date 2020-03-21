@@ -28,6 +28,19 @@ public class BuyPay {
     private String beginTime;
     private String endTime;
 
+    /**
+     * 类型0:小游戏  1:小程序
+     */
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getBeginTime() {
         return beginTime;
     }

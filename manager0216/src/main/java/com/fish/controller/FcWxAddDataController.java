@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/manage")
 public class FcWxAddDataController {
+
     @Autowired
     WxAddDataService wxAddDataService;
     @Autowired

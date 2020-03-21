@@ -11,23 +11,27 @@ public interface BuyPayMapper {
 
     int insert(BuyPay record);
 
-    int insertSelective(BuyPay record);
-
-    BuyPay selectByPrimaryKey(Long id);
-
     int updateByPrimaryKeySelective(BuyPay record);
-
-    int updateByPrimaryKey(BuyPay record);
 
     BuyPay selectByAppIdAndDate(@Param("buyDate") String date, @Param("buyAppId") String appId);
 
     /**
      * 通过时间段查买量数据
+     *
      * @param beginTime
      * @param endTime
      * @return
      */
-    List<BuyPay> selectBuyPayByDate(@Param("beginTime") String beginTime,@Param("endTime") String endTime);
+    List<BuyPay> selectBuyPayByDate(@Param("beginTime") String beginTime, @Param("endTime") String endTime);
+
+    /**
+     * 通过时间段查询买量汇总数据
+     * @param beginTime
+     * @param endTime
+     * @param type
+     * @return
+     */
+    List<BuyPay> queryByPayCollectByDate(@Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("type") String type);
 
     BigDecimal selectCountBuyCost(String date);
 
@@ -35,5 +39,5 @@ public interface BuyPayMapper {
 
     int insertBatch(List<BuyPay> lists);
 
-    List<BuyPay> selectSearch(String SQL);
+    List<BuyPay> selectSearch(String sql);
 }

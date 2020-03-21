@@ -46,7 +46,6 @@ public class ProgramRankingController {
     public GetResult getGroupRanking(GetParameter parameter) {
         return programRankingService.findAll(parameter);
     }
-
     /**
      * 导出小程序比赛结果
      *

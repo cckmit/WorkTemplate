@@ -48,15 +48,18 @@ public class AppConfigService implements BaseService<AppConfig> {
             Integer ddcheckcode = appConfig.getDdcheckcode();
             if (ddcode != null) {
                 ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(ddcode);
-                appConfig.setCodename(arcadeGameSet.getDdname());
+                //设置游戏名称
+                appConfig.setCodename(arcadeGameSet!=null ?arcadeGameSet.getDdname():"");
             }
             if (ddcheckcode != null && ddcheckcode != 0) {
                 ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(ddcheckcode);
+                //设置合集名称
                 appConfig.setCheckcodename(arcadeGameSet.getDdname());
             }
             WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(ddappid);
             if (wxConfig != null) {
                 String productName = wxConfig.getProductName();
+                //设置产品名称
                 appConfig.setProductName(productName);
                 if (StringUtils.isNotBlank(wxConfig.getOriginName())) {
                     appConfig.setOriginName(wxConfig.getOriginName());

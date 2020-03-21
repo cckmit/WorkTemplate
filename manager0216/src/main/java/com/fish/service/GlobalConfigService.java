@@ -160,6 +160,7 @@ public class GlobalConfigService implements BaseService<GoodsValue> {
     public PostResult deleteSelective(JSONObject jsonObject) {
         PostResult result = new PostResult();
         String ddId = jsonObject.getString("deleteIds");
+
         int delete = this.goodsValueMapper.deleteByPrimaryKey(Integer.parseInt(ddId));
         if (delete <= 0) {
             result.setSuccessed(false);

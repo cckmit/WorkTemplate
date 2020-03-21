@@ -79,9 +79,9 @@ public class WxConfigController {
             //刷新业务表结构
             String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
             String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
-        }else {
-                result.setSuccessed(false);
-                result.setMsg("操作失败，请联系管理员");
+        } else {
+            result.setSuccessed(false);
+            result.setMsg("操作失败，请联系管理员");
         }
         return result;
     }
@@ -103,10 +103,23 @@ public class WxConfigController {
             //刷新业务表结构
             String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
             String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
-        }else {
-                result.setSuccessed(false);
-                result.setMsg("操作失败，请联系管理员");
+        } else {
+            result.setSuccessed(false);
+            result.setMsg("操作失败，请联系管理员");
         }
         return result;
+    }
+
+
+    /**
+     * 根据appId获取产品信息
+     *
+     * @param ddAppId
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/wxconfig/get")
+    public WxConfig selectWxConfig(String ddAppId) {
+        return cacheService.getWxConfig(ddAppId);
     }
 }

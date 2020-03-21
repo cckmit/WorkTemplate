@@ -2,10 +2,7 @@ package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.AdValueMapper;
-import com.fish.dao.second.model.AdValue;
-import com.fish.dao.second.model.ConfigAdContent;
-import com.fish.dao.second.model.ConfigAdPosition;
-import com.fish.dao.second.model.ConfigAdSpace;
+import com.fish.dao.second.model.*;
 import com.fish.protocols.GetParameter;
 import com.fish.service.cache.CacheService;
 import org.apache.commons.lang3.StringUtils;
@@ -32,13 +29,24 @@ public class AdValueService implements BaseService<AdValue> {
     CacheService cacheService;
 
     @Override
-    public void setDefaultSort(GetParameter parameter) { }
+    public void setDefaultSort(GetParameter parameter) {
+    }
 
     @Override
-    public Class<AdValue> getClassInfo() { return AdValue.class; }
+    public Class<AdValue> getClassInfo() {
+        return AdValue.class;
+    }
 
     @Override
-    public boolean removeIf(AdValue adValue, JSONObject searchData) { return false; }
+    public boolean removeIf(AdValue adValue, JSONObject searchData) {
+        if (existValueFalse(searchData.getString("adPosition"), adValue.getAdPositionId())) {
+            return true;
+        }
+        if (existValueFalse(searchData.getString("adSpace"), adValue.getAdSpaceId())) {
+            return true;
+        }
+        return (existValueFalse(searchData.getString("adContent"), adValue.getAdContentId()));
+    }
 
     @Override
     public List<AdValue> selectAll(GetParameter parameter) {
@@ -76,18 +84,41 @@ public class AdValueService implements BaseService<AdValue> {
 
         // 2、查询
         List<AdValue> list = this.adValueMapper.selectAll(beginDate, endDate, adValue);
-        System.out.println("查询结果：" + (list == null ? "无结果" : list.size()));
 
         // 3、数据处理
         if (list != null) {
-            for (AdValue value : list) {
-                System.out.println(value.getDateNum());
-                ConfigAdPosition configAdPosition = this.cacheService.getConfigAdPositions(value.getAdPositionId());
-                value.setPositionName(value.getAdPositionId() + "-" + configAdPosition.getDdName());
-                ConfigAdSpace configAdSpace = this.cacheService.getConfigAdSpaces(value.getAdSpaceId());
-                value.setSpaceName(value.getAdSpaceId() + "-" + configAdSpace.getDdName());
-                ConfigAdContent configAdContent = this.cacheService.getConfigAdContents(value.getAdContentId());
-                value.setContentName(value.getAdContentId() + "-" + configAdContent.getDdTargetAppName());
+            try {
+                for (AdValue value : list) {
+                    WxConfig wxConfig = this.cacheService.getWxConfig(value.getAppId());
+                    if (StringUtils.isNotBlank(wxConfig.getProductName())) {
+                        value.setAppName(wxConfig.getProductName());
+                    }
+                    ConfigAdPosition configAdPosition = this.cacheService.getConfigAdPositions(value.getAdPositionId());
+                    if (configAdPosition != null) {
+                        value.setPositionName(value.getAdPositionId() + "-" + configAdPosition.getDdName());
+                    } else {
+                        value.setPositionName(value.getAdPositionId() + " - 未匹配");
+                    }
+
+                    if (value.getAdSpaceId() > 0) {
+                        ConfigAdSpace configAdSpace = this.cacheService.getConfigAdSpaces(value.getAdSpaceId());
+                        if (configAdSpace != null) {
+                            value.setSpaceName(value.getAdSpaceId() + "-" + configAdSpace.getDdName());
+                        } else {
+                            value.setSpaceName(value.getAdSpaceId() + " - 未匹配");
+                        }
+                        ConfigAdContent configAdContent = this.cacheService.getConfigAdContents(value.getAdContentId());
+                        if (configAdContent != null) {
+                            value.setContentName(value.getAdContentId() + "-" + configAdContent.getDdTargetAppName());
+                        } else {
+                            value.setContentName(value.getAdContentId() + " - 未匹配");
+                        }
+                    } else {
+                        value.setSpaceName("微信");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return list;

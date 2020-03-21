@@ -53,10 +53,14 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
         for (ConfigProgram configProgram : configPrograms) {
             String ddAppId = configProgram.getDdAppId();
             WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
-            configProgram.setProductName(wxConfig.getProductName());
-            configProgram.setProgramType(wxConfig.getProgramType());
+            if(wxConfig !=null){
+                configProgram.setProductName(wxConfig.getProductName());
+                configProgram.setProgramType(wxConfig.getProgramType());
+            }
             ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(configProgram.getDdCode());
-            configProgram.setCodename(arcadeGameSet.getDdname());
+            if(arcadeGameSet !=null){
+                configProgram.setCodename(arcadeGameSet.getDdname());
+            }
         }
         return configPrograms;
     }
@@ -79,7 +83,7 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
         if (insert == 1) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("config_program", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
+            result.setMsg("操作成功");
         } else {
             result.setSuccessed(false);
             result.setMsg("包含重复数据，请检查后提交");
@@ -106,7 +110,7 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
         if (insert == 1) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("config_program", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
+            result.setMsg("操作成功");
         } else {
             result.setSuccessed(false);
             result.setMsg("修改失败，请联系管理员！");

@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -153,7 +153,7 @@
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',
             cols: [[
-                {type: 'checkbox'},
+                {type: 'checkbox',fixed: 'left'},
                 {type: 'numbers', title: '序号'},
                 {field: 'productName', width: 120, title: '产品名称', align: 'center'},
                 {field: 'ddappid', width: 180, title: 'appId', sort: true},

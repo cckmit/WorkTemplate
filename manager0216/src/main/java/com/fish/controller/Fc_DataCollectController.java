@@ -38,35 +38,4 @@ public class Fc_DataCollectController {
         return fcDataCollectService.findAll(parameter);
     }
 
-    /**
-     * 刷新数据汇总信息
-     * @param parameter
-     * @return
-     */
-    @ResponseBody
-    @GetMapping(value = "/datacollect/flush")
-    public PostResult flushDataCollect(GetParameter parameter) {
-        PostResult result = new PostResult();
-        int count = fcDataCollectService.flushAll();
-        if (count != 1) {
-            result.setSuccessed(false);
-            result.setMsg("操作失败，请联系管理员");
-        }
-        return result;
-    }
-
-    /**
-     * 搜索数据汇总信息
-     * @param parameter
-     * @return
-     */
-    @ResponseBody
-    @PostMapping(value = "/datacollect/search")
-    public GetResult searchData(HttpServletRequest request, GetParameter parameter) {
-        String beginDate = request.getParameter("beginDate");
-        String endDate = request.getParameter("endDate");
-        String type = request.getParameter("type");
-        return fcDataCollectService.searchData(beginDate, endDate, type, parameter);
-    }
-
 }
