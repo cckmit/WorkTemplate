@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigAdCombinationMapper">
+
+    <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigAdCombination">
+        <id column="ddId" property="ddId" jdbcType="INTEGER"/>
+        <result column="ddName" property="ddName" jdbcType="VARCHAR"/>
+        <result column="ddJson" property="ddJson" jdbcType="VARCHAR"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="select" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select ddId,
+               ddName,
+               ddJson,
+               updateTime
+        from config_ad_combination
+        where ddId = #{ddId, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" parameterType="com.fish.dao.second.model.ConfigAdCombination" resultMap="BaseResultMap">
+        select
+        ddId, ddName, updateTime
+        from config_ad_combination
+        where 1 = 1
+        <if test="ddName != null and ddName != ''">
+            and ddName like concat('%',#{ddName, jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdCombination">
+        insert into config_ad_combination (ddName, ddJson, updateTime)
+        values (#{ddName, jdbcType=VARCHAR}, #{ddJson, jdbcType=VARCHAR}, NOW())
+    </insert>
+
+    <update id="update" parameterType="com.fish.dao.second.model.ConfigAdCombination">
+        update config_ad_combination
+        <set>
+            ddName = #{ddName, jdbcType=VARCHAR},
+            updateTime = NOW()
+        </set>
+        where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+    <update id="saveCombinationJson" parameterType="com.fish.dao.second.model.ConfigAdCombination">
+        update config_ad_combination
+        <set>
+            ddJson = #{ddJson, jdbcType=VARCHAR},
+            updateTime = NOW()
+        </set>
+        where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+    <update id="delete" parameterType="java.lang.String">
+        delete
+        from config_ad_combination
+        where ddId in (${deleteIds})
+    </update>
+
+</mapper>
