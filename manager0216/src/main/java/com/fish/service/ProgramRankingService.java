@@ -234,8 +234,9 @@ public class ProgramRankingService implements BaseService<ShowRanking> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setSort("endTime");
         parameter.setOrder("desc");
     }
@@ -256,8 +257,9 @@ public class ProgramRankingService implements BaseService<ShowRanking> {
             return true;
         }
         String roundName = searchData.getString("roundName");
-        if (roundName != null && roundName.contains("-"))
+        if (roundName != null && roundName.contains("-")) {
             roundName = roundName.split("-")[0];
+        }
         return (existValueFalse(roundName, record.getRoundCode()));
     }
 

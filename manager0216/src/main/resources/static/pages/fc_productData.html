@@ -103,7 +103,6 @@
             delay: 500,
             filterable: true,
             filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
             },
         });
         $(() => {
@@ -114,7 +113,7 @@
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
                         //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
-                        var type;
+                        let type;
                         if (val.programType === 0) {
                             type = "小游戏";
                         }
@@ -144,7 +143,7 @@
             url: operatorurl + '?datagrid=data',
             cols: [
                 [
-                    {type: 'checkbox'},
+                    {type: 'checkbox', fixed: 'left'},
                     {field: 'wxDate', width: 120, title: '日期', sort: true},
                     {field: 'productName', width: 120, title: '产品名称', sort: true},
                     {
@@ -218,7 +217,8 @@
             limit: 20,
             defaultToolbar: ['filter', 'exports'],
             statusName: 'status',//数据状态的字段名称，默认：code
-            statusCode: 200 //成功的状态码，默认：0
+            statusCode: 200, //成功的状态码，默认：0
+            height: 'full-180'
         });
         //创建一个上传组件
         upload.render({
@@ -237,8 +237,8 @@
 
         })
         form.on('submit(export)', function () {
-            var excel = layui.excel;
-            var excelDate = [['日期', 'AppId', '产品名称', '产品类型', '新增', '活跃', '访问次数', '充值', '广告收入', '视频收入', 'banner收入',
+            let excel = layui.excel;
+            let excelDate = [['日期', 'AppId', '产品名称', '产品类型', '新增', '活跃', '访问次数', '充值', '广告收入', '视频收入', 'banner收入',
                 '活跃ARPU', '分享人数', '分享次数', '分享率', '次留', '人均登录次数', '人均在线时长'
             ]];
             excel.exportExcel({
@@ -266,21 +266,16 @@
     /**
      * 根据wxAppId，wxDate参数删除，重写privateGetDeleteData
      * @param dataArray
+     * @param deleteObj
      */
     function privateGetDeleteData(dataArray, deleteObj) {
-        dataArray.forEach(data => {
-            console.log('我是deleteIds:', deleteObj.deleteIds);
-            console.log('我是data:', data);
-            console.log('我是data.id:', data.id);
-            if (deleteObj.deleteIds) {
-                deleteObj.deleteIds += ',' + data.wxAppid;
-                deleteObj.wxDate += ',' + data.wxDate;
-            } else {
-                deleteObj.deleteIds = data.wxAppid;
-                deleteObj.wxDate = data.wxDate;
-            }
-            deleteObj.deleteCount++;
-        });
+        if (dataArray.length > 1) {
+            UIConfig.warnMsg("请选择一行数据删除！")
+            return false;
+        }
+        deleteObj.deleteIds = dataArray[0].wxAppid;
+        deleteObj.wxDate = dataArray[0].wxDate;
+        deleteObj.deleteCount++;
     }
 </script>
 

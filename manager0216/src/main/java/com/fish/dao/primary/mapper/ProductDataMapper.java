@@ -26,7 +26,7 @@ public interface ProductDataMapper {
      * @param endTime
      * @return
      */
-    List<ProductData> queryProgramByDate(@Param("beginTime")String beginTime,@Param("endTime")String endTime);
+    List<ProductData> queryProgramByDate(@Param("beginTime") String beginTime, @Param("endTime") String endTime);
 
     int updateByPrimaryKeySelective(ProductData record);
 

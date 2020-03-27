@@ -24,6 +24,7 @@ public class ProductData {
     private String wxRegJson;
 
     private String productName;
+    /*** 充值收入*/
     private BigDecimal recharge;
     /*** 广告收入*/
     private BigDecimal adRevenue;

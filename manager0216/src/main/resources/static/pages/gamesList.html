@@ -74,7 +74,7 @@
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',
             cols: [[
-                {type: 'checkbox'},
+                {type: 'checkbox', fixed: 'left'},
                 {field: 'ddcode', width: 120, title: '游戏代号（四位数字，唯一）', sort: true},
                 {field: 'ddname', width: 120, title: '游戏名称', sort: true},
                 {field: 'ddsinglecoin', width: 120, title: '游戏单人组队所需金币数', sort: true},
@@ -161,8 +161,9 @@
             ]],
             page: true,
             toolbar: '#toolbar',
-            limit: 20,
-            defaultToolbar: ['filter', 'exports']
+            limit: 30,
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-120',
         });
         var $ = layui.$, active = {
             getCheckData: function () { //获取选中数据

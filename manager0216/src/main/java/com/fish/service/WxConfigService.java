@@ -7,6 +7,7 @@ import com.fish.dao.second.mapper.WxConfigMapper;
 import com.fish.dao.second.model.AppConfig;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
+import com.fish.protocols.PostResult;
 import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
@@ -41,25 +42,6 @@ public class WxConfigService implements BaseService<WxConfig> {
     CacheService cacheService;
 
     /**
-     * 拼接链接地址
-     *
-     * @param icon    图标名称
-     * @param suffers 拼接数列
-     * @return url
-     */
-    public static String concatUrl(String resultUrl, String icon, String... suffers) {
-        if (icon != null) {
-            if (suffers != null) {
-                for (String suffer : suffers) {
-                    resultUrl = resultUrl.concat(suffer).concat("/");
-                }
-            }
-            return resultUrl.concat(icon);
-        }
-        return null;
-    }
-
-    /**
      * 查询所有WxConfig内容
      *
      * @param parameter
@@ -90,6 +72,25 @@ public class WxConfigService implements BaseService<WxConfig> {
             }
         }
         return wxConfigs;
+    }
+
+    /**
+     * 拼接链接地址
+     *
+     * @param icon    图标名称
+     * @param suffers 拼接数列
+     * @return url
+     */
+    public static String concatUrl(String resultUrl, String icon, String... suffers) {
+        if (icon != null) {
+            if (suffers != null) {
+                for (String suffer : suffers) {
+                    resultUrl = resultUrl.concat(suffer).concat("/");
+                }
+            }
+            return resultUrl.concat(icon);
+        }
+        return null;
     }
 
     /**
@@ -209,4 +210,22 @@ public class WxConfigService implements BaseService<WxConfig> {
         return updateWxConfig;
     }
 
+    public PostResult delete(JSONObject jsonObject) {
+        PostResult result = new PostResult();
+        String ddAppId = jsonObject.getString("deleteIds");
+        int wxResult = wxConfigMapper.deleteByPrimaryKey(ddAppId);
+        if (wxResult != 0) {
+            int appResult = appConfigMapper.deleteByPrimaryKey(ddAppId);
+            if (appResult <= 0) {
+                result.setSuccessed(false);
+                result.setMsg("操作失败，请联系管理员！");
+            }
+            ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
+            ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
+        } else {
+            result.setSuccessed(false);
+            result.setMsg("操作失败，请联系管理员！");
+        }
+        return result;
+    }
 }

@@ -23,7 +23,6 @@ public class UserAllInfo
 
     private Integer ddtotalpaymoney;
 
-
     private Integer id;
 
     private String dduid;

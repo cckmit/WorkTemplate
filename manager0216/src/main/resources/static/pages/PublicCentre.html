@@ -163,7 +163,8 @@
             page: true,
             toolbar: '#toolbar',
             limit: 30,
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-120'
         });
 
         laydate.render({
@@ -173,7 +174,7 @@
         //校验是否为图片格式结尾
         String.prototype.endWith = function (endStr) {
             var d = this.length - endStr.length;
-            return (d >= 0 && this.lastIndexOf(endStr) == d)
+            return (d >= 0 && this.lastIndexOf(endStr) === d)
         };
         let img = ".img";
         let gif = ".gif";
@@ -181,7 +182,7 @@
         $('#front-submit').on('click', function () {
             let content = $('#resourceName').val();
             if (!content.endWith(img) && !content.endWith(gif) && !content.endWith(png)) {
-                alert("图片名称 请检查后缀填写");
+                UIConfig.warnMsg("图片名称 请检查后缀填写");
                 return false;
             }
         });
@@ -233,13 +234,6 @@
                    class="layui-input layui-input">
         </div>
     </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">展示位顺序 *</label>
-        <div class="layui-input-inline">
-            <input type="text" id="showId" name="showId" lay-verify="required" autocomplete="off"
-                   class="layui-input ">
-        </div>
-    </div>
     <div class="layui-form-item">
         <label class="layui-form-label">推荐位类型 *</label>
         <div class="layui-input-inline">
@@ -249,6 +243,13 @@
                 <option value=1>热门</option>
                 <option value=2>游戏</option>
             </select>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">展示位顺序 *</label>
+        <div class="layui-input-inline">
+            <input type="text" id="showId" name="showId" lay-verify="required" autocomplete="off"
+                   class="layui-input ">
         </div>
     </div>
     <div class="layui-form-item ">

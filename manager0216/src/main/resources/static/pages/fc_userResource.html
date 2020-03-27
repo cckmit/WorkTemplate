@@ -56,13 +56,11 @@
                             <i class="layui-icon layuiadmin-button-btn"></i>查询
                         </button>
                     </div>
-
                 </div>
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" id="table-page" lay-filter="table-page"></table>
                 </div>
-
             </div>
         </div>
     </div>
@@ -142,9 +140,7 @@
                     {field: 'wxRegAd', width: 120, title: '新增-广告', sort: true},
                     {field: 'wxRegJump', width: 120, title: '新增-跳转', sort: true},
                     {field: 'wxRegSearch', width: 120, title: '新增-搜索', sort: true},
-                    {
-                        field: 'wxRegApp', width: 120, title: '新增-APP', sort: true
-                    },
+                    {field: 'wxRegApp', width: 120, title: '新增-APP', sort: true},
                     {field: 'wxRegCode', width: 120, title: '新增-二维码', sort: true},
                     {field: 'wxRegSession', width: 120, title: '新增-会话', sort: true},
                     {field: 'wxRegOther', width: 120, title: '新增-其他', sort: true},
@@ -170,7 +166,8 @@
             limit: 20,
             defaultToolbar: ['filter', 'exports'],
             statusName: 'status',//数据状态的字段名称，默认：code
-            statusCode: 200 //成功的状态码，默认：0
+            statusCode: 200, //成功的状态码，默认：0
+            height: 'full-120'
         });
         //此处作单独搜索逻辑公用产品信息详情数据
         $('#submit').click(function () {
@@ -178,7 +175,7 @@
             let endDate = $('#endDate').val();
             let selectArr = appSelect.getValue();
             if ((beginDate === "" && endDate !== "") || (beginDate !== "" && endDate === "")) {
-                alert("请填写完整查询时间");
+                UIConfig.warnMsg("请填写完整查询时间");
                 return false;
             }
             table.reload('table-page', {
@@ -191,9 +188,8 @@
                 where: {
                     "beginDate": beginDate,
                     "endDate": endDate,
-                    "productName": selectArr != null ? selectArr[0].value : ""
+                    "productName": selectArr[0] !== undefined ? selectArr[0].value : ""
                 }
-                , page: {curr: 1}
             });
         });
 

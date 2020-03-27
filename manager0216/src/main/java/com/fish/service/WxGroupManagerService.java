@@ -40,7 +40,6 @@ public class WxGroupManagerService implements BaseService<WxGroupManager> {
      * @return
      */
     public int updateWxGroupManager(WxGroupManager wxGroupManager) {
-
         return wxGroupManagerMapper.updateWxGroupManager(wxGroupManager);
     }
 
@@ -80,8 +79,8 @@ public class WxGroupManagerService implements BaseService<WxGroupManager> {
         return wxGroupManagerMapper.insertHistoryDate(wxGroupManager);
     }
 
-    public int changeStatus(Integer ddStatus){
-     return wxGroupManagerMapper.changeStatus(ddStatus);
+    public int changeStatus(Integer ddStatus) {
+        return wxGroupManagerMapper.changeStatus(ddStatus);
     }
 
     @Override

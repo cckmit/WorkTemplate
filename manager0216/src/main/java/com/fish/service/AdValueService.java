@@ -29,13 +29,10 @@ public class AdValueService implements BaseService<AdValue> {
     CacheService cacheService;
 
     @Override
-    public void setDefaultSort(GetParameter parameter) {
-    }
+    public void setDefaultSort(GetParameter parameter) { }
 
     @Override
-    public Class<AdValue> getClassInfo() {
-        return AdValue.class;
-    }
+    public Class<AdValue> getClassInfo() { return AdValue.class; }
 
     @Override
     public boolean removeIf(AdValue adValue, JSONObject searchData) {

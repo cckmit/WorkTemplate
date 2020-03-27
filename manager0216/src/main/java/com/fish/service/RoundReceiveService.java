@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -32,8 +34,10 @@ public class RoundReceiveService implements BaseService<RoundReceive> {
     public List<RoundReceive> selectAll(GetParameter parameter) {
         List<RoundReceive> roundReceives;
         JSONObject search = getSearchData(parameter.getSearchData());
+        String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+        String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
         if (search == null) {
-            roundReceives = roundReceiveMapper.selectAll();
+            roundReceives = roundReceiveMapper.selectSearchTime(beginTime, endTime);
         } else {
             String times = search.getString("times");
             if (StringUtils.isNotBlank(times)) {
@@ -41,14 +45,13 @@ public class RoundReceiveService implements BaseService<RoundReceive> {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 roundReceives = roundReceiveMapper.selectSearchTime(format.format(parse[0]), format.format(parse[1]));
             } else {
-                roundReceives = roundReceiveMapper.selectAll();
+                roundReceives = roundReceiveMapper.selectSearchTime(beginTime, endTime);
             }
         }
         String className = RoundReceiveService.class.getSimpleName().toLowerCase();
         long current = System.currentTimeMillis();
         Vector<Long> record = new Vector<>();
         record.add(System.currentTimeMillis() - current);
-
         Set<String> users = new HashSet<>();
         for (RoundReceive roundReceive : roundReceives) {
             users.add(roundReceive.getDduid());
@@ -84,7 +87,7 @@ public class RoundReceiveService implements BaseService<RoundReceive> {
             }
         }
         record.add(System.currentTimeMillis() - current);
-        System.out.println("获取记录查询1:" + JSONObject.toJSONString(record));
+        //System.out.println("获取记录查询:" + JSONObject.toJSONString(record));
         return roundReceives;
     }
 
@@ -98,8 +101,9 @@ public class RoundReceiveService implements BaseService<RoundReceive> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("ddtime");
     }
@@ -111,16 +115,19 @@ public class RoundReceiveService implements BaseService<RoundReceive> {
 
     @Override
     public boolean removeIf(RoundReceive record, JSONObject searchData) {
-
-        if (existValueFalse(searchData.getString("userName"), record.getUserName()))
+        if (existValueFalse(searchData.getString("userName"), record.getUserName())) {
             return true;
-        if (existValueFalse(searchData.getString("ddGroup"), record.getDdgroup().toString()))
+        }
+        if (existValueFalse(searchData.getString("ddGroup"), record.getDdgroup().toString())) {
             return true;
-        if (existValueFalse(searchData.getString("gameCode"), record.getDdgcode()))
+        }
+        if (existValueFalse(searchData.getString("gameCode"), record.getDdgcode())) {
             return true;
+        }
         String roundCode = searchData.getString("roundCode");
-        if (roundCode != null && roundCode.contains("-"))
+        if (roundCode != null && roundCode.contains("-")) {
             roundCode = roundCode.split("-")[0];
+        }
         return existValueFalse(roundCode, record.getRoudCode());
     }
 }

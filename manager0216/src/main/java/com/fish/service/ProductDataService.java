@@ -68,6 +68,7 @@ public class ProductDataService implements BaseService<ProductData> {
     @Override
     public List<ProductData> selectAll(GetParameter parameter) {
         Map<String, WxConfig> wxConfigMap = getWxConfigMap();
+        Map<String, BuyPay> buyPayMap = getBuyPayMap(parameter);
         List<ProductData> productDatas = new ArrayList<ProductData>();
         JSONObject search = getSearchData(parameter.getSearchData());
         if (search != null) {
@@ -76,21 +77,21 @@ public class ProductDataService implements BaseService<ProductData> {
             String type = search.getString("type");
             switch (type) {
                 case "0":
-                    productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap);
+                    productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap);
                     break;
                 case "1":
-                    productDatas = selectPersieDeamon(parameter, ddAppId, wxConfigMap);
+                    productDatas = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap);
                     break;
                 default:
                     // 如果只选了时间
-                    productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap);
-                    List<ProductData> list = selectPersieDeamon(parameter, ddAppId, wxConfigMap);
+                    productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap);
+                    List<ProductData> list = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap);
                     productDatas.addAll(list);
                     break;
             }
         } else {
-            productDatas = selectMinitjWx(parameter, null, wxConfigMap);
-            List<ProductData> list = selectPersieDeamon(parameter, null, wxConfigMap);
+            productDatas = selectMinitjWx(parameter, null, wxConfigMap, buyPayMap);
+            List<ProductData> list = selectPersieDeamon(parameter, null, wxConfigMap, buyPayMap);
             productDatas.addAll(list);
         }
         return productDatas;
@@ -103,37 +104,47 @@ public class ProductDataService implements BaseService<ProductData> {
      * @param ddAppId
      * @return
      */
-    private List<ProductData> selectPersieDeamon(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap) {
+    private List<ProductData> selectPersieDeamon(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap,
+                                                 Map<String, BuyPay> buyPayMap) {
         List<ProductData> productDatas = new ArrayList<ProductData>();
-        JSONObject search = getSearchData(parameter.getSearchData());
+
         // 选小程序的时候查询
-        String times = "";
-        String start;
-        String end;
-        if (search != null) {
-            times = search.getString("times");
-        }
-        if (!StringUtils.isBlank(times)) {
-            String[] split = times.split("-");
-            start = split[0].trim();
-            end = split[1].trim();
-        } else {
-            String format = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-            start = format;
-            end = format;
-        }
+        String[] times = getSearchTime(parameter);
+        String start = times[0];
+        String end = times[1];
         productDatas = productDataMapper.searchProgramData(ddAppId, start, end);
         for (ProductData productDatum : productDatas) {
             String wxAppid = productDatum.getWxAppid();
             Date wxDate = productDatum.getWxDate();
             //查询小程序是否存在买量数据
-            BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(new SimpleDateFormat("yyyy-MM-dd").format(wxDate), wxAppid);
-            if (buyPay != null) {
-                productDatum.setBuyCost(buyPay.getBuyCost());
-                productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
+            if (buyPayMap != null && !buyPayMap.isEmpty()) {
+                BuyPay buyPay = buyPayMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
+                if (buyPay != null) {
+                    productDatum.setBuyCost(buyPay.getBuyCost());
+                    productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
+                }
             }
         }
         return productDatas;
+    }
+
+    private String[] getSearchTime(GetParameter parameter) {
+
+        String[] times = new String[2];
+        String timeStr = "";
+        JSONObject search = getSearchData(parameter.getSearchData());
+        if (search != null) {
+            timeStr = search.getString("times");
+        }
+        if (StringUtils.isNotBlank(timeStr)) {
+            times[0] = timeStr.split("-")[0].trim();
+            times[1] = timeStr.split("-")[1].trim();
+        } else {
+            String format = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+            times[0] = format;
+            times[1] = format;
+        }
+        return times;
     }
 
     /**
@@ -143,25 +154,16 @@ public class ProductDataService implements BaseService<ProductData> {
      * @param ddAppId   前台输入框传的ddAppId
      * @return
      */
-    private List<ProductData> selectMinitjWx(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap) {
+    private List<ProductData> selectMinitjWx(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap,
+                                             Map<String, BuyPay> buyPayMap) {
         List<ProductData> productDatas = new ArrayList<>();
-        JSONObject search = getSearchData(parameter.getSearchData());
+        //JSONObject search = getSearchData(parameter.getSearchData());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String[] times = getSearchTime(parameter);
+        String start = times[0];
+        String end = times[1];
+
         // 小游戏的时候查询
-        String times = "";
-        String start;
-        String end;
-        if (search != null) {
-            times = search.getString("times");
-        }
-        if (!StringUtils.isBlank(times)) {
-            String[] split = times.split("-");
-            start = split[0].trim();
-            end = split[1].trim();
-        } else {
-            String format = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-            start = format;
-            end = format;
-        }
         List<MinitjWx> WxDatas = minitjWxMapper.searchDatas(ddAppId, start, end);
         for (MinitjWx wxData : WxDatas) {
             WxConfig wxConfig = wxConfigMap.get(wxData.getWxAppid());
@@ -193,16 +195,35 @@ public class ProductDataService implements BaseService<ProductData> {
             } else {
                 productData.setWxRegOther(0);
             }
-            BuyPay buyPay = buyPayMapper.selectByAppIdAndDate(new SimpleDateFormat("yyyy-MM-dd").format(wxData.getWxDate()),
-                    wxData.getWxAppid());
-            if (buyPay != null) {
-                productData.setBuyCost(buyPay.getBuyCost());
-                productData.setBuyClickPrice(buyPay.getBuyClickPrice());
+            if (buyPayMap != null && !buyPayMap.isEmpty()) {
+                BuyPay buyPay = buyPayMap.get(wxData.getWxAppid() + "_" + dateFormat.format(wxData.getWxDate()));
+                if (buyPay != null) {
+                    productData.setBuyCost(buyPay.getBuyCost());
+                    productData.setBuyClickPrice(buyPay.getBuyClickPrice());
+                }
             }
             BeanUtils.copyProperties(wxData, productData);
             productDatas.add(productData);
         }
         return productDatas;
+    }
+
+    /**
+     * 获取买量数据
+     *
+     * @param parameter
+     * @return
+     */
+    private Map<String, BuyPay> getBuyPayMap(GetParameter parameter) {
+        String[] times = getSearchTime(parameter);
+        String beginTime = times[0];
+        String endTime = times[1];
+        Map<String, BuyPay> buyPayMap = new HashMap<String, BuyPay>(16);
+        List<BuyPay> buyPays = buyPayMapper.selectBuyPayByDate(beginTime, endTime);
+        buyPays.forEach(buyPay -> {
+            buyPayMap.put(buyPay.getBuyAppId() + "_" + buyPay.getBuyDate(), buyPay);
+        });
+        return buyPayMap;
     }
 
     /**
@@ -225,10 +246,8 @@ public class ProductDataService implements BaseService<ProductData> {
      * @return
      */
     public int updateByPrimaryKeySelective(ProductData productData) {
-        int update;
         productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
-        update = productDataMapper.updateByPrimaryKey(productData);
-        return update;
+        return productDataMapper.updateByPrimaryKey(productData);
     }
 
     /**
@@ -247,7 +266,6 @@ public class ProductDataService implements BaseService<ProductData> {
             List<ProductData> lists = new ArrayList<>();
             for (int i = 0; i < param.size(); i++) {
                 String singleData = param.get(i).toString();
-
                 String singleString = singleData.substring(1, singleData.length() - 1);
                 System.out.println("我是singleString :" + singleString);
                 String[] split = singleString.split("], ");
@@ -289,7 +307,6 @@ public class ProductDataService implements BaseService<ProductData> {
                                 case 9:
                                     mapSingle.put("wx_video_income", singleSplit[x].trim());
                                     break;
-
                                 case 10:
                                     mapSingle.put("wx_banner_income", singleSplit[x].trim());
                                     break;
@@ -381,7 +398,6 @@ public class ProductDataService implements BaseService<ProductData> {
 
 
     public int insert(MinitjWx record) {
-
         return minitjWxMapper.insert(record);
     }
 
@@ -422,7 +438,7 @@ public class ProductDataService implements BaseService<ProductData> {
             return template(productData, parameter);
         }
         //根据搜索条件查询
-        searchDatas = searchQuery(productName,beginDate,endDate);
+        searchDatas = searchQuery(productName, beginDate, endDate);
         filterData(searchDatas, parameter);
         setDefaultSort(parameter);
         return template(searchDatas, parameter);
@@ -434,14 +450,14 @@ public class ProductDataService implements BaseService<ProductData> {
      * @param wxAppId
      * @return
      */
-    private ArrayList<ProductData> searchQuery(String wxAppId,String beginTime,String endTime) {
+    private ArrayList<ProductData> searchQuery(String wxAppId, String beginTime, String endTime) {
         ArrayList<ProductData> searchDatas = new ArrayList<>();
-        if(StringUtils.isBlank(beginTime) && StringUtils.isBlank(endTime)){
+        if (StringUtils.isBlank(beginTime) && StringUtils.isBlank(endTime)) {
             String format = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
             beginTime = format;
             endTime = format;
         }
-        List<MinitjWx> wxDatas = minitjWxMapper.searchDatas(wxAppId,beginTime,endTime);
+        List<MinitjWx> wxDatas = minitjWxMapper.searchDatas(wxAppId, beginTime, endTime);
         for (MinitjWx wxData : wxDatas) {
             ProductData productData = new ProductData();
             String appId = wxData.getWxAppid();
@@ -460,8 +476,7 @@ public class ProductDataService implements BaseService<ProductData> {
                         productData.setActiveUp(divide);
                     }
                     String wxRegJson = productData.getMinitjWx().getWxRegJson();
-                    JSONObject jsonObject = null;
-                    jsonObject = JSONObject.parseObject(wxRegJson);
+                    JSONObject jsonObject = JSONObject.parseObject(wxRegJson);
                     if (jsonObject != null) {
                         Integer other = (Integer) jsonObject.get("其他");
                         if (other != null) {
@@ -503,7 +518,7 @@ public class ProductDataService implements BaseService<ProductData> {
             int delete = this.productDataMapper.deleteByPrimaryKey(deleteIds, date);
             if (delete <= 0) {
                 result.setSuccessed(false);
-                result.setMsg("操作失败，修改广告内容失败！");
+                result.setMsg("操作失败，请联系管理员！");
             }
         } catch (ParseException e) {
             LOGGER.error("删除小程序产品数据异常" + ", 详细信息:{}", e.getMessage());

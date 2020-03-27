@@ -30,17 +30,20 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
     BaseConfig baseConfig;
 
     @Override
-    public void setDefaultSort(GetParameter parameter) {
-    }
+    public void setDefaultSort(GetParameter parameter) { }
 
     @Override
-    public Class getClassInfo() {
-        return ConfigAdApp.class;
-    }
+    public Class getClassInfo() { return ConfigAdApp.class; }
 
     @Override
     public boolean removeIf(ConfigAdApp configAdContent, JSONObject searchData) {
         if (existValueFalse(searchData.getString("productsName"), configAdContent.getDdAppId())) {
+            return true;
+        }
+        if (existValueFalse(searchData.getString("combinationName"), configAdContent.getDdCombinationId())) {
+            return true;
+        }
+        if (existValueFalse(searchData.getString("minVersion"), configAdContent.getDdMinVersion())) {
             return true;
         }
         return (existValueFalse(searchData.getString("appId"), configAdContent.getDdAppId()));
@@ -101,6 +104,25 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
     }
 
     /**
+     * 复制广告内容
+     *
+     * @param adApp
+     * @return
+     */
+    public PostResult copy(ConfigAdApp adApp) {
+        PostResult result = new PostResult();
+        adApp.setId(0);
+        int update = this.adAppMapper.insert(adApp);
+        if (update <= 0) {
+            result.setSuccessed(false);
+            result.setMsg("操作失败，复制广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_app", this.baseConfig.getFlushCache());
+        }
+        return result;
+    }
+
+    /**
      * 根据ID删除广告内容
      *
      * @param deleteIds
@@ -111,7 +133,7 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
         int delete = this.adAppMapper.delete(deleteIds);
         if (delete <= 0) {
             result.setSuccessed(false);
-            result.setMsg("操作失败，修改广告内容失败！");
+            result.setMsg("操作失败，删除广告内容失败！");
         } else {
             ReadJsonUtil.flushTable("config_ad_app", this.baseConfig.getFlushCache());
         }
@@ -131,4 +153,22 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
         return this.adAppMapper.select(id);
     }
 
+    /**
+     * 通过页面开关改变运营状态
+     *
+     * @param id          广告位置ID
+     * @param allowedShow 运营开关状态
+     * @return
+     */
+    public PostResult changeAllowedShowStatus(Integer id, Boolean allowedShow) {
+        PostResult result = new PostResult();
+        int count = this.adAppMapper.changeAllowedShowStatus(id, allowedShow);
+        if (count <= 0) {
+            result.setSuccessed(false);
+            result.setMsg("更新失败");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_app", this.baseConfig.getFlushCache());
+        }
+        return result;
+    }
 }

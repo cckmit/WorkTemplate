@@ -43,6 +43,7 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
     @Override
     public List<ArcadeGameSet> selectAll(GetParameter parameter) {
         List<ArcadeGameSet> arcadeGameSets;
+        //手动设值升序降序
         if ("asc".equals(parameter.getOrder())) {
             arcadeGameSets = arcadeGameSetMapper.selectAllByAsc();
         } else if ("desc".equals(parameter.getOrder())) {
@@ -55,7 +56,7 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
             StringBuilder ddContents = new StringBuilder();
             List<String> gameBox = new ArrayList<>();
             try {
-                //处理展示游戏合集内容
+                //处理展示游戏合集内容,把#转化为,
                 String[] split = content.split("#");
                 for (int i = 0; i < split.length; i++) {
                     String ddCode = split[i];
@@ -68,7 +69,12 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
                         }
                         ddContents.append(ddName);
                     }
-                    arcadeGameSet.setSelect(gameBox.toString());
+                    //此处过滤只有一个游戏集合防止传入数据[""]
+                    if (split.length == 1) {
+                        arcadeGameSet.setSelect(gameBox.toString().substring(1, gameBox.toString().length() - 1));
+                    } else {
+                        arcadeGameSet.setSelect(gameBox.toString());
+                    }
                 }
             } catch (Exception e) {
                 LOGGER.error("查询GamesSetService失败" + ", 详细信息:{}", e.getMessage());
@@ -125,7 +131,6 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
         record.setDdcontent512a(ddContents.toString());
         record.setDddesc512u(HexToStringUtil.getStringToHex(ddName.toString()));
         record.setDddesc(ddName.toString());
-
         return arcadeGameSetMapper.insert(record);
     }
 
@@ -149,7 +154,7 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
             }
         }
         String select = record.getSelect();
-        String[] split = select.substring(1, select.length() - 1).split(",");
+        String[] split = select.split(",");
         List<String> gameBox = new ArrayList<>(Arrays.asList(split));
         StringBuilder ddContents = new StringBuilder();
         StringBuilder ddName = new StringBuilder();

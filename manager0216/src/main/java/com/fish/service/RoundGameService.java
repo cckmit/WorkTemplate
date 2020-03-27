@@ -9,6 +9,7 @@ import com.fish.dao.primary.model.ArcadeGames;
 import com.fish.dao.primary.model.RoundExt;
 import com.fish.dao.primary.model.RoundGame;
 import com.fish.protocols.GetParameter;
+import com.fish.protocols.PostResult;
 import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.XwhTool;
@@ -61,14 +62,13 @@ public class RoundGameService implements BaseService<RoundGame> {
                 roundGame.setGameName(gameName);
                 String ddShareRes = arcadeGames.getDdshareres();
                 if (StringUtils.isNotEmpty(ddShareRes)) {
-                    if (StringUtils.isNotEmpty(ddShareRes)) {
-                        JSONArray shareLists = JSONObject.parseArray(ddShareRes);
-                        for (int i = 0; i < shareLists.size(); i++) {
-                            JSONObject jsonObject = JSONObject.parseObject(shareLists.getString(i));
-                            if (jsonObject.getInteger("position") == 3) {
-                                String icon = WxConfigService.concatUrl(url, jsonObject.getString("url"), "g" + arcadeGames.getDdcode(), "share");
-                                if (icon != null)
-                                    roundGame.setJumpDirect(icon);
+                    JSONArray shareLists = JSONObject.parseArray(ddShareRes);
+                    for (int i = 0; i < shareLists.size(); i++) {
+                        JSONObject jsonObject = JSONObject.parseObject(shareLists.getString(i));
+                        if (jsonObject.getInteger("position") == 3) {
+                            String icon = WxConfigService.concatUrl(url, jsonObject.getString("url"), "g" + arcadeGames.getDdcode(), "share");
+                            if (icon != null) {
+                                roundGame.setJumpDirect(icon);
                             }
                         }
                     }
@@ -80,6 +80,7 @@ public class RoundGameService implements BaseService<RoundGame> {
             String roundName = roundExt.getDdname();
             roundGame.setRoundName(roundName);
             roundGame.setDdreward(ddreward);
+            roundGame.setRoundSelect(ddround + "_" + roundName);
         }
         return roundGames;
     }
@@ -114,8 +115,9 @@ public class RoundGameService implements BaseService<RoundGame> {
      */
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setSort("times");
         parameter.setOrder("desc");
     }
@@ -159,7 +161,8 @@ public class RoundGameService implements BaseService<RoundGame> {
         for (RoundExt round : roundExt) {
             String ddCode = round.getDdcode();
             String ddName = round.getDdname();
-            round.setDdcode(ddCode + "-" + ddName);
+            //此处变更由于赛制名称含有-以便区分，新增更新已做相应处理
+            round.setDdcode(ddCode + "_" + ddName);
         }
         return roundExt;
     }
@@ -170,17 +173,29 @@ public class RoundGameService implements BaseService<RoundGame> {
      * @param roundGame
      */
     private void updateRoundGame(RoundGame roundGame) {
-
-        if (!StringUtils.isBlank(roundGame.getGameCodeSelect())) {
-            roundGame.setDdgame(Integer.parseInt(roundGame.getGameCodeSelect()));
-        }
         if (!StringUtils.isBlank(roundGame.getRoundSelect())) {
-            String[] roundSplit = roundGame.getRoundSelect().split("-");
-            if (roundSplit.length > 0) {
+            String[] roundSplit = roundGame.getRoundSelect().split("_");
+            if (roundSplit.length > 1) {
                 roundGame.setDdround(roundSplit[0]);
                 roundGame.setDdname(roundSplit[1]);
             }
         }
         roundGame.setTimes(new Timestamp(System.currentTimeMillis()));
+    }
+
+    /**
+     * 删除
+     * @param jsonObject
+     * @return
+     */
+    public PostResult delete(JSONObject jsonObject) {
+        PostResult result = new PostResult();
+        String ddCode = jsonObject.getString("deleteIds");
+        int delete = roundGameMapper.deleteByPrimaryKey(Integer.parseInt(ddCode));
+        if (delete <= 0) {
+            result.setSuccessed(false);
+            result.setMsg("操作失败，请联系管理员！");
+        }
+        return result;
     }
 }

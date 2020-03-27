@@ -110,7 +110,6 @@ public class WxConfigController {
         return result;
     }
 
-
     /**
      * 根据appId获取产品信息
      *
@@ -121,5 +120,17 @@ public class WxConfigController {
     @GetMapping(value = "/wxconfig/get")
     public WxConfig selectWxConfig(String ddAppId) {
         return cacheService.getWxConfig(ddAppId);
+    }
+
+    /**
+     * 删除产品信息
+     *
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/wxconfig/delete")
+    public PostResult deleteBuyPay(@RequestBody JSONObject jsonObject) {
+        return this.wxConfigService.delete(jsonObject);
     }
 }

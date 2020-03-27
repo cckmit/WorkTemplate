@@ -46,7 +46,6 @@
                                 <input type="text" class="layui-input" id="userName" name="userName">
                             </div>
                         </div>
-
                         <div class="layui-inline">
                             <label class="layui-form-label">OpenID</label>
                             <div class="layui-input-inline" style="width: 14rem;">
@@ -70,16 +69,16 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
+                                    lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                             <div class="layui-btn-group demoTable">
-                                <button type="button" class="layui-btn" data-type="getCheckData">进行补单</button>
+                                <button type="button" class="layui-btn layui-btn-sm" data-type="getCheckData">进行补单</button>
                             </div>
                         </div>
                     </form>
                 </div>
-
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
@@ -162,7 +161,7 @@
                 {
                     field: 'ordersOder', width: 260, title: '商户平台订单号', sort: true,
                     templet: (d) => {
-                        if (d.ordersOder != "null") {
+                        if (d.ordersOder !== "null") {
                             return d.ordersOder;
                         } else {
                             return "无";
@@ -222,11 +221,12 @@
                 },
                 {field: 'ordersPrice', width: 120, title: '支付金额', sort: true}
             ]],
-            limit: 20,
+            limit: 30,
             page: true,
             toolbar: '#toolbar',
             autoSort: false,
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-160'
         });
 
         laydate.render({
@@ -252,12 +252,12 @@
                     break;
             }
         });
-        var $ = layui.$, active = {
+        let active = {
             getCheckData: function () { //获取选中数据
                 let checkStatus = table.checkStatus('table-page')
                 let l = checkStatus.data.length
                     , data = checkStatus.data;
-                if (l == 0) {
+                if (l === 0) {
                     layer.msg('请选择一行');
                 } else if (l > 1) {
                     layer.msg('只能查看一行哦');
@@ -289,7 +289,7 @@
             }
         };
         $('.demoTable .layui-btn').on('click', function () {
-            var type = $(this).data('type');
+            let type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
     })

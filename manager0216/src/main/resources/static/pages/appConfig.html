@@ -126,9 +126,6 @@
                             }
                         );
                     });
-                    // Array.from (data, (json) => {
-                    //     $("#gameBox").append("<option  name='game'  value = '" + json.value + "'>"+json.title +"</option><br/>");
-                    // });
                     layui.form.render("select");
                 },
                 error: function () {
@@ -141,7 +138,7 @@
                 url: '../manage/roundmatch/appname',
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
-                        var type;
+                        let type;
                         if (val.programType === 0) {
                             type = "小游戏";
                         }
@@ -177,11 +174,11 @@
                 {
                     field: 'ddprogram', width: 150, title: '是否为小程序', sort: true,
                     templet: (d) => {
-                        if (d.ddprogram == 1) {
+                        if (d.ddprogram === 1) {
                             return '小程序';
-                        } else if (d.ddprogram == 0) {
+                        } else if (d.ddprogram === 0) {
                             return '小游戏';
-                        } else if (d.ddprogram == 2) {
+                        } else if (d.ddprogram === 2) {
                             return '公众号';
                         } else
                             return '其他';
@@ -193,7 +190,7 @@
                     field: 'ddcheckcode', width: 180, title: '审核合集', sort: true,
                     templet: (d) => {
 
-                        if (d.ddcheckcode != null && d.ddcheckcode != 0) {
+                        if (d.ddcheckcode != null && d.ddcheckcode !== 0) {
                             return "(" + d.ddcheckcode + "-" + d.checkcodename + ")";
                         } else {
                             return "";
@@ -206,7 +203,8 @@
             page: true,
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports'],
-            limit: 30
+            limit: 30,
+            height: 'full-120'
         });
 
         laydate.render({
@@ -217,7 +215,6 @@
             elem: '#ddtime',
             format: 'yyyy/MM/dd HH:mm'
         });
-
     })
 
     /**
@@ -284,7 +281,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">审核版本</label>
         <div class="layui-input-inline">
-            <input type="text" id="ddcheckversion" name="ddcheckversion"  autocomplete="off"
+            <input type="text" id="ddcheckversion" name="ddcheckversion" autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>

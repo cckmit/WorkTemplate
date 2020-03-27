@@ -17,11 +17,17 @@
         <result column="ddWxIntAllowedShow" property="ddWxIntAllowedShow" jdbcType="BOOLEAN"/>
         <result column="ddWxIntStrategyId" property="ddWxIntStrategyId" jdbcType="INTEGER"/>
         <result column="ddWxIntStrategyValue" property="ddWxIntStrategyValue" jdbcType="VARCHAR"/>
+        <result column="ddWxReVideoUnit" property="ddWxReVideoUnit" jdbcType="VARCHAR"/>
+        <result column="ddWxReVideoAllowedShow" property="ddWxReVideoAllowedShow" jdbcType="BOOLEAN"/>
         <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, ddAppId,  ddMinVersion,  ddCombinationId,  ddAllowedShow,  ddWxBannerUnit,  ddWxBannerTime,  ddWxBannerAllowedShow,  ddWxBannerStrategyId,  ddWxBannerStrategyValue,  ddWxIntUint,  ddWxIntAllowedShow,  ddWxIntStrategyId,  ddWxIntStrategyValue,  updateTime
+        id, ddAppId,  ddMinVersion,  ddCombinationId,  ddAllowedShow,
+        ddWxBannerUnit,  ddWxBannerTime,  ddWxBannerAllowedShow,  ddWxBannerStrategyId,  ddWxBannerStrategyValue,
+        ddWxIntUint,  ddWxIntAllowedShow,  ddWxIntStrategyId,  ddWxIntStrategyValue,
+        ddWxIntStrategyId,  ddWxIntStrategyValue, ddWxReVideoUnit, ddWxReVideoAllowedShow,
+        updateTime
     </sql>
 
     <select id="select" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -40,13 +46,15 @@
     <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdApp">
         insert into config_ad_app (ddAppId, ddMinVersion, ddCombinationId, ddAllowedShow, ddWxBannerUnit,
                                    ddWxBannerTime, ddWxBannerAllowedShow, ddWxBannerStrategyId, ddWxBannerStrategyValue,
-                                   ddWxIntUint, ddWxIntAllowedShow, ddWxIntStrategyId, ddWxIntStrategyValue, updateTime)
+                                   ddWxIntUint, ddWxIntAllowedShow, ddWxIntStrategyId, ddWxIntStrategyValue,
+                                   ddWxReVideoUnit, ddWxReVideoAllowedShow, updateTime)
         values (#{ddAppId, jdbcType=VARCHAR}, #{ddMinVersion, jdbcType=VARCHAR}, #{ddCombinationId, jdbcType=INTEGER},
                 #{ddAllowedShow, jdbcType=BOOLEAN}, #{ddWxBannerUnit, jdbcType=VARCHAR},
                 #{ddWxBannerTime, jdbcType=INTEGER}, #{ddWxBannerAllowedShow, jdbcType=BOOLEAN},
                 #{ddWxBannerStrategyId, jdbcType=INTEGER}, #{ddWxBannerStrategyValue, jdbcType=VARCHAR},
                 #{ddWxIntUint, jdbcType=VARCHAR}, #{ddWxIntAllowedShow, jdbcType=BOOLEAN},
                 #{ddWxIntStrategyId, jdbcType=INTEGER}, #{ddWxIntStrategyValue, jdbcType=VARCHAR},
+                #{ddWxReVideoUnit, jdbcType=VARCHAR}, #{ddWxReVideoAllowedShow, jdbcType=BOOLEAN},
                 NOW())
     </insert>
 
@@ -66,6 +74,8 @@
             ddWxIntAllowedShow = #{ddWxIntAllowedShow, jdbcType=BOOLEAN},
             ddWxIntStrategyId = #{ddWxIntStrategyId, jdbcType=INTEGER},
             ddWxIntStrategyValue = #{ddWxIntStrategyValue, jdbcType=VARCHAR},
+            ddWxReVideoUnit = #{ddWxReVideoUnit, jdbcType=VARCHAR},
+            ddWxReVideoAllowedShow = #{ddWxReVideoAllowedShow, jdbcType=BOOLEAN},
             updateTime = NOW()
         </set>
         where id = #{id, jdbcType=INTEGER}
@@ -75,6 +85,9 @@
         delete
         from config_ad_app
         where id in (${deleteIds})
+    </update>
+    <update id="changeAllowedShowStatus">
+         update config_ad_app set ddAllowedShow = #{ddAllowedShow, jdbcType=BOOLEAN} where id = #{id, jdbcType=INTEGER}
     </update>
 
 </mapper>

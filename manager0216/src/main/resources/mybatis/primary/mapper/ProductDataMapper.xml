@@ -37,8 +37,8 @@
     <select id="allDate" resultType="String">
     SELECT wx_date FROM  program_entering GROUP BY  wx_date ORDER BY  wx_date DESC
   </select>
-    
-    <select id="queryProgramByDate"  resultType="com.fish.dao.third.model.ProductData">
+
+    <select id="queryProgramByDate" resultType="com.fish.dao.third.model.ProductData">
         SELECT
             p.wx_date AS wxDate,
             COUNT(p.wx_appid) AS productCount,
@@ -49,7 +49,8 @@
             SUM(p.wx_banner_income) AS wxBannerIncome,
             SUM(p.wx_share_user) AS wxShareUser,
             SUM(p.wx_share_count) AS wxShareCount,
-            SUM(wx_video_income + wx_banner_income) AS revenueCount
+            SUM(p.wx_video_income + p.wx_banner_income) AS adRevenue,
+            SUM(p.wx_video_income + p.wx_banner_income + p.recharge) AS revenueCount
         FROM
             program_entering p
         WHERE DATE(p.wx_date) BETWEEN #{beginTime} AND #{endTime}
@@ -318,7 +319,7 @@
         select
         <include refid="Base_Column_List"/>
         from program_entering
-        where wx_date &gt;= #{start}  and wx_date &lt;= #{end}
+        where wx_date &gt;= #{start} and wx_date &lt;= #{end}
         <where>
             <if test="wxAppid != null and wxAppid !=''">
                 AND wx_appid = #{wxAppid}

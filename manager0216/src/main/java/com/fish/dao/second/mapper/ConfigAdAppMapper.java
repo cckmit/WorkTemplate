@@ -51,4 +51,11 @@ public interface ConfigAdAppMapper {
      */
     int delete(String deleteIds);
 
+    /**
+     * 通过页面开关改变运营状态
+     * @param id
+     * @param ddAllowedShow
+     * @return
+     */
+    int changeAllowedShowStatus(Integer id, Boolean ddAllowedShow);
 }

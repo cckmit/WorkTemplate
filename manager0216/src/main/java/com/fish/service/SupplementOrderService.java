@@ -7,19 +7,17 @@ import com.fish.dao.second.mapper.AllCostMapper;
 import com.fish.dao.second.mapper.UserInfoMapper;
 import com.fish.dao.second.mapper.UserValueMapper;
 import com.fish.dao.second.mapper.WxConfigMapper;
-import com.fish.dao.second.model.AllCost;
+import com.fish.dao.second.model.UserAllInfo;
 import com.fish.dao.second.model.UserInfo;
 import com.fish.dao.second.model.UserValue;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
-import com.fish.protocols.PostResult;
 import com.fish.utils.RedisUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -33,7 +31,6 @@ public class SupplementOrderService implements BaseService<SupplementOrder> {
     SupplementOrderMapper supplementOrderMapper;
     @Autowired
     WxConfigMapper wxConfigMapper;
-
     @Autowired
     AllCostMapper allCostMapper;
 
@@ -84,7 +81,7 @@ public class SupplementOrderService implements BaseService<SupplementOrder> {
         userValue.setDdcoincount(coinCount + orCoin);
         userValueMapper.updateByPrimaryKeySelective(userValue);
         String coin = RedisUtils.hget("user-" + userId, "coin");
-        coinCount = coinCount + Integer.parseInt(coin);
+        coinCount = coinCount + (StringUtils.isNotBlank(coin) ? Integer.parseInt(coin) : 0);
         RedisUtils.hset("user-" + userId, "coin", String.valueOf(coinCount));
         int insert = supplementOrderMapper.insert(record);
         return insert;
@@ -92,8 +89,9 @@ public class SupplementOrderService implements BaseService<SupplementOrder> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("id");
     }
@@ -123,16 +121,11 @@ public class SupplementOrderService implements BaseService<SupplementOrder> {
      */
     public SupplementOrder selectCurrentCoin(String uid) {
         SupplementOrder supplementOrder = new SupplementOrder();
-        String uidSql = String.format(" SELECT * FROM all_cost WHERE ddUid ='%s' ORDER BY id DESC LIMIT 0,1", uid);
-        //查询当前用户金币
-        AllCost allCost = this.allCostMapper.selectCurrentCoin(uidSql);
         //查询当前用户信息
-        UserInfo userInfo = userInfoMapper.selectByDdUid(uid);
-        if (allCost != null) {
-            supplementOrder.setCurrentCoin(allCost.getDdcurrent());
-            supplementOrder.setAppid(allCost.getDdappid());
-        }
+        UserAllInfo userInfo = userInfoMapper.selectUserCoin(uid);
         if (userInfo != null) {
+            supplementOrder.setCurrentCoin(userInfo.getDdcoincount().longValue());
+            supplementOrder.setAppid(userInfo.getDdappid());
             supplementOrder.setUsername(userInfo.getDdname());
         }
         return supplementOrder;

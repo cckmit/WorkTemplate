@@ -26,6 +26,8 @@ public class ConfigAdApp {
     private boolean ddWxIntAllowedShow;
     private int ddWxIntStrategyId;
     private String ddWxIntStrategyValue;
+    private String ddWxReVideoUnit;
+    private boolean ddWxReVideoAllowedShow;
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm")
     private Date updateTime;
 
@@ -157,6 +159,22 @@ public class ConfigAdApp {
 
     public void setDdWxIntStrategyValue(String ddWxIntStrategyValue) {
         this.ddWxIntStrategyValue = ddWxIntStrategyValue;
+    }
+
+    public String getDdWxReVideoUnit() {
+        return ddWxReVideoUnit;
+    }
+
+    public void setDdWxReVideoUnit(String ddWxReVideoUnit) {
+        this.ddWxReVideoUnit = ddWxReVideoUnit;
+    }
+
+    public boolean isDdWxReVideoAllowedShow() {
+        return ddWxReVideoAllowedShow;
+    }
+
+    public void setDdWxReVideoAllowedShow(boolean ddWxReVideoAllowedShow) {
+        this.ddWxReVideoAllowedShow = ddWxReVideoAllowedShow;
     }
 
     public Date getUpdateTime() {

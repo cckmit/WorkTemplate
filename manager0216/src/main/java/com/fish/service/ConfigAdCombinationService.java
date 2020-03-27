@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.ConfigAdCombinationMapper;
 import com.fish.dao.second.model.ConfigAdCombination;
+import com.fish.dao.second.model.ConfigAdPosition;
 import com.fish.dao.second.model.ConfigAdSpace;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
@@ -56,6 +57,7 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
 
     @Override
     public List<ConfigAdCombination> selectAll(GetParameter parameter) {
+        getDefaultJson();
         return this.adCombinationMapper.selectAll();
     }
 
@@ -79,8 +81,6 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
                 int strategyId = positionObject.getInteger("strategyId");
                 positionObject.put("strategyName",
                         strategyId + "-" + this.cacheService.getConfigAdStrategys(strategyId).getDdName());
-                // 对策略配置json的引号转义
-                String strategyValue = positionObject.getString("strategyValue");
                 // 处理广告位
                 JSONArray spaceArray = positionObject.getJSONArray("spaces");
                 for (int spaceIndex = 0; spaceIndex < spaceArray.size(); spaceIndex++) {
@@ -110,6 +110,42 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
         }
         return null;
     }
+
+    /**
+     * 通过以前的配置生成默认的新配置方法，先放在这里用以测试，后续可以删除
+     *
+     * @return
+     */
+    private void getDefaultJson() {
+        JSONArray jsonArray = new JSONArray();
+        List<ConfigAdPosition> positionList = this.adPositionService.selectAll();
+        for (ConfigAdPosition adPosition : positionList) {
+            JSONObject positionObject = new JSONObject();
+            positionObject.put("positionId", adPosition.getDdId());
+            if (StringUtils.isNotBlank(adPosition.getDdAdSpaces())) {
+                JSONArray spaceArray = new JSONArray();
+                for (String adSpaceId : adPosition.getDdAdSpaces().split(",")) {
+                    ConfigAdSpace configAdSpace = this.adSpaceService.getConfigAdSpace(Integer.parseInt(adSpaceId));
+                    JSONObject spaceObject = new JSONObject();
+                    spaceObject.put("spaceId", Integer.parseInt(adSpaceId));
+                    JSONArray contentIdArray = new JSONArray();
+                    if (StringUtils.isNotBlank(configAdSpace.getDdAdContents())) {
+                        for (String adContentId : configAdSpace.getDdAdContents().split(",")) {
+                            contentIdArray.add(Integer.parseInt(adContentId));
+                        }
+                    }
+                    spaceObject.put("contentIds", contentIdArray);
+                    spaceArray.add(spaceObject);
+                }
+                positionObject.put("spaces", spaceArray);
+            }
+            positionObject.put("strategyId", adPosition.getDdStrategyId());
+            positionObject.put("strategyValue", adPosition.getDdStrategyValue());
+            jsonArray.add(positionObject);
+        }
+        System.out.println(jsonArray);
+    }
+
 
     /**
      * 新增
@@ -240,6 +276,5 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
         }
         return postResult;
     }
-
 
 }

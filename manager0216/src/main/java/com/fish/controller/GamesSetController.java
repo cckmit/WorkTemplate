@@ -93,20 +93,21 @@ public class GamesSetController {
     public PostResult insertGameSet(@RequestBody ArcadeGameSet productInfo) {
         PostResult result = new PostResult();
         int count = gamesSetService.insert(productInfo);
-        if (count == 1) {
-            //刷新业务表结构
-            String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
-            result.setMsg("操作成功");
-            return result;
-        } else if (count == 5) {
-            result.setSuccessed(false);
-            result.setMsg("游戏代号重复，操作失败");
-            return result;
-        } else {
-            result.setSuccessed(false);
-            result.setMsg("操作失败，请联系管理员");
-            return result;
+        switch (count) {
+            case 1:
+                //刷新业务表结构
+                String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
+                break;
+            case 5:
+                result.setSuccessed(false);
+                result.setMsg("操作失败，游戏代号重复");
+                break;
+            default:
+                result.setSuccessed(false);
+                result.setMsg("操作失败，请联系管理员");
+                break;
         }
+        return result;
     }
 
     /**
@@ -124,7 +125,6 @@ public class GamesSetController {
             case 1:
                 //刷新业务表结构
                 String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
-                result.setMsg("操作成功");
                 break;
             case 5:
                 result.setSuccessed(false);

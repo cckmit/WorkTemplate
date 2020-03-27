@@ -47,7 +47,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
+                                    lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -60,7 +61,6 @@
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
                 </div>
-
             </div>
         </div>
     </div>
@@ -84,7 +84,7 @@
 
         var gameName = xmSelect.render({
             el: '#gameName',
-            name:"gameName",
+            name: "gameName",
             language: 'zn',
             toolbar: {show: true},
             data: [],
@@ -96,7 +96,6 @@
             delay: 500,
             filterable: true,
             filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
             },
         });
 
@@ -128,18 +127,17 @@
             })
         });
 
-
         table.render({
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'times', width: 120, title: '时间', sort: true},
-                {field: 'online', width: 120, title: '在线人数', sort: true},
-                {field: 'buzyroom', width: 120, title: '游戏房间数', sort: true},
-                {field: 'idleroom', width: 120, title: '剩余房间数', sort: true},
-                {field: 'gameinfo', width: 120, title: '游戏信息', sort: true},
-                {field: 'inserttime', width: 120, title: '插入时间', sort: true}
+                {field: 'times', width: 180, title: '时间', sort: true},
+                {field: 'online', width: 160, title: '在线人数', sort: true},
+                {field: 'buzyroom', width: 160, title: '游戏房间数', sort: true},
+                {field: 'idleroom', width: 160, title: '剩余房间数', sort: true},
+                {field: 'gameinfo', width: 200, title: '游戏信息', sort: true},
+                {field: 'inserttime', width: 180, title: '插入时间', sort: true}
             ]],
             limit: 20,
             page: true,
@@ -147,16 +145,15 @@
             autoSort: false,
             defaultToolbar: ['filter', 'exports'],
             done: function (res, curr, count) {
-                console.log('当前加载完',res,curr);
+                console.log('当前加载完', res, curr);
                 //当前第一才进行加载
-                if (curr == 1) {
+                if (curr === 1) {
                     let lineData = res['lineData'];
                     let seriesData = lineData['series'];
                     let series = [];
                     let legend = [];
                     let selected = {};
-                    for(let i = 0;i<seriesData.length;i++)
-                    {
+                    for (let i = 0; i < seriesData.length; i++) {
                         let data = seriesData[i];
                         selected[data.name] = !data.smooth;
                         legend.push(data.name);
@@ -167,8 +164,7 @@
                             smooth: data.smooth,//曲线 默认折线
                         });
                     }
-                    if(object.notice)
-                    {
+                    if (object.notice) {
                         object.notice.clear();
                     }
                     object.notice = echarts.init(document.getElementById('Notice'));
@@ -176,8 +172,8 @@
                         title: {
                             text: '在线人数统计'
                         },
-                        dataZoom:[{
-                            type:"inside"
+                        dataZoom: [{
+                            type: "inside"
                         }],
                         tooltip: {
                             trigger: 'axis'//悬浮显示对比
@@ -190,15 +186,15 @@
                         xAxis: {
                             type: 'category',
                             boundaryGap: false,//从起点开始
-                            data:lineData['xAxis']
+                            data: lineData['xAxis']
                         },
                         yAxis: {
                             type: 'value'
                         },
                         series: series,
-                        legend: {data: legend,selected:selected}
+                        legend: {data: legend, selected: selected}
                     };
-                    console.log('option data:',data);
+                    console.log('option data:', data);
                     object.notice.setOption(data);
                     window.onresize = function () {//用于使echarts自适应高度和宽度
                         object.notice && object.notice.resize();

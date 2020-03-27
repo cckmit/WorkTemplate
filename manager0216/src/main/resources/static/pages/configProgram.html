@@ -169,9 +169,6 @@
                             }
                         );
                     });
-                    // Array.from (data, (json) => {
-                    //     $("#gameBox").append("<option  name='game'  value = '" + json.value + "'>"+json.title +"</option><br/>");
-                    // });
                     layui.form.render("select");
                 },
                 error: function () {
@@ -240,11 +237,11 @@
                 {
                     field: 'programType', width: 150, title: '类型', sort: true,
                     templet: (d) => {
-                        if (d.programType == 1) {
+                        if (d.programType === 1) {
                             return '小程序';
-                        } else if (d.programType == 0) {
+                        } else if (d.programType === 0) {
                             return '小游戏';
-                        } else if (d.programType == 2) {
+                        } else if (d.programType === 2) {
                             return '公众号';
                         } else
                             return '其他';
@@ -253,7 +250,7 @@
                 {
                     field: 'ddCode', width: 220, title: '正式合集', align: 'center',
                     templet: (d) => {
-                        if (d.ddCode != null && d.ddCode != 0) {
+                        if (d.ddCode != null && d.ddCode !== 0) {
                             return "(" + d.ddCode + "-" + d.codename + ")";
                         } else {
                             return "";
@@ -265,7 +262,8 @@
             page: true,
             limit: 30,
             toolbar: '#toolbar',
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-120'
         });
 
         laydate.render({
@@ -331,18 +329,16 @@
     /**
      * 根据ddAppId，ddMinVer参数删除，重写privateGetDeleteData
      * @param dataArray
+     * @param deleteObj
      */
     function privateGetDeleteData(dataArray, deleteObj) {
-        dataArray.forEach(data => {
-            if (deleteObj.deleteIds) {
-                deleteObj.deleteIds += ',' + data.ddAppId;
-                deleteObj.ddMinVer += ',' + data.ddMinVer;
-            } else {
-                deleteObj.deleteIds = data.ddAppId;
-                deleteObj.ddMinVer = data.ddMinVer;
-            }
-            deleteObj.deleteCount++;
-        });
+        if (dataArray.length > 1) {
+            UIConfig.warnMsg("请选择一行数据删除！")
+            return false;
+        }
+        deleteObj.deleteIds = dataArray[0].ddAppId;
+        deleteObj.ddMinVer = dataArray[0].ddMinVer;
+        deleteObj.deleteCount++;
     }
 </script>
 

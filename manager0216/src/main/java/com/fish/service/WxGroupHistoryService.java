@@ -35,7 +35,6 @@ public class WxGroupHistoryService implements BaseService<WxGroupHistory> {
     @Override
     public List<WxGroupHistory> selectAll(GetParameter parameter) {
         List<WxGroupHistory> wxGroupHistories;
-
         JSONObject search = getSearchData(parameter.getSearchData());
         if (search == null) {
             wxGroupHistories = wxGroupHistoryMapper.selectAll();

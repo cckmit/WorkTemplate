@@ -12,7 +12,6 @@
     <script src="../layuiadmin/layui/layui.js"></script>
     <script src="../layuiadmin/modules/operation.js"></script>
     <script src="../layuiadmin/xm-select.js"></script>
-
     <script></script>
 </head>
 <body>
@@ -65,7 +64,9 @@
 </script>
 <script>
     const operatorurl = '../manage/gameset';
-
+    /**
+     * 游戏合集选择下拉框
+     */
     let boxSelect = xmSelect.render({
         el: '#select',
         name: 'select',
@@ -78,19 +79,16 @@
         delay: 500,
         filterable: true,
         filterDone: function (val, list) {
-            console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
         },
     });
     //合集数据
     let allGameSets = [];
     //合集下拉框数据
-    var selectData = [];
+    let selectData = [];
     layui.use(['table', 'laydate', 'form', 'layer', 'multiSelect', 'index'], function (arrayLike) {
         var table = layui.table,
-            form = layui.form,
-            layer = layui.layer,
             $ = layui.jquery,
-            laydate = layui.laydate;
+            layDate = layui.laydate;
         $(() => {
             $.ajax({
                 type: "get",
@@ -127,7 +125,7 @@
                 {
                     field: 'ddstate', width: 250, title: '合集类型', sort: true,
                     templet: (d) => {
-                        if (d.ddstate == true)
+                        if (d.ddstate === true)
                             return "壳子模式";
                         return "游戏模式";
                     }
@@ -136,11 +134,12 @@
                 {field: 'ddcontent512a', width: 350, title: '游戏合集内容', sort: true}
             ]],
             page: true,
-            limit: 20,
+            limit: 30,
             toolbar: '#toolbar',
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-120'
         });
-        laydate.render({
+        layDate.render({
             elem: '#times',
             range: true
         });
@@ -154,8 +153,7 @@
     function privateLoadEditData(editData, type) {
         layui.use(['form', 'layer'], () => {
             const $ = layui.$, form = layui.form, layer = layui.layer;
-            const queryData = {id: type === 'new' ? 0 : editData.ddappid};
-            console.log("editData.gameBox---" + editData.gameBox)
+            console.log("editData.select--"+editData.select)
             // 编辑游戏合集内容
             if (type !== 'new') {
                 let newGameSets = [];

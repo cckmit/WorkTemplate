@@ -1,5 +1,6 @@
 package com.fish.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.model.RoundExt;
 import com.fish.dao.primary.model.RoundGame;
 import com.fish.dao.second.model.Recharge;
@@ -53,10 +54,8 @@ public class RoundGameController {
     }
 
     @PostMapping(value = "/roundgame/delete")
-    public PostResult deleteRecharge(@RequestBody Recharge productInfo) {
-        PostResult result = new PostResult();
-        result.setMsg("操作成功");
-        return result;
+    public PostResult deleteRoundGame(@RequestBody JSONObject jsonObject) {
+        return this.roundGameService.delete(jsonObject);
     }
 
     /**
@@ -73,7 +72,6 @@ public class RoundGameController {
         if (count == 1) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_game", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
@@ -94,7 +92,6 @@ public class RoundGameController {
         if (count != 0) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_game", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");

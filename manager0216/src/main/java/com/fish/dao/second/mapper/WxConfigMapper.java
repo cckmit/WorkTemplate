@@ -23,4 +23,6 @@ public interface WxConfigMapper {
     List<WxConfig> selectAllGames();
 
     List<WxConfig> selectAllPrograms();
+
+    int deleteByPrimaryKey(String ddappid);
 }

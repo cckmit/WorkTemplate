@@ -46,10 +46,8 @@
                             <button type="button" class="layui-btn layui-btn-normal" id="test8">导入数据</button>
                             <button type="button" class="layui-btn" id="test9">开始上传</button>
                         </div>
-
                     </div>
                 </div>
-
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
@@ -69,30 +67,30 @@
 </script>
 <script>
     const operatorurl = '../manage/buypay';
+    let appNames = [];
+    let appSelect = xmSelect.render({
+        el: '#ddappid',
+        name: 'ddappid',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+            console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+        },
+    });
     layui.use(['table', 'laydate', 'form', 'layer', 'upload'], function () {
         var table = layui.table,
             form = layui.form,
             layer = layui.layer,
             laydate = layui.laydate, upload = layui.upload;
         var $ = layui.$;
-        var appNames = [];
-        var appSelect = xmSelect.render({
-            el: '#ddappid',
-            name: 'ddappid',
-            language: 'zn',
-            toolbar: {show: true},
-            data: [],
-            radio: true,
-            clickClose: true,
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
         $(() => {
             $.ajax({
                 type: "get",
@@ -100,7 +98,7 @@
                 url: '../manage/roundmatch/appname',
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
-                        var type;
+                        let type;
                         if (val.programType === 0) {
                             type = "小游戏";
                         }
@@ -139,13 +137,14 @@
             ]],
             page: true,
             toolbar: '#toolbar',
-            limit: 20,
+            limit: 30,
             defaultToolbar: ['filter', 'exports'],
             statusName: 'status',//数据状态的字段名称，默认：code
-            statusCode: 200 //成功的状态码，默认：0
+            statusCode: 200,//成功的状态码，默认：0
+            height: 'full-180'
         });
         form.on('submit(search)', function (data) {
-            var field = data.field;
+            let field = data.field;
             //执行重载
             table_reload(field);
             return false;
@@ -161,10 +160,10 @@
             accept: "file",
             exts: 'xls|xlsx|xlsm|xlt|xltx|xltm',
             done: function (res) {
-                if(res.code === 200){
+                if (res.code === 200) {
                     console.log(res)
                     layer.msg('导入成功');
-                }else {
+                } else {
                     console.log(res)
                     layer.msg('导入失败，请检查数据格式后重新上传');
                 }
@@ -202,21 +201,16 @@
     /**
      * 根据wxAppId，wxDate参数删除，重写privateGetDeleteData
      * @param dataArray
+     * @param deleteObj
      */
     function privateGetDeleteData(dataArray, deleteObj) {
-        dataArray.forEach(data => {
-            console.log('我是deleteIds:', deleteObj.deleteIds);
-            console.log('我是data:', data);
-            console.log('我是data.id:', data.id);
-            if (deleteObj.deleteIds) {
-                deleteObj.deleteIds += ',' + data.buyAppId;
-                deleteObj.buyDate += ',' + data.buyDate;
-            } else {
-                deleteObj.deleteIds = data.buyAppId;
-                deleteObj.buyDate = data.buyDate;
-            }
-            deleteObj.deleteCount++;
-        });
+        if (dataArray.length > 1) {
+            UIConfig.warnMsg("请选择一行数据删除！")
+            return false;
+        }
+        deleteObj.deleteIds = dataArray[0].buyAppId;
+        deleteObj.buyDate = dataArray[0].buyDate;
+        deleteObj.deleteCount++;
     }
 </script>
 <!-- 表单元素 -->

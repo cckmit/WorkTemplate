@@ -35,7 +35,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search" >
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
+                                    lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -166,12 +167,15 @@
                 {field: 'ddappskipres', width: 300, title: '跳转资源', sort: true},
                 {
                     field: 'jumpDirect', width: 120, title: '资源图',
-                    sort: true,
                     templet: function (d) {
                         //return  "<img src='"+datum.formatUrl(d.url)+"' style='height:50px;'";
-                        return '<a href="' + d.jumpDirect + '" target="_blank " title="点击查看">' +
-                            '<img lay-src="' + d.jumpDirect + '" style="max-width: 100px;line-height:100px!important;"/>' +
-                            '</a>';
+                        if (d.jumpDirect !== null) {
+                            return '<a href="' + d.jumpDirect + '" target="_blank " title="点击查看">' +
+                                '<img src="' + d.jumpDirect + '" style="max-width: 100px;line-height:100px!important;"/>' +
+                                '</a>';
+                        } else {
+                            return "";
+                        }
                     }
                 },
                 {field: 'ddSubscribe', width: 300, title: '订阅配置', sort: true}
@@ -181,22 +185,21 @@
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports'],
             limit: 30,
-            height: 'full-20'
+            height: 'full-120'
         });
-        var $ = layui.$, active = {
+        let active = {
             flushPicture: function () { //获取选中数据
-                var checkStatus = table.checkStatus('table-page');
-                var l = checkStatus.data.length;
-                data = checkStatus.data;
-                if (l == 0) {
+                let checkStatus = table.checkStatus('table-page');
+                let l = checkStatus.data.length;
+                let data = checkStatus.data;
+                if (l === 0) {
                     layer.msg('请选择一行');
                 } else {
-                    var arr = [];
-                    for (var i in data) {
+                    let arr = [];
+                    for (let i in data) {
                         arr.push(data[i].ddappid);
                     }
-                    console.log("wxArry :" + arr);
-                    var obj = {
+                    let obj = {
                         "appList": arr
                     };
                     $.ajax({
@@ -219,7 +222,7 @@
             }
         };
         $('.flushPictures .layui-btn').on('click', function () {
-            var type = $(this).data('type');
+            let type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
         laydate.render({
@@ -246,19 +249,37 @@
         function verify(content, name) {
             if (typeof content == 'string') {
                 try {
-                    var objContent = JSON.parse(content);
-                    if (typeof objContent != 'object' && !objContent) {
-                        alert("请检查" + name + "JSON格式");
+                    if (content === "") {
+                        return true;
+                    }
+                    let objContent = JSON.parse(content);
+                    if (typeof objContent == 'object' && objContent) {
+                        return true;
+                    } else {
+                        UIConfig.warnMsg("请检查" + name + "JSON格式")
                         return false;
                     }
                 } catch (e) {
-                    alert("请检查" + name + "JSON格式");
+                    UIConfig.warnMsg("请检查" + name + "JSON格式")
                     return false;
                 }
             }
         }
     })
 
+    /**
+     * 根据wxAppId删除，重写privateGetDeleteData
+     * @param dataArray
+     * @param deleteObj
+     */
+    function privateGetDeleteData(dataArray, deleteObj) {
+        if (dataArray.length > 1) {
+            UIConfig.warnMsg("请选择一行数据删除！")
+            return false;
+        }
+        deleteObj.deleteIds = dataArray[0].ddappid;
+        deleteObj.deleteCount++;
+    }
 </script>
 
 <!-- 表单元素 -->

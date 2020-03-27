@@ -23,18 +23,18 @@
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
-                            <label class="layui-form-label" >类型</label>
+                            <label class="layui-form-label">类型</label>
                             <div class="layui-input-inline" style="width: 14rem;" id="adType" name="adType"
                                  lay-filter="adType" autocomplete="off"></div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" >名称</label>
+                            <label class="layui-form-label">名称</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="name" name="name">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -157,6 +157,12 @@
                     field: 'ddShowWxAd', width: 120, title: '显示微信？', sort: false, align: 'center',
                     templet: (d) => {
                         return d.ddShowWxAd ? '是' : '否';
+                    }
+                },
+                {
+                    field: 'ddShowWxReVideoAd', width: 120, title: '显示微信激励视频？', sort: false, align: 'center',
+                    templet: (d) => {
+                        return d.ddShowWxReVideoAd ? '是' : '否';
                     }
                 },
                 {field: 'updateTime', width: 220, title: '数据更新时间', sort: true, align: 'center'}
@@ -295,6 +301,12 @@
         <label class="layui-form-label">微信广告</label>
         <div class="layui-input-inline">
             <input type="checkbox" checked="" name="ddShowWxAd" lay-skin="switch" lay-text="展示|不展示">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">微信激励视频</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" checked="" name="ddShowWxReVideoAd" lay-skin="switch" lay-text="展示|不展示">
         </div>
     </div>
     <div class="layui-form-item layui-hide" style="text-align:center;">

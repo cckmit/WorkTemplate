@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 提现审核 Service
+ * 提现记录查询 Service
  * RechargedService
  *
  * @author
@@ -26,7 +26,6 @@ public class RechargedService implements BaseService<Recharge> {
     RechargeMapper rechargeMapper;
     @Autowired
     UserAppMapper userAppMapper;
-
     @Autowired
     WxConfigMapper wxConfigMapper;
     @Autowired
@@ -40,10 +39,8 @@ public class RechargedService implements BaseService<Recharge> {
 
     @Override
     public List<Recharge> selectAll(GetParameter parameter) {
-        long current = System.currentTimeMillis();
         List<Recharge> recharges;
         JSONObject search = getSearchData(parameter.getSearchData());
-        System.out.println("查询,耗时:" + (System.currentTimeMillis() - current) + "ms");
         if (search == null || search.getString("times").isEmpty()) {
             recharges = rechargeMapper.selectAllCharge();
         } else {
@@ -51,24 +48,14 @@ public class RechargedService implements BaseService<Recharge> {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             recharges = rechargeMapper.selectChargedByTime(format.format(parse[0]), format.format(parse[1]));
         }
-        System.out.println("查询提现结束,耗时:" + (System.currentTimeMillis() - current) + "ms");
         return recharges;
-    }
-
-    //新增信息
-    public int insert(Recharge record) {
-        return rechargeMapper.insert(record);
-    }
-
-    //更新信息
-    public int updateByPrimaryKeySelective(Recharge record) {
-        return rechargeMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setSort("ddtimes");
         parameter.setOrder("desc");
     }
@@ -91,6 +78,5 @@ public class RechargedService implements BaseService<Recharge> {
         }
         return (existValueFalse(searchData.getString("ddStatus"), recharge.getDdstatus()));
     }
-
 
 }

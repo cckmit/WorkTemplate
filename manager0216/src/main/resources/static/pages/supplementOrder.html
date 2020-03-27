@@ -50,12 +50,10 @@
                         </div>
                     </form>
                 </div>
-
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
                 </div>
-
             </div>
         </div>
     </div>
@@ -69,8 +67,8 @@
     </div>
 </script>
 <script>
-    var appNameOptionArr = [];
-    var appNameSelect = xmSelect.render({
+    let appNameOptionArr = [];
+    let appNameSelect = xmSelect.render({
         el: '#appid',
         name: 'appid',
         language: 'zn',
@@ -83,9 +81,7 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {
-            console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-        },
+        filterDone: function (val, list) {},
     });
     const operatorurl = '../manage/supplementorder';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
@@ -100,7 +96,6 @@
             url: '../manage/roundmatch/appname',
             success: (res) => {
                 res.forEach(function (val, index, arr) {
-                    //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
                     var type;
                     if (val.programType === 0) {
                         type = "小游戏";
@@ -124,29 +119,29 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'userid', width: '24%', title: '用户ID', sort: true},
-                {field: 'username', width: 120, title: '用户昵称', sort: true},
-                {field: 'appid', width: '15%', title: '来源APPID', sort: true},
-                {field: 'appname', width: '12%', title: '来源产品名称', sort: true},
+                {field: 'userid', width: 280, title: '用户ID', sort: true},
+                {field: 'username', width: 140, title: '用户昵称', sort: true},
+                {field: 'appid', width: 220, title: '来源APPID', sort: true},
+                {field: 'appname', width: 140, title: '来源产品名称', sort: true},
                 {
-                    field: 'programType', width: 120, title: '来源类型', sort: true,
+                    field: 'programType', width: 140, title: '来源类型', sort: true,
                     templet: (d) => {
-                        if (d.programType == 0) {
+                        if (d.programType === 0) {
                             return "小游戏";
-                        } else if (d.programType == 1) {
+                        } else if (d.programType === 1) {
                             return "小程序";
-                        } else if (d.programType == 2) {
+                        } else if (d.programType === 2) {
                             return "公众号";
                         }
                     }
                 },
-                {field: 'coinCount', width: '10%', title: '补发数量', sort: true},
-                {field: 'createTime', width: '14%', title: '操作时间', sort: true}
-
+                {field: 'coinCount', width: 140, title: '补发数量', sort: true},
+                {field: 'createTime', width: 220, title: '操作时间', sort: true}
             ]],
             page: true,
             toolbar: '#toolbar',
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-120'
         });
 
         laydate.render({
@@ -235,23 +230,6 @@
         <label class="layui-form-label">来源AppID *</label>
         <div class="layui-input-inline" id="appid" name="appid" lay-filter="appid" autocomplete="off"></div>
     </div>
-    <!--    <div class="layui-form-item ">
-            <label class="layui-form-label">来源产品名称</label>
-            <div class="layui-input-inline">
-                <input type="text" id="appname" name="appname" autocomplete="off"
-                       class="layui-input layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item ">
-            <label class="layui-form-label">来源类型</label>
-            <div class="layui-input-inline">
-                <select name="programType" id="programType">
-                    <option value=0>小游戏</option>
-                    <option value=1 selected="selected">小程序</option>
-                    <option value=2>公众号</option>
-                </select>
-            </div>
-        </div>-->
     <div class="layui-form-item ">
         <label class="layui-form-label">当前剩余金币</label>
         <div class="layui-input-inline">

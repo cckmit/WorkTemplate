@@ -8,11 +8,7 @@ import com.fish.protocols.PostResult;
 import com.fish.service.ConfigAdAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 广告内容管理
@@ -62,6 +58,18 @@ public class ConfigAdAppController {
     }
 
     /**
+     * 复制
+     *
+     * @param configAdApp
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/configAdApp/copy")
+    public PostResult copyConfigAdSource(@RequestBody ConfigAdApp configAdApp) {
+        return this.adAppService.copy(configAdApp);
+    }
+
+    /**
      * 删除
      *
      * @param jsonObject
@@ -79,6 +87,21 @@ public class ConfigAdAppController {
      */
     @ResponseBody
     @GetMapping(value = "/configAdApp/get")
-    public ConfigAdApp getConfigAdApp(int id) { return this.adAppService.getConfigAdApp(id); }
+    public ConfigAdApp getConfigAdApp(int id) {
+        return this.adAppService.getConfigAdApp(id);
+    }
 
+    /**
+     * 通过页面开关改变运营状态
+     *
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/configAdApp/change")
+    public PostResult changeStatus(@RequestBody JSONObject jsonObject) {
+        Integer id = jsonObject.getInteger("id");
+        Boolean ddAllowedShow = jsonObject.getBoolean("ddAllowedShow");
+        return this.adAppService.changeAllowedShowStatus(id, ddAllowedShow);
+    }
 }

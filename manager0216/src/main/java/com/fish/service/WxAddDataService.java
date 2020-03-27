@@ -14,7 +14,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -34,10 +33,8 @@ public class WxAddDataService implements BaseService<ProductData> {
 
     @Autowired
     WxConfigMapper wxConfigMapper;
-
     @Autowired
     MinitjWxMapper minitjWxMapper;
-
     @Autowired
     CacheService cacheService;
     @Autowired
@@ -124,37 +121,10 @@ public class WxAddDataService implements BaseService<ProductData> {
                 }
                 productData.setRevenueCount(adRevenue);
                 BeanUtils.copyProperties(productData.getMinitjWx(), productData);
-                try {
-                    if (!checkObjFieldIsNull(productData.getMinitjWx())) {
-                        productDatas.add(productData);
-                    }
-                } catch (IllegalAccessException e) {
-                    LOGGER.error("查询微信广告数据失败" + ", 详细信息:{}", e.getMessage());
-                }
+                productDatas.add(productData);
             }
         });
         return productDatas;
-    }
-
-    /**
-     * java反射机制判断对象所有属性是否全部为空
-     *
-     * @param obj 对象参数
-     * @return 返回属性名称
-     */
-    private boolean checkObjFieldIsNull(Object obj) throws IllegalAccessException {
-        boolean flag = false;
-        if (obj == null) {
-            return true;
-        } else {
-            for (Field f : obj.getClass().getDeclaredFields()) {
-                f.setAccessible(true);
-                if (f.get(obj) == null) {
-                    flag = true;
-                }
-            }
-            return flag;
-        }
     }
 
     @Override

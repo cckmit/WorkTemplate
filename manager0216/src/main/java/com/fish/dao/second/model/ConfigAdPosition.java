@@ -21,6 +21,7 @@ public class ConfigAdPosition {
     private int ddStrategyId;
     private String ddStrategyValue;
     private boolean ddShowWxAd;
+    private boolean ddShowWxReVideoAd;
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm")
     private Date updateTime;
 
@@ -69,6 +70,14 @@ public class ConfigAdPosition {
     public boolean isDdShowWxAd() { return ddShowWxAd; }
 
     public void setDdShowWxAd(boolean ddShowWxAd) { this.ddShowWxAd = ddShowWxAd; }
+
+    public boolean isDdShowWxReVideoAd() {
+        return ddShowWxReVideoAd;
+    }
+
+    public void setDdShowWxReVideoAd(boolean ddShowWxReVideoAd) {
+        this.ddShowWxReVideoAd = ddShowWxReVideoAd;
+    }
 
     public Date getUpdateTime() {
         return updateTime;

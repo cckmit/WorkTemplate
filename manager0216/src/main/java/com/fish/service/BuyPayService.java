@@ -38,22 +38,20 @@ public class BuyPayService implements BaseService<BuyPay> {
     public List<BuyPay> selectAll(GetParameter parameter) {
         List<BuyPay> buyPayList;
         JSONObject search = getSearchData(parameter.getSearchData());
-        String sql = "select * from buy_pay where 1 = 1";
-        StringBuilder SQL = new StringBuilder(sql);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         if (search == null) {
             buyPayList = buyPayMapper.selectAll();
         } else {
-            String ddAppId = search.getString("ddappid");
+            String buyAppId = search.getString("ddappid");
             String times = search.getString("times");
-            if (StringUtils.isNotBlank(ddAppId)) {
-                SQL.append(" and buy_app_id =" + "'").append(ddAppId).append("'");
-            }
+            String beginTime = format.format(new Date());
+            String endTime = format.format(new Date());
             if (StringUtils.isNotBlank(times)) {
                 Date[] parse = XwhTool.parseDate(times);
-                SQL.append(" and DATE(buy_date) between '").append(format.format(parse[0])).append("' and '").append(format.format(parse[1])).append("'");
+                beginTime = format.format(parse[0]);
+                endTime = format.format(parse[1]);
             }
-            buyPayList = buyPayMapper.selectSearch(SQL.toString());
+            buyPayList = buyPayMapper.queryBuyPayData(beginTime, endTime, buyAppId);
         }
         return buyPayList;
     }
@@ -129,7 +127,7 @@ public class BuyPayService implements BaseService<BuyPay> {
                         }
                     }
                 }
-                 buyPayMapper.insertBatch(lists);
+                buyPayMapper.insertBatch(lists);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -230,9 +228,9 @@ public class BuyPayService implements BaseService<BuyPay> {
      */
     public PostResult deleteSelective(JSONObject jsonObject) {
         PostResult result = new PostResult();
-        String BuyAppId = jsonObject.getString("deleteIds");
+        String buyAppId = jsonObject.getString("deleteIds");
         String wxDate = jsonObject.getString("buyDate");
-        int delete = buyPayMapper.deleteByPrimaryKey(wxDate, BuyAppId);
+        int delete = buyPayMapper.deleteByPrimaryKey(wxDate, buyAppId);
         if (delete <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改买量数据失败！");

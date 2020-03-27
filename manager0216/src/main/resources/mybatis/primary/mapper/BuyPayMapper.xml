@@ -165,6 +165,16 @@
         ORDER BY b.buy_date
     </select>
 
+    <select id="queryBuyPayData" parameterType="string" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        FROM buy_pay
+        WHERE DATE(buy_buy_date) BETWEEN #{beginTime} AND #{endTime}
+        <if test="buyAppId != null and buyAppId !=''">
+            AND buy_app_id = #{buyAppId}
+        </if>
+    </select>
+
     <select id="selectSearch" resultMap="BaseResultMap">
          ${_parameter}
     </select>

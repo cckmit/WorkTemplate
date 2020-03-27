@@ -29,9 +29,6 @@
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
                 </div>
-                <style type="text/css">
-
-                </style>
             </div>
         </div>
     </div>
@@ -50,9 +47,8 @@
         var table = layui.table,
             form = layui.form,
             layer = layui.layer,
-            laydate = layui.laydate, flow = layui.flow;
+            laydate = layui.laydate;
         var $ = layui.$;
-
         form.on('switch(switchTest)', function (data) {
             let switchStatus = data.elem.checked;//判断开关状态
             let statusObj = {ddStatus: false};
@@ -77,8 +73,6 @@
                 }
             });
         })
-
-        flow.lazyimg();
         table.render({
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',
@@ -98,10 +92,8 @@
                     field: 'ddStatus', width: 180, title: '群二维码状态', sort: true,
                     templet: (d) => {
                         if (d.ddStatus) {
-                            
                             return '<input type="checkbox" checked="checked" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="开启|关闭">';
                         } else {
-                           
                             return '<input type="checkbox" name="close" lay-skin="switch" lay-filter="switchTest" lay-text="开启|关闭">';
                         }
                     }
@@ -112,7 +104,8 @@
             autoSort: false,
             toolbar: '#toolbar',
             defaultToolbar: ['filter', 'exports'],
-            limit: 30
+            limit: 30,
+            height: 'full-80'
         });
         laydate.render({
             elem: '#times',
@@ -128,7 +121,6 @@
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
       style="padding: 20px 0 0 0;width: 600px;height: 700px;">
-
     <div class="layui-form-item layui-hide">
         <label class="layui-form-label">ID *</label>
         <div class="layui-input-inline">
@@ -203,7 +195,7 @@
     <div class="layui-form-item ">
         <label class="layui-form-label">群二维码状态</label>
         <div class="layui-input-inline">
-            <input type="checkbox" checked="" id="ddStatus"  name="ddStatus" lay-skin="switch" lay-text="开启|关闭">
+            <input type="checkbox" checked="" id="ddStatus" name="ddStatus" lay-skin="switch" lay-text="开启|关闭">
         </div>
     </div>
 

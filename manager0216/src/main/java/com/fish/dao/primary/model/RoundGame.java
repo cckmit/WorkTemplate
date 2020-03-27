@@ -6,10 +6,11 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class RoundGame
-{
+public class RoundGame {
+    /**
+     * 赛制编号
+     */
     private String roundSelect;
-    private String gameCodeSelect;
 
     private String ddreward;
     private String gameName;
@@ -33,149 +34,111 @@ public class RoundGame
     //图片跳转
     private String jumpDirect;
 
-    public String getJumpDirect()
-    {
+    public String getJumpDirect() {
         return jumpDirect;
     }
 
-    public void setJumpDirect(String jumpDirect)
-    {
+    public void setJumpDirect(String jumpDirect) {
         this.jumpDirect = jumpDirect;
     }
 
-    public String getRoundSelect()
-    {
+    public String getRoundSelect() {
         return roundSelect;
     }
 
-    public void setRoundSelect(String roundSelect)
-    {
+    public void setRoundSelect(String roundSelect) {
         this.roundSelect = roundSelect;
     }
-
-    public String getGameCodeSelect()
-    {
-        return gameCodeSelect;
-    }
-
-    public void setGameCodeSelect(String gameCodeSelect)
-    {
-        this.gameCodeSelect = gameCodeSelect;
-    }
-
-    public String getDdreward()
-    {
+    public String getDdreward() {
         return ddreward;
     }
 
-    public void setDdreward(String ddreward)
-    {
+    public void setDdreward(String ddreward) {
         this.ddreward = ddreward;
     }
 
-    public String getGameName()
-    {
+    public String getGameName() {
         return gameName;
     }
 
-    public void setGameName(String gameName)
-    {
+    public void setGameName(String gameName) {
         this.gameName = gameName;
     }
 
-    public String getRoundName()
-    {
+    public String getRoundName() {
         return roundName;
     }
 
-    public void setRoundName(String roundName)
-    {
+    public void setRoundName(String roundName) {
         this.roundName = roundName;
     }
 
-    public Integer getDdcode()
-    {
+    public Integer getDdcode() {
         return ddcode;
     }
 
-    public void setDdcode(Integer ddcode)
-    {
+    public void setDdcode(Integer ddcode) {
         this.ddcode = ddcode;
     }
 
-    public String getDdname()
-    {
+    public String getDdname() {
         return ddname;
     }
 
-    public void setDdname(String ddname)
-    {
+    public void setDdname(String ddname) {
         this.ddname = ddname == null ? null : ddname.trim();
     }
 
-    public Boolean getDdstate()
-    {
+    public Boolean getDdstate() {
         return ddstate;
     }
 
-    public void setDdstate(Boolean ddstate)
-    {
+    public void setDdstate(Boolean ddstate) {
         this.ddstate = ddstate;
     }
 
-    public Integer getDdgame()
-    {
+    public Integer getDdgame() {
         return ddgame;
     }
 
-    public void setDdgame(Integer ddgame)
-    {
+    public void setDdgame(Integer ddgame) {
         this.ddgame = ddgame;
     }
 
-    public String getDdround()
-    {
+    public String getDdround() {
         return ddround;
     }
 
-    public void setDdround(String ddround)
-    {
+    public void setDdround(String ddround) {
         this.ddround = ddround == null ? null : ddround.trim();
     }
 
-    public Date getDdstart()
-    {
+    public Date getDdstart() {
         return ddstart;
     }
 
-    public void setDdstart(Date ddstart)
-    {
+    public void setDdstart(Date ddstart) {
         this.ddstart = ddstart;
     }
 
-    public Date getDdend()
-    {
+    public Date getDdend() {
         return ddend;
     }
 
-    public void setDdend(Date ddend)
-    {
+    public void setDdend(Date ddend) {
         this.ddend = ddend;
     }
 
-    public Date getTimes()
-    {
+    public Date getTimes() {
         return times;
     }
 
-    public void setTimes(Date times)
-    {
+    public void setTimes(Date times) {
         this.times = times;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
         sb.append(" [");

@@ -243,7 +243,7 @@ public class PublicCentreService implements BaseService<PublicCentre> {
         int delete = publicCentreMapper.deleteByPrimaryKey(Integer.parseInt(ddId));
         if (delete <= 0) {
             result.setSuccessed(false);
-            result.setMsg("操作失败，修改广告内容失败！");
+            result.setMsg("操作失败，请联系管理员！");
         }
         return result;
     }

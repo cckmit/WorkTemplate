@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.Objects;
 
 /**
  * 产品数据详情
@@ -75,7 +76,7 @@ public class Fc_ProductDataController {
         try {
             String readPath = baseConfig.getExcelSave();
             String originalFilename = file.getOriginalFilename();
-            File saveFile = new File(readPath, originalFilename);
+            File saveFile = new File(readPath, Objects.requireNonNull(originalFilename));
             FileUtils.copyInputStreamToFile(file.getInputStream(), saveFile);
             ReadExcel readExcel = new ReadExcel();
             readExcel.readFile(saveFile);
@@ -87,7 +88,6 @@ public class Fc_ProductDataController {
         jsonObject.put("code", 200);
         return jsonObject;
     }
-
 
     /**
      * 新增小程序产品广告信息

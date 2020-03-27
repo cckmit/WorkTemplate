@@ -23,7 +23,6 @@ public class OnlineStatisticsController {
     @Autowired
     OnlineService onlineService;
 
-
     /**
      * 查询在线情况
      *

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.*;
 import com.fish.dao.second.model.AllCost;
 import com.fish.dao.second.model.Recharge;
-import com.fish.dao.second.model.UserAllInfo;
 import com.fish.dao.second.model.UserApp;
 import com.fish.protocols.GetParameter;
 import com.fish.service.cache.CacheService;
@@ -14,6 +13,7 @@ import com.fish.utils.tool.CmTool;
 import com.fish.utils.tool.SignatureAlgorithm;
 import com.fish.utils.tool.WxConfig;
 import com.fish.utils.tool.XMLHandler;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import java.util.*;
 import static com.fish.utils.tool.CmTool.createNonceStr;
 
 /**
- * 提现记录查询 Service
+ * 提现审核 Service
  * RechargeService
  *
  * @author
@@ -40,21 +40,19 @@ public class RechargeService implements BaseService<Recharge> {
     RechargeMapper rechargeMapper;
     @Autowired
     UserAppMapper userAppMapper;
-
     @Autowired
     WxConfigMapper wxConfigMapper;
     @Autowired
     UserInfoMapper userInfoMapper;
     @Autowired
     UserValueMapper userValueMapper;
-
     @Autowired
     CacheService cacheService;
     @Autowired
     AllCostMapper allCostMapper;
 
     /**
-     * 查询所有提现记录
+     * 查询提现审核
      *
      * @param parameter
      * @return
@@ -68,31 +66,14 @@ public class RechargeService implements BaseService<Recharge> {
         } else {
             Date[] parse = XwhTool.parseDate(search.getString("times"));
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            recharges = rechargeMapper.selectByTime(format.format(parse[0]), format.format(parse[1]));
+            recharges = rechargeMapper.selectAll(format.format(parse[0]), format.format(parse[1]));
         }
         List<Recharge> rechargeList = new ArrayList<>();
         for (Recharge recharge : recharges) {
             String dduid = recharge.getDduid();
-            String ddAppId = recharge.getDdappid();
-            com.fish.dao.second.model.WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
-            if (wxConfig != null) {
-                String productName = wxConfig.getProductName();
-                Integer programType = wxConfig.getProgramType();
-                recharge.setProductName(productName);
-                recharge.setProgramType(programType);
-            }
-            //查询用户信息
-            UserAllInfo userInfo = cacheService.getUserInfo(dduid);
-            if (userInfo != null) {
-                String userName = userInfo.getDdname();
-                recharge.setUserName(userName);
-            }
             Date times = recharge.getDdtimes();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String ddTime = sdf.format(times);
-            // String sql = "SELECT * FROM all_cost WHERE ddTime ='" + ddTime + "' ";
-            String sql = String.format(" SELECT * FROM all_cost WHERE ddTime ='%s' and ddType = 'rmb'", ddTime);
-            AllCost allCost = allCostMapper.selectCurrentCoin(sql);
+            String ddTime = DateFormatUtils.format(times, "yyyy-MM-dd HH:mm:ss");
+            AllCost allCost = allCostMapper.selectCurrentCoin(ddTime);
             if (allCost != null) {
                 Long rmbCurrent = allCost.getDdcurrent();
                 //剩余金额
@@ -100,9 +81,7 @@ public class RechargeService implements BaseService<Recharge> {
             } else {
                 recharge.setRemainAmount(0);
             }
-            //String reChargeSql ="SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '" + dduid + "' AND ddTimes <= '" + ddTime + "' ";
-          //  String reChargeSql = String.format("SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '%s' AND ddTimes <= '%s' ", dduid, ddTime);
-            int cashOutCurrent = rechargeMapper.selectCashOut(dduid,ddTime);
+            int cashOutCurrent = rechargeMapper.selectCashOut(dduid, ddTime);
             //已提现金额
             recharge.setDdrmbed(new BigDecimal(cashOutCurrent));
             Integer programType = recharge.getProgramType();
@@ -121,8 +100,9 @@ public class RechargeService implements BaseService<Recharge> {
      */
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setSort("ddtimes");
         parameter.setOrder("desc");
     }
@@ -167,18 +147,20 @@ public class RechargeService implements BaseService<Recharge> {
         Map<String, String> signMap = new HashMap<>();
         signMap.put("mch_appid", wxConfig.getDdappid());
         signMap.put("mchid", wxConfig.getDdmchid());
-        if (!WxConfig.DEVICE_INFO.isEmpty())
+        if (!WxConfig.DEVICE_INFO.isEmpty()) {
             signMap.put("device_info", WxConfig.DEVICE_INFO);
+        }
         signMap.put("nonce_str", createNonceStr());
         signMap.put("partner_trade_no", orderid);
         signMap.put("openid", openid);
         signMap.put("check_name", WxConfig.CHECK_NAME.name());
         signMap.put("re_user_name", "default");
         signMap.put("amount", String.valueOf(amount));
-        if (desc != null)
+        if (desc != null) {
             signMap.put("desc", desc);
-        else
+        } else {
             signMap.put("desc", WxConfig.DESC);
+        }
         signMap.put("spbill_create_ip", ip);
         SignatureAlgorithm algorithm = new SignatureAlgorithm(wxConfig.getDdkey(), signMap);
         String xml = algorithm.getSignXml();
@@ -220,31 +202,31 @@ public class RechargeService implements BaseService<Recharge> {
                 com.fish.dao.second.model.WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(ddappid);
                 LOG.info("当前订单提现金额：" + rmb / 100 + "元, 用户Uid ：" + dduid + " ,产品名 : " + wxConfig.getProductName());
                 Map<String, String> backCharge = recharge(orderId, rmb, wxConfig, oppenId, wxConfig.getProductName() + "-赛事奖金提现" + rmb / 100 + "元", "129.211.119.249");
-                String return_code = backCharge.get("return_code");
-                if (return_code.equals("FAIL")) {
-                    String return_msg = backCharge.get("return_msg");
-                    recharge.setDdtip(return_msg);
+                String returnCode = backCharge != null ? backCharge.get("return_code") : null;
+                if ("FAIL".equals(returnCode)) {
+                    String returnMsg = backCharge.get("return_msg");
+                    recharge.setDdtip(returnMsg);
                     recharge.setDdstatus(2);
                     recharge.setDdtrans(new Timestamp(System.currentTimeMillis()));
                     error = rechargeMapper.updateByPrimaryKeySelective(recharge);
                     errorCount = errorCount + error;
-                    LOG.info("提现返回结果 :" + return_code);
-                } else if (return_code.equals("SUCCESS")) {
-                    String result_code = backCharge.get("result_code");
-                    if (result_code.equals("SUCCESS")) {
+                    LOG.info("提现返回结果 :" + returnCode);
+                } else if ("SUCCESS".equals(returnCode)) {
+                    String resultCode = backCharge.get("result_code");
+                    if ("SUCCESS".equals(resultCode)) {
                         recharge.setDdstatus(200);
                         recharge.setDdtip("");
                         recharge.setDdtrans(new Timestamp(System.currentTimeMillis()));
                         rechargeMapper.updateByPrimaryKeySelective(recharge);
                         index++;
-                    } else if (result_code.equals("FAIL")) {
-                        String err_code = backCharge.get("err_code");
-                        recharge.setDdtip(err_code);
+                    } else if ("FAIL".equals(resultCode)) {
+                        String errCode = backCharge.get("err_code");
+                        recharge.setDdtip(errCode);
                         recharge.setDdstatus(2);
                         recharge.setDdtrans(new Timestamp(System.currentTimeMillis()));
                         error = rechargeMapper.updateByPrimaryKeySelective(recharge);
                         errorCount = errorCount + error;
-                        LOG.info("提现返回结果 :" + return_code);
+                        LOG.info("提现返回结果 :" + returnCode);
                     }
                 }
             }

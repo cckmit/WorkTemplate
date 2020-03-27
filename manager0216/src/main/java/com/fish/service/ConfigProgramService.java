@@ -3,10 +3,7 @@ package com.fish.service;
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.mapper.ArcadeGameSetMapper;
 import com.fish.dao.primary.model.ArcadeGameSet;
-import com.fish.dao.second.mapper.AppConfigMapper;
 import com.fish.dao.second.mapper.ConfigProgramMapper;
-import com.fish.dao.second.mapper.WxConfigMapper;
-import com.fish.dao.second.model.AppConfig;
 import com.fish.dao.second.model.ConfigProgram;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
@@ -14,7 +11,6 @@ import com.fish.protocols.PostResult;
 import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +26,6 @@ import java.util.List;
  */
 @Service
 public class ConfigProgramService implements BaseService<ConfigProgram> {
-
 
     @Autowired
     CacheService cacheService;
@@ -53,12 +48,12 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
         for (ConfigProgram configProgram : configPrograms) {
             String ddAppId = configProgram.getDdAppId();
             WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
-            if(wxConfig !=null){
+            if (wxConfig != null) {
                 configProgram.setProductName(wxConfig.getProductName());
                 configProgram.setProgramType(wxConfig.getProgramType());
             }
             ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(configProgram.getDdCode());
-            if(arcadeGameSet !=null){
+            if (arcadeGameSet != null) {
                 configProgram.setCodename(arcadeGameSet.getDdname());
             }
         }
@@ -79,11 +74,11 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
             insert = configProgramMapper.insert(record);
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            LOGGER.error("合集及版本号配置新增异常" + ", 详细信息:{}", e.getMessage());
         }
         if (insert == 1) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("config_program", baseConfig.getFlushCache());
-            result.setMsg("操作成功");
         } else {
             result.setSuccessed(false);
             result.setMsg("包含重复数据，请检查后提交");
@@ -92,7 +87,7 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
     }
 
     /**
-     * 更新appConfig信息
+     * 更新
      *
      * @param record
      * @return
@@ -105,12 +100,11 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
         try {
             insert = configProgramMapper.updateByPrimaryKeySelective(record);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            LOGGER.error("合集及版本号配置修改异常" + ", 详细信息:{}", e.getMessage());
         }
         if (insert == 1) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("config_program", baseConfig.getFlushCache());
-            result.setMsg("操作成功");
         } else {
             result.setSuccessed(false);
             result.setMsg("修改失败，请联系管理员！");

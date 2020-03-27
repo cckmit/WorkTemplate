@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * 提现记录查询
+ * 提现审核
  * RechargeController
  *
  * @author
@@ -24,7 +24,7 @@ public class RechargeController {
     RechargeService rechargeService;
 
     /**
-     * 查询提现情况
+     * 查询提现审核情况
      *
      * @param parameter
      * @return

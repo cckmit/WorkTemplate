@@ -55,7 +55,6 @@ public class GlobalConfigController {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushCache());
             String pubRes = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushPublicCache());
-            result.setMsg("操作成功" + res + pubRes);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
@@ -78,7 +77,6 @@ public class GlobalConfigController {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushCache());
             String pubRes = ReadJsonUtil.flushTable("goods_value_ext", baseConfig.getFlushPublicCache());
-            result.setMsg("操作成功" + res + pubRes);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");

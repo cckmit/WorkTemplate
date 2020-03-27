@@ -27,10 +27,6 @@
         "url": "ArcadeGlobalconfig"
       },
       {
-        "name": "订阅配置",
-        "url": "configSubscribe"
-      },
-      {
         "name": "资源上传统一接口",
         "url": "uploadCdn"
       }

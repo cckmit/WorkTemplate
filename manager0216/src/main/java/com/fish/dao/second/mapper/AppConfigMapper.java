@@ -8,10 +8,11 @@ public interface AppConfigMapper {
 
     int insert(AppConfig record);
 
-    AppConfig selectByPrimaryKey(String AppId);
+    AppConfig selectByPrimaryKey(String ddAppId);
 
     int updateByPrimaryKeySelective(AppConfig record);
 
     List<AppConfig> selectAll();
 
+    int deleteByPrimaryKey(String ddAppId);
 }

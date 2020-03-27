@@ -186,7 +186,6 @@
       ddTime = #{ddtime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-
   <select id="selectAll"  resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
@@ -197,8 +196,4 @@
     <include refid="Base_Column_List" />
     from round_receive where DATE(ddtime) between '${start}' and '${end}'
   </select>
-  <select id="selectBySearchData" resultMap="BaseResultMap" parameterType="string">
-       ${_parameter}
-  </select>
-
 </mapper>

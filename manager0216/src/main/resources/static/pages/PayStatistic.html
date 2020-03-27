@@ -141,6 +141,14 @@
                 });
                 return false;
             }
+            let start = new Date($('#start').val()).getTime();
+            let endTime = new Date($('#end').val()).getTime();
+            if (start > endTime) {
+                layer.msg('结束时间不能小于开始时间', function () {
+                    time:1500
+                });
+                return false;
+            }
             //执行重载
             table_reload(field);
             return false;
@@ -177,7 +185,8 @@
             page: true,
             toolbar: '#toolbar',
             autoSort: false,
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-160'
         });
 
         // 表格重载
@@ -198,21 +207,38 @@
         laydate.render({
             elem: '#start',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'yyyy-MM-dd HH:mm',
+            trigger: 'click',
+            done: function (value, date, endDate) {
+                let startDate = new Date(value).getTime();
+                let endTime = new Date($('#end').val()).getTime();
+                if (endTime < startDate) {
+                    layer.msg('结束时间不能小于开始时间');
+                    $('#start').val($('#end').val());
+                }
+            }
         });
         laydate.render({
             elem: '#end',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'yyyy-MM-dd HH:mm',
+            trigger: 'click',
+            done: function (value, date, endDate) {
+                let startDate = new Date($('#start').val()).getTime();
+                let endTime = new Date(value).getTime();
+                if (endTime < startDate) {
+                    layer.msg('结束时间不能小于开始时间');
+                    $('#end').val($('#start').val());
+                }
+            }
+
         });
         //头工具栏事件
         table.on('toolbar(table-page)', function (obj) {
-            var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
-            switch (obj.event) {
-                case 'getCheckData':
-                    var data = checkStatus.data;  //获取选中行数据
-                    layer.alert(JSON.stringify(data));
-                    break;
+            let checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
+            if (obj.event === 'getCheckData') {
+                let data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
             }
         });
     })

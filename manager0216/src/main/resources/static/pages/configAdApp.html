@@ -35,6 +35,18 @@
                             </div>
                         </div>
                         <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">最低版本</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="minVersion" name="minVersion">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">自有广告组合</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <div id="combinationName" name="combinationName" lay-filter="combinationName"></div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
                             <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
                                     lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
@@ -55,13 +67,17 @@
     <div class="layui-table-tool-temp">
         <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
         </button>
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i
-                class="layui-icon">&#xe642;</i>编辑
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
         </button>
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i
-                class="layui-icon">&#xe640;</i>删除
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe654;</i>复制
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
         </button>
     </div>
+</script>
+<script type="text/html" id="switchTpl">
+    <input type="checkbox" name="ddAllowedShow" value="{{d.id}}" lay-skin="switch" lay-text="是|否"
+           lay-filter="switchAllowed" {{ d.ddAllowedShow== true ? 'checked' : '' }}>
 </script>
 <script>
     const operatorurl = '../manage/configAdApp';
@@ -84,7 +100,24 @@
         filterDone: function (val, list) {
         },
     });
-
+    //自有广告组合数组
+    let combinationNames = [];
+    /**
+     * 自有广告组合查询框
+     */
+    let combinationSearch = xmSelect.render({
+        el: '#combinationName',
+        name: 'combinationName',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {},
+    });
     /**
      * 广告组合配置选择器
      */
@@ -102,7 +135,6 @@
         delay: 500,
         filterable: true,
         filterDone: function (val, list) {
-            console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
         },
     });
 
@@ -124,8 +156,7 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {
-        },
+        filterDone: function (val, list) {},
     });
 
     /**
@@ -144,15 +175,14 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {
-        },
+        filterDone: function (val, list) {},
     });
 
     /**
      * 打开页面时初始化加载数据
      */
     layui.use(['table', 'form', 'layer', 'tree'], () => {
-        const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+        const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer;
         table.render({
             elem: '#table-page',
             url: operatorurl,
@@ -162,24 +192,21 @@
                 {field: 'ddAppId', width: 180, title: 'AppId', sort: true, align: 'left'},
                 {field: 'appName', width: 140, title: '产品名称', sort: true, align: 'left'},
                 {field: 'ddMinVersion', width: 110, title: '最低版本', sort: true, align: 'left'},
-                {field: 'combinationName', width: 120, title: '自有广告组合', sort: false, align: 'center'},
+                {field: 'combinationName', width: 220, title: '自有广告组合', sort: false, align: 'center'},
                 {
                     field: 'ddAllowedShow', width: 100, title: '自有—运营', sort: false, align: 'center',
-                    templet: (d) => {
-                        return d.ddAllowedShow ? '是' : '否';
-                    }
+                    templet: '#switchTpl', unresize: true
                 },
                 {field: 'ddWxBannerUnit', width: 160, title: 'Banner—Unit', sort: false, align: 'left'},
                 {field: 'ddWxBannerTime', width: 160, title: 'Banner—切换间隔', sort: false, align: 'center'},
                 {
-                    field: 'ddWxBannerAllowedShow', width: 100, title: 'Banner—运营', sort: false, align: 'center',
+                    field: 'ddWxBannerAllowedShow', width: 120, title: 'Banner—运营', sort: false, align: 'center',
                     templet: (d) => {
                         return d.ddWxBannerAllowedShow ? '是' : '否';
                     }
                 },
                 {field: 'wxBannerStrategyName', width: 120, title: 'Banner—策略', sort: false, align: 'center'},
                 {field: 'ddWxBannerStrategyValue', width: 220, title: 'Banner—策略配置', sort: false},
-
                 {field: 'ddWxIntUint', width: 160, title: '插屏—unit', sort: false, align: 'left'},
                 {
                     field: 'ddWxIntAllowedShow', width: 100, title: '插屏—运营', sort: false, align: 'center',
@@ -189,15 +216,21 @@
                 },
                 {field: 'wxIntStrategyName', width: 120, title: '插屏—策略', sort: false, align: 'center'},
                 {field: 'ddWxIntStrategyValue', width: 220, title: '插屏—策略配置', sort: false},
+                {field: 'ddWxReVideoUnit', width: 160, title: '激励视频—unit', sort: false, align: 'left'},
+                {
+                    field: 'ddWxReVideoAllowedShow', width: 100, title: '激励视频—运营', sort: false, align: 'center',
+                    templet: (d) => {
+                        return d.ddWxReVideoAllowedShow ? '是' : '否';
+                    }
+                },
                 {field: 'updateTime', width: 140, title: '数据更新时间', sort: true, align: 'center'}
             ]],
             page: true,
             toolbar: '#toolbar',
             limit: 30,
             defaultToolbar: ['filter', 'exports'],
-            height: 'full-60'
+            height: 'full-120'
         });
-
         // 初始化数据
         $(() => {
             $.ajax({
@@ -212,6 +245,26 @@
                 },
                 error: function () {
                     layer.msg("广告策略列表查询失败，请联系管理员！", {icon: 2});
+                }
+            })
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdCombination/select',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddId + '-' + val.ddName, value: val.ddId, selected: false};
+                        combinationNames.push(context);
+                    });
+                    combinationSearch.update(
+                        {
+                            data: combinationNames,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    layer.msg("自有广告组合列表查询失败，请联系管理员！", {icon: 2});
                 }
             })
             $.ajax({
@@ -247,6 +300,29 @@
                 },
                 error: function () {
                     alert("查询失败")
+                }
+            });
+        });
+        //监听自由运营操作
+        form.on('switch(switchAllowed)', function (obj) {
+            let statusObj = {id: this.value, ddAllowedShow: obj.elem.checked};
+            $.ajax({
+                url: operatorurl + '/change',
+                data: JSON.stringify(statusObj),
+                contentType: "application/json; charset=utf-8",
+                type: 'post',
+                dataType: "json",
+                success: function (res) {
+                    if (res.successed) {
+                        if (obj.elem.checked === true) {
+                            layer.msg("开启成功");
+                        } else {
+                            layer.msg("关闭成功");
+                        }
+                        table.reload('table-page');
+                    } else {
+                        layer.msg('操作失败，请联系管理员')
+                    }
                 }
             });
         });
@@ -322,8 +398,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">AppId</label>
         <div class="layui-input-inline ">
-            <input type="text" id="ddAppId" name="ddAppId" class="layui-input" autocomplete="off"
-                   lay-verify="required">
+            <input type="text" id="ddAppId" name="ddAppId" class="layui-input" autocomplete="off" lay-verify="required">
         </div>
     </div>
     <div class="layui-form-item ">
@@ -399,6 +474,19 @@
         <div class="layui-input-inline">
             <input type="text" class="layui-input" id="ddWxIntStrategyValue" name="ddWxIntStrategyValue"
                    autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">激励视频—unit</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" id="ddWxReVideoUnit" name="ddWxReVideoUnit" class="layui-input"
+                   autocomplete="off" lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">激励视频—展示？</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" checked="" name="ddWxReVideoAllowedShow" lay-skin="switch" lay-text="是|否">
         </div>
     </div>
     <div class="layui-form-item layui-hide" style="text-align:center;">

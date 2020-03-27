@@ -7,12 +7,10 @@ import com.fish.dao.third.mapper.MinitjWxMapper;
 import com.fish.dao.third.model.MinitjWx;
 import com.fish.dao.third.model.ProductData;
 import com.fish.protocols.GetParameter;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -38,10 +36,8 @@ public class UserResourceService implements BaseService<ProductData> {
                 ProductData productData = new ProductData();
                 productData.setProductName(wxConfig.getProductName());
                 String ddAppId = wxConfig.getDdappid();
-                LocalDate now = LocalDate.now();
-                LocalDate beforeDate = now.minusDays(2);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                String localDate = formatter.format(beforeDate);
+                LocalDate beforeDate = LocalDate.now().minusDays(2);
+                String localDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(beforeDate);
                 try {
                     MinitjWx minitjWx = minitjWxMapper.selectByPrimaryKey(ddAppId, localDate);
                     if (minitjWx != null) {
@@ -68,7 +64,6 @@ public class UserResourceService implements BaseService<ProductData> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-
     }
 
     @Override

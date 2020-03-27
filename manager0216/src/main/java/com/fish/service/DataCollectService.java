@@ -11,18 +11,20 @@ import com.fish.dao.third.model.DataCollect;
 import com.fish.dao.third.model.MinitjWx;
 import com.fish.dao.third.model.ProductData;
 import com.fish.protocols.GetParameter;
-import com.fish.utils.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class DataCollectService implements BaseService<DataCollect> {
@@ -57,14 +59,14 @@ public class DataCollectService implements BaseService<DataCollect> {
             Map<String, DataCollect> dataCollectMap = queryMinitjWxStatis(times[0], times[1], type);
             // 合并小游戏和小程序数据
             if (!dataCollectMap.isEmpty() && !dataCollects.isEmpty()) {
-                countProgramAndMititjWx(dataCollects, dataCollectMap);
+                dataCollects = countProgramAndMititjWx(dataCollects, dataCollectMap);
             } else {
-                if (dataCollects == null || dataCollects.isEmpty()) {
+                if (dataCollects.isEmpty()) {
                     dataCollects = new ArrayList<>(dataCollectMap.values());
                 }
             }
         } else {
-            if (type.equals("1")) {
+            if ("1".equals(type)) {
                 // 小程序查询
                 dataCollects = queryProgramStatis(times[0], times[1]);
             } else {
@@ -89,6 +91,9 @@ public class DataCollectService implements BaseService<DataCollect> {
     private void countBuyData(List<DataCollect> dataCollects, Map<String, BuyPay> buyPayMap) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         dataCollects.forEach(dataCollect -> {
+            if (dataCollect == null) {
+                return;
+            }
             if (buyPayMap != null && buyPayMap.size() > 0) {
                 if (dataCollect != null) {
                     BuyPay buyPay = buyPayMap.get(format.format(dataCollect.getWxDate()));
@@ -97,16 +102,13 @@ public class DataCollectService implements BaseService<DataCollect> {
                     }
                 }
             }
-            if (dataCollect == null) {
-                return;
-            }
             dataCollect.setBannerIncomeCount(dataCollect.getBannerIncomeCount().setScale(2, BigDecimal.ROUND_HALF_UP));
             dataCollect.setVideoIncomeCount(dataCollect.getVideoIncomeCount().setScale(2, BigDecimal.ROUND_HALF_UP));
             BigDecimal rate = new BigDecimal((double) dataCollect.getShareUserCount() * 100 / dataCollect.getActiveCount())
                     .setScale(2, BigDecimal.ROUND_HALF_UP);
             dataCollect.setShareRateCount(rate);
             dataCollect.setAdRevenueCount(dataCollect.getAdRevenueCount().setScale(2, BigDecimal.ROUND_HALF_UP));
-            dataCollect.setRevenueCount(dataCollect.getAdRevenueCount());
+            dataCollect.setRevenueCount(dataCollect.getRevenueCount().setScale(2, BigDecimal.ROUND_HALF_UP));
         });
     }
 
@@ -116,19 +118,22 @@ public class DataCollectService implements BaseService<DataCollect> {
      * @param dataCollects
      * @param dataCollectMap
      */
-    private void countProgramAndMititjWx(List<DataCollect> dataCollects, Map<String, DataCollect> dataCollectMap) {
+    private List<DataCollect> countProgramAndMititjWx(List<DataCollect> dataCollects, Map<String, DataCollect> dataCollectMap) {
         dataCollects.forEach(dataCollect -> {
-            DataCollect collect = dataCollectMap.get(dataCollect.getWxDate());
-            dataCollect.setProductCount(dataCollect.getProductCount() + collect.getProductCount());
-            dataCollect.setNewCount(dataCollect.getNewCount() + collect.getNewCount());
-            dataCollect.setActiveCount(dataCollect.getActiveCount() + collect.getActiveCount());
-            dataCollect.setAdRevenueCount(collect.getRevenueCount().add(dataCollect.getRevenueCount()));
-            dataCollect.setVideoIncomeCount(dataCollect.getVideoIncomeCount().add(collect.getVideoIncomeCount()));
-            dataCollect.setBannerIncomeCount(dataCollect.getBannerIncomeCount().add(collect.getBannerIncomeCount()));
-            dataCollect.setShareCount(dataCollect.getShareCount() + collect.getShareCount());
-            dataCollect.setShareUserCount(dataCollect.getShareUserCount() + collect.getShareUserCount());
-            dataCollect.setAdRevenueCount(dataCollect.getRevenueCount());
+            DataCollect collect = dataCollectMap.get(DateFormatUtils.format(dataCollect.getWxDate(), "yyyy-MM-dd"));
+            if (collect != null) {
+                collect.setProductCount(dataCollect.getProductCount() + collect.getProductCount());
+                collect.setNewCount(dataCollect.getNewCount() + collect.getNewCount());
+                collect.setActiveCount(dataCollect.getActiveCount() + collect.getActiveCount());
+                collect.setVideoIncomeCount(dataCollect.getVideoIncomeCount().add(collect.getVideoIncomeCount()));
+                collect.setBannerIncomeCount(dataCollect.getBannerIncomeCount().add(collect.getBannerIncomeCount()));
+                collect.setAdRevenueCount(collect.getAdRevenueCount().add(dataCollect.getAdRevenueCount()));
+                collect.setShareCount(dataCollect.getShareCount() + collect.getShareCount());
+                collect.setShareUserCount(dataCollect.getShareUserCount() + collect.getShareUserCount());
+                collect.setRevenueCount(collect.getRevenueCount().add(dataCollect.getRevenueCount() != null ? dataCollect.getRevenueCount() : new BigDecimal(0)));
+            }
         });
+        return new ArrayList<>(dataCollectMap.values());
     }
 
     /**
@@ -199,8 +204,8 @@ public class DataCollectService implements BaseService<DataCollect> {
                 dataCollect.setBannerIncomeCount(new BigDecimal(bannerIncomeCount).setScale(2, BigDecimal.ROUND_HALF_UP));
                 dataCollect.setShareUserCount(shareUserCount);
                 dataCollect.setShareCount(shareCount);
-                dataCollect.setRevenueCount(new BigDecimal(videoIncomeCount + bannerIncomeCount));
-                dataCollect.setAdRevenueCount(dataCollect.getRevenueCount());
+                dataCollect.setAdRevenueCount(new BigDecimal(videoIncomeCount + bannerIncomeCount));
+                dataCollect.setRevenueCount(dataCollect.getAdRevenueCount());
                 dataCollectMap.put(str, dataCollect);
             }
         }
@@ -274,6 +279,8 @@ public class DataCollectService implements BaseService<DataCollect> {
             dataCollect.setShareUserCount(productData1.getWxShareUser());
             // 分享次数
             dataCollect.setShareCount(productData1.getWxShareCount());
+            // 总收入
+            dataCollect.setRevenueCount(productData1.getRevenueCount());
             dataCollects.add(dataCollect);
         });
         return dataCollects;
@@ -334,22 +341,6 @@ public class DataCollectService implements BaseService<DataCollect> {
             }
         });
         return wxConfigMap;
-    }
-
-    /**
-     * 解析日期
-     *
-     * @param str 字符串
-     * @return 时间
-     */
-    private Date parseDate(String str) {
-        try {
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            return format.parse(str);
-        } catch (Exception e) {
-            LOGGER.error(Log4j.getExceptionInfo(e));
-        }
-        return new Date();
     }
 
     @Override

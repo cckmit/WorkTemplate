@@ -56,7 +56,6 @@ public class GameTableController {
         if (count == 1) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
@@ -80,7 +79,6 @@ public class GameTableController {
             this.cacheService.updateArcadeGames(productInfo);
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");

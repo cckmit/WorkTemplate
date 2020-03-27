@@ -9,6 +9,8 @@ import com.fish.service.BuyPayService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadExcel;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.Objects;
 
 /**
  * 买量支出
@@ -27,7 +30,7 @@ import java.io.File;
 @Controller
 @RequestMapping(value = "/manage")
 public class Fc_BuyPayController {
-
+    private static final Logger LOG = LoggerFactory.getLogger(Fc_BuyPayController.class);
     @Autowired
     BaseConfig baseConfig;
     @Autowired
@@ -58,7 +61,7 @@ public class Fc_BuyPayController {
         try {
             String readPath = baseConfig.getExcelSave();
             String originalFilename = file.getOriginalFilename();
-            File saveFile = new File(readPath, originalFilename);
+            File saveFile = new File(readPath, Objects.requireNonNull(originalFilename));
             FileUtils.copyInputStreamToFile(file.getInputStream(), saveFile);
             ReadExcel readExcel = new ReadExcel();
             readExcel.readFile(saveFile);
@@ -66,10 +69,9 @@ public class Fc_BuyPayController {
             buyPayService.insertExcel(jsonObject);
             jsonObject.put("code", 200);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("导入买量信息EXCEL失败" + ", 详细信息:{}", e.getMessage());
             jsonObject.put("code", 400);
         }
-
         return jsonObject;
     }
 
@@ -86,7 +88,6 @@ public class Fc_BuyPayController {
         String beginDate = request.getParameter("beginDate");
         String endDate = request.getParameter("endDate");
         String productName = request.getParameter("productName");
-        // productDataService.searchData(beginDate,endDate,productName,parameter);
         return buyPayService.searchData(beginDate, endDate, productName, parameter);
     }
 
@@ -101,7 +102,6 @@ public class Fc_BuyPayController {
     public PostResult insertBuyPay(@RequestBody BuyPay productInfo) {
         PostResult result = new PostResult();
         int count = buyPayService.insert(productInfo);
-        // count =1;
         if (count == 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
@@ -136,8 +136,6 @@ public class Fc_BuyPayController {
     @ResponseBody
     @PostMapping(value = "/buypay/delete")
     public PostResult deleteBuyPay(@RequestBody JSONObject jsonObject) {
-
         return this.buyPayService.deleteSelective(jsonObject);
-
     }
 }

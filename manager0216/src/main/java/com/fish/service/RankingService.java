@@ -173,8 +173,9 @@ public class RankingService implements BaseService<ShowRanking> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("matchdate");
     }

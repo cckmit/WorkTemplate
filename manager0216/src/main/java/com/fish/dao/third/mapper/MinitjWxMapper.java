@@ -25,7 +25,7 @@ public interface MinitjWxMapper {
     List<MinitjWx> searchDatas(@Param("wxAppid") String wxAppid, @Param("beginTime") String beginTime, @Param("endTime") String endTime);
 
     /**
-     * ¸ù¾İÈÕÆÚ²éÑ¯Ğ¡ÓÎÏ·Êı¾İ
+     * æ ¹æ®æ—¥æœŸæŸ¥è¯¢å°æ¸¸æˆæ•°æ®
      * @param beginTime
      * @param endTime
      * @return

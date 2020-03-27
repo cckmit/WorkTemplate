@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -240,14 +240,14 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {field: 'ddtime', width: 170, title: '变更时间', sort: true},
-                {field: 'dduid', width: 270, title: '用户Id', sort: true},
+                {field: 'dduid', width: 300, title: '用户Id', sort: true},
                 {field: 'ddtype', width: 120, title: '消耗类型', sort: true},
-                {field: 'nickname', width: 250, title: '用户昵称'},
+                {field: 'nickname', width: 200, title: '用户昵称'},
                 {field: 'ddhistory', width: 120, title: '变更前数量', sort: true},
                 {field: 'ddcurrent', width: 120, title: '变更后数量', sort: true},
                 {
                     field: 'ddvalue', width: 120, title: '变更值', sort: true, templet: (d) => {
-                        if (d.ddtype == 'video')
+                        if (d.ddtype === 'video')
                             return '--';
                         if (d.ddvalue > 0)
                             return `<font color="red">${Math.abs(d.ddvalue)}</font>`;
@@ -274,13 +274,13 @@
                             case "head":
                                 return `编号${key}`;
                             case "gameSuccess": {
-                                if ('false' == key) return '闯关游戏';
+                                if ('false' === key) return '闯关游戏';
                                 else return 'PK游戏';
                             }
                             case "video":
                                 return `剩余${key - 1}次`;
                             case "relive": {
-                                if (d.ddtype == 'coin')
+                                if (d.ddtype === 'coin')
                                     return `第${key}次复活`;
                                 else if (key > 1000) {
                                     return gameCodes[key];
@@ -312,7 +312,8 @@
             autoSort: false,
             page: true,
             toolbar: '#toolbar',
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-160'
         });
         laydate.render({
             elem: '#ddtime',

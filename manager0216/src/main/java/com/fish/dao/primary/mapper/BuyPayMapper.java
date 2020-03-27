@@ -26,12 +26,23 @@ public interface BuyPayMapper {
 
     /**
      * 通过时间段查询买量汇总数据
+     *
      * @param beginTime
      * @param endTime
      * @param type
      * @return
      */
     List<BuyPay> queryByPayCollectByDate(@Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("type") String type);
+
+    /**
+     * 查询买量信息
+     *
+     * @param beginTime
+     * @param endTime
+     * @param buyAppId
+     * @return
+     */
+    List<BuyPay> queryBuyPayData(@Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("buyAppId") String buyAppId);
 
     BigDecimal selectCountBuyCost(String date);
 

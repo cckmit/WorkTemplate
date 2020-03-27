@@ -36,7 +36,7 @@ public class UpdateOnline implements Runnable
             JSONObject resObject = JSONObject.parseObject(res);
             if (!"success".equals(resObject.getString("result")))
                 return;
-            System.out.println(res);
+           // System.out.println(res);
             JSONArray server = resObject.getJSONArray("server");
             Online online = new Online();
             online.setTimes(new Date());
@@ -50,7 +50,7 @@ public class UpdateOnline implements Runnable
                 for (int j = 0; j < data.size(); j++)
                 {
                     JSONObject roomInfo = data.getJSONObject(j);
-                    System.out.println(roomInfo);
+                   // System.out.println(roomInfo);
                     //空闲房间数
                     int idleCount = roomInfo.getInteger("idleCount");
                     //繁忙房间数

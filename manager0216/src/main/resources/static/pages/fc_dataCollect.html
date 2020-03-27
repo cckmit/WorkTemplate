@@ -78,7 +78,16 @@
                     {field: 'adRevenueCount', width: 120, title: '广告收入', sort: true},
                     {field: 'videoIncomeCount', width: 120, title: '视频收入', sort: true},
                     {field: 'bannerIncomeCount', width: 120, title: 'banner收入', sort: true},
-                    {field: 'buyPay', width: 120, title: '买量支出', sort: true},
+                    {
+                        field: 'buyPay', width: 120, title: '买量支出', sort: true,
+                        templet: (d) => {
+                            if (d.buyPay == null) {
+                                return 0;
+                            } else {
+                                return d.buyPay;
+                            }
+                        }
+                    },
                     {field: 'shareUserCount', width: 120, title: '分享人数', sort: true},
                     {field: 'shareCount', width: 120, title: '分享次数', sort: true},
                     {
@@ -98,17 +107,10 @@
             limit: 30,
             defaultToolbar: ['filter', 'exports'],
             statusName: 'status',//数据状态的字段名称，默认：code
-            statusCode: 200 //成功的状态码，默认：0
+            statusCode: 200,//成功的状态码，默认：0
+            height: 'full-120'
         });
 
-        laydate.render({
-            elem: '#beginDate',
-            format: 'yyyy-MM-dd'
-        });
-        laydate.render({
-            elem: '#endDate',
-            format: 'yyyy-MM-dd'
-        });
 
         laydate.render({
             elem: '#beginDate',
@@ -139,13 +141,12 @@
         $('#submit').on('click', function () {
             let startDate = $('#beginDate').val();
             let endTime = $('#endDate').val();
-            if (startDate === "" || endTime === "") {
+            if ((startDate !== "" && endTime === "") || (startDate === "" && endTime !== "")) {
                 layer.msg('请将查询时间填写完整');
                 return false
             }
         });
     })
-
 </script>
 
 <!-- 表单元素 -->

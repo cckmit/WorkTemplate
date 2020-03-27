@@ -14,110 +14,19 @@
     <sql id="Base_Column_List">
     ddId, ddUid, ddAppId, ddRmb, ddTip, ddStatus, ddTrans, ddTimes
   </sql>
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
-        select
-        <include refid="Base_Column_List"/>
-        from recharge
-        where ddId = #{ddid,jdbcType=VARCHAR}
-    </select>
-    <select id="selectAll" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from recharge where ddStatus != 200
+    <select id="selectAll" resultType="com.fish.dao.second.model.Recharge">
+        SELECT
+        r.ddId as ddid,r.ddUid as ddUid, i.ddName as userName, r.ddRmb as ddRmb,r.ddAppId as ddAppId, r.ddTip as ddTip,
+        r.ddStatus as ddStatus, w.product_name as productName , w.program_type as programType, r.ddTimes as ddTimes,
+        r.ddTrans as ddTrans FROM recharge AS r LEFT JOIN user_info AS i ON r.ddUid = i.ddUid
+        LEFT JOIN wx_config AS w ON r.ddAppId = w.ddAppId WHERE ddStatus != 200
+        <if test="start != null and end !=''">
+            and DATE(ddTimes) between '${start}' and '${end}'
+        </if>
     </select>
     <select id="selectCashOut" resultType="java.lang.Integer" parameterType="java.lang.String">
         SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '${dduid}' AND ddTimes  &lt;= '${ddTime}'
     </select>
-    <select id="selectRecharged" resultType="java.math.BigDecimal" parameterType="java.lang.String">
-         ${_parameter}
-    </select>
-    <select id="selectRechargeByUid" resultType="com.fish.dao.second.model.Recharge">
-        select
-        <include refid="Base_Column_List"/>
-        from recharge where ddUid = #{dduid,jdbcType=VARCHAR} and ddStatus = 200
-    </select>
-
-    <select id="selectByTime" resultType="com.fish.dao.second.model.Recharge" parameterType="string">
-        select
-        <include refid="Base_Column_List"/>
-        from recharge where ddStatus != 200 and DATE(ddTimes) between '${start}' and '${end}'
-    </select>
-    <select id="selectAllCharged" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from recharge
-    </select>
-    <select id="selectAllChargeSQL" resultType="com.fish.dao.second.model.Recharge">
-        ${_parameter}
-    </select>
-
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from recharge
-    where ddId = #{ddid,jdbcType=VARCHAR}
-  </delete>
-    <insert id="insert" parameterType="com.fish.dao.second.model.Recharge">
-    insert into recharge (ddId, ddUid, ddAppId, 
-      ddRmb, ddTip, ddStatus, 
-      ddTrans, ddTimes)
-    values (#{ddid,jdbcType=VARCHAR}, #{dduid,jdbcType=VARCHAR}, #{ddappid,jdbcType=VARCHAR}, 
-      #{ddrmb,jdbcType=DECIMAL}, #{ddtip,jdbcType=VARCHAR}, #{ddstatus,jdbcType=INTEGER}, 
-      #{ddtrans,jdbcType=TIMESTAMP}, #{ddtimes,jdbcType=TIMESTAMP})
-  </insert>
-    <insert id="insertSelective" parameterType="com.fish.dao.second.model.Recharge">
-        insert into recharge
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="ddid != null">
-                ddId,
-            </if>
-            <if test="dduid != null">
-                ddUid,
-            </if>
-            <if test="ddappid != null">
-                ddAppId,
-            </if>
-            <if test="ddrmb != null">
-                ddRmb,
-            </if>
-            <if test="ddtip != null">
-                ddTip,
-            </if>
-            <if test="ddstatus != null">
-                ddStatus,
-            </if>
-            <if test="ddtrans != null">
-                ddTrans,
-            </if>
-            <if test="ddtimes != null">
-                ddTimes,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="ddid != null">
-                #{ddid,jdbcType=VARCHAR},
-            </if>
-            <if test="dduid != null">
-                #{dduid,jdbcType=VARCHAR},
-            </if>
-            <if test="ddappid != null">
-                #{ddappid,jdbcType=VARCHAR},
-            </if>
-            <if test="ddrmb != null">
-                #{ddrmb,jdbcType=DECIMAL},
-            </if>
-            <if test="ddtip != null">
-                #{ddtip,jdbcType=VARCHAR},
-            </if>
-            <if test="ddstatus != null">
-                #{ddstatus,jdbcType=INTEGER},
-            </if>
-            <if test="ddtrans != null">
-                #{ddtrans,jdbcType=TIMESTAMP},
-            </if>
-            <if test="ddtimes != null">
-                #{ddtimes,jdbcType=TIMESTAMP},
-            </if>
-        </trim>
-    </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.Recharge">
         update recharge
         <set>
@@ -145,18 +54,6 @@
         </set>
         where ddId = #{ddid,jdbcType=VARCHAR}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.Recharge">
-    update recharge
-    set ddUid = #{dduid,jdbcType=VARCHAR},
-      ddAppId = #{ddappid,jdbcType=VARCHAR},
-      ddRmb = #{ddrmb,jdbcType=DECIMAL},
-      ddTip = #{ddtip,jdbcType=VARCHAR},
-      ddStatus = #{ddstatus,jdbcType=INTEGER},
-      ddTrans = #{ddtrans,jdbcType=TIMESTAMP},
-      ddTimes = #{ddtimes,jdbcType=TIMESTAMP}
-    where ddId = #{ddid,jdbcType=VARCHAR}
-  </update>
-
     <select id="selectAllCharge" resultType="com.fish.dao.second.model.Recharge">
        SELECT a.ddCurrent*0.01 AS remainAmount,w.program_type AS programType,w.product_name AS productName,u.ddName AS userName,r.* FROM
         recharge AS r LEFT JOIN all_cost AS a ON r.ddUid = a.ddUid AND a.ddCostType= 'recharge' AND DATE_FORMAT(a.ddTime,"%Y-%m-%d %h")
@@ -170,5 +67,8 @@
        LEFT JOIN wx_config AS w ON r.ddAppId =w.ddAppId LEFT JOIN user_info AS u ON r.ddUid=u.ddUid) t WHERE  DATE(ddTimes) BETWEEN
         from recharge where DATE(ddTimes) between '${start}' and '${end}'
     </select>
-
+    <select id="selectAllUserRecharged" resultMap="BaseResultMap" parameterType="string">
+       SELECT  s.`ddUid` as ddUid, SUM(ddRmb) as ddRmb
+        FROM  recharge s  WHERE ddStatus = 200  GROUP BY s.`ddUid`
+    </select>
 </mapper>

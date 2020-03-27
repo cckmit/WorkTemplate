@@ -62,17 +62,17 @@ public class MinitjWx {
     private String wxRegJson;
 
     /**
-     * ²úÆ·Êı
+     * äº§å“æ•°
      */
     private Integer productCount;
 
     /**
-     * ×ÜÊÕÈë
+     * æ€»æ”¶å…¥
      */
     private Double revenueCount;
 
     /**
-     * ²éÑ¯µÄ¿ªÊ¼¿É½áÊøÊ±¼ä
+     * æŸ¥è¯¢çš„å¼€å§‹å¯ç»“æŸæ—¶é—´
      */
     private String beginTime;
     private String endTime;

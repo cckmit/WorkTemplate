@@ -77,7 +77,6 @@ public class GamesController {
         if (i != 0) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
@@ -99,7 +98,6 @@ public class GamesController {
         if (count == 1) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
@@ -120,7 +118,6 @@ public class GamesController {
         if (count != 0) {
             //刷新业务表结构
             String res = ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
