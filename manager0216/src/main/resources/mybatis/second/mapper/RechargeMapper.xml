@@ -64,8 +64,7 @@
        SELECT * FROM (SELECT a.ddCurrent*0.01 AS remainAmount,w.program_type AS programType,w.product_name AS productName,u.ddName AS userName,r.* FROM
         recharge AS r LEFT JOIN all_cost AS a ON r.ddUid = a.ddUid AND a.ddCostType= 'recharge' AND DATE_FORMAT(a.ddTime,"%Y-%m-%d %h")
         = DATE_FORMAT(r.ddTimes,"%Y-%m-%d %h")
-       LEFT JOIN wx_config AS w ON r.ddAppId =w.ddAppId LEFT JOIN user_info AS u ON r.ddUid=u.ddUid) t WHERE  DATE(ddTimes) BETWEEN
-        from recharge where DATE(ddTimes) between '${start}' and '${end}'
+       LEFT JOIN wx_config AS w ON r.ddAppId =w.ddAppId LEFT JOIN user_info AS u ON r.ddUid=u.ddUid) t  where DATE(ddTimes) between '${start}' and '${end}'
     </select>
     <select id="selectAllUserRecharged" resultMap="BaseResultMap" parameterType="string">
        SELECT  s.`ddUid` as ddUid, SUM(ddRmb) as ddRmb

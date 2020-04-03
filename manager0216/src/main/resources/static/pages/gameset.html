@@ -50,7 +50,6 @@
         </div>
     </div>
 </div>
-</div>
 
 <script id="toolbar" type="text/html">
     <div class="layui-table-tool-temp">
@@ -153,7 +152,7 @@
     function privateLoadEditData(editData, type) {
         layui.use(['form', 'layer'], () => {
             const $ = layui.$, form = layui.form, layer = layui.layer;
-            console.log("editData.select--"+editData.select)
+            console.log("editData.select--" + editData.select)
             // 编辑游戏合集内容
             if (type !== 'new') {
                 let newGameSets = [];

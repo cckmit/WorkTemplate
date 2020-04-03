@@ -63,15 +63,15 @@ public class RoundExtService implements BaseService<RoundExt> {
             // 更新比赛时长
             updateRoundTimeLength(record);
         }
-        Boolean ddgroup = record.getDdgroup();
-        if (ddgroup) {
+        Integer ddgroup = record.getDdgroup();
+        if (ddgroup == 1) {
             int maxId = roundExtMapper.selectGMaxId();
             record.setDdcode("G" + (maxId + 1));
-            record.setDdgroup(true);
+            record.setDdgroup(1);
         } else {
             int maxId = roundExtMapper.selectSMaxId();
             record.setDdcode("S" + (maxId + 1));
-            record.setDdgroup(false);
+            record.setDdgroup(0);
         }
         record.setDdstate(true);
         record.setInserttime(new Timestamp(System.currentTimeMillis()));

@@ -15,6 +15,8 @@ public class GoodsValue {
 
     private String ddMinVer;
 
+    private Boolean ddIOS;
+
     private String ddName;
 
     private String ddDesc;
@@ -83,6 +85,14 @@ public class GoodsValue {
 
     public void setDdMinVer(String ddMinVer) {
         this.ddMinVer = ddMinVer == null ? null : ddMinVer.trim();
+    }
+
+    public Boolean getDdIOS() {
+        return ddIOS;
+    }
+
+    public void setDdIOS(Boolean ddIOS) {
+        this.ddIOS = ddIOS;
     }
 
     public String getDdName() {

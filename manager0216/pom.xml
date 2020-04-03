@@ -228,7 +228,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <configurationFile>${basedir}/src/main/resources/generator/secondConfig.xml</configurationFile>
+                    <configurationFile>${basedir}/src/main/resources/generator/fourthConfig.xml</configurationFile>
                     <overwrite>true</overwrite>
                     <verbose>true</verbose>
                 </configuration>

@@ -1,6 +1,8 @@
 package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fish.dao.fourth.mapper.AdValueWxAdUnitMapper;
+import com.fish.dao.fourth.model.AdValueWxAdUnit;
 import com.fish.dao.primary.mapper.BuyPayMapper;
 import com.fish.dao.primary.mapper.ProductDataMapper;
 import com.fish.dao.primary.model.BuyPay;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -38,6 +41,8 @@ public class DataCollectService implements BaseService<DataCollect> {
     BuyPayMapper buyPayMapper;
     @Autowired
     ProductDataMapper productDataMapper;
+    @Autowired
+    AdValueWxAdUnitMapper adValueWxAdUnitMapper;
 
     /**
      * 查询汇总数据
@@ -79,7 +84,53 @@ public class DataCollectService implements BaseService<DataCollect> {
         Map<String, BuyPay> buyPayMap = queryBuPayByDate(times[0], times[1], type);
         // 追加买量数据和分享率
         countBuyData(dataCollects, buyPayMap);
+
+        // 查询插屏总收入
+        Map<String, AdValueWxAdUnit> screenIncomeMap = queryAdValueWxAdUnitDate(times[0], times[1]);
+        // 追加插屏总收入
+        countScreenIncomeData(dataCollects, screenIncomeMap);
         return dataCollects;
+    }
+
+    /**
+     * 追加插屏总收入
+     *
+     * @param dataCollects
+     * @param screenIncomeMap
+     */
+    private void countScreenIncomeData(List<DataCollect> dataCollects, Map<String, AdValueWxAdUnit> screenIncomeMap) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        dataCollects.forEach(dataCollect -> {
+            if (dataCollect == null) {
+                return;
+            }
+            if (screenIncomeMap != null && screenIncomeMap.size() > 0) {
+                AdValueWxAdUnit adValueWxAdUnit = screenIncomeMap.get(format.format(dataCollect.getWxDate()));
+                if (adValueWxAdUnit != null) {
+                    BigDecimal screenIncome = new BigDecimal(adValueWxAdUnit.getScreenIncome()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+                    dataCollect.setScreenIncomeCount(screenIncome);
+                    dataCollect.setRevenueCount(dataCollect.getRevenueCount().add(screenIncome));
+                }
+            }
+        });
+    }
+
+    /**
+     * 根据时间查询插屏总收入
+     *
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    private Map<String, AdValueWxAdUnit> queryAdValueWxAdUnitDate(String beginTime, String endTime) {
+        Map<String, AdValueWxAdUnit> map = new HashMap<>(16);
+        List<AdValueWxAdUnit> adValueWxAdUnits = adValueWxAdUnitMapper.queryScreenIncomeByDate(beginTime, endTime);
+        if (!adValueWxAdUnits.isEmpty()) {
+            adValueWxAdUnits.forEach(adValueWxAdUnit -> {
+                map.put(adValueWxAdUnit.getDate(), adValueWxAdUnit);
+            });
+        }
+        return map;
     }
 
     /**
@@ -130,6 +181,7 @@ public class DataCollectService implements BaseService<DataCollect> {
                 collect.setAdRevenueCount(collect.getAdRevenueCount().add(dataCollect.getAdRevenueCount()));
                 collect.setShareCount(dataCollect.getShareCount() + collect.getShareCount());
                 collect.setShareUserCount(dataCollect.getShareUserCount() + collect.getShareUserCount());
+                collect.setRechargeCount(dataCollect.getRechargeCount());
                 collect.setRevenueCount(collect.getRevenueCount().add(dataCollect.getRevenueCount() != null ? dataCollect.getRevenueCount() : new BigDecimal(0)));
             }
         });
@@ -279,6 +331,7 @@ public class DataCollectService implements BaseService<DataCollect> {
             dataCollect.setShareUserCount(productData1.getWxShareUser());
             // 分享次数
             dataCollect.setShareCount(productData1.getWxShareCount());
+            dataCollect.setRechargeCount(productData1.getRecharge());
             // 总收入
             dataCollect.setRevenueCount(productData1.getRevenueCount());
             dataCollects.add(dataCollect);

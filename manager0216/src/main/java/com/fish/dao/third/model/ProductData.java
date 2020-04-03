@@ -26,6 +26,7 @@ public class ProductData {
     private String productName;
     /*** 充值收入*/
     private BigDecimal recharge;
+
     /*** 广告收入*/
     private BigDecimal adRevenue;
 
@@ -90,6 +91,17 @@ public class ProductData {
      * 展示数据-买量单价
      */
     private BigDecimal buyClickPrice;
+    /*** 展示数据-插屏收入*/
+    private BigDecimal screenIncome;
+
+
+    public BigDecimal getScreenIncome() {
+        return screenIncome;
+    }
+
+    public void setScreenIncome(BigDecimal screenIncome) {
+        this.screenIncome = screenIncome;
+    }
 
     public String getBeginTime() {
         return beginTime;

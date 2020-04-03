@@ -7,6 +7,10 @@
         "url": "wxConfig"
       },
       {
+        "name": "广告ID信息",
+        "url": "wxConfigAd"
+      },
+      {
         "name": "审核配置",
         "url": "appConfig"
       },
@@ -29,6 +33,10 @@
       {
         "name": "资源上传统一接口",
         "url": "uploadCdn"
+      },
+      {
+        "name": "测试网页",
+        "url": "GroupFormatConfig"
       }
     ]
   },
@@ -144,6 +152,26 @@
       {
         "name": "广告数据查询",
         "url": "adValue"
+      },
+      {
+        "name": "微信广告数据延伸",
+        "url": "adValueWxAdUnit"
+      },
+      {
+        "name": "wxAdPos数据查询",
+        "url": "wxAdPos"
+      },
+      {
+        "name": "微信数据日留存",
+        "url": "wxDailyDetain"
+      },
+      {
+        "name": "微信数据Summary",
+        "url": "wxDailySummary"
+      },
+      {
+        "name": "微信访问统计",
+        "url": "wxDailyVisitTrend"
       }
     ]
   },

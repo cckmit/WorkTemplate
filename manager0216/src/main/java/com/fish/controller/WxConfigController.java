@@ -73,17 +73,7 @@ public class WxConfigController {
     @ResponseBody
     @PostMapping(value = "/wxconfig/new")
     public PostResult insertWxConfig(@RequestBody WxConfig productInfo) {
-        PostResult result = new PostResult();
-        int count = wxConfigService.insert(productInfo);
-        if (count != 0) {
-            //刷新业务表结构
-            String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
-            String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
-        } else {
-            result.setSuccessed(false);
-            result.setMsg("操作失败，请联系管理员");
-        }
-        return result;
+        return wxConfigService.insert(productInfo);
     }
 
     /**

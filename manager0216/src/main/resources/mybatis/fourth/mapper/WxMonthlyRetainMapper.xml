@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.fourth.mapper.WxMonthlyRetainMapper" >
+  <resultMap id="BaseResultMap" type="com.fish.dao.fourth.model.WxMonthlyRetain" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="appId" property="appId" jdbcType="VARCHAR" />
+    <result column="refMonth" property="refMonth" jdbcType="VARCHAR" />
+    <result column="dataType" property="dataType" jdbcType="VARCHAR" />
+    <result column="month0" property="month0" jdbcType="INTEGER" />
+    <result column="month1" property="month1" jdbcType="INTEGER" />
+    <result column="month2" property="month2" jdbcType="INTEGER" />
+    <result column="month3" property="month3" jdbcType="INTEGER" />
+    <result column="month4" property="month4" jdbcType="INTEGER" />
+    <result column="month5" property="month5" jdbcType="INTEGER" />
+    <result column="month6" property="month6" jdbcType="INTEGER" />
+    <result column="month7" property="month7" jdbcType="INTEGER" />
+    <result column="insertTime" property="insertTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, appId, refMonth, dataType, month0, month1, month2, month3, month4, month5, month6, 
+    month7, insertTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wx_monthly_retain
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from wx_monthly_retain
+    where DATE(refMonth) between #{beginMonth, jdbcType=INTEGER} and #{endMonth, jdbcType=INTEGER}
+    <if test="wxMonthlyRetain.appId != null and wxMonthlyRetain.appId != ''">
+      and appId = #{wxMonthlyRetain.appId, jdbcType=VARCHAR}
+    </if>
+  </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wx_monthly_retain
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fish.dao.fourth.model.WxMonthlyRetain" >
+    insert into wx_monthly_retain (id, appId, refMonth, 
+      dataType, month0, month1, 
+      month2, month3, month4, 
+      month5, month6, month7, 
+      insertTime)
+    values (#{id,jdbcType=INTEGER}, #{appId,jdbcType=VARCHAR}, #{refMonth,jdbcType=VARCHAR}, 
+      #{dataType,jdbcType=VARCHAR}, #{month0,jdbcType=INTEGER}, #{month1,jdbcType=INTEGER}, 
+      #{month2,jdbcType=INTEGER}, #{month3,jdbcType=INTEGER}, #{month4,jdbcType=INTEGER}, 
+      #{month5,jdbcType=INTEGER}, #{month6,jdbcType=INTEGER}, #{month7,jdbcType=INTEGER}, 
+      #{insertTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.dao.fourth.model.WxMonthlyRetain" >
+    insert into wx_monthly_retain
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="appId != null" >
+        appId,
+      </if>
+      <if test="refMonth != null" >
+        refMonth,
+      </if>
+      <if test="dataType != null" >
+        dataType,
+      </if>
+      <if test="month0 != null" >
+        month0,
+      </if>
+      <if test="month1 != null" >
+        month1,
+      </if>
+      <if test="month2 != null" >
+        month2,
+      </if>
+      <if test="month3 != null" >
+        month3,
+      </if>
+      <if test="month4 != null" >
+        month4,
+      </if>
+      <if test="month5 != null" >
+        month5,
+      </if>
+      <if test="month6 != null" >
+        month6,
+      </if>
+      <if test="month7 != null" >
+        month7,
+      </if>
+      <if test="insertTime != null" >
+        insertTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="refMonth != null" >
+        #{refMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="dataType != null" >
+        #{dataType,jdbcType=VARCHAR},
+      </if>
+      <if test="month0 != null" >
+        #{month0,jdbcType=INTEGER},
+      </if>
+      <if test="month1 != null" >
+        #{month1,jdbcType=INTEGER},
+      </if>
+      <if test="month2 != null" >
+        #{month2,jdbcType=INTEGER},
+      </if>
+      <if test="month3 != null" >
+        #{month3,jdbcType=INTEGER},
+      </if>
+      <if test="month4 != null" >
+        #{month4,jdbcType=INTEGER},
+      </if>
+      <if test="month5 != null" >
+        #{month5,jdbcType=INTEGER},
+      </if>
+      <if test="month6 != null" >
+        #{month6,jdbcType=INTEGER},
+      </if>
+      <if test="month7 != null" >
+        #{month7,jdbcType=INTEGER},
+      </if>
+      <if test="insertTime != null" >
+        #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.fourth.model.WxMonthlyRetain" >
+    update wx_monthly_retain
+    <set >
+      <if test="appId != null" >
+        appId = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="refMonth != null" >
+        refMonth = #{refMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="dataType != null" >
+        dataType = #{dataType,jdbcType=VARCHAR},
+      </if>
+      <if test="month0 != null" >
+        month0 = #{month0,jdbcType=INTEGER},
+      </if>
+      <if test="month1 != null" >
+        month1 = #{month1,jdbcType=INTEGER},
+      </if>
+      <if test="month2 != null" >
+        month2 = #{month2,jdbcType=INTEGER},
+      </if>
+      <if test="month3 != null" >
+        month3 = #{month3,jdbcType=INTEGER},
+      </if>
+      <if test="month4 != null" >
+        month4 = #{month4,jdbcType=INTEGER},
+      </if>
+      <if test="month5 != null" >
+        month5 = #{month5,jdbcType=INTEGER},
+      </if>
+      <if test="month6 != null" >
+        month6 = #{month6,jdbcType=INTEGER},
+      </if>
+      <if test="month7 != null" >
+        month7 = #{month7,jdbcType=INTEGER},
+      </if>
+      <if test="insertTime != null" >
+        insertTime = #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.dao.fourth.model.WxMonthlyRetain" >
+    update wx_monthly_retain
+    set appId = #{appId,jdbcType=VARCHAR},
+      refMonth = #{refMonth,jdbcType=VARCHAR},
+      dataType = #{dataType,jdbcType=VARCHAR},
+      month0 = #{month0,jdbcType=INTEGER},
+      month1 = #{month1,jdbcType=INTEGER},
+      month2 = #{month2,jdbcType=INTEGER},
+      month3 = #{month3,jdbcType=INTEGER},
+      month4 = #{month4,jdbcType=INTEGER},
+      month5 = #{month5,jdbcType=INTEGER},
+      month6 = #{month6,jdbcType=INTEGER},
+      month7 = #{month7,jdbcType=INTEGER},
+      insertTime = #{insertTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -19,7 +19,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@MapperScan({"com.fish.manger.v5.mapper", "com.fish.dao.primary.mapper", "com.fish.dao.third.mapper"})
+@MapperScan({"com.fish.manger.v5.mapper", "com.fish.dao.primary.mapper", "com.fish.dao.third.mapper", "com.fish.dao.fourth.mapper"})
 public class testJDBC {
     @Autowired
     private RankingMapper rankingMapper;

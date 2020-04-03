@@ -48,7 +48,6 @@
         </div>
     </div>
 </div>
-</div>
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
@@ -170,7 +169,7 @@
                 var checkStatus = table.checkStatus('table-page');
                 var l = checkStatus.data.length;
                 data = checkStatus.data;
-                if (l == 0) {
+                if (l === 0) {
                     layer.msg('请选择一行');
                 } else if (l > 1) {
                     layer.msg('只能查看一行哦');

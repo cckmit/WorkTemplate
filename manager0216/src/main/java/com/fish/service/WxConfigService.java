@@ -99,17 +99,13 @@ public class WxConfigService implements BaseService<WxConfig> {
      * @param record
      * @return
      */
-    public int insert(WxConfig record) {
-        int insertAppConfig;
-        appConfig.setDdappid(record.getDdappid());
-        appConfig.setDdname(record.getProductName());
-        appConfig.setDdprogram(record.getProgramType());
-        appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
-        try {
-            insertAppConfig = appConfigMapper.insert(appConfig);
-            LOGGER.info("appConfig插入数据" + insertAppConfig);
-        } catch (Exception e) {
-            LOGGER.error("新增appConfig信息失败" + ", 详细信息:{}", e.getMessage());
+    public PostResult insert(WxConfig record) {
+        PostResult result = new PostResult();
+        WxConfig wxConfig = wxConfigMapper.selectByPrimaryKey(record.getDdappid());
+        if (wxConfig != null) {
+            result.setSuccessed(false);
+            result.setMsg("产品AppId已存在");
+            return result;
         }
         record.setCreateTime(new Timestamp(System.currentTimeMillis()));
         String ddAppSkipRes = record.getDdappskipres();
@@ -117,14 +113,31 @@ public class WxConfigService implements BaseService<WxConfig> {
             String minify = ReadJsonUtil.minify(ddAppSkipRes);
             record.setDdappskipres(minify);
         }
-        int insertWxconfig = 0;
+        int insertWxConfig = 0;
+        int insertAppConfig = 0;
         try {
             //新增产品信息
-            insertWxconfig = wxConfigMapper.insert(record);
+            insertWxConfig = wxConfigMapper.insert(record);
+            if (insertWxConfig != 0) {
+                appConfig.setDdappid(record.getDdappid());
+                appConfig.setDdname(record.getProductName());
+                appConfig.setDdprogram(record.getProgramType());
+                appConfig.setDdtime(new Timestamp(System.currentTimeMillis()));
+                insertAppConfig = appConfigMapper.insert(appConfig);
+            }
         } catch (Exception e) {
-            LOGGER.error("新增产品信息失败" + ", 详细信息:{}", e.getMessage());
+            LOGGER.error("新增appConfig信息失败" + ", 详细信息:{}", e.getMessage());
         }
-        return insertWxconfig;
+
+        if (insertWxConfig != 0 && insertAppConfig != 0) {
+            //刷新业务表结构
+            String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
+            String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
+        } else {
+            result.setSuccessed(false);
+            result.setMsg("操作失败，请联系管理员");
+        }
+        return result;
     }
 
     /**
@@ -171,6 +184,9 @@ public class WxConfigService implements BaseService<WxConfig> {
     @Override
     public boolean removeIf(WxConfig wxConfig, JSONObject searchData) {
         if (existValueFalse(searchData.getString("appId"), wxConfig.getDdappid())) {
+            return true;
+        }
+        if (existValueFalse(searchData.getString("addName"), wxConfig.getAdName())) {
             return true;
         }
         return existValueFalse(searchData.getString("productsName"), wxConfig.getDdappid());

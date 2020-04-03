@@ -19,6 +19,10 @@ public class DataCollect implements Serializable {
     private BigDecimal revenueCount;
     /*** 广告总收入*/
     private BigDecimal adRevenueCount;
+    /*** 插屏总收入*/
+    private BigDecimal screenIncomeCount;
+    /*** 充值总收入*/
+    private BigDecimal rechargeCount;
     /*** 视频总收入*/
     private BigDecimal videoIncomeCount;
 
@@ -38,6 +42,22 @@ public class DataCollect implements Serializable {
      */
     public String beginTime;
     public String endTime;
+
+    public BigDecimal getRechargeCount() {
+        return rechargeCount;
+    }
+
+    public void setRechargeCount(BigDecimal rechargeCount) {
+        this.rechargeCount = rechargeCount;
+    }
+
+    public BigDecimal getScreenIncomeCount() {
+        return screenIncomeCount;
+    }
+
+    public void setScreenIncomeCount(BigDecimal screenIncomeCount) {
+        this.screenIncomeCount = screenIncomeCount;
+    }
 
     public String getBeginTime() {
         return beginTime;

@@ -53,7 +53,6 @@
         </div>
     </div>
 </div>
-</div>
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
@@ -79,11 +78,11 @@
             cols: [[
                 {type: 'checkbox'},
                 {type: 'numbers', width: 60, title: '序号'},
-                {field: 'ddId', width: 180, title: '计费点ID', sort: true},
-                {field: 'costDesc', width: 220, title: '计费点描述', sort: true},
+                {field: 'ddId', width: 120, title: '计费点ID', sort: true,align: 'center'},
+                {field: 'costDesc', width: 200, title: '计费点描述', sort: true},
                 {field: 'ddCostType', width: 180, title: '计费点金额', sort: true},
                 {
-                    field: 'ddGoodsType', width: 180, title: '类型', sort: true,
+                    field: 'ddGoodsType', width: 140, title: '类型', sort: true,
                     templet: (d) => {
                         if (d.ddGoodsType === "recharge") {
                             return '提现';
@@ -94,9 +93,19 @@
                         }
                     }
                 },
-                {field: 'gainDesc', width: 250, title: '获得道具', sort: true},
+                {field: 'gainDesc', width: 220, title: '获得道具', sort: true},
                 {
-                    field: 'ddState', width: 180, title: '状态', sort: true,
+                    field: 'ddIOS', width: 160, title: '是否支持IOS', sort: true,
+                    templet: (d) => {
+                        if (d.ddIOS === true) {
+                            return '是';
+                        } else {
+                            return "否";
+                        }
+                    }
+                },
+                {
+                    field: 'ddState', width: 160, title: '状态', sort: true,
                     templet: (d) => {
                         if (d.ddState === true) {
                             return '开启';
@@ -105,7 +114,7 @@
                         }
                     }
                 },
-                {field: 'insertTime', width: 280, title: '创建时间', sort: true}
+                {field: 'insertTime', width: 260, title: '创建时间', sort: true}
             ]],
             page: true,
             toolbar: '#toolbar',
@@ -170,8 +179,9 @@
         <label class="layui-form-label">购买数量 *</label>
         <div class="layui-input-inline">
             <input type="number" id="coinNumber" name="coinNumber" autocomplete="off"
-                   class="layui-input ">
+                   class="layui-input " placeholder="(金币)">
         </div>
+        (金币)
     </div>
     <div class="layui-form-item layui-hide" id="head">
         <label class="layui-form-label">头像框编号 *</label>
@@ -179,6 +189,7 @@
             <input type="number" id="headNumber" name="headNumber" autocomplete="off"
                    class="layui-input ">
         </div>
+        (号头像框)
     </div>
     <div class="layui-form-item layui-hide " id="cash">
         <label class="layui-form-label">提现金额 *</label>
@@ -187,6 +198,14 @@
                    class="layui-input " placeholder="(元)">
         </div>
         (元)
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">是否支持IOS *</label>
+        <div class="layui-input-inline">
+            <div class="layui-input-block">
+                <input type="checkbox" id="ddIOS" name="ddIOS" lay-skin="switch">
+            </div>
+        </div>
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">状态 *</label>

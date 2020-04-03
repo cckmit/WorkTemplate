@@ -65,7 +65,6 @@
         </div>
     </div>
 </div>
-</div>
 
 <script id="toolbar" type="text/html">
     <div class="layui-table-tool-temp">
@@ -144,21 +143,7 @@
                     {field: 'wxRegCode', width: 120, title: '新增-二维码', sort: true},
                     {field: 'wxRegSession', width: 120, title: '新增-会话', sort: true},
                     {field: 'wxRegOther', width: 120, title: '新增-其他', sort: true},
-                    {field: 'wxActive', width: 120, title: '活跃用户数', sort: true},
-                    {field: 'wxActiveWomen', width: 120, title: '活跃女性占比', sort: true},
-                    {field: 'wxShareUser', width: 120, title: '分享人数', sort: true},
-                    {field: 'wxShareCount', width: 120, title: '分享次数', sort: true},
-                    {
-                        field: 'wxShareRate', width: 120, title: '分享率', sort: true,
-                        templet: (d) => {
-                            if (d.wxShareRate != null && d.wxShareRate !== "null") {
-                                return d.wxShareRate + "%";
-                            } else {
-                                return "";
-                            }
-                        }
-                    },
-                    {field: 'wxRegJson', width: 120, title: '注册用户来源', sort: true}
+                    {field: 'wxRegJson', width: 450, title: '注册用户来源', sort: true}
                 ]
             ],
             page: true,

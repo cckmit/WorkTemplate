@@ -50,7 +50,6 @@
         </div>
     </div>
 </div>
-</div>
 
 <script id="toolbar" type="text/html">
     <div class="layui-table-tool-temp">
@@ -133,7 +132,7 @@
                     {
                         field: 'ddgroup', width: 120, title: '赛制类型', sort: true,
                         templet: (d) => {
-                            if (d.ddgroup === true) {
+                            if (d.ddgroup === 1) {
                                 return "小程序";
                             } else {
                                 return "小游戏";
@@ -228,8 +227,8 @@
         <label class="layui-form-label">赛制类型</label>
         <div class="layui-input-inline">
             <select class="layui-select" id="ddgroup" name="ddgroup">
-                <option value=true>小程序</option>
-                <option value=false>小游戏</option>
+                <option value=1>小程序</option>
+                <option value=0>小游戏</option>
             </select>
         </div>
     </div>

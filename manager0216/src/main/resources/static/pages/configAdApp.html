@@ -97,8 +97,7 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {
-        },
+        filterDone: function (val, list) {},
     });
     //自有广告组合数组
     let combinationNames = [];
@@ -337,8 +336,7 @@
         layui.use(['form', 'layer'], () => {
             const $ = layui.$, form = layui.form, layer = layui.layer;
             $.get('../manage/configAdCombination/select', {}, function (data) {
-                console.log(data);
-                console.log(editData);
+
                 let combinationOptionArr = [];
                 data.forEach((val, index, arr) => {
                     let context = {

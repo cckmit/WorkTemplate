@@ -57,7 +57,7 @@
         </div>
     </div>
 </div>
-</div>
+
 <script>
     const operatorurl = '../manage/datacollect';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
@@ -75,9 +75,29 @@
                     {field: 'newCount', width: 120, title: '新增总数', sort: true},
                     {field: 'activeCount', width: 120, title: '活跃总数', sort: true},
                     {field: 'revenueCount', width: 120, title: '总收入', sort: true},
+                    {
+                        field: 'rechargeCount', width: 120, title: '充值收入', sort: true,
+                        templet: (d) => {
+                            if (d.rechargeCount != null && d.rechargeCount !== "null") {
+                                return d.rechargeCount;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
                     {field: 'adRevenueCount', width: 120, title: '广告收入', sort: true},
-                    {field: 'videoIncomeCount', width: 120, title: '视频收入', sort: true},
                     {field: 'bannerIncomeCount', width: 120, title: 'banner收入', sort: true},
+                    {field: 'videoIncomeCount', width: 120, title: '视频收入', sort: true},
+                    {
+                        field: 'screenIncomeCount', width: 120, title: '插屏收入', sort: true,
+                        templet: (d) => {
+                            if (d.screenIncomeCount != null && d.screenIncomeCount !== "null") {
+                                return d.screenIncomeCount;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
                     {
                         field: 'buyPay', width: 120, title: '买量支出', sort: true,
                         templet: (d) => {

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,7 +48,7 @@ public class AppConfigService implements BaseService<AppConfig> {
             if (ddcode != null) {
                 ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(ddcode);
                 //设置游戏名称
-                appConfig.setCodename(arcadeGameSet!=null ?arcadeGameSet.getDdname():"");
+                appConfig.setCodename(arcadeGameSet != null ? arcadeGameSet.getDdname() : "");
             }
             if (ddcheckcode != null && ddcheckcode != 0) {
                 ArcadeGameSet arcadeGameSet = arcadeGameSetMapper.selectByPrimaryKey(ddcheckcode);

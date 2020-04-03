@@ -50,6 +50,7 @@
             SUM(p.wx_share_user) AS wxShareUser,
             SUM(p.wx_share_count) AS wxShareCount,
             SUM(p.wx_video_income + p.wx_banner_income) AS adRevenue,
+            SUM(p.recharge) AS recharge,
             SUM(p.wx_video_income + p.wx_banner_income + p.recharge) AS revenueCount
         FROM
             program_entering p
@@ -320,10 +321,8 @@
         <include refid="Base_Column_List"/>
         from program_entering
         where wx_date &gt;= #{start} and wx_date &lt;= #{end}
-        <where>
-            <if test="wxAppid != null and wxAppid !=''">
-                AND wx_appid = #{wxAppid}
-            </if>
-        </where>
+        <if test="wxAppid != null and wxAppid !=''">
+            and wx_appid = #{wxAppid}
+        </if>
     </select>
 </mapper>

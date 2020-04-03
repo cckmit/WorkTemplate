@@ -169,7 +169,7 @@
         select
         <include refid="Base_Column_List"/>
         FROM buy_pay
-        WHERE DATE(buy_buy_date) BETWEEN #{beginTime} AND #{endTime}
+        WHERE DATE(buy_date) BETWEEN #{beginTime} AND #{endTime}
         <if test="buyAppId != null and buyAppId !=''">
             AND buy_app_id = #{buyAppId}
         </if>

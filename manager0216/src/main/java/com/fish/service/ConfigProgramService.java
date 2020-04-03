@@ -69,6 +69,17 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
     public PostResult insert(ConfigProgram record) {
         PostResult result = new PostResult();
         record.setTimes(new Timestamp(System.currentTimeMillis()));
+        if (null == record.getDdCode()) {
+            result.setSuccessed(false);
+            result.setMsg("请填写正式合集后提交");
+            return result;
+        }
+        ConfigProgram configProgram = configProgramMapper.selectByPrimaryKey(record.getDdAppId(), record.getDdMinVer());
+        if (configProgram != null) {
+            result.setSuccessed(false);
+            result.setMsg("包含重复产品和最低版本号组合");
+            return result;
+        }
         int insert = 0;
         try {
             insert = configProgramMapper.insert(record);
@@ -81,7 +92,7 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
             String res = ReadJsonUtil.flushTable("config_program", baseConfig.getFlushCache());
         } else {
             result.setSuccessed(false);
-            result.setMsg("包含重复数据，请检查后提交");
+            result.setMsg("操作失败，联系管理员");
         }
         return result;
     }
@@ -93,9 +104,13 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
      * @return
      */
     public PostResult updateByPrimaryKeySelective(ConfigProgram record) {
-
         PostResult result = new PostResult();
         record.setTimes(new Timestamp(System.currentTimeMillis()));
+        if (null == record.getDdCode()) {
+            result.setSuccessed(false);
+            result.setMsg("请填写正式合集后提交");
+            return result;
+        }
         int insert = 0;
         try {
             insert = configProgramMapper.updateByPrimaryKeySelective(record);

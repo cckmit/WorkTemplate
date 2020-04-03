@@ -81,24 +81,27 @@ public class BuyPayService implements BaseService<BuyPay> {
                         Map<String, String> mapSingle = new HashMap<>();
                         BuyPay buyPay = new BuyPay();
                         for (int x = 0; x < singleSplit.length; x++) {
-                            //System.out.println("我是单条数据 "+x +" :"+singleSplit[x] );
-                            if (x == 0) {
-                                mapSingle.put("buyDate", singleSplit[x].trim());
-                            }
-                            if (x == 1) {
-                                mapSingle.put("buyProductName", singleSplit[x].trim());
-                            }
-                            if (x == 2) {
-                                mapSingle.put("buyCost", singleSplit[x].trim());
-                            }
-                            if (x == 3) {
-                                mapSingle.put("buyClickNumber", singleSplit[x].trim());
-                            }
-                            if (x == 4) {
-                                mapSingle.put("buyClickPrice", singleSplit[x].trim());
-                            }
-                            if (x == 5) {
-                                mapSingle.put("appId", singleSplit[x].trim());
+                            switch (x) {
+                                case 0:
+                                    mapSingle.put("buyDate", singleSplit[x].trim());
+                                    break;
+                                case 1:
+                                    mapSingle.put("buyProductName", singleSplit[x].trim());
+                                    break;
+                                case 2:
+                                    mapSingle.put("buyCost", singleSplit[x].trim());
+                                    break;
+                                case 3:
+                                    mapSingle.put("buyClickNumber", singleSplit[x].trim());
+                                    break;
+                                case 4:
+                                    mapSingle.put("buyClickPrice", singleSplit[x].trim());
+                                    break;
+                                case 5:
+                                    mapSingle.put("appId", singleSplit[x].trim());
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                         String buyDate = mapSingle.get("buyDate");

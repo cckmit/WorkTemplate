@@ -24,7 +24,7 @@
     <select id="selectAll" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from ad_value
+        from persie_value.ad_value
         where left(hourNum, 8) between #{beginDate, jdbcType=INTEGER} and #{endDate, jdbcType=INTEGER}
         <if test="adValue.appId != null and adValue.appId != ''">
             and appId like concat('%',#{adValue.appId, jdbcType=VARCHAR},'%')

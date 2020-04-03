@@ -3,6 +3,12 @@ package com.fish.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.fish.dao.fourth.mapper.AdValueWxAdUnitMapper;
+import com.fish.dao.fourth.mapper.AdValueWxAdposMapper;
+import com.fish.dao.fourth.mapper.WxDailyVisitTrendMapper;
+import com.fish.dao.fourth.model.AdValueWxAdUnit;
+import com.fish.dao.fourth.model.AdValueWxAdpos;
+import com.fish.dao.fourth.model.WxDailyVisitTrend;
 import com.fish.dao.primary.mapper.BuyPayMapper;
 import com.fish.dao.primary.mapper.ProductDataMapper;
 import com.fish.dao.primary.model.BuyPay;
@@ -21,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,6 +51,8 @@ public class ProductDataService implements BaseService<ProductData> {
     MinitjWxMapper minitjWxMapper;
 
     @Autowired
+    AdValueWxAdUnitMapper adValueWxAdUnitMapper;
+    @Autowired
     CacheService cacheService;
     @Autowired
     ProductDataMapper productDataMapper;
@@ -51,6 +60,11 @@ public class ProductDataService implements BaseService<ProductData> {
     @Autowired
     BuyPayMapper buyPayMapper;
 
+    @Autowired
+    WxDailyVisitTrendMapper wxDailyVisitTrendMapper;
+
+    @Autowired
+    AdValueWxAdposMapper adValueWxAdposMapper;
     /**
      * 获取微信配置表
      *
@@ -69,6 +83,7 @@ public class ProductDataService implements BaseService<ProductData> {
     public List<ProductData> selectAll(GetParameter parameter) {
         Map<String, WxConfig> wxConfigMap = getWxConfigMap();
         Map<String, BuyPay> buyPayMap = getBuyPayMap(parameter);
+        Map<String, AdValueWxAdUnit> wxAdUnitMap = getWxAdUnitMap(parameter);
         List<ProductData> productDatas = new ArrayList<ProductData>();
         JSONObject search = getSearchData(parameter.getSearchData());
         if (search != null) {
@@ -77,21 +92,21 @@ public class ProductDataService implements BaseService<ProductData> {
             String type = search.getString("type");
             switch (type) {
                 case "0":
-                    productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap);
+                    productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap, wxAdUnitMap);
                     break;
                 case "1":
-                    productDatas = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap);
+                    productDatas = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap, wxAdUnitMap);
                     break;
                 default:
                     // 如果只选了时间
-                    productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap);
-                    List<ProductData> list = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap);
+                    productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap, wxAdUnitMap);
+                    List<ProductData> list = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap, wxAdUnitMap);
                     productDatas.addAll(list);
                     break;
             }
         } else {
-            productDatas = selectMinitjWx(parameter, null, wxConfigMap, buyPayMap);
-            List<ProductData> list = selectPersieDeamon(parameter, null, wxConfigMap, buyPayMap);
+            productDatas = selectMinitjWx(parameter, null, wxConfigMap, buyPayMap, wxAdUnitMap);
+            List<ProductData> list = selectPersieDeamon(parameter, null, wxConfigMap, buyPayMap, wxAdUnitMap);
             productDatas.addAll(list);
         }
         return productDatas;
@@ -105,14 +120,41 @@ public class ProductDataService implements BaseService<ProductData> {
      * @return
      */
     private List<ProductData> selectPersieDeamon(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap,
-                                                 Map<String, BuyPay> buyPayMap) {
+                                                 Map<String, BuyPay> buyPayMap, Map<String, AdValueWxAdUnit> wxAdUnitMap) {
         List<ProductData> productDatas = new ArrayList<ProductData>();
-
         // 选小程序的时候查询
         String[] times = getSearchTime(parameter);
         String start = times[0];
         String end = times[1];
         productDatas = productDataMapper.searchProgramData(ddAppId, start, end);
+
+        List<AdValueWxAdpos> adValueWxAdPos = adValueWxAdposMapper.selectTypeIncomeByDate(start, end, ddAppId);
+        List<WxDailyVisitTrend> wxDailyVisitTrends = wxDailyVisitTrendMapper.selectVisitTrend(start, end, ddAppId);
+
+        for (AdValueWxAdpos adValueWxAdPo : adValueWxAdPos) {
+            ProductData productData = new ProductData();
+            productData.setWxAppid(adValueWxAdPo.getAppId());
+            productData.setWxDate(new Date(adValueWxAdPo.getDate()));
+           switch(adValueWxAdPo.getSlotId()){
+               case "8040321819858439":
+                   productData.setWxBannerIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                           break;
+               case "1030436212907001":
+                   productData.setWxVideoIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                   break;
+               case "3030046789020061":
+                   productData.setScreenIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                   break;
+               case "7070083760581921":
+                   break;
+               default:
+                   break;
+           }
+
+        }
+
+
+
         for (ProductData productDatum : productDatas) {
             String wxAppid = productDatum.getWxAppid();
             Date wxDate = productDatum.getWxDate();
@@ -124,10 +166,53 @@ public class ProductDataService implements BaseService<ProductData> {
                     productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
                 }
             }
+            if (wxAdUnitMap != null && !wxAdUnitMap.isEmpty()) {
+                AdValueWxAdUnit wxAdUnit = wxAdUnitMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
+                if (wxAdUnit != null) {
+                    productDatum.setScreenIncome(new BigDecimal(wxAdUnit.getScreenIncome()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+                }
+            }
         }
         return productDatas;
     }
 
+
+    /**
+     * 查询小程序数据
+     *
+     * @param parameter
+     * @param ddAppId
+     * @return
+     */
+    private List<ProductData> selectPersieDeamonS(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap,
+                                                 Map<String, BuyPay> buyPayMap, Map<String, AdValueWxAdUnit> wxAdUnitMap) {
+        List<ProductData> productDatas = new ArrayList<ProductData>();
+        // 选小程序的时候查询
+        String[] times = getSearchTime(parameter);
+        String start = times[0];
+        String end = times[1];
+        productDatas = productDataMapper.searchProgramData(ddAppId, start, end);
+
+        for (ProductData productDatum : productDatas) {
+            String wxAppid = productDatum.getWxAppid();
+            Date wxDate = productDatum.getWxDate();
+            //查询小程序是否存在买量数据
+            if (buyPayMap != null && !buyPayMap.isEmpty()) {
+                BuyPay buyPay = buyPayMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
+                if (buyPay != null) {
+                    productDatum.setBuyCost(buyPay.getBuyCost());
+                    productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
+                }
+            }
+            if (wxAdUnitMap != null && !wxAdUnitMap.isEmpty()) {
+                AdValueWxAdUnit wxAdUnit = wxAdUnitMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
+                if (wxAdUnit != null) {
+                    productDatum.setScreenIncome(new BigDecimal(wxAdUnit.getScreenIncome()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+                }
+            }
+        }
+        return productDatas;
+    }
     private String[] getSearchTime(GetParameter parameter) {
 
         String[] times = new String[2];
@@ -155,7 +240,7 @@ public class ProductDataService implements BaseService<ProductData> {
      * @return
      */
     private List<ProductData> selectMinitjWx(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap,
-                                             Map<String, BuyPay> buyPayMap) {
+                                             Map<String, BuyPay> buyPayMap, Map<String, AdValueWxAdUnit> wxAdUnitMap) {
         List<ProductData> productDatas = new ArrayList<>();
         //JSONObject search = getSearchData(parameter.getSearchData());
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -202,11 +287,18 @@ public class ProductDataService implements BaseService<ProductData> {
                     productData.setBuyClickPrice(buyPay.getBuyClickPrice());
                 }
             }
+            if (wxAdUnitMap != null && !wxAdUnitMap.isEmpty()) {
+                AdValueWxAdUnit wxAdUnit = wxAdUnitMap.get(wxData.getWxAppid() + "_" + dateFormat.format(wxData.getWxDate()));
+                if (wxAdUnit != null) {
+                    productData.setScreenIncome(new BigDecimal(wxAdUnit.getScreenIncome()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+                }
+            }
             BeanUtils.copyProperties(wxData, productData);
             productDatas.add(productData);
         }
         return productDatas;
     }
+
 
     /**
      * 获取买量数据
@@ -224,6 +316,25 @@ public class ProductDataService implements BaseService<ProductData> {
             buyPayMap.put(buyPay.getBuyAppId() + "_" + buyPay.getBuyDate(), buyPay);
         });
         return buyPayMap;
+    }
+
+    /**
+     * 获取插屏收入
+     *
+     * @param parameter
+     * @return 3030046789020061插屏
+     */
+    private Map<String, AdValueWxAdUnit> getWxAdUnitMap(GetParameter parameter) {
+        String[] times = getSearchTime(parameter);
+        String beginTime = times[0];
+        String endTime = times[1];
+        Map<String, AdValueWxAdUnit> AdValueWxAdUnitMap = new HashMap<String, AdValueWxAdUnit>(16);
+
+        List<AdValueWxAdUnit> adValueWxAdUnits = adValueWxAdUnitMapper.selectAllScreenIncome(beginTime, endTime);
+        adValueWxAdUnits.forEach(adValueWxAdUnit -> {
+            AdValueWxAdUnitMap.put(adValueWxAdUnit.getAppId() + "_" + adValueWxAdUnit.getDate(), adValueWxAdUnit);
+        });
+        return AdValueWxAdUnitMap;
     }
 
     /**

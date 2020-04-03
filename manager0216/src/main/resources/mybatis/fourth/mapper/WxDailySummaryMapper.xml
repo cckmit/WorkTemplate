@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.fourth.mapper.WxDailySummaryMapper" >
+  <resultMap id="BaseResultMap" type="com.fish.dao.fourth.model.WxDailySummary" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="appId" property="appId" jdbcType="VARCHAR" />
+    <result column="refDate" property="refDate" jdbcType="VARCHAR" />
+    <result column="visitTotal" property="visitTotal" jdbcType="INTEGER" />
+    <result column="sharePv" property="sharePv" jdbcType="INTEGER" />
+    <result column="shareUv" property="shareUv" jdbcType="INTEGER" />
+    <result column="insertTime" property="insertTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, appId, refDate, visitTotal, sharePv, shareUv, insertTime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from wx_daily_summary
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List" />
+      from wx_daily_summary
+      where DATE(refDate) between #{beginDate, jdbcType=INTEGER} and #{endDate, jdbcType=INTEGER}
+      <if test="wxDailySummary.appId != null and wxDailySummary.appId != ''">
+        and appId = #{wxDailySummary.appId, jdbcType=VARCHAR}
+      </if>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from wx_daily_summary
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fish.dao.fourth.model.WxDailySummary" >
+    insert into wx_daily_summary (id, appId, refDate, 
+      visitTotal, sharePv, shareUv, 
+      insertTime)
+    values (#{id,jdbcType=INTEGER}, #{appId,jdbcType=VARCHAR}, #{refDate,jdbcType=VARCHAR}, 
+      #{visitTotal,jdbcType=INTEGER}, #{sharePv,jdbcType=INTEGER}, #{shareUv,jdbcType=INTEGER}, 
+      #{insertTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.dao.fourth.model.WxDailySummary" >
+    insert into wx_daily_summary
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="appId != null" >
+        appId,
+      </if>
+      <if test="refDate != null" >
+        refDate,
+      </if>
+      <if test="visitTotal != null" >
+        visitTotal,
+      </if>
+      <if test="sharePv != null" >
+        sharePv,
+      </if>
+      <if test="shareUv != null" >
+        shareUv,
+      </if>
+      <if test="insertTime != null" >
+        insertTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="refDate != null" >
+        #{refDate,jdbcType=VARCHAR},
+      </if>
+      <if test="visitTotal != null" >
+        #{visitTotal,jdbcType=INTEGER},
+      </if>
+      <if test="sharePv != null" >
+        #{sharePv,jdbcType=INTEGER},
+      </if>
+      <if test="shareUv != null" >
+        #{shareUv,jdbcType=INTEGER},
+      </if>
+      <if test="insertTime != null" >
+        #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.fourth.model.WxDailySummary" >
+    update wx_daily_summary
+    <set >
+      <if test="appId != null" >
+        appId = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="refDate != null" >
+        refDate = #{refDate,jdbcType=VARCHAR},
+      </if>
+      <if test="visitTotal != null" >
+        visitTotal = #{visitTotal,jdbcType=INTEGER},
+      </if>
+      <if test="sharePv != null" >
+        sharePv = #{sharePv,jdbcType=INTEGER},
+      </if>
+      <if test="shareUv != null" >
+        shareUv = #{shareUv,jdbcType=INTEGER},
+      </if>
+      <if test="insertTime != null" >
+        insertTime = #{insertTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.dao.fourth.model.WxDailySummary" >
+    update wx_daily_summary
+    set appId = #{appId,jdbcType=VARCHAR},
+      refDate = #{refDate,jdbcType=VARCHAR},
+      visitTotal = #{visitTotal,jdbcType=INTEGER},
+      sharePv = #{sharePv,jdbcType=INTEGER},
+      shareUv = #{shareUv,jdbcType=INTEGER},
+      insertTime = #{insertTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
