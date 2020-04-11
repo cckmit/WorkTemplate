@@ -1,5 +1,6 @@
 package com.fish.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.model.ConfigAdStrategy;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
@@ -70,8 +71,8 @@ public class ConfigAdStrategyController {
      */
     @ResponseBody
     @PostMapping(value = "/configAdStrategy/delete")
-    public PostResult delete(@RequestBody int id) {
-        return this.adStrategyService.delete(id);
+    public PostResult delete(@RequestBody JSONObject jsonObject) {
+        return this.adStrategyService.delete(jsonObject.getString("deleteIds"));
     }
 
     /**
@@ -83,4 +84,5 @@ public class ConfigAdStrategyController {
     public List<ConfigAdStrategy> getConfigAdStrategySelect(GetParameter getParameter) {
         return this.adStrategyService.selectAllAdStrategy(getParameter);
     }
+
 }

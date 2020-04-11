@@ -80,6 +80,7 @@ public class WechatService implements BaseService<WxInput> {
      * @param searchData 查询内容
      * @return 是否移除
      */
+    @Override
     public boolean removeIf(WxInput wxInput, JSONObject searchData) {
         String st = searchData.getString("st"), ed = searchData.getString("ed");
         if (st == null || ed == null || st.isEmpty() || ed.isEmpty())
@@ -129,6 +130,7 @@ public class WechatService implements BaseService<WxInput> {
      *
      * @param parameter 上传参数
      */
+    @Override
     public void setDefaultSort(GetParameter parameter) {
         if (parameter.getOrder() != null)
             return;
@@ -178,6 +180,7 @@ public class WechatService implements BaseService<WxInput> {
     }
 
     //查询结果
+    @Override
     public List<WxInput> selectAll(GetParameter parameter) {
         return wxInputMapper.selectAll();
     }
@@ -224,6 +227,7 @@ public class WechatService implements BaseService<WxInput> {
         }
     }
 
+    @Override
     public Class<WxInput> getClassInfo() {
         return WxInput.class;
     }

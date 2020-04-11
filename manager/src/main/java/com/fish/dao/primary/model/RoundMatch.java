@@ -3,6 +3,7 @@ package com.fish.dao.primary.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
+
 /**
  * @author
  * @pragram: RoundMatch
@@ -32,23 +33,37 @@ public class RoundMatch {
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")
     private Date ddtime;
 
-    /* 赛制时长 */
+    /**
+     * 赛制时长
+     */
     private String roundLength;
-    /* 产品名称 */
+    /**
+     * 产品名称
+     */
     private String appName;
-    //界面选择产品代号
+    /**
+     * 界面选择产品代号
+     */
     private String appNameSelect;
-    //界面选择赛制代号
+    /**
+     * 界面选择赛制代号
+     */
     private String roundSelect;
-    //界面选择游戏代号
-    private String gameCodeSelect;
-    //赛制奖励
+    /**
+     * 赛制奖励
+     */
     private String ddreward;
-    //游戏名称
+    /**
+     * 游戏名称
+     */
     private String gameName;
-    //赛场名称
+    /**
+     * 赛场名称
+     */
     private String roundName;
-    //图片跳转
+    /**
+     * 图片跳转
+     */
     private String jumpDirect;
 
     private String gamePicture0;
@@ -100,14 +115,6 @@ public class RoundMatch {
 
     public void setRoundSelect(String roundSelect) {
         this.roundSelect = roundSelect;
-    }
-
-    public String getGameCodeSelect() {
-        return gameCodeSelect;
-    }
-
-    public void setGameCodeSelect(String gameCodeSelect) {
-        this.gameCodeSelect = gameCodeSelect;
     }
 
     public String getDdreward() {

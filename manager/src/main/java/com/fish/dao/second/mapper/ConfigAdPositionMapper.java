@@ -21,32 +21,33 @@ public interface ConfigAdPositionMapper {
     /**
      * 查询全部广告
      *
+     * @param adPosition
      * @return
      */
-    List<ConfigAdPosition> selectAll();
+    List<ConfigAdPosition> selectAll(ConfigAdPosition adPosition);
 
     /**
      * 新增广告内容
      *
-     * @param adContent
+     * @param adPosition
      * @return
      */
-    int insert(ConfigAdPosition adContent);
+    int insert(ConfigAdPosition adPosition);
 
     /**
      * 修改广告内容
      *
-     * @param adContent
+     * @param adPosition
      * @return
      */
-    int update(ConfigAdPosition adContent);
+    int update(ConfigAdPosition adPosition);
 
     /**
-     * 根据ID删除广告内容
+     * 根据ID删除广告位置
      *
-     * @param id
+     * @param deleteIds
      * @return
      */
-    int delete(int id);
+    int delete(String deleteIds);
 
 }

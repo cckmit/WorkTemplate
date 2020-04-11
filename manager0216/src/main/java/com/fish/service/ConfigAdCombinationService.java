@@ -15,11 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author CC ccheng0725@outlook.com
@@ -47,13 +43,18 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
     BaseConfig baseConfig;
 
     @Override
-    public void setDefaultSort(GetParameter parameter) { }
+    public void setDefaultSort(GetParameter parameter) {
+    }
 
     @Override
-    public Class<ConfigAdCombination> getClassInfo() { return ConfigAdCombination.class; }
+    public Class<ConfigAdCombination> getClassInfo() {
+        return ConfigAdCombination.class;
+    }
 
     @Override
-    public boolean removeIf(ConfigAdCombination configAdCombination, JSONObject searchData) { return false; }
+    public boolean removeIf(ConfigAdCombination configAdCombination, JSONObject searchData) {
+        return false;
+    }
 
     @Override
     public List<ConfigAdCombination> selectAll(GetParameter parameter) {
@@ -270,11 +271,32 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
         int delete = this.adCombinationMapper.delete(deleteIds);
         if (delete <= 0) {
             postResult.setSuccessed(false);
-            postResult.setMsg("操作失败，修改组合配置内容失败！");
+            postResult.setMsg("操作失败，删除组合配置内容失败！");
         } else {
             ReadJsonUtil.flushTable("config_ad_combination", this.baseConfig.getFlushCache());
         }
         return postResult;
     }
 
+    /**
+     * 复制
+     *
+     * @param configAdCombination 复制内容
+     * @return 复制结果
+     */
+    public PostResult copy(ConfigAdCombination configAdCombination) {
+        PostResult result = new PostResult();
+        ConfigAdCombination selectResult = adCombinationMapper.select(configAdCombination.getDdId());
+        selectResult.setDdId(0);
+        selectResult.setDdName(configAdCombination.getDdName());
+        selectResult.setUpdateTime(new Date());
+        int update = this.adCombinationMapper.insert(selectResult);
+        if (update <= 0) {
+            result.setSuccessed(false);
+            result.setMsg("操作失败，复制广告合集失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_combination", this.baseConfig.getFlushCache());
+        }
+        return result;
+    }
 }

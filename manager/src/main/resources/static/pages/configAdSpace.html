@@ -19,6 +19,28 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card">
+                <!-- 搜索表单 -->
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <form class="layui-form-item" id="search-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" >类型</label>
+                            <div class="layui-input-inline" style="width: 14rem;" id="adType" name="adType"
+                                 lay-filter="adType" autocomplete="off"></div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" >名称</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="name" name="name">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
@@ -27,178 +49,223 @@
         </div>
     </div>
 </div>
-</div>
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
     </div>
 </script>
+
 <script>
     const operatorurl = '../manage/configAdSpace';
-    let checkedRoles = [];
+
     /**
-     * 打开页面时初始化加载数据
+     * 查询框渲染
      */
-    layui.use(['table', 'form', 'layer', 'tree'], () => {
-        const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
-        let typeArr = [];
-        let adContentArr = [];
-        let strategyArr = [];
-        var typeSelect = xmSelect.render({
-            el: '#ddAdType',
-            name: 'ddAdType',
-            language: 'zn',
-            toolbar: {show: true},
-            data: [],
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
-        var adContenSelect = xmSelect.render({
-            el: '#ddAdContents',
-            name: 'ddAdContents',
-            language: 'zn',
-            toolbar: {show: true},
-            data: [],
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
-        var strategySelect = xmSelect.render({
-            el: '#ddStrategyId',
-            name: 'ddStrategyId',
-            language: 'zn',
-            toolbar: {show: true},
-            data: [],
-            radio: false,
-            clickClose: true,
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
-        $(() => {
-        $.ajax({
-            type: "get",
-            dataType: "json",
-            url: '../manage/configAdType/select',
-            success: (res) => {
+    let searchTypeSelect = xmSelect.render({
+        el: '#adType',
+        name: 'adType',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        layVerify: 'required'
+    });
 
-                res.forEach(function (val, index, arr) {
-                    let context = {name: val.ddName, value: val.ddId, selected: false};
-                    typeArr.push(context);
-                });
-                typeSelect.update(
-                    {
-                        data: typeArr,
-                        autoRow: true,
-                    }
-                );
-            },
-            error: function () {
-                alert("查询失败")
+    // 广告类型数组
+    let editTypeOptionArr = [];
+    /**
+     * 广告类型选择
+     */
+    let editTypeSelect = xmSelect.render({
+        el: '#ddAdType',
+        name: 'ddAdType',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        layVerify: 'required',
+        on: function (data) {
+            if (data && data.change && data.change.length > 0) {
+                changeFormAdType(data.arr[0].value);
             }
-        }),
-            $.ajax({
-                type: "get",
-                dataType: "json",
-                url: '../manage/configAdContent/select',
-                success: (res) => {
+        },
+    });
 
-                    res.forEach(function (val, index, arr) {
-                        let context = {name: val.adTypeName, value: val.ddId, selected: false};
-                        adContentArr.push(context);
-                    });
-                    adContenSelect.update(
-                        {
-                            data: adContentArr,
-                            autoRow: true,
-                        }
-                    );
-                },
-                error: function () {
-                    alert("查询失败")
-                }
-            }),
-            $.ajax({
-                type: "get",
-                dataType: "json",
-                url: '../manage/configAdStrategy/select',
-                success: (res) => {
-                    res.forEach(function (val, index, arr) {
-                        let context = {name: val.ddName, value: val.ddId, selected: false};
-                        strategyArr.push(context);
-                    });
-                    strategySelect.update(
-                        {
-                            data: strategyArr,
-                            autoRow: true,
-                        }
-                    );
-                },
-                error: function () {
-                    alert("查询失败")
-                }
-            })
-        });
+    // 已选中的广告内容数组
+    let contentSelectedArray = [];
+    /**
+     * 广告内容选择器
+     */
+    let contentSelect = xmSelect.render({
+        el: '#ddAdContents',
+        name: 'ddAdContents',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: false,
+        clickClose: false,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true
+    });
+
+    layui.use(['table', 'laydate', 'form', 'layer', 'flow'], () => {
+        const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+        // 表格渲染
         table.render({
             elem: '#table-page',
-            url: operatorurl,
+            url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
                 {field: 'ddId', width: 80, title: 'ID', sort: true, align: 'right'},
-                {field: 'ddName', width: 180, title: '名称', sort: true, align: 'center'},
-                {field: 'ddAdType', width: 160, title: '类型', sort: true,
+                {field: 'ddName', width: 240, title: '名称', sort: true, align: 'left'},
+                {
+                    field: 'ddAdType', width: 160, title: '类型', sort: true,
                     templet: (d) => {
-                    switch (d.ddAdType) {
-                        case 1: return "大Banner";
-                        case 2:return "小Banner";
-                        case 3:return "插屏";
-                        case 4: return "Icon";
-                        default:
-                            return "展示类型有误";
+                        switch (d.ddAdType) {
+                            case 1:
+                                return "大Banner";
+                            case 2:
+                                return "小Banner";
+                            case 3:
+                                return "插屏";
+                            case 4:
+                                return "Icon";
+                            default:
+                                return "展示类型有误";
+                        }
                     }
-                    } },
+                },
                 {
                     field: 'ddAllowedOperation', width: 120, title: '允许运营？', sort: false, align: 'center',
                     templet: (d) => {
                         return d.ddAllowedOperation ? '是' : '否';
                     }
                 },
-                {field: 'ddWeight', width: 120, title: '权重', sort: false, align: 'center'},
-                {field: 'adStrategyNames', width: 120, title: '策略', sort: false, align: 'center'},
-                {field: 'ddStrategyValue', width: 220, title: '策略配置', sort: false},
-                {field: 'ddAdContents', width: 300, title: '广告内容列表', sort: false},
                 {field: 'updateTime', width: 220, title: '数据更新时间', sort: true, align: 'center'}
             ]],
             page: true,
+            autoSort: false,
             toolbar: '#toolbar',
-            limit: 30,
             defaultToolbar: ['filter', 'exports']
         });
-    })
+        // 初始化数据
+        $(() => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdType/select',
+                success: (res) => {
+                    let typeSearchArr = [];
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddName, value: val.ddId, selected: false};
+                        typeSearchArr.push(context);
+                        editTypeOptionArr.push(context);
+                    });
+                    console.log(typeSearchArr);
+                    searchTypeSelect.update({
+                        data: typeSearchArr,
+                        autoRow: true,
+                    });
+                },
+                error: function () {
+                    layer.msg("广告类型列表查询失败，请联系管理员！", {icon: 2});
+                }
+            });
+        });
+    });
+
+    /**
+     * 渲染部分下拉框选项
+     * @param editData
+     * @param type
+     */
+    function privateLoadEditData(editData, type) {
+        layui.use(['form', 'layer'], () => {
+            const $ = layui.$, form = layui.form, layer = layui.layer;
+            const queryData = {id: type === 'new' ? 0 : editData.ddId};
+            $.get(operatorurl + '/get', queryData, (data) => {
+                // 处理广告类型
+                let newTypeOptionArray = [];
+                editTypeOptionArr.forEach((val, index, arr) => {
+                    val.selected = data && val.value === data.ddAdType;
+                    newTypeOptionArray.push(val);
+                });
+                editTypeSelect.update({
+                    data: newTypeOptionArray,
+                    autoRow: true,
+                });
+
+                // 处理广告内容
+                const contentArray = data && data.ddAdContents ? data.ddAdContents.split(',') : [];
+                updateContentSelect(editData.ddAdType, contentArray);
+                form.val("form_table", editData);
+            });
+        });
+    }
+
+    /**
+     * 切换广告类型
+     */
+    function changeFormAdType(adType) {
+        layui.use('form', () => {
+            // 处理广告内容
+            layui.$.get('../manage/configAdContent/selectByType', {"adType": adType}, (data) => {
+                let newContentOptionArr = [];
+                data.forEach((val, index, arr) => {
+                    val.selected = contentSelectedArray.indexOf(val.value.toString()) > -1;
+                    newContentOptionArr.push(val);
+                });
+                contentSelect.update({
+                    data: newContentOptionArr,
+                    autoRow: true,
+                });
+            });
+        });
+    }
+
+    /**
+     * 根据类型查询广告内容
+     * @param adType
+     * @param contentArray
+     */
+    function updateContentSelect(adType, contentArray) {
+        layui.use('form', () => {
+            // 处理广告内容
+            layui.$.get('../manage/configAdContent/selectByType', {"adType": adType}, (data) => {
+                let newContentOptionArr = [];
+                data && data.forEach((val, index, arr) => {
+                    val.selected = contentArray.indexOf(val.value.toString()) > -1;
+                    if (val.selected) {
+                        contentSelectedArray.push(val.value);
+                    }
+                    newContentOptionArr.push(val);
+                });
+                contentSelect.update({
+                    data: newContentOptionArr,
+                    autoRow: true,
+                });
+            });
+        });
+    }
 
 </script>
+
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
-      style="padding: 20px 0 0 0;width: 400px;height: 350px;">
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
     <div class="layui-form-item">
         <label class="layui-form-label">ID</label>
         <div class="layui-input-inline">
@@ -207,19 +274,15 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">名称 *</label>
-        <div class="layui-input-inline ">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-inline">
             <input type="text" id="ddName" name="ddName" class="layui-input" autocomplete="off"
                    lay-verify="required">
         </div>
     </div>
-
-    <div class="layui-form-item ">
-        <label class="layui-form-label">类型列表 </label>
-        <div class="layui-input-block">
-            <div class="layui-input-inline" style="width: 12rem;"
-                 id="ddAdType" name="ddAdType" lay-filter="ddAdType" autocomplete="off"></div>
-        </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">类型</label>
+        <div class="layui-input-inline" id="ddAdType" name="ddAdType" lay-filter="ddAdType" autocomplete="off"></div>
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">允许运营？</label>
@@ -228,36 +291,6 @@
                    lay-text="是|否">
         </div>
     </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">权重 *</label>
-        <div class="layui-input-inline ">
-            <input type="text" id="ddWeight" name="ddWeight" class="layui-input" autocomplete="off"
-                   lay-verify="required|number">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">策略 </label>
-        <div class="layui-input-block">
-            <div class="layui-input-inline" style="width: 14rem;"
-                 id="ddStrategyId" name="ddStrategyId" lay-filter="ddStrategyId" autocomplete="off"></div>
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">策略配置</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddStrategyValue" name="ddStrategyValue" class="layui-input" autocomplete="off"
-                   >
-        </div>
-    </div>
-
-    <div class="layui-form-item ">
-        <label class="layui-form-label">广告内容</label>
-        <div class="layui-input-block">
-            <div class="layui-input-inline" style="width: 14rem;"
-                 id="ddAdContents" name="ddAdContents" lay-filter="ddAdContents" autocomplete="off"></div>
-        </div>
-    </div>
-
     <div class="layui-form-item layui-hide" style="text-align:center;">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认"
                style="text-align:center;">

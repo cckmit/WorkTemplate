@@ -6,9 +6,9 @@ window.UIConfig = {
      * @returns {string}
      */
     formaterSex: (d) => {
-        if (d == 0) {
+        if (d === 0) {
             return '女';
-        } else if (d == 1) {
+        } else if (d === 1) {
             return '男';
         } else {
             return '其他';
@@ -16,11 +16,11 @@ window.UIConfig = {
     },
 
     formaterBool: (d) => {
-        if (d == 1) {
+        if (d === 1) {
             return '小程序';
-        } else if (d == 0) {
+        } else if (d === 0) {
             return '小游戏';
-        } else if (d == 2) {
+        } else if (d === 2) {
             return '公众号';
         } else {
             return '其他';
@@ -41,7 +41,7 @@ window.UIConfig = {
 
     //非正整数，保留2位小数点
     divideByDecimal: (a, b) => {
-        if (a == 0 || b == 0 || a == undefined || b == undefined) {
+        if (a === 0 || b === 0 || a === undefined || b === undefined) {
             return '-';
         }
         return (a / b).toFixed(2);
@@ -49,7 +49,7 @@ window.UIConfig = {
 
     //百分比
     divideByPercent: (a, b) => {
-        if (a == 0 || b == 0 || a == undefined || b == undefined) {
+        if (a === 0 || b === 0 || a === undefined || b === undefined) {
             return '--';
         }
         return (a * 100 / b).toFixed(1) + "%";
@@ -62,10 +62,10 @@ window.UIConfig = {
     },
 
     formatImage: (image) => {
-        if (image == null || image.search('http') == -1) {
+        if (image == null || image.search('http') === -1) {
             return image;
         }
-        return `<div><img src="${image}"></div>`;
+        return `<div><img src="${image}" ></div>`;
     },
 
     formatData: (data) => {
@@ -122,7 +122,7 @@ window.UIConfig = {
                 let k = _v[0],
                     v = _v[1];
                 let _obj = val[k];
-                if (_obj == undefined)
+                if (_obj === undefined)
                     _obj = val[k] = {};
                 _obj[v] = element;
             } else {
@@ -197,29 +197,41 @@ layui.config({
      * table上操作按钮监听
      */
     table.on('toolbar(table-page)', function (obj) {
-        console.log('table.on ->obj:', obj)
         const checkStatus = table.checkStatus(obj.config.id);
         const l = checkStatus.data.length;
         const editData = checkStatus.data[0];
         switch (obj.event) {
+            case 'refresh':
+                table_reload();
+                break;
             case 'add':
-                edit(editData, 'new');
+                edit({}, 'new');
                 break;
             case 'delete':
-                if (l == 0) {
+                if (l === 0) {
                     UIConfig.warnMsg('删除：请至少选择一行!');
                 } else {
                     deleteData(checkStatus.data);
                 }
                 break;
             case 'update':
-                if (l == 0) {
+                if (l === 0) {
                     UIConfig.warnMsg('修改：请选择一行！');
                 } else if (l > 1) {
                     UIConfig.warnMsg('修改：只能选择一行！');
                 } else {
                     UIConfig.warnMsg('修改：开始修改！');
                     edit(editData, 'edit');
+                }
+                break;
+            case 'copy':
+                if (l === 0) {
+                    UIConfig.warnMsg('复制：请选择一行！');
+                } else if (l > 1) {
+                    UIConfig.warnMsg('复制：只能选择一行！');
+                } else {
+                    UIConfig.warnMsg('复制：开始修改！');
+                    edit(editData, 'copy');
                 }
                 break;
             default:
@@ -230,21 +242,35 @@ layui.config({
          * 修改
          */
         function edit(editData, type) {
-            console.log(operatorurl, type, JSON.stringify(editData))
+            console.log(operatorurl, type, JSON.stringify(editData));
+            var title;
+            switch (type) {
+                case 'new':
+                    title = '新增';
+                    break;
+                case 'edit':
+                    title = '编辑';
+                    break;
+                case 'copy':
+                    title = '复制';
+                    break;
+            }
             $('#form_table').removeClass('layui-hide').addClass('layui-show');
             layui.layer.open({
                 type: 1,
-                title: type == 'new' ? '新增' : '编辑',
+                title: title,
                 content: $('#form_table'),
                 maxmin: true,
                 shade: 0,
-                area: ['auto', '600px;'],
+                area: ['38%', '60%'],
+                offset: ['15%', '20%'],
                 btn: ['确定', '取消'],
+                btnAlign: 'c',
                 success: (layero, index) => {
                     // 可以在<script></script>内自定义私有的数据处理方法，如果不定义，则按照默认方式初始化数据
                     const existPrivateFunction = typeof privateLoadEditData !== "undefined" && privateLoadEditData !== null;
                     if (existPrivateFunction) {
-                        privateLoadEditData(editData, type)
+                        privateLoadEditData(editData, type);
                     } else {
                         form.val("form_table", editData);
                     }
@@ -254,6 +280,7 @@ layui.config({
                     form.on('submit(front-submit)', function (data) {
                         const existPrivateFunction = typeof privateSumbitFormatData !== "undefined" && privateSumbitFormatData !== null;
                         const field = existPrivateFunction ? privateSumbitFormatData(data) : UIConfig.sumbitFormatData(data); //获取提交的字段
+                        console.log('submit field => ', field);
                         $.ajax({
                             url: operatorurl + "/" + type,
                             data: field,
@@ -273,7 +300,7 @@ layui.config({
                 },
                 end: () => {
                     $("#form_table")[0].reset();
-                    $('#form_table').removeClass('layui-show').addClass('layui-hide')
+                    $('#form_table').removeClass('layui-show').addClass('layui-hide');
                     return false;
                 }
             });
@@ -289,20 +316,24 @@ layui.config({
             // 如果有自定义的方法，则按照自定义的方式处理，否则获取删除数据的ID，且用“,”分隔，在数据库中直接使用in方法删除
             const existPrivateFunction = typeof privateGetDeleteData !== "undefined" && privateGetDeleteData !== null;
             if (existPrivateFunction) {
-                privateGetDeleteData(dataArray, deleteObj);
+                let res = privateGetDeleteData(dataArray, deleteObj);
+                if (!res && res !== undefined) {
+                    return false;
+                }
             } else {
                 dataArray.forEach(data => {
+                    const id = data.id ? data.id : data.ddId;
                     if (deleteObj.deleteIds) {
-                        deleteObj.deleteIds += ',' + data.id;
+                        deleteObj.deleteIds += ',' + id;
                     } else {
-                        deleteObj.deleteIds = data.id;
+                        deleteObj.deleteIds = id;
                     }
                     deleteObj.deleteCount++;
                 });
             }
             console.log('deleteObj:', deleteObj);
 
-            if (deleteObj.deleteCount == 0) {
+            if (deleteObj.deleteCount === 0) {
                 UIConfig.warnMsg("当前删除操作未选中任何可删除数据！")
                 return false;
             }

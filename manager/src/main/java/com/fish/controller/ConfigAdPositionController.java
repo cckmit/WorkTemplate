@@ -1,19 +1,18 @@
 package com.fish.controller;
 
-import com.fish.dao.second.model.ConfigAdContent;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.model.ConfigAdPosition;
+import com.fish.dao.second.model.ConfigAdSpace;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
 import com.fish.protocols.PostResult;
-import com.fish.service.ConfigAdContentService;
 import com.fish.service.ConfigAdPositionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 广告内容管理
@@ -29,6 +28,8 @@ public class ConfigAdPositionController {
     ConfigAdPositionService adPositionService;
 
     /**
+     * 查询
+     *
      * @param getParameter
      * @return
      */
@@ -65,13 +66,56 @@ public class ConfigAdPositionController {
     /**
      * 删除
      *
-     * @param id
+     * @param jsonObject
      * @return
      */
     @ResponseBody
     @PostMapping(value = "/configAdPosition/delete")
-    public PostResult delete(@RequestBody int id) {
-        return this.adPositionService.delete(id);
+    public PostResult delete(@RequestBody JSONObject jsonObject) {
+        return this.adPositionService.delete(jsonObject.getString("deleteIds"));
+    }
+
+    /**
+     * @param id 广告位置ID
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdPosition/get")
+    public ConfigAdPosition getConfigAdSpace(int id) { return this.adPositionService.getConfigAdPosition(id); }
+
+    /**
+     * 查询广告位置列表
+     *
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdPosition/selectAll")
+    public List<ConfigAdPosition> select() {
+        return this.adPositionService.selectAll();
+    }
+
+    /**
+     * 根据广告位置ID查询广告位列表
+     *
+     * @return
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdPosition/selectSpaceByPositionId")
+    public List<ConfigAdSpace> selectSpaceByPositionId(int positionId) {
+        return this.adPositionService.selectSpaceByPositionId(positionId);
+    }
+
+    /**
+     * 通过页面开关改变运营状态
+     *
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/configAdPosition/change")
+    public PostResult changeStatus(@RequestBody JSONObject jsonObject) {
+
+        return this.adPositionService.changeStatus(jsonObject);
     }
 
 }

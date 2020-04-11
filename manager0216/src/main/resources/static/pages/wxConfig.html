@@ -136,6 +136,17 @@
                 {type: 'checkbox', fixed: 'left'},
                 {type: 'numbers', title: '序号'},
                 {field: 'productName', width: 120, title: '产品名称', sort: true},
+                {
+                    field: 'ddAppPlatform', width: 120, title: '平台类型', sort: true,
+                    templet: (d) => {
+                        if (d.ddAppPlatform === 'weixin') {
+                            return '微信';
+                        } else if (d.ddAppPlatform === 'q') {
+                            return 'QQ';
+                        } else
+                            return '其他';
+                    }
+                },
                 {field: 'ddappid', width: 180, title: 'appId', sort: true},
                 {field: 'ddappsecret', width: 120, title: 'appSecret', sort: true, hide: true},
                 {field: 'ddmchid', width: 120, title: '商户号', sort: true, hide: true},
@@ -313,6 +324,16 @@
         <div class="layui-input-inline">
             <input type="text" id="productName" name="productName" lay-verify="required" autocomplete="off"
                    class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">平台类型 *</label>
+        <div class="layui-input-inline">
+            <select name="ddAppPlatform" lay-filter="">
+                <option value="weixin">微信</option>
+                <option value="q">QQ</option>
+                <option>无</option>
+            </select>
         </div>
     </div>
     <div class="layui-form-item ">

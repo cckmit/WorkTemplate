@@ -8,6 +8,7 @@ import java.util.List;
 public interface WxGroupHistoryMapper {
 
     List<WxGroupHistory> selectAll();
+
     List<WxGroupHistory> selectSearchTime(@Param("start") String start, @Param("end") String end);
 
 

@@ -36,7 +36,7 @@
       },
       {
         "name": "测试网页",
-        "url": "GroupFormatConfig"
+        "url": "PackLog"
       }
     ]
   },
@@ -133,8 +133,12 @@
         "url": "PayStatistic"
       },
       {
-        "name": "用户来源明细",
+        "name": "用户来源明细-新增",
         "url": "fc_userResource"
+      },
+      {
+        "name": "用户来源明细-活跃",
+        "url": "fc_userActiveResource"
       },
       {
         "name": "开赛与复活情况",

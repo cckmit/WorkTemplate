@@ -7,16 +7,36 @@
         "url": "wxConfig"
       },
       {
+        "name": "广告ID信息",
+        "url": "wxConfigAd"
+      },
+      {
         "name": "审核配置",
         "url": "appConfig"
+      },
+      {
+        "name": "产品合集配置",
+        "url": "configProgram"
       },
       {
         "name": "广告位配置",
         "url": "wxAddShow"
       },
       {
+        "name": "公众号中心配置",
+        "url": "PublicCentre"
+      },
+      {
         "name": "全局配置",
         "url": "ArcadeGlobalconfig"
+      },
+      {
+        "name": "资源上传统一接口",
+        "url": "uploadCdn"
+      },
+      {
+        "name": "测试网页",
+        "url": "GroupFormatConfig"
       }
     ]
   },
@@ -58,6 +78,10 @@
     "name": "广告配置",
     "children": [
       {
+        "name": "广告合集配置",
+        "url": "configAdCombination"
+      },
+      {
         "name": "广告位置配置",
         "url": "configAdPosition"
       },
@@ -74,8 +98,8 @@
         "url": "configAdStrategy"
       },
       {
-        "name": "微信广告及策略",
-        "url": "configAdWx"
+        "name": "App广告配置",
+        "url": "configAdApp"
       },
       {
         "name": "广告类型",
@@ -109,12 +133,49 @@
         "url": "PayStatistic"
       },
       {
-        "name": "用户来源明细",
+        "name": "用户来源明细-新增",
         "url": "fc_userResource"
+      },
+      {
+        "name": "用户来源明细-活跃",
+        "url": "fc_userActiveResource"
       },
       {
         "name": "开赛与复活情况",
         "url": "MatchCost"
+      }
+    ]
+  },
+  {
+    "name": "广告数据",
+    "children": [
+      {
+        "name": "微信广告数据明细",
+        "url": "fc_wxAddData"
+      },
+      {
+        "name": "广告数据查询",
+        "url": "adValue"
+      },
+      {
+        "name": "微信广告数据延伸",
+        "url": "adValueWxAdUnit"
+      },
+      {
+        "name": "wxAdPos数据查询",
+        "url": "wxAdPos"
+      },
+      {
+        "name": "微信数据日留存",
+        "url": "wxDailyDetain"
+      },
+      {
+        "name": "微信数据Summary",
+        "url": "wxDailySummary"
+      },
+      {
+        "name": "微信访问统计",
+        "url": "wxDailyVisitTrend"
       }
     ]
   },

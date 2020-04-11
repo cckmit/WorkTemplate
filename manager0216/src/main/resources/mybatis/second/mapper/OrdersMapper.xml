@@ -31,21 +31,13 @@
         <include refid="Base_Column_List"/>
         from orders order by ddTime desc
     </select>
-    <select id="selectBySQL" resultType="com.fish.dao.second.model.Orders">
-         ${_parameter}
-  </select>
-    <select id="selectResSingle" resultType="com.fish.dao.second.model.Orders">
-        ${_parameter}
-  </select>
+
     <select id="selectByTimes" resultType="com.fish.dao.second.model.Orders" parameterType="java.lang.String">
         select
         <include refid="Base_Column_List"/>
         from orders where DATE(ddTime) between '${start}' and '${end}' order by ddTime desc
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from orders
-    where ddId = #{ddid,jdbcType=VARCHAR}
-  </delete>
+
     <!--查询付费统计-->
     <select id="queryBuyStatis" resultMap="BaseResultMap">
         SELECT
@@ -64,103 +56,12 @@
         GROUP BY DATE(o.ddTrans) ,o.ddAppId
         ORDER BY DATE(o.ddTrans) ASC
     </select>
-    <insert id="insert" parameterType="com.fish.dao.second.model.Orders">
-    insert into orders (ddId, ddUid, ddGId, 
-      ddType, ddAccount, ddOrder, 
-      ddError, ddPrice, ddState, 
-      ddTime, ddTrans, ddOId, 
-      ddAppId)
-    values (#{ddid,jdbcType=VARCHAR}, #{dduid,jdbcType=VARCHAR}, #{ddgid,jdbcType=INTEGER}, 
-      #{ddtype,jdbcType=VARCHAR}, #{ddaccount,jdbcType=VARCHAR}, #{ddorder,jdbcType=VARCHAR}, 
-      #{dderror,jdbcType=VARCHAR}, #{ddprice,jdbcType=DECIMAL}, #{ddstate,jdbcType=INTEGER}, 
-      #{ddtime,jdbcType=TIMESTAMP}, #{ddtrans,jdbcType=TIMESTAMP}, #{ddoid,jdbcType=VARCHAR}, 
-      #{ddappid,jdbcType=VARCHAR})
-  </insert>
-    <insert id="insertSelective" parameterType="com.fish.dao.second.model.Orders">
-        insert into orders
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="ddid != null">
-                ddId,
-            </if>
-            <if test="dduid != null">
-                ddUid,
-            </if>
-            <if test="ddgid != null">
-                ddGId,
-            </if>
-            <if test="ddtype != null">
-                ddType,
-            </if>
-            <if test="ddaccount != null">
-                ddAccount,
-            </if>
-            <if test="ddorder != null">
-                ddOrder,
-            </if>
-            <if test="dderror != null">
-                ddError,
-            </if>
-            <if test="ddprice != null">
-                ddPrice,
-            </if>
-            <if test="ddstate != null">
-                ddState,
-            </if>
-            <if test="ddtime != null">
-                ddTime,
-            </if>
-            <if test="ddtrans != null">
-                ddTrans,
-            </if>
-            <if test="ddoid != null">
-                ddOId,
-            </if>
-            <if test="ddappid != null">
-                ddAppId,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="ddid != null">
-                #{ddid,jdbcType=VARCHAR},
-            </if>
-            <if test="dduid != null">
-                #{dduid,jdbcType=VARCHAR},
-            </if>
-            <if test="ddgid != null">
-                #{ddgid,jdbcType=INTEGER},
-            </if>
-            <if test="ddtype != null">
-                #{ddtype,jdbcType=VARCHAR},
-            </if>
-            <if test="ddaccount != null">
-                #{ddaccount,jdbcType=VARCHAR},
-            </if>
-            <if test="ddorder != null">
-                #{ddorder,jdbcType=VARCHAR},
-            </if>
-            <if test="dderror != null">
-                #{dderror,jdbcType=VARCHAR},
-            </if>
-            <if test="ddprice != null">
-                #{ddprice,jdbcType=DECIMAL},
-            </if>
-            <if test="ddstate != null">
-                #{ddstate,jdbcType=INTEGER},
-            </if>
-            <if test="ddtime != null">
-                #{ddtime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="ddtrans != null">
-                #{ddtrans,jdbcType=TIMESTAMP},
-            </if>
-            <if test="ddoid != null">
-                #{ddoid,jdbcType=VARCHAR},
-            </if>
-            <if test="ddappid != null">
-                #{ddappid,jdbcType=VARCHAR},
-            </if>
-        </trim>
-    </insert>
+    <select id="queryProgramReCharge" resultType="com.fish.dao.second.model.Orders">
+     SELECT  DATE(ddTrans) as ddtrans ,ddAppId,SUM(ddPrice) as ddPrice  FROM orders WHERE ddState = 1 GROUP BY DATE(ddTrans) ,ddAppId
+    </select>
+    <select id="queryProgramReChargeCount" resultType="com.fish.dao.second.model.Orders">
+        SELECT  DATE(ddTrans) as ddtrans ,SUM(ddPrice) as ddPrice  FROM orders WHERE ddState = 1 GROUP BY DATE(ddTrans)
+    </select>
     <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.Orders">
         update orders
         <set>

@@ -26,13 +26,15 @@
         </div>
     </div>
 </div>
-</div>
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
     </div>
 </script>
 <script>
@@ -112,10 +114,11 @@
     /**
      * 删除用户时不允许删除管理员，即使用户选中了也剔除掉
      * @param dataArray
+     * @param deleteObj
      */
     function privateGetDeleteData(dataArray, deleteObj) {
         dataArray.forEach(data => {
-            if (data.id != 1) {
+            if (data.id !== 1) {
                 if (deleteObj.deleteIds) {
                     deleteObj.deleteIds += ',' + data.id;
                 } else {
@@ -129,15 +132,15 @@
 </script>
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
-      style="padding: 20px 0 0 0;width: 400px;height: 350px;">
+      style="padding: 20px 0 0 0;width: 600px;height: 750px;">
     <div class="layui-form-item layui-hide">
-        <label class="layui-form-label">角色ID *</label>
+        <label class="layui-form-label">角色ID</label>
         <div class="layui-input-inline ">
             <input type="text" id="id" name="id" class="layui-input ">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">角色名称 *</label>
+        <label class="layui-form-label">角色名称</label>
         <div class="layui-input-inline ">
             <input type="text" id="name" name="name" lay-verify="required" autocomplete="off"
                    class="layui-input ">
@@ -151,7 +154,7 @@
     </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">授权页面 *</label>
-        <div class="layui-input-block">
+        <div class="layui-input-inline">
             <div id="pagesTree"></div>
         </div>
     </div>

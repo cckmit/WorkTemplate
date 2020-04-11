@@ -9,6 +9,7 @@ import com.fish.dao.primary.model.ArcadeGames;
 import com.fish.dao.primary.model.RoundExt;
 import com.fish.dao.primary.model.RoundGame;
 import com.fish.protocols.GetParameter;
+import com.fish.protocols.PostResult;
 import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.XwhTool;
@@ -20,6 +21,13 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 常规赛制 Service
+ * RoundGameService
+ *
+ * @author
+ * @date
+ */
 @Service
 public class RoundGameService implements BaseService<RoundGame> {
 
@@ -36,33 +44,31 @@ public class RoundGameService implements BaseService<RoundGame> {
     @Autowired
     CacheService cacheService;
 
+    /**
+     * 查询赛制
+     *
+     * @param parameter
+     * @return
+     */
     @Override
-    //查询roundGame
     public List<RoundGame> selectAll(GetParameter parameter) {
         String url = baseConfig.getResHost();
         List<RoundGame> roundGames = roundGameMapper.selectAll();
-        for (RoundGame roundGame : roundGames)
-        {
+        for (RoundGame roundGame : roundGames) {
             Integer ddgame = roundGame.getDdgame();
             ArcadeGames arcadeGames = cacheService.getArcadeGames(ddgame);
-            if (arcadeGames != null)
-            {
+            if (arcadeGames != null) {
                 String gameName = arcadeGames.getDdname();
                 roundGame.setGameName(gameName);
                 String ddShareRes = arcadeGames.getDdshareres();
-                if (StringUtils.isNotEmpty(ddShareRes))
-                {
-                    if (StringUtils.isNotEmpty(ddShareRes))
-                    {
-                        JSONArray shareLists = JSONObject.parseArray(ddShareRes);
-                        for (int i = 0; i < shareLists.size(); i++)
-                        {
-                            JSONObject jsonObject = JSONObject.parseObject(shareLists.getString(i));
-                            if (jsonObject.getInteger("position") == 3)
-                            {
-                                String icon = WxConfigService.concatUrl(url, jsonObject.getString("url"), "g" + arcadeGames.getDdcode(), "share");
-                                if (icon != null)
-                                    roundGame.setJumpDirect(icon);
+                if (StringUtils.isNotEmpty(ddShareRes)) {
+                    JSONArray shareLists = JSONObject.parseArray(ddShareRes);
+                    for (int i = 0; i < shareLists.size(); i++) {
+                        JSONObject jsonObject = JSONObject.parseObject(shareLists.getString(i));
+                        if (jsonObject.getInteger("position") == 3) {
+                            String icon = WxConfigService.concatUrl(url, jsonObject.getString("url"), "g" + arcadeGames.getDdcode(), "share");
+                            if (icon != null) {
+                                roundGame.setJumpDirect(icon);
                             }
                         }
                     }
@@ -74,51 +80,44 @@ public class RoundGameService implements BaseService<RoundGame> {
             String roundName = roundExt.getDdname();
             roundGame.setRoundName(roundName);
             roundGame.setDdreward(ddreward);
+            roundGame.setRoundSelect(ddround + "_" + roundName);
         }
         return roundGames;
     }
 
-    //新增
+    /**
+     * 新增
+     *
+     * @param record
+     * @return
+     */
     public int insert(RoundGame record) {
-        String roundSelect = record.getRoundSelect();
-        String[] roundSplit = roundSelect.split("-");
-        String gameCodeSelect = record.getGameCodeSelect();
-        if (gameCodeSelect != null && gameCodeSelect.length() > 0)
-        {
-            record.setDdgame(Integer.parseInt(gameCodeSelect));
-        }
-        if (roundSplit.length > 0)
-        {
-            record.setDdround(roundSplit[0]);
-            record.setDdname(roundSplit[1]);
-        }
-        record.setTimes(new Timestamp(new Date().getTime()));
+        updateRoundGame(record);
         return roundGameMapper.insert(record);
     }
 
-    //更新
+    /**
+     * 更新
+     *
+     * @param record
+     * @return
+     */
     public int updateByPrimaryKeySelective(RoundGame record) {
-        String roundSelect = record.getRoundSelect();
-        String[] roundSplit = roundSelect.split("-");
-        String gameCodeSelect = record.getGameCodeSelect();
-        if (gameCodeSelect != null && gameCodeSelect.length() > 0)
-        {
-            record.setDdgame(Integer.parseInt(gameCodeSelect));
-        }
-        if (roundSplit.length > 0)
-        {
-            record.setDdround(roundSplit[0]);
-            record.setDdname(roundSplit[1]);
-        }
-        record.setTimes(new Timestamp(new Date().getTime()));
+        updateRoundGame(record);
         return roundGameMapper.updateByPrimaryKeySelective(record);
     }
 
-    //默认排序
+    /**
+     * 默认排序
+     *
+     * @param parameter
+     * @return
+     */
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setSort("times");
         parameter.setOrder("desc");
     }
@@ -128,38 +127,75 @@ public class RoundGameService implements BaseService<RoundGame> {
         return RoundGame.class;
     }
 
-    //筛选
+    /**
+     * 筛选
+     *
+     * @param recharge
+     * @return
+     */
     @Override
     public boolean removeIf(RoundGame recharge, JSONObject searchData) {
         String times = searchData.getString("times");
         Date[] parse = XwhTool.parseDate(times);
-        if (times != null && times.length() != 0)
-        {
-            if (recharge.getDdend().before(parse[0]) || recharge.getDdend().after(parse[1]))
-            {
+        if (times != null && times.length() != 0) {
+            if (recharge.getDdend().before(parse[0]) || recharge.getDdend().after(parse[1])) {
                 return true;
             }
         }
-        if (existValueFalse(searchData.getString("gameName"), recharge.getGameName()))
-        {
+        if (existValueFalse(searchData.getString("gameName"), recharge.getGameName())) {
             return true;
         }
-        if (existValueFalse(searchData.getString("ddstate"), recharge.getDdstate().toString()))
-        {
+        if (existValueFalse(searchData.getString("ddstate"), recharge.getDdstate().toString())) {
             return true;
         }
         return (existValueFalse(searchData.getString("roundName"), recharge.getRoundName()));
     }
 
-    //查询所有游戏赛制
+    /**
+     * 查询所有游戏赛制
+     *
+     * @return
+     */
     public List<RoundExt> selectAllS() {
         List<RoundExt> roundExt = roundExtMapper.selectAllS();
-        for (RoundExt round : roundExt)
-        {
+        for (RoundExt round : roundExt) {
             String ddCode = round.getDdcode();
             String ddName = round.getDdname();
-            round.setDdcode(ddCode + "-" + ddName);
+            //此处变更由于赛制名称含有-以便区分，新增更新已做相应处理
+            round.setDdcode(ddCode + "_" + ddName);
         }
         return roundExt;
+    }
+
+    /**
+     * 更新或新增时统一处理（提取的之前的老的代码块）
+     *
+     * @param roundGame
+     */
+    private void updateRoundGame(RoundGame roundGame) {
+        if (!StringUtils.isBlank(roundGame.getRoundSelect())) {
+            String[] roundSplit = roundGame.getRoundSelect().split("_");
+            if (roundSplit.length > 1) {
+                roundGame.setDdround(roundSplit[0]);
+                roundGame.setDdname(roundSplit[1]);
+            }
+        }
+        roundGame.setTimes(new Timestamp(System.currentTimeMillis()));
+    }
+
+    /**
+     * 删除
+     * @param jsonObject
+     * @return
+     */
+    public PostResult delete(JSONObject jsonObject) {
+        PostResult result = new PostResult();
+        String ddCode = jsonObject.getString("deleteIds");
+        int delete = roundGameMapper.deleteByPrimaryKey(Integer.parseInt(ddCode));
+        if (delete <= 0) {
+            result.setSuccessed(false);
+            result.setMsg("操作失败，请联系管理员！");
+        }
+        return result;
     }
 }

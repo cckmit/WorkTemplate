@@ -2,6 +2,7 @@ package com.fish.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.mapper.ArcadeGamesMapper;
+import com.fish.service.ConfigAdContentService;
 import com.fish.service.UploadExcelService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadExcel;
@@ -9,6 +10,7 @@ import com.fish.utils.ReadJsonUtil;
 import com.fish.utils.log4j.Log4j;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,9 @@ public class UploadController {
     @Autowired
     ArcadeGamesMapper gamesMapper;
 
+    @Autowired
+    ConfigAdContentService configAdContentService;
+
     @GetMapping
     public String upload() {
         return "upload";
@@ -74,7 +79,7 @@ public class UploadController {
     public JSONObject uploadZip(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
         if (file.isEmpty()) {
-            jsonObject.put("code", 404);
+            jsonObject.put("successed", false);
             jsonObject.put("msg", "未上传文件!");
             return jsonObject;
         }
@@ -93,7 +98,8 @@ public class UploadController {
                 ZipFile zipFile = new ZipFile(readFile);
                 zipFile.setCharset(Charset.defaultCharset());
                 if (!zipFile.isValidZipFile()) {
-                    throw new ZipException("压缩文件不合法，可能已经损坏！");
+                    jsonObject.put("successed", false);
+                    jsonObject.put("msg", "压缩文件不合法，可能已经损坏!");
                 }
                 File zip = new File(readPath);
                 if (zip.isDirectory() && !zip.exists()) {
@@ -103,12 +109,39 @@ public class UploadController {
                 if (isDelete) {
                     readFile.delete();
                 }
+                if ("game".equals(type)) {
+                    autoUploadAdImageUrl(readFile);
+                }
             }
-            jsonObject.put("code", 200);
+            jsonObject.put("successed", true);
+            jsonObject.put("msg", "压缩包上传成功!");
         } catch (Exception e) {
             LOGGER.error(Log4j.getExceptionInfo(e));
         }
         return jsonObject;
+    }
+
+    /**
+     * 自动更新广告图片地址
+     *
+     * @param readFile
+     */
+    private void autoUploadAdImageUrl(File readFile) {
+        String readFilePath = readFile.getPath().substring(0, readFile.getPath().lastIndexOf('.'));
+        System.out.println(readFilePath);
+        File readFileDirs = new File(readFilePath);
+        if (readFileDirs.listFiles() != null) {
+            for (File uploadFile : readFileDirs.listFiles()) {
+                if (uploadFile.getName().startsWith("ad_") && uploadFile.getName().endsWith(
+                        ".png") || uploadFile.getName().endsWith(".jpg")) {
+                    String[] fileArray = uploadFile.getName().split("_");
+                    if (fileArray.length > 2) {
+                        String imageUrl = uploadFile.getPath().replace("\\", "/").replace("/data/", "https://");
+                        this.configAdContentService.updateImageUrl(imageUrl, fileArray[1]);
+                    }
+                }
+            }
+        }
     }
 
     @ResponseBody
@@ -116,15 +149,15 @@ public class UploadController {
     public JSONObject uploadImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
         JSONObject jsonObject = new JSONObject();
         if (file.isEmpty()) {
-            jsonObject.put("code", 404);
-            jsonObject.put("msg", "未上传文件!");
+            jsonObject.put("successed", false);
+            jsonObject.put("msg", "操作失败，未上传图片文件!");
             return jsonObject;
         }
         try {
             String flushType = request.getParameter("flushType");
             String readPath = baseConfig.getUploadJson().getString("game");
             String hostUrl = null;
-            if (flushType != null && !flushType.trim().isEmpty()) {
+            if (StringUtils.isNotBlank(flushType) && "qr".equals(flushType)) {
                 readPath = baseConfig.getUploadJson().getString(flushType);
                 hostUrl = baseConfig.getUploadJson().getString("host-" + flushType);
             }
@@ -135,19 +168,22 @@ public class UploadController {
             }
             String originalFilename = file.getOriginalFilename();
             FileUtils.copyInputStreamToFile(file.getInputStream(), new File(readPath, originalFilename));
-            jsonObject.put("code", 200);
+            jsonObject.put("successed", true);
+            jsonObject.put("msg", "图片上传成功");
             if (hostUrl != null) {
                 hostUrl = hostUrl.concat(originalFilename);
+                jsonObject.put("imageURL", hostUrl);
                 if ("qr".equals(flushType)) {
                     String gameCode = request.getParameter("gameCode");
                     String SQL = "update games set ddFriendUrl='" + hostUrl + "'";
                     if (gameCode != null && !"all".equals(gameCode)) {
                         SQL = SQL.concat(" where ddCode in(").concat(gameCode).concat(")");
                     }
-                    System.out.println(SQL);
                     gamesMapper.updateSQL(SQL);
-                    jsonObject.put("msg", ReadJsonUtil.flushTable("games", baseConfig.getFlushCache()));
+                    ReadJsonUtil.flushTable("games", baseConfig.getFlushCache());
                 }
+            } else {
+                jsonObject.put("imageURL", readPath.replace("/data/", "https://") + originalFilename);
             }
         } catch (Exception e) {
             LOGGER.error(Log4j.getExceptionInfo(e));

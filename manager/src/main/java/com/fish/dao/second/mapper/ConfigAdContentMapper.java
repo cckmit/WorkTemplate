@@ -1,6 +1,7 @@
 package com.fish.dao.second.mapper;
 
 import com.fish.dao.second.model.ConfigAdContent;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,9 +22,26 @@ public interface ConfigAdContentMapper {
     /**
      * 查询全部广告
      *
+     * @param configAdContent
      * @return
      */
-    List<ConfigAdContent> selectAll();
+    List<ConfigAdContent> selectAll(ConfigAdContent configAdContent);
+
+    /**
+     * 根据广告类型查询广告内容
+     *
+     * @param adType
+     * @return
+     */
+    List<ConfigAdContent> selectAllByType(int adType);
+
+    /**
+     * 通过广告内容ID查询广告内容详情
+     *
+     * @param contentIds
+     * @return
+     */
+    List<ConfigAdContent> selectContentBySpaceId(String contentIds);
 
     /**
      * 新增广告内容
@@ -44,9 +62,17 @@ public interface ConfigAdContentMapper {
     /**
      * 根据ID删除广告内容
      *
-     * @param id
+     * @param deleteIds
      * @return
      */
-    int delete(int id);
+    int delete(String deleteIds);
+
+    /**
+     * 更新广告图片地址
+     *
+     * @param imageUrl
+     * @param id
+     */
+    void updateImageUrl(@Param("imageUrl") String imageUrl, @Param("id") int id);
 
 }

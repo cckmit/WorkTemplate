@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-public class PlayUserVO
-{
+public class PlayUserVO {
     //用户编号
     private Long userId;
     //新增时间
@@ -33,93 +32,75 @@ public class PlayUserVO
     //设备
     private String device;
 
-    public Long getUserId()
-    {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId)
-    {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Timestamp getRegister()
-    {
+    public Timestamp getRegister() {
         return register;
     }
 
-    public void setRegister(Timestamp register)
-    {
+    public void setRegister(Timestamp register) {
         this.register = register;
     }
 
-    public String getNickName()
-    {
+    public String getNickName() {
         return nickName;
     }
 
-    public void setNickName(String nickName)
-    {
+    public void setNickName(String nickName) {
         this.nickName = nickName;
     }
 
-    public Long getPearl()
-    {
+    public Long getPearl() {
         return pearl;
     }
 
-    public void setPearl(Long pearl)
-    {
+    public void setPearl(Long pearl) {
         this.pearl = pearl;
     }
 
-    public Long getShell()
-    {
+    public Long getShell() {
         return shell;
     }
 
-    public void setShell(Long shell)
-    {
+    public void setShell(Long shell) {
         this.shell = shell;
     }
 
-    public Integer getBook()
-    {
+    public Integer getBook() {
         return book;
     }
 
-    public void setBook(Integer book)
-    {
+    public void setBook(Integer book) {
         this.book = book;
     }
 
-    public BigDecimal getPayCost()
-    {
+    public BigDecimal getPayCost() {
         return payCost;
     }
 
-    public void setPayCost(BigDecimal payCost)
-    {
+    public void setPayCost(BigDecimal payCost) {
         this.payCost = payCost;
     }
 
-    public String getPlatform()
-    {
+    public String getPlatform() {
         return platform;
     }
 
-    public void setPlatform(String platform)
-    {
+    public void setPlatform(String platform) {
         this.platform = platform;
     }
 
-    public String getDevice()
-    {
+    public String getDevice() {
         return device;
     }
 
-    public void setDevice(String device)
-    {
+    public void setDevice(String device) {
         this.device = device;
     }
 }

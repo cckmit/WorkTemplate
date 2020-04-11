@@ -1,5 +1,6 @@
 package com.fish.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.model.PublicCentre;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
@@ -26,14 +27,24 @@ public class PublicCentreController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询公众号信息
+    /**
+     * 查询公众号配置中心信息
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/public")
     public GetResult getPublicCentre(GetParameter parameter) {
         return publicCentreService.findAll(parameter);
     }
 
-    //新增游戏信息
+    /**
+     * 新增公众号配置
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/public/new")
     public PostResult insertPublicCentre(@RequestBody PublicCentre productInfo) {
@@ -49,15 +60,18 @@ public class PublicCentreController {
         }
     }
 
-    //修改游戏表信息
+    /**
+     * 修改公众号配置
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/public/edit")
     public PostResult modifyPublicCentre(@RequestBody PublicCentre productInfo) {
         PostResult result = new PostResult();
-
         int count = publicCentreService.updateByPrimaryKeySelective(productInfo);
         if (count != 0) {
-
             result.setMsg("操作成功");
             return result;
         } else {
@@ -65,38 +79,52 @@ public class PublicCentreController {
             result.setMsg("操作失败，请联系管理员");
             return result;
         }
-
     }
 
+    /**
+     * 修改完毕公众号中心内容提交JSON文件到客户端
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/public/submitJson")
     public PostResult submitPublicCentre(GetParameter parameter) {
         PostResult result = new PostResult();
-        publicCentreService.selectAllForJson(parameter);
-        int count = 1;
-        if (count != 0) {
-            result.setMsg("操作成功");
-            return result;
-        } else {
+        try {
+            publicCentreService.selectAllForJson(parameter);
+            result.setMsg("更新JSON成功");
+        } catch (Exception e) {
+            e.printStackTrace();
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
 
     }
 
+    /**
+     * 删除选中的公众号配置内容
+     *
+     * @param jsonObject
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/public/delete")
-    public PostResult deleteBuyPay(@RequestBody PublicCentre productInfo) {
-        PostResult result = new PostResult();
-        int count = publicCentreService.deleteSelective(productInfo);
-        if (count != 0) {
-            result.setMsg("操作成功");
-            return result;
-        } else {
-            result.setSuccessed(false);
-            result.setMsg("操作失败，请联系管理员");
-            return result;
-        }
+    public PostResult deleteBuyPay(@RequestBody JSONObject jsonObject) {
+        return this.publicCentreService.deleteSelective(jsonObject);
     }
+
+    /**
+     * 更新展示顺序
+     *
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/public/updateShowId")
+    public PostResult updateShowId(@RequestBody JSONObject jsonObject) {
+        return this.publicCentreService.updateShowId(jsonObject);
+    }
+
 }

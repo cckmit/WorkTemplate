@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.fourth.mapper.AdValueWxAdUnitMapper">
+    <resultMap id="BaseResultMap" type="com.fish.dao.fourth.model.AdValueWxAdUnit">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="date" property="date" jdbcType="VARCHAR"/>
+        <result column="appId" property="appId" jdbcType="VARCHAR"/>
+        <result column="adUnitId" property="adUnitId" jdbcType="VARCHAR"/>
+        <result column="adUnitName" property="adUnitName" jdbcType="VARCHAR"/>
+        <result column="clickCount" property="clickCount" jdbcType="INTEGER"/>
+        <result column="clickRate" property="clickRate" jdbcType="DECIMAL"/>
+        <result column="ecpm" property="ecpm" jdbcType="INTEGER"/>
+        <result column="exposureCount" property="exposureCount" jdbcType="INTEGER"/>
+        <result column="exposureRate" property="exposureRate" jdbcType="DECIMAL"/>
+        <result column="income" property="income" jdbcType="INTEGER"/>
+        <result column="reqSuccCount" property="reqSuccCount" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+       id , date, appId, adUnitId, adUnitName, clickCount, clickRate,
+        ecpm, exposureCount, exposureRate, income, reqSuccCount
+    </sql>
+
+    <select id="queryCollectData" resultMap="BaseResultMap">
+        SELECT date,
+        <if test="groupByType == '1'.toString()">
+            appId,
+            <if test="queryDetail == '1'.toString()">
+                adUnitName,
+            </if>
+        </if>
+        <if test="groupByType == '2'.toString()">
+            slotId,
+            <if test="queryDetail == '1'.toString()">
+                appId,
+                adUnitName,
+            </if>
+        </if>
+        <if test="groupByType == '3'.toString()">
+            adUnitName,
+            <if test="queryDetail == '1'.toString()">
+                appId,
+                slotId,
+            </if>
+        </if>
+        <if test="groupByType == '4'.toString()">
+            appId, slotId,
+            <if test="queryDetail == '1'.toString()">
+                adUnitName,
+            </if>
+        </if>
+        <if test="groupByType == '5'.toString()">
+            appId, adUnitName,slotId,
+        </if>
+        sum(a.reqSuccCount) as reqSuccCount, sum(a.exposureCount) as exposureCount,
+        sum(a.clickCount) as clickCount,sum(a.income) as income
+        from persie_value.ad_value_wx_adunit a
+        where DATE(a.date) between #{beginTime} and #{endTime}
+        <if test="appId != null and appId != ''">
+            and a.appId = #{appId, jdbcType=VARCHAR}
+        </if>
+        <if test="slotId != null and slotId !=''">
+            and a.slotId = #{slotId, jdbcType=VARCHAR}
+        </if>
+        <if test="adUnitName !=null and adUnitName !=''">
+            and adUnitName = #{adUnitName, jdbcType=VARCHAR}
+        </if>
+        group by a.date
+        <if test="groupByType == '1'.toString()">
+            ,appId
+            <if test="queryDetail == '1'.toString()">
+                ,adUnitName
+            </if>
+        </if>
+        <if test="groupByType == '2'.toString()">
+            ,slotId
+            <if test="queryDetail == '1'.toString()">
+                ,appId
+                ,adUnitName
+            </if>
+        </if>
+        <if test="groupByType == '3'.toString()">
+            ,adUnitName
+            <if test="queryDetail == '1'.toString()">
+                ,appId
+                ,slotId
+            </if>
+        </if>
+        <if test="groupByType == '4'.toString()">
+            ,appId, slotId
+            <if test="queryDetail == '1'.toString()">
+                ,adUnitName
+            </if>
+        </if>
+        <if test="groupByType == '5'.toString()">
+            ,appId, adUnitName, slotId
+
+        </if>
+    </select>
+
+
+    <select id="selectAllScreenIncome" resultType="com.fish.dao.fourth.model.AdValueWxAdUnit">
+        SELECT appId,SUM(income) AS screenIncome,DATE
+        FROM persie_value.ad_value_wx_adunit WHERE DATE(DATE) BETWEEN  #{beginTime} and #{endTime}
+        AND slotId='3030046789020061'
+        GROUP BY DATE ,appId
+    </select>
+    <select id="queryScreenIncomeByDate" resultType="com.fish.dao.fourth.model.AdValueWxAdUnit">
+        SELECT SUM(income) AS screenIncome,DATE
+        FROM ad_value_wx_adunit WHERE DATE(DATE) BETWEEN  #{beginTime} and #{endTime}
+        AND slotId='3030046789020061'
+        GROUP BY DATE
+    </select>
+</mapper>

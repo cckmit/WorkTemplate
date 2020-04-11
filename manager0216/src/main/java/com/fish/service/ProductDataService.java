@@ -1,25 +1,23 @@
 package com.fish.service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.fourth.mapper.AdValueWxAdUnitMapper;
 import com.fish.dao.fourth.mapper.AdValueWxAdposMapper;
 import com.fish.dao.fourth.mapper.WxDailyVisitTrendMapper;
 import com.fish.dao.fourth.model.AdValueWxAdUnit;
 import com.fish.dao.fourth.model.AdValueWxAdpos;
-import com.fish.dao.fourth.model.WxDailyVisitTrend;
 import com.fish.dao.primary.mapper.BuyPayMapper;
 import com.fish.dao.primary.mapper.ProductDataMapper;
 import com.fish.dao.primary.model.BuyPay;
+import com.fish.dao.second.mapper.OrdersMapper;
 import com.fish.dao.second.mapper.WxConfigMapper;
+import com.fish.dao.second.model.Orders;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.dao.third.mapper.MinitjWxMapper;
 import com.fish.dao.third.model.MinitjWx;
 import com.fish.dao.third.model.ProductData;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.GetResult;
-import com.fish.protocols.PostResult;
 import com.fish.service.cache.CacheService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -28,12 +26,12 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static java.math.BigDecimal.ROUND_HALF_UP;
 
 /**
  * 数据统计-产品数据详情
@@ -65,10 +63,14 @@ public class ProductDataService implements BaseService<ProductData> {
 
     @Autowired
     AdValueWxAdposMapper adValueWxAdposMapper;
+
+    @Autowired
+    OrdersMapper ordersMapper;
+
     /**
      * 获取微信配置表
      *
-     * @return
+     * @return 配置结果集
      */
     private Map<String, WxConfig> getWxConfigMap() {
         Map<String, WxConfig> wxConfigMap = new HashMap<>();
@@ -84,7 +86,7 @@ public class ProductDataService implements BaseService<ProductData> {
         Map<String, WxConfig> wxConfigMap = getWxConfigMap();
         Map<String, BuyPay> buyPayMap = getBuyPayMap(parameter);
         Map<String, AdValueWxAdUnit> wxAdUnitMap = getWxAdUnitMap(parameter);
-        List<ProductData> productDatas = new ArrayList<ProductData>();
+        List<ProductData> productDatas;
         JSONObject search = getSearchData(parameter.getSearchData());
         if (search != null) {
             //搜索
@@ -95,124 +97,152 @@ public class ProductDataService implements BaseService<ProductData> {
                     productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap, wxAdUnitMap);
                     break;
                 case "1":
-                    productDatas = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap, wxAdUnitMap);
+                    productDatas = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap);
                     break;
                 default:
                     // 如果只选了时间
                     productDatas = selectMinitjWx(parameter, ddAppId, wxConfigMap, buyPayMap, wxAdUnitMap);
-                    List<ProductData> list = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap, wxAdUnitMap);
+                    List<ProductData> list = selectPersieDeamon(parameter, ddAppId, wxConfigMap, buyPayMap);
                     productDatas.addAll(list);
                     break;
             }
         } else {
             productDatas = selectMinitjWx(parameter, null, wxConfigMap, buyPayMap, wxAdUnitMap);
-            List<ProductData> list = selectPersieDeamon(parameter, null, wxConfigMap, buyPayMap, wxAdUnitMap);
+            List<ProductData> list = selectPersieDeamon(parameter, null, wxConfigMap, buyPayMap);
             productDatas.addAll(list);
         }
         return productDatas;
     }
 
+
     /**
      * 查询小程序数据
      *
-     * @param parameter
-     * @param ddAppId
-     * @return
+     * @param parameter   搜索参数
+     * @param ddAppId     appId
+     * @param wxConfigMap 配置Map
+     * @param buyPayMap   买量Map
+     * @return 结果集合
      */
     private List<ProductData> selectPersieDeamon(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap,
-                                                 Map<String, BuyPay> buyPayMap, Map<String, AdValueWxAdUnit> wxAdUnitMap) {
-        List<ProductData> productDatas = new ArrayList<ProductData>();
-        // 选小程序的时候查询
+                                                 Map<String, BuyPay> buyPayMap) {
+        List<ProductData> productDatas;
+        // 解析时间
         String[] times = getSearchTime(parameter);
         String start = times[0];
         String end = times[1];
-        productDatas = productDataMapper.searchProgramData(ddAppId, start, end);
 
-        List<AdValueWxAdpos> adValueWxAdPos = adValueWxAdposMapper.selectTypeIncomeByDate(start, end, ddAppId);
-        List<WxDailyVisitTrend> wxDailyVisitTrends = wxDailyVisitTrendMapper.selectVisitTrend(start, end, ddAppId);
-
-        for (AdValueWxAdpos adValueWxAdPo : adValueWxAdPos) {
-            ProductData productData = new ProductData();
-            productData.setWxAppid(adValueWxAdPo.getAppId());
-            productData.setWxDate(new Date(adValueWxAdPo.getDate()));
-           switch(adValueWxAdPo.getSlotId()){
-               case "8040321819858439":
-                   productData.setWxBannerIncome(new BigDecimal(adValueWxAdPo.getIncome()));
-                           break;
-               case "1030436212907001":
-                   productData.setWxVideoIncome(new BigDecimal(adValueWxAdPo.getIncome()));
-                   break;
-               case "3030046789020061":
-                   productData.setScreenIncome(new BigDecimal(adValueWxAdPo.getIncome()));
-                   break;
-               case "7070083760581921":
-                   break;
-               default:
-                   break;
-           }
-
-        }
-
-
-
-        for (ProductData productDatum : productDatas) {
-            String wxAppid = productDatum.getWxAppid();
-            Date wxDate = productDatum.getWxDate();
-            //查询小程序是否存在买量数据
-            if (buyPayMap != null && !buyPayMap.isEmpty()) {
-                BuyPay buyPay = buyPayMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
-                if (buyPay != null) {
-                    productDatum.setBuyCost(buyPay.getBuyCost());
-                    productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
+        //获取广告收入map--暂未使用
+        Map<String, AdValueWxAdpos> wxAdpPosMap = getWxAdIncomeMap(start, end, ddAppId);
+        //小程序充值收入map
+        Map<String, Orders> programReChargeMap = getProgramReChargeMap();
+        //查询小程序数据
+        productDatas = wxDailyVisitTrendMapper.selectVisitTrend(start.replace("/", ""), end.replace("/", ""), ddAppId);
+        try {
+            for (ProductData productDatum : productDatas) {
+                String wxAppid = productDatum.getWxAppid();
+                Date wxDate = productDatum.getWxDate();
+                productDatum.setProgramType(1);
+                productDatum.setWxRemain2(productDatum.getWxRemain2() != null ? productDatum.getWxRemain2().multiply(new BigDecimal(100)) : new BigDecimal(0));
+                WxConfig wxConfig = wxConfigMap.get(wxAppid);
+                productDatum.setProductName(wxConfig != null ? wxConfig.getProductName() : "");
+                if (productDatum.getWxVisit() != null && productDatum.getWxVisit() != 0 && productDatum.getWxActive() != 0) {
+                    productDatum.setWxAvgLogin(new BigDecimal(productDatum.getWxVisit()).divide(new BigDecimal(productDatum.getWxActive()), 2, ROUND_HALF_UP));
+                } else {
+                    productDatum.setWxAvgLogin(new BigDecimal(0));
+                }
+                if (productDatum.getWxShareUser() != null && productDatum.getWxShareUser() != 0 && productDatum.getWxActive() != 0) {
+                    productDatum.setWxShareRate(new BigDecimal(productDatum.getWxShareUser() * 100).divide(new BigDecimal(productDatum.getWxActive()), 2, ROUND_HALF_UP));
+                } else {
+                    productDatum.setWxShareRate(new BigDecimal(0));
+                }
+                //查询小程序是否存在买量数据
+                if (buyPayMap != null && !buyPayMap.isEmpty()) {
+                    BuyPay buyPay = buyPayMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
+                    if (buyPay != null) {
+                        productDatum.setBuyCost(buyPay.getBuyCost());
+                        productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
+                    }
+                }
+                //查询小程序是否存在充值数据
+                if (!programReChargeMap.isEmpty()) {
+                    Orders orders = programReChargeMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
+                    if (orders != null) {
+                        productDatum.setRecharge(orders.getDdprice());
+                    }
                 }
             }
-            if (wxAdUnitMap != null && !wxAdUnitMap.isEmpty()) {
-                AdValueWxAdUnit wxAdUnit = wxAdUnitMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
-                if (wxAdUnit != null) {
-                    productDatum.setScreenIncome(new BigDecimal(wxAdUnit.getScreenIncome()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
-                }
-            }
+        } catch (Exception e) {
+            LOGGER.error("查询小游戏数据处理异常" + ", 详细信息:{}", e.getMessage());
+            // System.out.println(e.getMessage());
         }
         return productDatas;
     }
-
 
     /**
-     * 查询小程序数据
-     *
-     * @param parameter
-     * @param ddAppId
-     * @return
+     * 小程序充值存放map
      */
-    private List<ProductData> selectPersieDeamonS(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap,
-                                                 Map<String, BuyPay> buyPayMap, Map<String, AdValueWxAdUnit> wxAdUnitMap) {
-        List<ProductData> productDatas = new ArrayList<ProductData>();
-        // 选小程序的时候查询
-        String[] times = getSearchTime(parameter);
-        String start = times[0];
-        String end = times[1];
-        productDatas = productDataMapper.searchProgramData(ddAppId, start, end);
+    private Map<String, Orders> getProgramReChargeMap() {
+        List<Orders> orders = ordersMapper.queryProgramReCharge();
+        Map<String, Orders> programReChargeMap = new HashMap<>(16);
+        orders.forEach(order -> programReChargeMap.put(order.getDdappid() + "_" + new SimpleDateFormat("yyyy-MM-dd").format(order.getDdtrans()), order));
+        return programReChargeMap;
+    }
 
-        for (ProductData productDatum : productDatas) {
-            String wxAppid = productDatum.getWxAppid();
-            Date wxDate = productDatum.getWxDate();
-            //查询小程序是否存在买量数据
-            if (buyPayMap != null && !buyPayMap.isEmpty()) {
-                BuyPay buyPay = buyPayMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
-                if (buyPay != null) {
-                    productDatum.setBuyCost(buyPay.getBuyCost());
-                    productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
+    /**
+     * 存放广告收入map
+     */
+    private Map<String, AdValueWxAdpos> getWxAdIncomeMap(String start, String end, String ddAppId) {
+        List<AdValueWxAdpos> adValueWxAdPos = adValueWxAdposMapper.selectTypeIncomeByDate(start, end, ddAppId);
+        Map<String, AdValueWxAdpos> wxAdpPosMap = new HashMap<>(16);
+        for (AdValueWxAdpos adValueWxAdPo : adValueWxAdPos) {
+            String appId = adValueWxAdPo.getAppId();
+            String date = adValueWxAdPo.getDate();
+            AdValueWxAdpos adValueWxAdpos = wxAdpPosMap.get(appId + "_" + date);
+            if (adValueWxAdpos == null) {
+                switch (adValueWxAdPo.getSlotId()) {
+                    case "8040321819858439":
+                        adValueWxAdPo.setWxBannerIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                        break;
+                    case "1030436212907001":
+                        adValueWxAdPo.setWxVideoIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                        break;
+                    case "3030046789020061":
+                        adValueWxAdPo.setScreenIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                        break;
+                    case "7070083760581921":
+                        break;
+                    default:
+                        break;
                 }
-            }
-            if (wxAdUnitMap != null && !wxAdUnitMap.isEmpty()) {
-                AdValueWxAdUnit wxAdUnit = wxAdUnitMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
-                if (wxAdUnit != null) {
-                    productDatum.setScreenIncome(new BigDecimal(wxAdUnit.getScreenIncome()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+                wxAdpPosMap.put(appId + "_" + date, adValueWxAdPo);
+            } else {
+                switch (adValueWxAdPo.getSlotId()) {
+                    case "8040321819858439":
+                        adValueWxAdpos.setWxBannerIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                        break;
+                    case "1030436212907001":
+                        adValueWxAdpos.setWxVideoIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                        break;
+                    case "3030046789020061":
+                        adValueWxAdpos.setScreenIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                        break;
+                    case "7070083760581921":
+                        break;
+                    default:
+                        break;
                 }
             }
         }
-        return productDatas;
+        return wxAdpPosMap;
     }
+
+    /**
+     * 判断时间
+     *
+     * @param parameter parameter
+     * @return 返回格式化时间
+     */
     private String[] getSearchTime(GetParameter parameter) {
 
         String[] times = new String[2];
@@ -235,281 +265,165 @@ public class ProductDataService implements BaseService<ProductData> {
     /**
      * 查询小游戏数据
      *
-     * @param parameter
+     * @param parameter parameter
      * @param ddAppId   前台输入框传的ddAppId
-     * @return
+     * @return 小游戏数据集合
      */
     private List<ProductData> selectMinitjWx(GetParameter parameter, String ddAppId, Map<String, WxConfig> wxConfigMap,
                                              Map<String, BuyPay> buyPayMap, Map<String, AdValueWxAdUnit> wxAdUnitMap) {
         List<ProductData> productDatas = new ArrayList<>();
-        //JSONObject search = getSearchData(parameter.getSearchData());
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String[] times = getSearchTime(parameter);
         String start = times[0];
         String end = times[1];
-
         // 小游戏的时候查询
-        List<MinitjWx> WxDatas = minitjWxMapper.searchDatas(ddAppId, start, end);
-        for (MinitjWx wxData : WxDatas) {
-            WxConfig wxConfig = wxConfigMap.get(wxData.getWxAppid());
-            if (wxConfig == null) {
-                continue;
-            }
-            ProductData productData = new ProductData();
-            productData.setMinitjWx(wxData);
-            // 设置data信息
-            productData.setProgramType(wxConfig.getProgramType());
-            productData.setProductName(wxConfig.getProductName());
-            productData.setProductName(wxConfig.getProductName());
-            productData.setAdRevenue(wxData.getWxBannerIncome().add(wxData.getWxVideoIncome()));
-            BigDecimal adRevenue = productData.getAdRevenue();
-            Integer wxActive = wxData.getWxActive();
-            if (!wxActive.equals(0)) {
-                BigDecimal divide = adRevenue.divide(new BigDecimal(wxActive), 4, 4);
-                productData.setActiveUp(divide);
-            }
-            String wxRegJson = wxData.getWxRegJson();
-            JSONObject jsonObject = JSONObject.parseObject(wxRegJson);
-            if (jsonObject != null) {
-                Integer other = (Integer) jsonObject.get("其他");
-                if (other != null) {
-                    productData.setWxRegOther(other);
-                } else {
-                    productData.setWxRegOther(0);
+        List<MinitjWx> wxDatas = minitjWxMapper.searchDatas(ddAppId, start, end);
+        try {
+            for (MinitjWx wxData : wxDatas) {
+                WxConfig wxConfig = wxConfigMap.get(wxData.getWxAppid());
+                if (wxConfig == null) {
+                    continue;
                 }
-            } else {
-                productData.setWxRegOther(0);
-            }
-            if (buyPayMap != null && !buyPayMap.isEmpty()) {
-                BuyPay buyPay = buyPayMap.get(wxData.getWxAppid() + "_" + dateFormat.format(wxData.getWxDate()));
-                if (buyPay != null) {
-                    productData.setBuyCost(buyPay.getBuyCost());
-                    productData.setBuyClickPrice(buyPay.getBuyClickPrice());
+                ProductData productData = new ProductData();
+                productData.setMinitjWx(wxData);
+                // 设置data信息
+                productData.setProgramType(wxConfig.getProgramType());
+                productData.setProductName(wxConfig.getProductName());
+
+                if (wxAdUnitMap != null && !wxAdUnitMap.isEmpty()) {
+                    AdValueWxAdUnit wxAdUnit = wxAdUnitMap.get(wxData.getWxAppid() + "_" + dateFormat.format(wxData.getWxDate()));
+                    if (wxAdUnit != null) {
+                        productData.setScreenIncome(new BigDecimal(wxAdUnit.getScreenIncome()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+                    } else {
+                        productData.setScreenIncome(new BigDecimal(0));
+                    }
                 }
-            }
-            if (wxAdUnitMap != null && !wxAdUnitMap.isEmpty()) {
-                AdValueWxAdUnit wxAdUnit = wxAdUnitMap.get(wxData.getWxAppid() + "_" + dateFormat.format(wxData.getWxDate()));
-                if (wxAdUnit != null) {
-                    productData.setScreenIncome(new BigDecimal(wxAdUnit.getScreenIncome()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+                //设置广告数据
+                productData.setAdRevenue(wxData.getWxBannerIncome().add(wxData.getWxVideoIncome()).add(productData.getScreenIncome() != null ? productData.getScreenIncome() : new BigDecimal(0)));
+                BigDecimal adRevenue = productData.getAdRevenue();
+                Integer wxActive = wxData.getWxActive();
+                if (!wxActive.equals(0)) {
+                    BigDecimal divide = adRevenue.divide(new BigDecimal(wxActive), 4, 4);
+                    //设置活跃up
+                    productData.setActiveUp(divide);
                 }
+                String wxRegJson = wxData.getWxRegJson();
+                //处理新增其他数据
+                newSourceOther(productData, wxRegJson);
+
+                String wxActiveSource = wxData.getWxActiveSource();
+                if (StringUtils.isNotBlank(wxActiveSource)) {
+                    //处理活跃用户来源数据
+                    activeSourceDetail(productData, wxActiveSource);
+                }
+                if (buyPayMap != null && !buyPayMap.isEmpty()) {
+                    BuyPay buyPay = buyPayMap.get(wxData.getWxAppid() + "_" + dateFormat.format(wxData.getWxDate()));
+                    if (buyPay != null) {
+                        productData.setBuyCost(buyPay.getBuyCost());
+                        productData.setBuyClickPrice(buyPay.getBuyClickPrice());
+                    }
+                }
+                //赋值相同属性
+                BeanUtils.copyProperties(wxData, productData);
+                productDatas.add(productData);
             }
-            BeanUtils.copyProperties(wxData, productData);
-            productDatas.add(productData);
+        } catch (Exception e) {
+            LOGGER.error("查询小游戏数据处理异常" + ", 详细信息:{}", e.getMessage());
         }
         return productDatas;
     }
 
+    /**
+     * 处理活跃用户来源信息
+     *
+     * @param productData    展示实体
+     * @param wxActiveSource 用户来源信息
+     */
+    private void activeSourceDetail(ProductData productData, String wxActiveSource) {
+        JSONObject jsonObject = JSONObject.parseObject(wxActiveSource);
+        if (jsonObject != null) {
+            Integer taskBarMySp = (Integer) jsonObject.get("任务栏-我的小程序");
+            Integer findMySp = (Integer) jsonObject.get("发现-小程序");
+            Integer taskBarRecent = (Integer) jsonObject.get("任务栏-最近使用");
+            Integer otherReturn = (Integer) jsonObject.get("其他小程序返回");
+            Integer otherSp = (Integer) jsonObject.get("其他小程序");
+            Integer other = (Integer) jsonObject.get("其他");
+            Integer search = (Integer) jsonObject.get("搜索");
+            //广告
+            Integer ad = (Integer) jsonObject.get("微信广告");
+            if (taskBarMySp != null) {
+                productData.setWxActiveTaskBarMySp(taskBarMySp);
+            } else {
+                productData.setWxActiveTaskBarMySp(0);
+            }
+            if (findMySp != null) {
+                productData.setWxActiveFindMySp(findMySp);
+            } else {
+                productData.setWxActiveFindMySp(0);
+            }
+            if (taskBarRecent != null) {
+                productData.setWxActiveTaskBarRecent(taskBarRecent);
+            } else {
+                productData.setWxActiveTaskBarRecent(0);
+            }
+            if (otherReturn != null) {
+                productData.setWxActiveOtherReturn(otherReturn);
+            } else {
+                productData.setWxActiveOtherReturn(0);
+            }
+            if (otherSp != null) {
+                productData.setWxActiveOtherSp(otherSp);
+            } else {
+                productData.setWxActiveOtherSp(0);
+            }
+            if (other != null) {
+                productData.setWxActiveOther(other);
+            } else {
+                productData.setWxActiveOther(0);
+            }
+            if (search != null) {
+                productData.setWxActiveSearch(search);
+            } else {
+                productData.setWxActiveSearch(0);
+            }
+            if (ad != null) {
+                productData.setWxActiveAd(ad);
+            } else {
+                productData.setWxActiveAd(0);
+            }
+        }
+    }
 
     /**
      * 获取买量数据
      *
-     * @param parameter
-     * @return
+     * @param parameter 参数
+     * @return 买量数据Map
      */
     private Map<String, BuyPay> getBuyPayMap(GetParameter parameter) {
         String[] times = getSearchTime(parameter);
         String beginTime = times[0];
         String endTime = times[1];
-        Map<String, BuyPay> buyPayMap = new HashMap<String, BuyPay>(16);
+        Map<String, BuyPay> buyPayMap = new HashMap<>(16);
         List<BuyPay> buyPays = buyPayMapper.selectBuyPayByDate(beginTime, endTime);
-        buyPays.forEach(buyPay -> {
-            buyPayMap.put(buyPay.getBuyAppId() + "_" + buyPay.getBuyDate(), buyPay);
-        });
+        buyPays.forEach(buyPay -> buyPayMap.put(buyPay.getBuyAppId() + "_" + buyPay.getBuyDate(), buyPay));
         return buyPayMap;
     }
 
     /**
      * 获取插屏收入
      *
-     * @param parameter
+     * @param parameter 参数
      * @return 3030046789020061插屏
      */
     private Map<String, AdValueWxAdUnit> getWxAdUnitMap(GetParameter parameter) {
         String[] times = getSearchTime(parameter);
         String beginTime = times[0];
         String endTime = times[1];
-        Map<String, AdValueWxAdUnit> AdValueWxAdUnitMap = new HashMap<String, AdValueWxAdUnit>(16);
-
+        Map<String, AdValueWxAdUnit> adValueWxAdUnitMap = new HashMap<>(16);
         List<AdValueWxAdUnit> adValueWxAdUnits = adValueWxAdUnitMapper.selectAllScreenIncome(beginTime, endTime);
-        adValueWxAdUnits.forEach(adValueWxAdUnit -> {
-            AdValueWxAdUnitMap.put(adValueWxAdUnit.getAppId() + "_" + adValueWxAdUnit.getDate(), adValueWxAdUnit);
-        });
-        return AdValueWxAdUnitMap;
-    }
-
-    /**
-     * 新增小程序产品信息
-     *
-     * @param productData
-     * @return
-     */
-    public int insert(ProductData productData) {
-        int insertProgramData;
-        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
-        insertProgramData = productDataMapper.insert(productData);
-        return insertProgramData;
-    }
-
-    /**
-     * 更新小程序产品信息
-     *
-     * @param productData
-     * @return
-     */
-    public int updateByPrimaryKeySelective(ProductData productData) {
-        productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
-        return productDataMapper.updateByPrimaryKey(productData);
-    }
-
-    /**
-     * 上传小程序产品信息
-     *
-     * @param record
-     * @return
-     */
-    public int insertExcel(JSONObject record) {
-        String context = record.getString("context");
-        System.out.println("context :" + context);
-        context = context.substring(1, context.length() - 1);
-        try {
-            JSONArray param = new JSONArray(Collections.singletonList(context));
-            List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-            List<ProductData> lists = new ArrayList<>();
-            for (int i = 0; i < param.size(); i++) {
-                String singleData = param.get(i).toString();
-                String singleString = singleData.substring(1, singleData.length() - 1);
-                System.out.println("我是singleString :" + singleString);
-                String[] split = singleString.split("], ");
-                for (int j = 0; j < split.length; j++) {
-                    if (j != 0 && j < split.length) {
-                        String single = split[j].substring(1);
-                        String[] singleSplit = single.split(",");
-                        Map<String, String> mapSingle = new HashMap<>();
-                        ProductData productData = new ProductData();
-                        for (int x = 0; x < singleSplit.length; x++) {
-                            switch (x) {
-                                case 0:
-                                    mapSingle.put("wx_date", singleSplit[x].trim());
-                                    break;
-                                case 1:
-                                    mapSingle.put("wx_appid", singleSplit[x].trim());
-                                    break;
-                                case 2:
-                                    mapSingle.put("product_name", singleSplit[x].trim());
-                                    break;
-                                case 3:
-                                    mapSingle.put("product_type", singleSplit[x].trim());
-                                    break;
-                                case 4:
-                                    mapSingle.put("wx_new", singleSplit[x].trim());
-                                    break;
-                                case 5:
-                                    mapSingle.put("wx_active", singleSplit[x].trim());
-                                    break;
-                                case 6:
-                                    mapSingle.put("wx_visit", singleSplit[x].trim());
-                                    break;
-                                case 7:
-                                    mapSingle.put("recharge", singleSplit[x].trim());
-                                    break;
-                                case 8:
-                                    mapSingle.put("ad_revenue", singleSplit[x].trim());
-                                    break;
-                                case 9:
-                                    mapSingle.put("wx_video_income", singleSplit[x].trim());
-                                    break;
-                                case 10:
-                                    mapSingle.put("wx_banner_income", singleSplit[x].trim());
-                                    break;
-                                case 11:
-                                    mapSingle.put("active_up", singleSplit[x].trim());
-                                    break;
-                                case 12:
-                                    mapSingle.put("wx_share_user", singleSplit[x].trim());
-                                    break;
-                                case 13:
-                                    mapSingle.put("wx_share_count", singleSplit[x].trim());
-                                    break;
-                                case 14:
-                                    mapSingle.put("wx_share_rate", singleSplit[x].trim());
-                                    break;
-                                case 15:
-                                    mapSingle.put("wx_remain2", singleSplit[x].trim());
-                                    break;
-                                case 16:
-                                    mapSingle.put("wx_avg_login", singleSplit[x].trim());
-                                    break;
-                                case 17:
-                                    mapSingle.put("wx_avg_online", singleSplit[x].trim());
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        String wxDate = mapSingle.get("wx_date");
-                        String wxAppid = mapSingle.get("wx_appid");
-                        String productName = mapSingle.get("product_name");
-                        String productType = mapSingle.get("product_type");
-                        String wxNew = mapSingle.get("wx_new");
-                        String wxActive = mapSingle.get("wx_active");
-                        String wxVisit = mapSingle.get("wx_visit");
-                        String recharge = mapSingle.get("recharge");
-                        String adRevenue = mapSingle.get("ad_revenue");
-                        String wxVideoIncome = mapSingle.get("wx_video_income");
-                        String wxBannerIncome = mapSingle.get("wx_banner_income");
-                        String activeUp = mapSingle.get("active_up");
-                        String wxShareUser = mapSingle.get("wx_share_user");
-                        String wxShareCount = mapSingle.get("wx_share_count");
-                        String wxShareRate = mapSingle.get("wx_share_rate");
-                        String wxRemain2 = mapSingle.get("wx_remain2");
-                        String wxAvgLogin = mapSingle.get("wx_avg_login");
-                        String wxAvgOnline = mapSingle.get("wx_avg_online");
-                        if (StringUtils.isNotBlank(wxDate)) {
-                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            Date date = null;
-                            try {
-                                date = simpleDateFormat.parse(wxDate);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            productData.setWxDate(date);
-                            productData.setWxAppid(wxAppid);
-                            productData.setProductName(productName);
-                            productData.setProgramType(Integer.valueOf(productType));
-                            productData.setWxNew(Integer.valueOf(wxNew));
-                            productData.setWxActive(Integer.valueOf(wxActive));
-                            productData.setWxVisit(Integer.valueOf(wxVisit));
-                            if (recharge != null) {
-                                productData.setRecharge(new BigDecimal(recharge));
-                            } else {
-                                productData.setRecharge(new BigDecimal(0));
-                            }
-                            productData.setAdRevenue(new BigDecimal(adRevenue));
-                            productData.setWxVideoIncome(new BigDecimal(wxVideoIncome));
-                            productData.setWxBannerIncome(new BigDecimal(wxBannerIncome));
-                            productData.setActiveUp(new BigDecimal(activeUp));
-                            productData.setWxShareUser(Integer.valueOf(wxShareUser));
-                            productData.setWxShareCount(Integer.valueOf(wxShareCount));
-                            productData.setWxShareRate(new BigDecimal(wxShareRate));
-                            productData.setWxRemain2(new BigDecimal(wxRemain2));
-                            productData.setWxAvgLogin(new BigDecimal(wxAvgLogin));
-                            productData.setWxAvgOnline(new BigDecimal(wxAvgOnline));
-                            productData.setInsertTime(new Timestamp(System.currentTimeMillis()));
-                            lists.add(productData);
-                        }
-                    }
-                }
-                productDataMapper.insertBatch(lists);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return 1;
-    }
-
-
-    public int insert(MinitjWx record) {
-        return minitjWxMapper.insert(record);
+        adValueWxAdUnits.forEach(adValueWxAdUnit -> adValueWxAdUnitMap.put(adValueWxAdUnit.getAppId() + "_" + adValueWxAdUnit.getDate(), adValueWxAdUnit));
+        return adValueWxAdUnitMap;
     }
 
     @Override
@@ -541,7 +455,7 @@ public class ProductDataService implements BaseService<ProductData> {
      * @return 返回结果
      */
     public GetResult searchProductData(String beginDate, String endDate, String productName, GetParameter parameter) {
-        ArrayList<ProductData> searchDatas = new ArrayList<>();
+        ArrayList<ProductData> searchDatas;
         if (StringUtils.isBlank(beginDate) && StringUtils.isBlank(endDate) && StringUtils.isBlank(productName)) {
             List<ProductData> productData = selectAll(parameter);
             filterData(productData, parameter);
@@ -558,8 +472,8 @@ public class ProductDataService implements BaseService<ProductData> {
     /**
      * 根据搜索条件查询
      *
-     * @param wxAppId
-     * @return
+     * @param wxAppId appId
+     * @return 查询结果
      */
     private ArrayList<ProductData> searchQuery(String wxAppId, String beginTime, String endTime) {
         ArrayList<ProductData> searchDatas = new ArrayList<>();
@@ -587,17 +501,7 @@ public class ProductDataService implements BaseService<ProductData> {
                         productData.setActiveUp(divide);
                     }
                     String wxRegJson = productData.getMinitjWx().getWxRegJson();
-                    JSONObject jsonObject = JSONObject.parseObject(wxRegJson);
-                    if (jsonObject != null) {
-                        Integer other = (Integer) jsonObject.get("其他");
-                        if (other != null) {
-                            productData.setWxRegOther(other);
-                        } else {
-                            productData.setWxRegOther(0);
-                        }
-                    } else {
-                        productData.setWxRegOther(0);
-                    }
+                    newSourceOther(productData, wxRegJson);
                     if (buyPay != null) {
                         productData.setBuyCost(buyPay.getBuyCost());
                         productData.setBuyClickPrice(buyPay.getBuyClickPrice());
@@ -606,6 +510,10 @@ public class ProductDataService implements BaseService<ProductData> {
                 } catch (Exception e) {
                     LOGGER.error("ProductDataService异常" + ", 详细信息:{}", e.getMessage());
                 }
+                String wxActiveSource = wxData.getWxActiveSource();
+                if (StringUtils.isNotBlank(wxActiveSource)) {
+                    activeSourceDetail(productData, wxActiveSource);
+                }
                 searchDatas.add(productData);
             }
         }
@@ -613,27 +521,52 @@ public class ProductDataService implements BaseService<ProductData> {
     }
 
     /**
-     * 删除产品数据小程序部分
+     * 用户来源明细-新增其他 数据处理
      *
-     * @param jsonObject
-     * @return
+     * @param productData productData
+     * @param wxRegJson   wxRegJson属性
      */
-    public PostResult delete(JSONObject jsonObject) {
-        PostResult result = new PostResult();
-        String deleteIds = jsonObject.getString("deleteIds");
-        String wxDate = jsonObject.getString("wxDate");
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = null;
-        try {
-            date = sdf.parse(wxDate);
-            int delete = this.productDataMapper.deleteByPrimaryKey(deleteIds, date);
-            if (delete <= 0) {
-                result.setSuccessed(false);
-                result.setMsg("操作失败，请联系管理员！");
+    private void newSourceOther(ProductData productData, String wxRegJson) {
+        JSONObject jsonObject = JSONObject.parseObject(wxRegJson);
+        if (jsonObject != null) {
+            Integer other = (Integer) jsonObject.get("其他");
+            Integer wxRegTaskBarMySp = (Integer) jsonObject.get("任务栏-我的小程序");
+            Integer wxRegFindMySp = (Integer) jsonObject.get("发现-我的小程序");
+            Integer wxRegTaskBarRecent = (Integer) jsonObject.get("任务栏-最近使用");
+            Integer wxRegOtherSp = (Integer) jsonObject.get("其他小程序");
+            Integer wxRegOtherReturn = (Integer) jsonObject.get("其他小程序返回");
+            if (other != null) {
+                productData.setWxRegOther(other);
+            } else {
+                productData.setWxRegOther(0);
             }
-        } catch (ParseException e) {
-            LOGGER.error("删除小程序产品数据异常" + ", 详细信息:{}", e.getMessage());
+
+            if (wxRegTaskBarMySp != null) {
+                productData.setWxRegTaskBarMySp(wxRegTaskBarMySp);
+            } else {
+                productData.setWxRegTaskBarMySp(0);
+            }
+            if (wxRegFindMySp != null) {
+                productData.setWxRegFindMySp(wxRegFindMySp);
+            } else {
+                productData.setWxRegFindMySp(0);
+            }
+            if (wxRegTaskBarRecent != null) {
+                productData.setWxRegTaskBarRecent(wxRegTaskBarRecent);
+            } else {
+                productData.setWxRegTaskBarRecent(0);
+            }
+            if (wxRegOtherSp != null) {
+                productData.setWxRegOtherSp(wxRegOtherSp);
+            } else {
+                productData.setWxRegOtherSp(0);
+            }
+            if (wxRegOtherReturn != null) {
+                productData.setWxRegOtherReturn(wxRegOtherReturn);
+            } else {
+                productData.setWxRegOtherReturn(0);
+            }
         }
-        return result;
     }
+
 }

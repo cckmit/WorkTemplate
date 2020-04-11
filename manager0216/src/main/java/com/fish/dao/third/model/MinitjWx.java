@@ -60,7 +60,7 @@ public class MinitjWx {
     private Date wxUpdatetime;
 
     private String wxRegJson;
-
+    private String wxActiveSource;
     /**
      * 产品数
      */
@@ -300,6 +300,14 @@ public class MinitjWx {
 
     public void setWxRegJson(String wxRegJson) {
         this.wxRegJson = wxRegJson == null ? null : wxRegJson.trim();
+    }
+
+    public String getWxActiveSource() {
+        return wxActiveSource;
+    }
+
+    public void setWxActiveSource(String wxActiveSource) {
+        this.wxActiveSource = wxActiveSource;
     }
 
     public Integer getProductCount() {

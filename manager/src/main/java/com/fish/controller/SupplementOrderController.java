@@ -27,30 +27,47 @@ public class SupplementOrderController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询展示所有产品信息
+    /**
+     * 查询补单数据
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/supplementorder")
     public GetResult getSupplementOrder(GetParameter parameter) {
         return supplementOrderService.findAll(parameter);
     }
 
-    //新增产品赛制信息
+    /**
+     * 补单
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/supplementorder/new")
     public PostResult insertSupplementOrder(@RequestBody SupplementOrder productInfo) {
         PostResult result = new PostResult();
-
         int count = supplementOrderService.insert(productInfo);
         if (count == 1) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("user_value", baseConfig.getFlushCache());
-
-            result.setMsg("操作成功" + res);
-            return result;
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
+
+    /**
+     * 查询用户当前金币
+     */
+    @ResponseBody
+    @GetMapping(value = "/supplementorder/query")
+    public SupplementOrder selectCurrentCoinByUid(@RequestParam("uid") String uid) {
+        return supplementOrderService.selectCurrentCoin(uid);
+    }
+
 
 }

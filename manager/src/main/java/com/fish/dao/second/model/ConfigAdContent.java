@@ -16,17 +16,30 @@ public class ConfigAdContent {
     private int ddAdType;
     private int ddWeight;
     private String ddImageUrl;
+    private String ddVideoUrl;
     private String ddTargetAppId;
     private String ddTargetAppName;
+    private String ddTargetAppDesc;
+    private int ddTargetAppType;
+    private String ddTargetEnvVersion;
+    private String ddTargetAppPage;
     private String ddPromoteAppId;
     private String ddPromoteAppName;
+    private int ddPromoteAppType;
+    private String ddPromoteEnvVersion;
+    private String ddPromoteAppPage;
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm")
     private Date updateTime;
 
     /**
-     * 展示数据-由ddAdType关联得到的广告类型名称
+     * 展示数据-由ddAdType关联得到的广告内容名称
      */
     private String adTypeName;
+
+    /**
+     * 展示数据-ddAdType 对应名称
+     */
+    private String adType;
 
     public int getDdId() { return ddId; }
 
@@ -44,6 +57,14 @@ public class ConfigAdContent {
 
     public void setDdImageUrl(String ddImageUrl) { this.ddImageUrl = ddImageUrl; }
 
+    public String getDdVideoUrl() {
+        return ddVideoUrl;
+    }
+
+    public void setDdVideoUrl(String ddVideoUrl) {
+        this.ddVideoUrl = ddVideoUrl;
+    }
+
     public String getDdTargetAppId() { return ddTargetAppId; }
 
     public void setDdTargetAppId(String ddTargetAppId) { this.ddTargetAppId = ddTargetAppId; }
@@ -51,6 +72,26 @@ public class ConfigAdContent {
     public String getDdTargetAppName() { return ddTargetAppName; }
 
     public void setDdTargetAppName(String ddTargetAppName) { this.ddTargetAppName = ddTargetAppName;}
+
+    public String getDdTargetAppDesc() {
+        return ddTargetAppDesc;
+    }
+
+    public void setDdTargetAppDesc(String ddTargetAppDesc) {
+        this.ddTargetAppDesc = ddTargetAppDesc;
+    }
+
+    public int getDdTargetAppType() { return ddTargetAppType; }
+
+    public void setDdTargetAppType(int ddTargetAppType) { this.ddTargetAppType = ddTargetAppType; }
+
+    public String getDdTargetEnvVersion() { return ddTargetEnvVersion; }
+
+    public void setDdTargetEnvVersion(String ddTargetEnvVersion) { this.ddTargetEnvVersion = ddTargetEnvVersion; }
+
+    public String getDdTargetAppPage() { return ddTargetAppPage; }
+
+    public void setDdTargetAppPage(String ddTargetAppPage) { this.ddTargetAppPage = ddTargetAppPage; }
 
     public String getDdPromoteAppId() { return ddPromoteAppId; }
 
@@ -68,4 +109,23 @@ public class ConfigAdContent {
 
     public void setAdTypeName(String adTypeName) { this.adTypeName = adTypeName; }
 
+    public int getDdPromoteAppType() { return ddPromoteAppType; }
+
+    public void setDdPromoteAppType(int ddPromoteAppType) { this.ddPromoteAppType = ddPromoteAppType; }
+
+    public String getDdPromoteEnvVersion() { return ddPromoteEnvVersion; }
+
+    public void setDdPromoteEnvVersion(String ddPromoteEnvVersion) { this.ddPromoteEnvVersion = ddPromoteEnvVersion; }
+
+    public String getDdPromoteAppPage() { return ddPromoteAppPage; }
+
+    public void setDdPromoteAppPage(String ddPromoteAppPage) { this.ddPromoteAppPage = ddPromoteAppPage; }
+
+    public String getAdType() {
+        return adType;
+    }
+
+    public void setAdType(String adType) {
+        this.adType = adType;
+    }
 }

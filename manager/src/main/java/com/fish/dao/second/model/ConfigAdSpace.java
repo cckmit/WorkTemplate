@@ -16,9 +16,6 @@ public class ConfigAdSpace {
     private String ddName;
     private int ddAdType;
     private boolean ddAllowedOperation;
-    private int ddWeight;
-    private int ddStrategyId;
-    private String ddStrategyValue;
     private String ddAdContents;
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm")
     private Date updateTime;
@@ -36,6 +33,7 @@ public class ConfigAdSpace {
      * 展示数据-由ddId关联的广告策略名称
      */
     private String adStrategyNames;
+
     public int getDdId() { return ddId; }
 
     public void setDdId(int ddId) { this.ddId = ddId; }
@@ -52,31 +50,11 @@ public class ConfigAdSpace {
 
     public void setDdAllowedOperation(boolean ddAllowedOperation) { this.ddAllowedOperation = ddAllowedOperation; }
 
-    public int getDdWeight() { return ddWeight; }
-
-    public void setDdWeight(int ddWeight) { this.ddWeight = ddWeight; }
-
-    public int getDdStrategyId() { return ddStrategyId; }
-
-    public void setDdStrategyId(int ddStrategyId) {
-        this.ddStrategyId = ddStrategyId;
-    }
-
-    public String getDdStrategyValue() {
-        return ddStrategyValue;
-    }
-
-    public void setDdStrategyValue(String ddStrategyValue) {
-        this.ddStrategyValue = ddStrategyValue;
-    }
-
     public String getDdAdContents() {
         return ddAdContents;
     }
 
-    public void setDdAdContents(String ddAdContents) {
-        this.ddAdContents = ddAdContents;
-    }
+    public void setDdAdContents(String ddAdContents) { this.ddAdContents = ddAdContents; }
 
     public Date getUpdateTime() {
         return updateTime;
@@ -98,7 +76,6 @@ public class ConfigAdSpace {
         return adStrategyNames;
     }
 
-    public void setAdStrategyNames(String adStrategyNames) {
-        this.adStrategyNames = adStrategyNames;
-    }
+    public void setAdStrategyNames(String adStrategyNames) { this.adStrategyNames = adStrategyNames; }
+
 }

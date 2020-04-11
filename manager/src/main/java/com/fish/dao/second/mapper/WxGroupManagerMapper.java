@@ -9,13 +9,6 @@ public interface WxGroupManagerMapper {
     List<WxGroupManager> selectAll();
 
     /**
-     *  关联查询查看所有信息
-     * @param sql
-     * @return
-     */
-    List<WxGroupManager> selectAllConfigSQL(String sql);
-
-    /**
      * 更新wx_group_manager表
      * @param wxGroupManager
      * @return
@@ -36,4 +29,12 @@ public interface WxGroupManagerMapper {
      */
     WxGroupManager selectQrCodeByPrimaryKey(WxGroupManager wxGroupManager);
 
+    /**
+     * 插入历史数据
+     * @param wxGroupManager
+     * @return
+     */
+    int insertHistoryDate(WxGroupManager wxGroupManager);
+
+    int changeStatus(Integer ddStatus);
 }

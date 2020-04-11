@@ -23,28 +23,26 @@
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
                             <label class="layui-form-label">游戏代号</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="gameId" name="gameId">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">游戏名称</label>
-                            <div class="layui-input-inline" style="width: 6rem;">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input type="text" class="layui-input" id="gameName" name="gameName">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="front-search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
-
                         <div class="layui-btn-group flushPictures" style="float: right">
                             <button type="button" class="layui-btn" data-type="flushPicture">刷新缩略图</button>
                         </div>
                     </form>
                 </div>
-
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
@@ -54,17 +52,19 @@
         </div>
     </div>
 </div>
-</div>
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/play';
+    const operatorurl = '../manage/play';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
@@ -76,30 +76,31 @@
             url: operatorurl + '?datagrid=data',
             cols: [[
                 {type: 'checkbox'},
-                {field: 'ddcode',width:'20%', title: '游戏ID', sort: true},
-                {field: 'ddname', width:'20%', title: '游戏名称', sort: true},
-                {field: 'ddshareres', width:'56%', title: '分享JSON', sort: true}
+                {field: 'ddcode', width: '20%', title: '游戏ID', sort: true},
+                {field: 'ddname', width: '20%', title: '游戏名称', sort: true},
+                {field: 'ddshareres', width: '56%', title: '分享JSON', sort: true}
             ]],
             page: true,
-            autoSort:false,
+            autoSort: false,
             toolbar: '#toolbar',
-            limit: 20,
-            defaultToolbar: ['filter', 'exports']
+            limit: 30,
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-120',
         });
         var $ = layui.$, active = {
             flushPicture: function () { //获取选中数据
-                var checkStatus = table.checkStatus('table-page');
-                var l = checkStatus.data.length;
-                data = checkStatus.data;
-                if (l == 0) {
+                let checkStatus = table.checkStatus('table-page');
+                let l = checkStatus.data.length;
+                let data = checkStatus.data;
+                if (l === 0) {
                     layer.msg('请选择一行');
                 } else {
-                    var arr =[];
-                    for(var i in data){
+                    var arr = [];
+                    for (var i in data) {
                         arr.push(data[i].ddcode);
                     }
-                    console.log("gameArry :" +  arr)
-                    var obj ={
+                    console.log("gameArry :" + arr)
+                    var obj = {
                         "gameList": arr
                     };
                     $.ajax({
@@ -121,7 +122,7 @@
             }
         };
         $('.flushPictures .layui-btn').on('click', function () {
-            var type = $(this).data('type');
+            let type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
         laydate.render({
@@ -138,12 +139,13 @@
 </script>
 
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;width: 350px;height: 200px;">
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
 
     <div class="layui-form-item layui-hide">
         <label class="layui-form-label"></label>
         <div class="layui-input-inline">
-            <input type="text" id="id" name="id"  autocomplete="off"
+            <input type="text" id="id" name="id" autocomplete="off"
                    class="layui-input ">
         </div>
     </div>
@@ -154,7 +156,6 @@
                    class="layui-input ">
         </div>
     </div>
-
     <div class="layui-form-item ">
         <label class="layui-form-label">游戏名称 *</label>
         <div class="layui-input-inline">

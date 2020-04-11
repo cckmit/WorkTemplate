@@ -24,25 +24,23 @@
                     <form class="layui-form-item" id="search-form">
                         <div class="layui-inline">
                             <label class="layui-form-label">配置时间</label>
-                            <div class="layui-input-inline">
+                            <div class="layui-input-inline" style="width: 14rem;">
                                 <input class="layui-input" id="times" name="times" placeholder=" - " type="text">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">赛制名称</label>
-                            <div class="layui-input-block">
-                                <div class="layui-input-inline" style="width: 12rem;"
-                                     id="roundcode" name="roundSelect" lay-filter="roundcode" autocomplete="off"></div>
-                            </div>
+                            <div class="layui-input-inline" style="width: 14rem;"
+                                 id="roundcode" name="roundSelect" lay-filter="roundcode" autocomplete="off"></div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-filter="front-search" lay-submit="">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-filter="front-search"
+                                    lay-submit="" style="width: 55px;">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
                 </div>
-
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" id="table-page" lay-filter="table-page"></table>
@@ -52,41 +50,41 @@
         </div>
     </div>
 </div>
-</div>
 
 <script id="toolbar" type="text/html">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/roundext';
+    const operatorurl = '../manage/roundext';
+    let codesArr = [];
+    let codeSelect = xmSelect.render({
+        el: '#roundcode',
+        name: 'roundSelect',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+            console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+        },
+    });
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
             layer = layui.layer,
             laydate = layui.laydate;
-        var $ = layui.$;
-        let codesArr = [];
-        var codeSelect = xmSelect.render({
-            el: '#roundcode',
-            name: 'roundSelect',
-            language: 'zn',
-            toolbar: {show: true},
-            data: [],
-            radio: true,
-            clickClose: true,
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
+        let $ = layui.$;
         $.ajax({
             type: "get",
             dataType: "json",
@@ -119,11 +117,11 @@
                     {
                         field: 'ddpriority', width: 120, title: '优先级', sort: true,
                         templet: (d) => {
-                            if (d.ddpriority == 1) {
+                            if (d.ddpriority === 1) {
                                 return "高";
-                            } else if (d.ddpriority == 2) {
+                            } else if (d.ddpriority === 2) {
                                 return "中";
-                            } else if (d.ddpriority == 3) {
+                            } else if (d.ddpriority === 3) {
                                 return "低";
                             } else {
                                 return "关闭";
@@ -134,7 +132,7 @@
                     {
                         field: 'ddgroup', width: 120, title: '赛制类型', sort: true,
                         templet: (d) => {
-                            if (d.ddgroup == true) {
+                            if (d.ddgroup === 1) {
                                 return "小程序";
                             } else {
                                 return "小游戏";
@@ -146,7 +144,9 @@
                 ]],
                 page: true,
                 toolbar: '#toolbar',
-                defaultToolbar: ['filter', 'exports']
+                limit: 30,
+                defaultToolbar: ['filter', 'exports'],
+                height: 'full-120'
             });
 
         laydate.render({
@@ -163,13 +163,15 @@
             console.log("content:" + content)
             if (typeof content == 'string') {
                 try {
-                    var obj=JSON.parse(content);
-                    if(typeof obj != 'object' && !obj ){
-                        alert("请检查赛场奖励JSON格式")
+                    let obj = JSON.parse(content);
+                    if (typeof obj == 'object' && obj) {
+                        return true;
+                    }else {
+                        UIConfig.warnMsg("请检查赛场奖励JSON格式");
                         return false;
                     }
-                }catch(e) {
-                    alert("请检查赛场奖励JSON格式")
+                } catch (e) {
+                    UIConfig.warnMsg("请检查赛场奖励JSON格式");
                     return false;
                 }
             }
@@ -180,9 +182,8 @@
 </script>
 
 <!-- 表单元素 -->
-<form class="layui-form layui-hide" id="form_table" lay-filter="form_table" style="padding: 20px 0 0 0;width: 400px;height: 450px;">
-
-
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
     <div class="layui-form-item">
         <label class="layui-form-label">赛场编号</label>
         <div class="layui-input-inline">
@@ -207,13 +208,6 @@
             </select>
         </div>
     </div>
-
-    <!--    <div class="layui-form-item ">-->
-    <!--        <label class="layui-form-label">赛场状态</label>-->
-    <!--        <div class="layui-input-inline">-->
-    <!--            <input type="checkbox" name="ddstate" lay-skin="switch" checked="checked">-->
-    <!--        </div>-->
-    <!--    </div>-->
     <div class="layui-form-item ">
         <label class="layui-form-label">原时长</label>
         <div class="layui-input-inline">
@@ -233,8 +227,8 @@
         <label class="layui-form-label">赛制类型</label>
         <div class="layui-input-inline">
             <select class="layui-select" id="ddgroup" name="ddgroup">
-                <option value=true>小程序</option>
-                <option value=false>小游戏</option>
+                <option value=1>小程序</option>
+                <option value=0>小游戏</option>
             </select>
         </div>
     </div>
@@ -245,8 +239,6 @@
         <span>格式:["名次#名次#类型#数值"]</span><br>
         <span>["1#1#rmb#30","2#2#rmb#10"]</span>
     </div>
-
-
     <div class="layui-form-item layui-hide">
         <input id="front-submit" lay-filter="front-submit" lay-submit type="button" value="确认">
     </div>

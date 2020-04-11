@@ -48,12 +48,7 @@
                             </button>
                         </div>
                     </form>
-                    <div class="layui-upload">
-                        <button type="button" class="layui-btn" id="test8">上传小程序数据</button>
-                        <button type="button" lay-submit="" class="layui-btn layui-btn-warm" lay-filter="export">
-                            <i class="layui-icon"></i>导出模板
-                        </button>
-                    </div>
+
                 </div>
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
@@ -66,151 +61,13 @@
 
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;width: 600px;">
-    <div class="layui-form-item ">
-        <label class="layui-form-label">日期</label>
-        <div class="layui-input-inline">
-            <input type="date" id="wxDate" name="wxDate" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">appId</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxAppid" name="wxAppid" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">产品名称</label>
-        <div class="layui-input-inline">
-            <input type="text" id="productName" name="productName" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">产品类型</label>
-        <div class="layui-input-inline">
-            <select name="programType" id="programType" lay-verify="required" autocomplete="off">
-                <option value=0>小游戏</option>
-                <option value=1>小程序</option>
-            </select>
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">新增</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxNew" name="wxNew" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">活跃</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxActive" name="wxActive" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">访问次数</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxVisit" name="wxVisit" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">充值</label>
-        <div class="layui-input-inline">
-            <input type="text" id="recharge" name="recharge" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">广告收入</label>
-        <div class="layui-input-inline">
-            <input type="text" id="adRevenue" name="adRevenue" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">视频收入</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxVideoIncome" name="wxVideoIncome" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">banner收入</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxBannerIncome" name="wxBannerIncome" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">活跃ARPU</label>
-        <div class="layui-input-inline">
-            <input type="text" id="activeUp" name="activeUp" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">分享人数</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxShareUser" name="wxShareUser" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">分享次数</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxShareCount" name="wxShareCount" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">分享率</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxShareRate" name="wxShareRate" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">次留</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxRemain2" name="wxRemain2" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">人均登录次数</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxAvgLogin" name="wxAvgLogin" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">人均在线时长</label>
-        <div class="layui-input-inline">
-            <input type="text" id="wxAvgOnline" name="wxAvgOnline" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item layui-hide">
-        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">
-    </div>
+
 </form>
 <script src="../layuiadmin/layui/layui.js"></script>
 <script src="../layuiadmin/modules/operation.js"></script>
 <script src="../layuiadmin/xm-select.js"></script>
 <script src="../layuiadmin/layui_exts/excel.js"></script>
 <script type="text/html" id="toolbar">
-    <div class="layui-table-tool-temp">
-        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
-        </button>
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
-        </button>
-        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
-        </button>
-    </div>
 </script>
 <script>
     const operatorurl = '../manage/productdata';
@@ -231,11 +88,11 @@
         filterDone: function (val, list) {
         },
     });
-    layui.use(['table', 'laydate', 'form', 'layer', 'upload'], function () {
+    layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
             layer = layui.layer,
-            laydate = layui.laydate, upload = layui.upload;
+            laydate = layui.laydate;
         var $ = layui.$;
         $(() => {
             $.ajax({
@@ -244,7 +101,6 @@
                 url: '../manage/roundmatch/appname',
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
-                        //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
                         let type;
                         if (val.programType === 0) {
                             type = "小游戏";
@@ -303,7 +159,16 @@
                             }
                         }
                     },
-                    {field: 'adRevenue', width: 120, title: '广告收入', sort: true},
+                    {
+                        field: 'adRevenue', width: 120, title: '广告收入', sort: true,
+                        templet: (d) => {
+                            if (d.adRevenue != null && d.adRevenue !== "null") {
+                                return d.adRevenue;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
                     {
                         field: 'screenIncome', width: 120, title: '插屏总收入', sort: true,
                         templet: (d) => {
@@ -314,9 +179,36 @@
                             }
                         }
                     },
-                    {field: 'wxVideoIncome', width: 120, title: '视频收入', sort: true},
-                    {field: 'wxBannerIncome', width: 120, title: 'banner收入', sort: true},
-                    {field: 'activeUp', width: 120, title: '活跃ARPU', sort: true},
+                    {
+                        field: 'wxVideoIncome', width: 120, title: '视频收入', sort: true,
+                        templet: (d) => {
+                            if (d.wxVideoIncome != null && d.wxVideoIncome !== "null") {
+                                return d.wxVideoIncome;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxBannerIncome', width: 120, title: 'banner收入', sort: true,
+                        templet: (d) => {
+                            if (d.wxBannerIncome != null && d.wxBannerIncome !== "null") {
+                                return d.wxBannerIncome;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
+                    {
+                        field: 'activeUp', width: 120, title: '活跃ARPU', sort: true,
+                        templet: (d) => {
+                            if (d.activeUp != null && d.activeUp !== "null") {
+                                return d.activeUp;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
                     {field: 'wxShareUser', width: 120, title: '分享人数', sort: true},
                     {field: 'wxShareCount', width: 120, title: '分享次数', sort: true},
                     {
@@ -366,34 +258,10 @@
             page: true,
             toolbar: '#toolbar',
             limit: 20,
-            defaultToolbar: ['filter', 'exports'],
+            defaultToolbar: ['filter'],
             statusName: 'status',//数据状态的字段名称，默认：code
             statusCode: 200, //成功的状态码，默认：0
-            height: 'full-180'
-        });
-        //创建一个上传组件
-        let uploadFile = upload.render({
-            elem: '#test8',
-            url: '../manage/productdata/uploadExcel',
-            size: 1024,
-            accept: "file",
-            exts: 'xls|xlsx|xlsm|xlt|xltx|xltm'
-            , done: function (res) { //上传后的回调
-                console.log(res);
-                layer.msg('导入成功');
-                setTimeout(function () {
-                    window.location.reload();
-                }, 800);
-            }
-        })
-        form.on('submit(export)', function () {
-            let excel = layui.excel;
-            let excelDate = [['日期', 'AppId', '产品名称', '产品类型', '新增', '活跃', '访问次数', '充值', '广告收入', '视频收入', 'banner收入',
-                '活跃ARPU', '分享人数', '分享次数', '分享率', '次留', '人均登录次数', '人均在线时长'
-            ]];
-            excel.exportExcel({
-                sheet1: excelDate
-            }, '导入模板.xlsx', 'xlsx');
+            height: 'full-120'
         });
 
         laydate.render({

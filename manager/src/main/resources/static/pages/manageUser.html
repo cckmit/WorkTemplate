@@ -26,13 +26,15 @@
         </div>
     </div>
 </div>
-</div>
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
-        <div class="layui-inline" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></div>
-        <div class="layui-inline" lay-event="update"><i class="layui-icon layui-icon-edit"></i></div>
-        <div class="layui-inline" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></div>
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
     </div>
 </script>
 <script>
@@ -70,7 +72,7 @@
             limit: 30,
             defaultToolbar: ['filter', 'exports']
         });
-    })
+    });
 
     /**
      * 用户管理需要特殊处理的私有方法
@@ -137,29 +139,29 @@
 </script>
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
-      style="padding: 20px 0 0 0;width: 400px;height: 350px;">
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
     <div class="layui-form-item layui-hide">
-        <label class="layui-form-label">用户ID *</label>
+        <label class="layui-form-label">用户ID</label>
         <div class="layui-input-inline ">
             <input type="text" id="id" name="id">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">用户名 *</label>
+        <label class="layui-form-label">用户名</label>
         <div class="layui-input-inline ">
             <input type="text" id="userName" name="userName" lay-verify="required" autocomplete="off"
                    class="layui-input ">
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">密码 </label>
+        <label class="layui-form-label">密码</label>
         <div class="layui-input-inline">
             <input type="text" id="password" name="password" class="layui-input" autocomplete="off"
                    placeholder="为空不会修改密码">
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">昵称 *</label>
+        <label class="layui-form-label">昵称</label>
         <div class="layui-input-inline">
             <input type="text" id="nickName" name="nickName" lay-verify="required" autocomplete="off"
                    class="layui-input ">
@@ -172,17 +174,15 @@
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">授权角色 *</label>
-        <div class="layui-input-block">
+        <label class="layui-form-label">授权角色</label>
+        <div class="layui-input-inline">
             <div id="rolesTree"></div>
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">允许登录 *</label>
+        <label class="layui-form-label">允许登录</label>
         <div class="layui-input-inline">
-            <div class="layui-input-block">
-                <input type="checkbox" id="allowedLogin" name="allowedLogin" lay-skin="switch">
-            </div>
+            <input type="checkbox" id="allowedLogin" name="allowedLogin" lay-skin="switch">
         </div>
     </div>
     <div class="layui-form-item layui-hide" style="text-align:center;">

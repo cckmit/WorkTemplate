@@ -1,29 +1,34 @@
 package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fish.dao.second.mapper.ConfigAdContentMapper;
 import com.fish.dao.second.mapper.ConfigAdStrategyMapper;
-import com.fish.dao.second.model.ConfigAdStrategy;
 import com.fish.dao.second.model.ConfigAdStrategy;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
-import com.fish.service.cache.CacheService;
+import com.fish.utils.BaseConfig;
+import com.fish.utils.ReadJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author CC ccheng0725@outlook.com
  * @date 2020-02-28 19:07
  */
 @Service
-public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
+public class ConfigAdStrategyService extends CacheService<ConfigAdStrategy> implements BaseService<ConfigAdStrategy> {
 
     @Autowired
     ConfigAdStrategyMapper adStrategyMapper;
+
     @Autowired
-    CacheService cacheService;
+    BaseConfig baseConfig;
+
+    @Autowired
+    ConfigAdStrategyService adStrategyService;
+
     @Override
     public void setDefaultSort(GetParameter parameter) { }
 
@@ -34,7 +39,10 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
     public boolean removeIf(ConfigAdStrategy configAdContent, JSONObject searchData) { return false; }
 
     @Override
-    public List selectAll(GetParameter parameter) { return this.adStrategyMapper.selectAll(); }
+    public List selectAll(GetParameter parameter) {
+        List<ConfigAdStrategy> list = this.adStrategyMapper.selectAll();
+        return this.adStrategyMapper.selectAll();
+    }
 
     /**
      * 新增广告内容
@@ -48,8 +56,9 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
         if (id <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdStrategys();
         return result;
     }
 
@@ -65,37 +74,49 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
         if (update <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdStrategys();
         return result;
     }
 
     /**
      * 根据ID删除广告内容
      *
-     * @param id
+     * @param deleteIds
      * @return
      */
-    public PostResult delete(int id) {
+    public PostResult delete(String deleteIds) {
         PostResult result = new PostResult();
-        int delete = this.adStrategyMapper.delete(id);
+        int delete = this.adStrategyMapper.delete(deleteIds);
         if (delete <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdStrategys();
         return result;
     }
 
     public List<ConfigAdStrategy> selectAllAdStrategy(GetParameter getParameter) {
-        {
-            List<ConfigAdStrategy> configAdadStrategys = adStrategyMapper.selectAll();
-            for (ConfigAdStrategy configAdStrategy : configAdadStrategys) {
-                Integer ddId = configAdStrategy.getDdId();
-                String ddName = configAdStrategy.getDdName();
-                configAdStrategy.setDdName(ddId + "-" + ddName);
-            }
-            return configAdadStrategys;
+        List<ConfigAdStrategy> configAdStrategies = adStrategyMapper.selectAll();
+        for (ConfigAdStrategy configAdStrategy : configAdStrategies) {
+            Integer ddId = configAdStrategy.getDdId();
+            String ddName = configAdStrategy.getDdName();
+            configAdStrategy.setDdName(ddId + "-" + ddName);
         }
+        return configAdStrategies;
     }
+
+    @Override
+    void updateAllCache(ConcurrentHashMap<String, ConfigAdStrategy> map) {
+        List<ConfigAdStrategy> list = this.adStrategyMapper.selectAll();
+        list.forEach(adStrategy -> map.put(String.valueOf(adStrategy.getDdId()), adStrategy));
+    }
+
+    @Override
+    ConfigAdStrategy queryEntity(Class<ConfigAdStrategy> clazz, String key) {
+        return this.adStrategyMapper.select(Integer.valueOf(key));
+    }
+
 }

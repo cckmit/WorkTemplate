@@ -136,13 +136,87 @@
                     {field: 'wxDate', width: 120, title: '日期', sort: true},
                     {field: 'productName', width: 120, title: '产品名称', sort: true},
                     {field: 'wxNew', width: 120, title: '注册用户数', sort: true},
-                    {field: 'wxRegAd', width: 120, title: '新增-广告', sort: true},
-                    {field: 'wxRegJump', width: 120, title: '新增-跳转', sort: true},
-                    {field: 'wxRegSearch', width: 120, title: '新增-搜索', sort: true},
-                    {field: 'wxRegApp', width: 120, title: '新增-APP', sort: true},
-                    {field: 'wxRegCode', width: 120, title: '新增-二维码', sort: true},
-                    {field: 'wxRegSession', width: 120, title: '新增-会话', sort: true},
-                    {field: 'wxRegOther', width: 120, title: '新增-其他', sort: true},
+                    {
+                        field: 'wxRegAd', width: 100, title: '广告', sort: true,
+                        templet: (d) => {
+                            if (d.wxRegAd != null && d.wxRegAd !== "") {
+                                return d.wxRegAd;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxRegTaskBarMySp', width: 170, title: '任务栏-我的小程序', sort: true,
+                        templet: (d) => {
+                            if (d.wxRegTaskBarMySp != null && d.wxRegTaskBarMySp !== "") {
+                                return d.wxRegTaskBarMySp;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxRegFindMySp', width: 120, title: '发现-小程序', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveFindMySp != null && d.wxActiveFindMySp !== "") {
+                                return d.wxActiveFindMySp;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxRegTaskBarRecent', width: 160, title: '任务栏-最近使用', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveTaskBarRecent != null && d.wxActiveTaskBarRecent !== "") {
+                                return d.wxActiveTaskBarRecent;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxRegOther', width: 100, title: '其他', sort: true,
+                        templet: (d) => {
+                            if (d.wxRegOther != null && d.wxRegOther !== "") {
+                                return d.wxRegOther;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxRegOtherSp', width: 120, title: '其他小程序', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveOtherSp != null && d.wxActiveOtherSp !== "") {
+                                return d.wxActiveOtherSp;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxRegOtherReturn', width: 160, title: '其他小程序返回', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveOtherReturn != null && d.wxActiveOtherReturn !== "") {
+                                return d.wxActiveOtherReturn;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxRegSearch', width: 100, title: '搜索', sort: true,
+                        templet: (d) => {
+                            if (d.wxRegSearch != null && d.wxRegSearch !== "") {
+                                return d.wxRegSearch;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+
                     {field: 'wxRegJson', width: 450, title: '注册用户来源', sort: true}
                 ]
             ],

@@ -26,14 +26,24 @@ public class Fc_UserSourceController {
     @Autowired
     ProductDataService fcProductDataService;
 
-    //查询用户来源信息
+    /**
+     * 查询用户来源信息
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/usersource")
     public GetResult getUserSource(GetParameter parameter) {
         return fcProductDataService.findAll(parameter);
     }
 
-    //搜索用户来源信息
+    /**
+     * 搜索用户来源信息
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/usersource/search")
     public GetResult searchUserSource(HttpServletRequest request, GetParameter parameter) {

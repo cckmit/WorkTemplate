@@ -141,7 +141,7 @@
         <appender-ref ref="MYBATIS" />
     </logger>
 
-    <logger name="com.fish.dao.primary.mapper" level="trace" additivity="false">
+    <logger name="com.fish.dao.second.mapper" level="trace" additivity="false">
         <appender-ref ref="MYBATIS"/>
     </logger>
 

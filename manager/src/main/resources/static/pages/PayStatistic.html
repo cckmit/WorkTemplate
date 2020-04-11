@@ -30,19 +30,19 @@
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">查询时间:</label>
-                            <div class="layui-input-inline">
+                            <div class="layui-input-inline" style="width:14rem;">
                                 <input type="text" class="layui-input" id="start" name="start" placeholder=" - ">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">结束时间:</label>
-                            <div class="layui-input-inline">
+                            <div class="layui-input-inline" style="width:14rem;">
                                 <input type="text" class="layui-input" id="end" name="end" placeholder=" - ">
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">类型</label>
-                            <div class="layui-input-inline">
+                            <div class="layui-input-inline" style="width:14rem;">
                                 <select name="payState" id="payState">
                                     <option value="">全部</option>
                                     <option value=0>小游戏</option>
@@ -52,8 +52,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="search">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
                     </form>
@@ -67,14 +67,13 @@
         </div>
     </div>
 </div>
-</div>
 
 <script type="text/html" id="toolbar">
     <div class="layui-table-tool-temp">
     </div>
 </script>
 <script>
-    var operatorurl = '../manage/statistic';
+    const operatorurl = '../manage/statistic';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
             form = layui.form,
@@ -135,8 +134,18 @@
             var field = data.field;
             var $1 = $.trim($('#start').val());
             var $2 = $.trim($("#end").val());
-            if(($1 !=="" && $2 === "") || ($1 ==="" && $2 !== "")){
-                layer.msg('请把查询时间和结束时间填写完整',function() {time:1500});
+            if (($1 !== "" && $2 === "") || ($1 === "" && $2 !== "")) {
+                layer.msg('请把查询时间和结束时间填写完整', function () {
+                    time:1500
+                });
+                return false;
+            }
+            let start = new Date($('#start').val()).getTime();
+            let endTime = new Date($('#end').val()).getTime();
+            if (start > endTime) {
+                layer.msg('结束时间不能小于开始时间', function () {
+                    time:1500
+                });
                 return false;
             }
             //执行重载
@@ -175,8 +184,10 @@
             page: true,
             toolbar: '#toolbar',
             autoSort: false,
-            defaultToolbar: ['filter', 'exports']
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-160'
         });
+
         // 表格重载
         function table_reload(where_data) {
             if (where_data instanceof Object) {
@@ -191,31 +202,50 @@
                 }
             });
         }
+
         laydate.render({
             elem: '#start',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'yyyy-MM-dd HH:mm',
+            trigger: 'click',
+            done: function (value, date, endDate) {
+                let startDate = new Date(value).getTime();
+                let endTime = new Date($('#end').val()).getTime();
+                if (endTime < startDate) {
+                    layer.msg('结束时间不能小于开始时间');
+                    $('#start').val($('#end').val());
+                }
+            }
         });
         laydate.render({
             elem: '#end',
             type: 'datetime',
-            format: 'yyyy-MM-dd HH:mm'
+            format: 'yyyy-MM-dd HH:mm',
+            trigger: 'click',
+            done: function (value, date, endDate) {
+                let startDate = new Date($('#start').val()).getTime();
+                let endTime = new Date(value).getTime();
+                if (endTime < startDate) {
+                    layer.msg('结束时间不能小于开始时间');
+                    $('#end').val($('#start').val());
+                }
+            }
+
         });
         //头工具栏事件
         table.on('toolbar(table-page)', function (obj) {
-            var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
-            switch (obj.event) {
-                case 'getCheckData':
-                    var data = checkStatus.data;  //获取选中行数据
-                    layer.alert(JSON.stringify(data));
-                    break;
-            };
+            let checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
+            if (obj.event === 'getCheckData') {
+                let data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
         });
     })
 </script>
 
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;">
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">
     </div>

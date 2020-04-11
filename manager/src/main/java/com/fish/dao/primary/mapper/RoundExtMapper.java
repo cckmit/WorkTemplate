@@ -5,8 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface RoundExtMapper
-{
+public interface RoundExtMapper {
     int deleteByPrimaryKey(String ddcode);
 
     int insert(RoundExt record);

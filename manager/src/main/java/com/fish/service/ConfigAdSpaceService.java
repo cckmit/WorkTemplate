@@ -1,18 +1,19 @@
 package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fish.dao.second.mapper.ConfigAdContentMapper;
 import com.fish.dao.second.mapper.ConfigAdSpaceMapper;
 import com.fish.dao.second.model.ConfigAdContent;
 import com.fish.dao.second.model.ConfigAdSpace;
-import com.fish.dao.second.model.ConfigAdStrategy;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
 import com.fish.service.cache.CacheService;
+import com.fish.utils.BaseConfig;
+import com.fish.utils.ReadJsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +27,13 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
     ConfigAdSpaceMapper adSpaceMapper;
 
     @Autowired
+    ConfigAdContentMapper adContentMapper;
+
+    @Autowired
     CacheService cacheService;
+
+    @Autowired
+    BaseConfig baseConfig;
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
@@ -43,36 +50,38 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
     }
 
     @Override
-    public List selectAll(GetParameter parameter) {
-        List<ConfigAdSpace> configAdSpaces = adSpaceMapper.selectAll();
-        for (ConfigAdSpace configAdSpace : configAdSpaces) {
-            String ddAdContents = configAdSpace.getDdAdContents();
+    public List<ConfigAdSpace> selectAll(GetParameter parameter) {
+        // 数据查询
+        ConfigAdSpace adSpace = new ConfigAdSpace();
+        if (StringUtils.isNotBlank(parameter.getSearchData())) {
+            JSONObject searchObject = JSONObject.parseObject(parameter.getSearchData());
+            String adType = searchObject.getString("adType");
+            adSpace.setDdAdType(StringUtils.isNotBlank(adType) ? Integer.parseInt(adType) : 0);
+            adSpace.setDdName(searchObject.getString("name"));
+        }
+        List<ConfigAdSpace> configAdSpaces = this.adSpaceMapper.selectAll(adSpace);
 
-            String[] splitContents = ddAdContents.split(",");
-            ArrayList<String> adContents = new ArrayList<>();
-            if (splitContents.length == 1) {
-                ConfigAdContent configAdContent = cacheService.getConfigAdContents(Integer.parseInt(splitContents[0]));
-                if (configAdContent != null) {
-                    configAdSpace.setDdAdContents(configAdContent.getDdId() + "-" + configAdContent.getDdTargetAppName());
-                }
-            } else {
-                for (int i = 0; i < splitContents.length; i++) {
-                    ConfigAdContent configAdContent = cacheService.getConfigAdContents(Integer.valueOf(splitContents[i]));
-                    if (configAdContent != null) {
-                        adContents.add(configAdContent.getDdId() + "-" + configAdContent.getDdTargetAppName());
+        // 数据处理
+        for (ConfigAdSpace configAdSpace : configAdSpaces) {
+            // 根据广告内容ID，拼接广告名称
+            if (StringUtils.isNotBlank(configAdSpace.getDdAdContents())) {
+                String ddAdContents = null;
+                String[] splitContents = configAdSpace.getDdAdContents().split(",");
+                //处理广告内容数据
+                for (String contentId : splitContents) {
+                    ConfigAdContent configAdContents = this.cacheService.getConfigAdContents(
+                            Integer.parseInt(contentId));
+                    //防止表内没有对应ID数据异常
+                    if (configAdContents != null) {
+                        String contentName = configAdContents.getDdTargetAppName();
+                        if (StringUtils.isBlank(ddAdContents)) {
+                            ddAdContents = contentId + "-" + contentName;
+                        } else {
+                            ddAdContents += ", " + contentId + "-" + contentName;
+                        }
                     }
                 }
-                if (adContents.size() > 0) {
-                    String adContent = adContents.toString();
-                    configAdSpace.setDdAdContents(adContent.substring(1, adContent.length() - 1));
-                }
-            }
-            int ddStrategyId = configAdSpace.getDdStrategyId();
-            ConfigAdStrategy configAdStrategys = cacheService.getConfigAdStrategys(ddStrategyId);
-            if(configAdStrategys != null && StringUtils.isNotBlank(configAdStrategys.getDdName())){
-                configAdSpace.setAdStrategyNames(configAdStrategys.getDdName());
-            }else {
-                configAdSpace.setAdStrategyNames(configAdSpace.getDdStrategyId()+"");
+                configAdSpace.setAdContentNames(ddAdContents);
             }
         }
         return configAdSpaces;
@@ -90,6 +99,8 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
         if (id <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
         cacheService.updateAllConfigAdSpaces();
         return result;
@@ -107,6 +118,8 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
         if (update <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
         cacheService.updateAllConfigAdSpaces();
         return result;
@@ -115,15 +128,17 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
     /**
      * 根据ID删除广告内容
      *
-     * @param id
+     * @param deleteIds
      * @return
      */
-    public PostResult delete(int id) {
+    public PostResult delete(String deleteIds) {
         PostResult result = new PostResult();
-        int delete = this.adSpaceMapper.delete(id);
+        int delete = this.adSpaceMapper.delete(deleteIds);
         if (delete <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
         cacheService.updateAllConfigAdSpaces();
         return result;
@@ -133,17 +148,47 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
     /**
      * select组件数据
      *
-     * @param getParameter
      * @return
      */
-    public List<ConfigAdSpace> selectAllSpace(GetParameter getParameter) {
-        List<ConfigAdSpace> configAdSpaces = this.adSpaceMapper.selectAll();
+    public List<ConfigAdSpace> selectAllSpace() {
+        return this.adSpaceMapper.selectAll(new ConfigAdSpace());
+    }
 
-        for (ConfigAdSpace configAdSpace : configAdSpaces) {
-            Integer ddId = configAdSpace.getDdId();
-            String ddName = configAdSpace.getDdName();
-            configAdSpace.setDdName(ddId + "-" + ddName);
+    /**
+     * 通过ID查询查询指定广告内容
+     *
+     * @param id 广告位置ID
+     * @return 广告内容
+     */
+    public ConfigAdSpace getConfigAdSpace(int id) {
+        return id == 0 ? null : this.adSpaceMapper.select(id);
+    }
+
+    /**
+     * 通过广告位查询广告内容列表
+     *
+     * @param spaceId
+     * @return
+     */
+    public List<ConfigAdContent> selectContentBySpaceId(int spaceId) {
+        ConfigAdSpace configAdSpace = this.adSpaceMapper.select(spaceId);
+        if (configAdSpace != null && StringUtils.isNotBlank(configAdSpace.getDdAdContents())) {
+            return this.adContentMapper.selectContentBySpaceId(configAdSpace.getDdAdContents());
         }
-        return configAdSpaces;
+        return null;
+    }
+
+    /**
+     * 通过广告位查询广告内容列表
+     *
+     * @param spaceId
+     * @return
+     */
+    public List<ConfigAdContent> selectTypeContentBySpaceId(int spaceId) {
+        ConfigAdSpace configAdSpace = this.adSpaceMapper.select(spaceId);
+        if (configAdSpace != null) {
+            return this.adContentMapper.selectAllByType(configAdSpace.getDdAdType());
+        }
+        return null;
     }
 }

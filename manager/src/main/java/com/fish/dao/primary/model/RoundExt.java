@@ -11,7 +11,7 @@ public class RoundExt
     private String roundLength;
     private String ddcode;
 
-    private Boolean ddgroup;
+    private Integer ddgroup;
 
     private String ddname;
 
@@ -50,12 +50,12 @@ public class RoundExt
         this.ddcode = ddcode == null ? null : ddcode.trim();
     }
 
-    public Boolean getDdgroup()
+    public Integer getDdgroup()
     {
         return ddgroup;
     }
 
-    public void setDdgroup(Boolean ddgroup)
+    public void setDdgroup(Integer ddgroup)
     {
         this.ddgroup = ddgroup;
     }

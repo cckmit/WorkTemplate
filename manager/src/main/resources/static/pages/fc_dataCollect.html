@@ -19,82 +19,49 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-md12">
             <div class="layui-card">
-
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
-
-                        <div class="layui-inline">
-                            <label class="layui-form-label">开始日期</label>
-                            <div class="layui-input-inline" style="width: 7rem;">
-                                <input type="text" class="layui-input" id="beginDate" name="beginDate" placeholder=" - ">
-                            </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始日期</label>
+                        <div class="layui-input-inline" style="width: 14rem;">
+                            <input type="text" class="layui-input" id="beginDate" name="beginDate" placeholder=" - ">
                         </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label">结束日期</label>
-                            <div class="layui-input-inline" style="width: 7rem;">
-                                <input type="text" class="layui-input" id="endDate" name="endDate" placeholder=" - ">
-                            </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结束日期</label>
+                        <div class="layui-input-inline" style="width: 14rem;">
+                            <input type="text" class="layui-input" id="endDate" name="endDate" placeholder=" - ">
                         </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label">类型</label>
-                            <div class="layui-input-inline" style="width: 8rem;">
-                                <select name="type" id="type">
-                                    <option value="">全部</option>
-                                    <option value=0>小游戏</option>
-                                    <option value=1>小程序</option>
-                                </select>
-                            </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-inline" style="width: 14rem;">
+                            <select name="type" id="type">
+                                <option value="">全部</option>
+                                <option value=0>小游戏</option>
+                                <option value=1>小程序</option>
+                            </select>
                         </div>
-
-                        <div class="layui-inline">
-                            <button id="submit" class="layui-btn" data-type="reload">
-                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
-                            </button>
-                        </div>
-                    <div class="layui-btn-group " style="float: right">
-                        <button type="button" class="layui-btn" onclick="flushCash()">数据刷新</button>
+                    </div>
+                    <div class="layui-inline">
+                        <button id="submit" class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
+                                lay-filter="front-search">
+                            <i class="layui-icon layuiadmin-button-btn"></i>查询
+                        </button>
                     </div>
                 </div>
                 <!-- 数据表格 -->
                 <div class="layui-card-body">
                     <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
-</div>
-<script type="text/javascript">
 
-    function flushCash() {
-        var $ = layui.jquery;
-        layer.confirm('是否进行数据刷新？', function (index) {
-            layer.close(layer.index);
-            var loading = layer.load(0, {
-                shade: false
-            });
-            $.ajax({
-                url: '../manage/datacollect/flush',
-                type: 'get',
-                success: function (result) {
-                    UIConfig.postMsg(result);
-                    layer.close(loading);
-                    if (result.successed) {
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 1000);
-                    }
-                }
-            });
-        });
-    }
-</script>
 <script>
-    var operatorurl = '../manage/datacollect';
+    const operatorurl = '../manage/datacollect';
     layui.use(['table', 'laydate', 'form', 'layer'], function () {
         var table = layui.table,
-            form = layui.form,
-            layer = layui.layer,
             laydate = layui.laydate;
         var $ = layui.$;
         table.render({
@@ -103,36 +70,46 @@
             cols: [
                 [
                     {type: 'checkbox'},
-                    {
-                        field: 'wxDate', width: 120, title: '日期', sort: true
-                    },
+                    {field: 'wxDate', width: 120, title: '日期', sort: true},
                     {field: 'productCount', width: 120, title: '产品数量', sort: true},
-                    {
-                        field: 'newCount', width: 120, title: '新增总数', sort: true
-
-                    },
-                    {
-                        field: 'activeCount', width: 120, title: '活跃总数', sort: true
-
-                    },
+                    {field: 'newCount', width: 120, title: '新增总数', sort: true},
+                    {field: 'activeCount', width: 120, title: '活跃总数', sort: true},
                     {field: 'revenueCount', width: 120, title: '总收入', sort: true},
+                    {
+                        field: 'rechargeCount', width: 120, title: '充值收入', sort: true,
+                        templet: (d) => {
+                            if (d.rechargeCount != null && d.rechargeCount !== "null") {
+                                return d.rechargeCount;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
                     {field: 'adRevenueCount', width: 120, title: '广告收入', sort: true},
+                    {field: 'bannerIncomeCount', width: 120, title: 'banner收入', sort: true},
+                    {field: 'videoIncomeCount', width: 120, title: '视频收入', sort: true},
                     {
-                        field: 'videoIncomeCount', width: 120, title: '视频收入', sort: true
-
+                        field: 'screenIncomeCount', width: 120, title: '插屏收入', sort: true,
+                        templet: (d) => {
+                            if (d.screenIncomeCount != null && d.screenIncomeCount !== "null") {
+                                return d.screenIncomeCount;
+                            } else {
+                                return "0";
+                            }
+                        }
                     },
                     {
-                        field: 'bannerIncomeCount', width: 120, title: 'banner收入', sort: true
+                        field: 'buyPay', width: 120, title: '买量支出', sort: true,
+                        templet: (d) => {
+                            if (d.buyPay == null) {
+                                return 0;
+                            } else {
+                                return d.buyPay;
+                            }
+                        }
                     },
-                    {
-                        field: 'buyPay', width: 120, title: '买量支出', sort: true
-                    },
-                    {
-                        field: 'shareUserCount', width: 120, title: '分享人数', sort: true
-                    },
-                    {
-                        field: 'shareCount', width: 120, title: '分享次数', sort: true
-                    },
+                    {field: 'shareUserCount', width: 120, title: '分享人数', sort: true},
+                    {field: 'shareCount', width: 120, title: '分享次数', sort: true},
                     {
                         field: 'shareRateCount', width: 120, title: '分享率', sort: true,
                         templet: (d) => {
@@ -147,73 +124,54 @@
             ],
             page: true,
             toolbar: '#toolbar',
-            limit: 20,
+            limit: 30,
             defaultToolbar: ['filter', 'exports'],
             statusName: 'status',//数据状态的字段名称，默认：code
-            statusCode: 200 //成功的状态码，默认：0
+            statusCode: 200,//成功的状态码，默认：0
+            height: 'full-120'
         });
 
-        $('#submit').click(function () {
-            let beginDate = $('#beginDate').val()
-            let endDate = $('#endDate').val()
-            let type = $('#type').val()
-            console.log("beginDate :" + beginDate)
-            console.log("endDate :" + endDate)
-            console.log("type :" + type)
-            table.reload('table-page', {
-                page: {
-                    curr: 1 //重新从第 1 页开始
-                    , limit: 20
-                },
-                url: '../manage/datacollect/search',
-                method: "post",
-                where: {
-                    "beginDate": beginDate,
-                    "endDate": endDate,
-                    "type": type
-                }
-                , page: {curr: 1}
-            });
-        })
 
         laydate.render({
             elem: '#beginDate',
-            format: 'yyyy-MM-dd'
+            format: 'yyyy-MM-dd',
+            trigger: 'click',
+            done: function (value, date, endDate) {
+                let startDate = new Date(value).getTime();
+                let endTime = new Date($('#endDate').val()).getTime();
+                if (endTime < startDate) {
+                    layer.msg('结束日期不能小于开始日期');
+                    $('#beginDate').val($('#endDate').val());
+                }
+            }
         });
         laydate.render({
             elem: '#endDate',
-            format: 'yyyy-MM-dd'
+            format: 'yyyy-MM-dd',
+            trigger: 'click',
+            done: function (value, date, endDate) {
+                let startDate = new Date($('#beginDate').val()).getTime();
+                let endTime = new Date(value).getTime();
+                if (endTime < startDate) {
+                    layer.msg('结束时间不能小于开始时间');
+                    $('#endDate').val($('#beginDate').val());
+                }
+            }
         });
-
+        $('#submit').on('click', function () {
+            let startDate = $('#beginDate').val();
+            let endTime = $('#endDate').val();
+            if ((startDate !== "" && endTime === "") || (startDate === "" && endTime !== "")) {
+                layer.msg('请将查询时间填写完整');
+                return false
+            }
+        });
     })
-
 </script>
 
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;">
-
-    <div class="layui-form-item layui-hide">
-        <label class="layui-form-label">id</label>
-        <div class="layui-input-inline">
-            <input type="text" id="id" name="id" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">游戏代号</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddcode" name="ddcode" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">分享率</label>
-        <div class="layui-input-inline">
-            <input type="text" id="shareRateCount" name="shareRateCount" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">
     </div>

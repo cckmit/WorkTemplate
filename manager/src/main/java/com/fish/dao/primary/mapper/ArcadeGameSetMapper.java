@@ -6,8 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface ArcadeGameSetMapper
-{
+public interface ArcadeGameSetMapper {
 
     List<ArcadeGameSet> selectAll();
 
@@ -22,8 +21,6 @@ public interface ArcadeGameSetMapper
     int insertSelective(ArcadeGameSet record);
 
     ArcadeGameSet selectByPrimaryKey(Integer id);
-
-    int updateByPrimaryKey(ArcadeGameSet record);
 
     int updateByPrimaryKeySelective(ArcadeGameSet record);
 }

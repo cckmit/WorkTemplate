@@ -1,5 +1,6 @@
 package com.fish.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.model.RoundExt;
 import com.fish.dao.primary.model.RoundMatch;
 import com.fish.dao.second.model.WxConfig;
@@ -71,12 +72,8 @@ public class RoundMatchController {
     }
 
     @PostMapping(value = "/roundmatch/delete")
-    public PostResult deleteRecharge(@RequestBody RoundMatch productInfo) {
-        PostResult result = new PostResult();
-        int count = 1;
-
-        result.setMsg("操作成功");
-        return result;
+    public PostResult deleteRoundMatch(@RequestBody JSONObject jsonObject) {
+        return this.roundMatchService.delete(jsonObject);
     }
 
     /**
@@ -90,17 +87,14 @@ public class RoundMatchController {
     public PostResult insertRoundExt(@RequestBody RoundMatch productInfo) {
         PostResult result = new PostResult();
         int count = roundMatchService.insert(productInfo);
-        //int count =1;
         if (count == 1) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_match", baseConfig.getFlushCache());
-
-            result.setMsg("操作成功" + res);
-            return result;
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
+        return result;
     }
 
     /**
@@ -114,16 +108,12 @@ public class RoundMatchController {
         PostResult result = new PostResult();
         int count = roundMatchService.updateByPrimaryKeySelective(productInfo);
         if (count != 0) {
+            //刷新业务表结构
             String res = ReadJsonUtil.flushTable("round_match", baseConfig.getFlushCache());
-
-            result.setMsg("操作成功" + res);
-            return result;
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
-            return result;
         }
-
+        return result;
     }
-
 }

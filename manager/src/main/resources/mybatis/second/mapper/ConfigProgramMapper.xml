@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigProgramMapper" >
+  <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigProgram" >
+    <id column="ddAppId" property="ddAppId" jdbcType="VARCHAR" />
+    <id column="ddMinVer" property="ddMinVer" jdbcType="VARCHAR" />
+    <result column="ddCode" property="ddCode" jdbcType="INTEGER" />
+    <result column="ddUrl" property="ddUrl" jdbcType="VARCHAR" />
+    <result column="times" property="times" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ddAppId, ddMinVer, ddCode, ddUrl, times
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="String" >
+    select 
+    <include refid="Base_Column_List" />
+    from config_program
+    where ddAppId = #{ddAppId,jdbcType=VARCHAR}
+      and ddMinVer = #{ddMinVer,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from config_program
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="String" >
+    delete from config_program
+    where ddAppId = #{ddAppId,jdbcType=VARCHAR}
+      and ddMinVer = #{ddMinVer,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.fish.dao.second.model.ConfigProgram" >
+    insert into config_program (ddAppId, ddMinVer, ddCode, 
+      ddUrl, times)
+    values (#{ddAppId,jdbcType=VARCHAR}, #{ddMinVer,jdbcType=VARCHAR}, #{ddCode,jdbcType=INTEGER}, 
+      #{ddUrl,jdbcType=VARCHAR}, #{times,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fish.dao.second.model.ConfigProgram" >
+    insert into config_program
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ddAppId != null" >
+        ddAppId,
+      </if>
+      <if test="ddMinVer != null" >
+        ddMinVer,
+      </if>
+      <if test="ddCode != null" >
+        ddCode,
+      </if>
+      <if test="ddUrl != null" >
+        ddUrl,
+      </if>
+      <if test="times != null" >
+        times,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ddAppId != null" >
+        #{ddAppId,jdbcType=VARCHAR},
+      </if>
+      <if test="ddMinVer != null" >
+        #{ddMinVer,jdbcType=VARCHAR},
+      </if>
+      <if test="ddCode != null" >
+        #{ddCode,jdbcType=INTEGER},
+      </if>
+      <if test="ddUrl != null" >
+        #{ddUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="times != null" >
+        #{times,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.ConfigProgram" >
+    update config_program
+    <set >
+      <if test="ddCode != null" >
+        ddCode = #{ddCode,jdbcType=INTEGER},
+      </if>
+      <if test="ddUrl != null" >
+        ddUrl = #{ddUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="times != null" >
+        times = #{times,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ddAppId = #{ddAppId,jdbcType=VARCHAR}
+      and ddMinVer = #{ddMinVer,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fish.dao.second.model.ConfigProgram" >
+    update config_program
+    set ddCode = #{ddCode,jdbcType=INTEGER},
+      ddUrl = #{ddUrl,jdbcType=VARCHAR},
+      times = #{times,jdbcType=TIMESTAMP}
+    where ddAppId = #{ddAppId,jdbcType=VARCHAR}
+      and ddMinVer = #{ddMinVer,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -35,21 +35,37 @@ public class GamesSetController {
     @Autowired
     BaseConfig baseConfig;
 
-    //查询展示所有合集配置信息
+
+    /**
+     * 查询合集配置
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/gameset")
     public GetResult getGameSet(GetParameter parameter) {
         return gamesSetService.findAll(parameter);
     }
 
-    //查询展示所有合集信息
+    /**
+     * 查询合集信息下拉框信息
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/gamesetInfo")
     public List<ArcadeGameSet> getGameInfo(GetParameter parameter) {
         return gamesSetService.selectAll(parameter);
     }
 
-    //查询展示所有appId和游戏名称信息
+    /**
+     * 合集跳转关系
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/gameset/jumpdirect")
     public List<WxConfig> getJumpDirect(GetParameter parameter) {
@@ -58,7 +74,7 @@ public class GamesSetController {
             String ddappid = wxConfig.getDdappid();
             if (StringUtils.isNotBlank((wxConfig.getProductName()))) {
                 String productName = wxConfig.getProductName();
-                wxConfig.setJumpDirect(ddappid + "-" + productName);
+                wxConfig.setJumpDirect(productName + "-" + ddappid);
             } else {
                 wxConfig.setJumpDirect(ddappid);
             }
@@ -66,29 +82,40 @@ public class GamesSetController {
         return wxConfigs;
     }
 
-    //新增合集配置
+    /**
+     * 新增合集配置
+     *
+     * @param productInfo
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/gameset/new")
     public PostResult insertGameSet(@RequestBody ArcadeGameSet productInfo) {
         PostResult result = new PostResult();
-
         int count = gamesSetService.insert(productInfo);
-        if (count == 1) {
-            String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
-            result.setMsg("操作成功" + res);
-            return result;
-        } else if (count == 5) {
-            result.setSuccessed(false);
-            result.setMsg("游戏代号重复，操作失败");
-            return result;
-        } else {
-            result.setSuccessed(false);
-            result.setMsg("操作失败，请联系管理员");
-            return result;
+        switch (count) {
+            case 1:
+                //刷新业务表结构
+                String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
+                break;
+            case 5:
+                result.setSuccessed(false);
+                result.setMsg("操作失败，游戏代号重复");
+                break;
+            default:
+                result.setSuccessed(false);
+                result.setMsg("操作失败，请联系管理员");
+                break;
         }
+        return result;
     }
 
-    //修改合集信息
+    /**
+     * 修改合集信息
+     *
+     * @param
+     * @return
+     */
     @ResponseBody
     @PostMapping(value = "/gameset/edit")
     public PostResult modifyGameSet(@RequestBody ArcadeGameSet productInfo) {
@@ -96,8 +123,8 @@ public class GamesSetController {
         int count = gamesSetService.updateByPrimaryKeySelective(productInfo);
         switch (count) {
             case 1:
+                //刷新业务表结构
                 String res = ReadJsonUtil.flushTable("gameset", baseConfig.getFlushCache());
-                result.setMsg("操作成功" + res);
                 break;
             case 5:
                 result.setSuccessed(false);

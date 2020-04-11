@@ -169,7 +169,6 @@
                 {type: 'checkbox'},
                 {type: 'numbers', title: '序号'},
                 {field: 'ddname', width: 120, title: '产品名称', sort: true},
-                {field: 'originName', width: 270, title: '原始名称', sort: true},
                 {
                     field: 'ddprogram', width: 150, title: '是否为小程序', sort: true,
                     templet: (d) => {
@@ -250,13 +249,6 @@
         <label class="layui-form-label">产品名称</label>
         <div class="layui-input-inline">
             <input type="text" id="ddname" name="ddname" lay-verify="required" autocomplete="off"
-                   class="layui-input layui-disabled" disabled>
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">原始名称</label>
-        <div class="layui-input-inline">
-            <input type="text" id="originName" name="originName" autocomplete="off"
                    class="layui-input layui-disabled" disabled>
         </div>
     </div>

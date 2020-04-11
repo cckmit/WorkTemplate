@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * @author
+ * @author: CF
  * @pragram: ProductData
  * @description: fc数据对应展示实体类
  * @create:
@@ -17,21 +17,21 @@ public class ProductData {
     private Date wxDate;
     private Integer programType;
 
-    /*** 产品数量*/
+    /*** 产品数量 */
     private Integer productCount;
-    /*** 总收入*/
+    /*** 总收入 */
     private BigDecimal revenueCount;
     private String wxRegJson;
 
     private String productName;
-    /*** 充值收入*/
+    /*** 充值收入 */
     private BigDecimal recharge;
 
-    /*** 广告收入*/
+    /*** 广告收入 */
     private BigDecimal adRevenue;
 
     private BigDecimal activeUp;
-    private Integer wxRegOther;
+
 
     private MinitjWx minitjWx;
 
@@ -64,9 +64,21 @@ public class ProductData {
 
     private Integer wxRegAd;
 
-    private Integer wxRegJump;
-
     private Integer wxRegSearch;
+
+    private Integer wxRegOther;
+    /*** 新增用户来源展示字段-- 任务栏-我的小程序 */
+    private Integer wxRegTaskBarMySp;
+    /*** 新增用户来源展示字段-- 发现-我的小程序 */
+    private Integer wxRegFindMySp;
+    /*** 新增用户来源展示字段-- 任务栏-最近使用 */
+    private Integer wxRegTaskBarRecent;
+    /*** 新增用户来源展示字段-- 其他小程序 */
+    private Integer wxRegOtherSp;
+    /*** 新增用户来源展示字段-- 其他小程序返回 */
+    private Integer wxRegOtherReturn;
+
+    private Integer wxRegJump;
 
     private Integer wxRegApp;
 
@@ -83,16 +95,33 @@ public class ProductData {
     private BigDecimal wxShareRate;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date insertTime;
-    /**
-     * 展示数据-买量支出
-     */
+    /*** 展示数据-买量支出 */
     private BigDecimal buyCost;
-    /**
-     * 展示数据-买量单价
-     */
+    /*** 展示数据-买量单价 */
     private BigDecimal buyClickPrice;
-    /*** 展示数据-插屏收入*/
+
+    /*** 展示数据--插屏收入 */
     private BigDecimal screenIncome;
+
+    /*** 活跃用户来源--新增活跃来源  */
+    private String wxActiveSource;
+    /*** 活跃来源展示字段--广告 */
+    private Integer wxActiveAd;
+    /*** 活跃来源展示字段-- 任务栏-我的小程序 */
+    private Integer wxActiveTaskBarMySp;
+    /*** 活跃来源展示字段-- 发现-我的小程序 */
+    private Integer wxActiveFindMySp;
+
+    /*** 活跃来源展示字段-- 任务栏-最近使用 */
+    private Integer wxActiveTaskBarRecent;
+    /*** 活跃来源展示字段-- 搜索 */
+    private Integer wxActiveSearch;
+    /*** 活跃来源展示字段-- 其他 */
+    private Integer wxActiveOther;
+    /*** 活跃来源展示字段-- 其他小程序返回 */
+    private Integer wxActiveOtherReturn;
+    /*** 活跃来源展示字段-- 其他小程序 */
+    private Integer wxActiveOtherSp;
 
 
     public BigDecimal getScreenIncome() {
@@ -125,12 +154,20 @@ public class ProductData {
     private String beginTime;
     private String endTime;
 
-    public Integer getProductCount() {
-        return productCount;
+    public String getWxAppid() {
+        return wxAppid;
     }
 
-    public void setProductCount(Integer productCount) {
-        this.productCount = productCount;
+    public void setWxAppid(String wxAppid) {
+        this.wxAppid = wxAppid;
+    }
+
+    public Date getWxDate() {
+        return wxDate;
+    }
+
+    public void setWxDate(Date wxDate) {
+        this.wxDate = wxDate;
     }
 
     public Integer getProgramType() {
@@ -141,20 +178,20 @@ public class ProductData {
         this.programType = programType;
     }
 
-    public Date getInsertTime() {
-        return insertTime;
+    public Integer getProductCount() {
+        return productCount;
     }
 
-    public void setInsertTime(Date insertTime) {
-        this.insertTime = insertTime;
+    public void setProductCount(Integer productCount) {
+        this.productCount = productCount;
     }
 
-    public String getWxAppid() {
-        return wxAppid;
+    public BigDecimal getRevenueCount() {
+        return revenueCount;
     }
 
-    public void setWxAppid(String wxAppid) {
-        this.wxAppid = wxAppid;
+    public void setRevenueCount(BigDecimal revenueCount) {
+        this.revenueCount = revenueCount;
     }
 
     public String getWxRegJson() {
@@ -163,6 +200,46 @@ public class ProductData {
 
     public void setWxRegJson(String wxRegJson) {
         this.wxRegJson = wxRegJson;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public BigDecimal getRecharge() {
+        return recharge;
+    }
+
+    public void setRecharge(BigDecimal recharge) {
+        this.recharge = recharge;
+    }
+
+    public BigDecimal getAdRevenue() {
+        return adRevenue;
+    }
+
+    public void setAdRevenue(BigDecimal adRevenue) {
+        this.adRevenue = adRevenue;
+    }
+
+    public BigDecimal getActiveUp() {
+        return activeUp;
+    }
+
+    public void setActiveUp(BigDecimal activeUp) {
+        this.activeUp = activeUp;
+    }
+
+    public MinitjWx getMinitjWx() {
+        return minitjWx;
+    }
+
+    public void setMinitjWx(MinitjWx minitjWx) {
+        this.minitjWx = minitjWx;
     }
 
     public Integer getWxNew() {
@@ -237,6 +314,14 @@ public class ProductData {
         this.wxVideoIncome = wxVideoIncome;
     }
 
+    public BigDecimal getVideoECPM() {
+        return videoECPM;
+    }
+
+    public void setVideoECPM(BigDecimal videoECPM) {
+        this.videoECPM = videoECPM;
+    }
+
     public Integer getWxBannerShow() {
         return wxBannerShow;
     }
@@ -259,6 +344,14 @@ public class ProductData {
 
     public void setWxBannerIncome(BigDecimal wxBannerIncome) {
         this.wxBannerIncome = wxBannerIncome;
+    }
+
+    public BigDecimal getBannerECPM() {
+        return bannerECPM;
+    }
+
+    public void setBannerECPM(BigDecimal bannerECPM) {
+        this.bannerECPM = bannerECPM;
     }
 
     public Integer getWxRegAd() {
@@ -309,6 +402,14 @@ public class ProductData {
         this.wxRegSession = wxRegSession;
     }
 
+    public Integer getWxRegOther() {
+        return wxRegOther;
+    }
+
+    public void setWxRegOther(Integer wxRegOther) {
+        this.wxRegOther = wxRegOther;
+    }
+
     public BigDecimal getWxActiveWomen() {
         return wxActiveWomen;
     }
@@ -341,84 +442,12 @@ public class ProductData {
         this.wxShareRate = wxShareRate;
     }
 
-    public Date getWxDate() {
-        return wxDate;
+    public Date getInsertTime() {
+        return insertTime;
     }
 
-    public void setWxDate(Date wxDate) {
-        this.wxDate = wxDate;
-    }
-
-    public Integer getWxRegOther() {
-        return wxRegOther;
-    }
-
-    public void setWxRegOther(Integer wxRegOther) {
-        this.wxRegOther = wxRegOther;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public BigDecimal getRecharge() {
-        return recharge;
-    }
-
-    public void setRecharge(BigDecimal recharge) {
-        this.recharge = recharge;
-    }
-
-    public BigDecimal getAdRevenue() {
-        return adRevenue;
-    }
-
-    public void setAdRevenue(BigDecimal adRevenue) {
-        this.adRevenue = adRevenue;
-    }
-
-    public BigDecimal getActiveUp() {
-        return activeUp;
-    }
-
-    public void setActiveUp(BigDecimal activeUp) {
-        this.activeUp = activeUp;
-    }
-
-    public MinitjWx getMinitjWx() {
-        return minitjWx;
-    }
-
-    public void setMinitjWx(MinitjWx minitjWx) {
-        this.minitjWx = minitjWx;
-    }
-
-    public BigDecimal getVideoECPM() {
-        return videoECPM;
-    }
-
-    public void setVideoECPM(BigDecimal videoECPM) {
-        this.videoECPM = videoECPM;
-    }
-
-    public BigDecimal getBannerECPM() {
-        return bannerECPM;
-    }
-
-    public void setBannerECPM(BigDecimal bannerECPM) {
-        this.bannerECPM = bannerECPM;
-    }
-
-    public BigDecimal getRevenueCount() {
-        return revenueCount;
-    }
-
-    public void setRevenueCount(BigDecimal revenueCount) {
-        this.revenueCount = revenueCount;
+    public void setInsertTime(Date insertTime) {
+        this.insertTime = insertTime;
     }
 
     public BigDecimal getBuyCost() {
@@ -435,5 +464,118 @@ public class ProductData {
 
     public void setBuyClickPrice(BigDecimal buyClickPrice) {
         this.buyClickPrice = buyClickPrice;
+    }
+
+    public String getWxActiveSource() {
+        return wxActiveSource;
+    }
+
+    public void setWxActiveSource(String wxActiveSource) {
+        this.wxActiveSource = wxActiveSource;
+    }
+
+    public Integer getWxActiveAd() {
+        return wxActiveAd;
+    }
+
+    public void setWxActiveAd(Integer wxActiveAd) {
+        this.wxActiveAd = wxActiveAd;
+    }
+
+    public Integer getWxActiveTaskBarMySp() {
+        return wxActiveTaskBarMySp;
+    }
+
+    public void setWxActiveTaskBarMySp(Integer wxActiveTaskBarMySp) {
+        this.wxActiveTaskBarMySp = wxActiveTaskBarMySp;
+    }
+
+    public Integer getWxActiveFindMySp() {
+        return wxActiveFindMySp;
+    }
+
+    public void setWxActiveFindMySp(Integer wxActiveFindMySp) {
+        this.wxActiveFindMySp = wxActiveFindMySp;
+    }
+
+    public Integer getWxActiveTaskBarRecent() {
+        return wxActiveTaskBarRecent;
+    }
+
+    public void setWxActiveTaskBarRecent(Integer wxActiveTaskBarRecent) {
+        this.wxActiveTaskBarRecent = wxActiveTaskBarRecent;
+    }
+
+    public Integer getWxActiveSearch() {
+        return wxActiveSearch;
+    }
+
+    public void setWxActiveSearch(Integer wxActiveSearch) {
+        this.wxActiveSearch = wxActiveSearch;
+    }
+
+    public Integer getWxActiveOther() {
+        return wxActiveOther;
+    }
+
+    public void setWxActiveOther(Integer wxActiveOther) {
+        this.wxActiveOther = wxActiveOther;
+    }
+
+    public Integer getWxActiveOtherReturn() {
+        return wxActiveOtherReturn;
+    }
+
+    public void setWxActiveOtherReturn(Integer wxActiveOtherReturn) {
+        this.wxActiveOtherReturn = wxActiveOtherReturn;
+    }
+
+    public Integer getWxActiveOtherSp() {
+        return wxActiveOtherSp;
+    }
+
+    public void setWxActiveOtherSp(Integer wxActiveOtherSp) {
+        this.wxActiveOtherSp = wxActiveOtherSp;
+    }
+
+
+    public Integer getWxRegTaskBarMySp() {
+        return wxRegTaskBarMySp;
+    }
+
+    public void setWxRegTaskBarMySp(Integer wxRegTaskBarMySp) {
+        this.wxRegTaskBarMySp = wxRegTaskBarMySp;
+    }
+
+    public Integer getWxRegFindMySp() {
+        return wxRegFindMySp;
+    }
+
+    public void setWxRegFindMySp(Integer wxRegFindMySp) {
+        this.wxRegFindMySp = wxRegFindMySp;
+    }
+
+    public Integer getWxRegTaskBarRecent() {
+        return wxRegTaskBarRecent;
+    }
+
+    public void setWxRegTaskBarRecent(Integer wxRegTaskBarRecent) {
+        this.wxRegTaskBarRecent = wxRegTaskBarRecent;
+    }
+
+    public Integer getWxRegOtherSp() {
+        return wxRegOtherSp;
+    }
+
+    public void setWxRegOtherSp(Integer wxRegOtherSp) {
+        this.wxRegOtherSp = wxRegOtherSp;
+    }
+
+    public Integer getWxRegOtherReturn() {
+        return wxRegOtherReturn;
+    }
+
+    public void setWxRegOtherReturn(Integer wxRegOtherReturn) {
+        this.wxRegOtherReturn = wxRegOtherReturn;
     }
 }

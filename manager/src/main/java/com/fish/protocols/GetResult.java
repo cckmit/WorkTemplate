@@ -10,7 +10,9 @@ public class GetResult<T> {
     private Object footer;
     private int code;
     private String msg;
-    //折线图统计
+    /**
+     * 折线图统计
+     */
     private JSONObject lineData;
 
     public int getCount() {

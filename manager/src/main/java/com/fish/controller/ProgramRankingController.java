@@ -35,13 +35,23 @@ public class ProgramRankingController {
     @Autowired
     CacheService cacheService;
 
-    //展示小程序比赛结果
+    /**
+     * 查询小程序比赛结果
+     *
+     * @param parameter
+     * @return
+     */
     @ResponseBody
     @GetMapping(value = "/programranking")
     public GetResult getGroupRanking(GetParameter parameter) {
         return programRankingService.findAll(parameter);
     }
-
+    /**
+     * 导出小程序比赛结果
+     *
+     * @param ranking
+     * @return
+     */
     @GetMapping(value = "/programranking/result")
     public void getProgramRankingResult(ShowRanking ranking, HttpServletResponse response) {
         List<ExportResult> rankings = programRankingService.selectResult(ranking);

@@ -135,27 +135,7 @@
             cols: [[
                 {type: 'checkbox'},
                 {field: 'ddId', width: 60, title: 'ID', sort: true, align: 'right'},
-                {
-                    field: 'ddAdType', width: 100, title: '类型', sort: true, align: 'center',
-                    templet: (d) => {
-                        let typeName = "";
-                        switch (d.ddAdType) {
-                            case 1:
-                                typeName = "大Banner";
-                                break;
-                            case 2:
-                                typeName = "小Banner";
-                                break;
-                            case 3:
-                                typeName = "插屏";
-                                break;
-                            case 4:
-                                typeName = "ICON";
-                                break;
-                        }
-                        return typeName;
-                    }
-                },
+                {field: 'adType', width: 140, title: '类型', sort: true, align: 'center'},
                 {field: 'ddWeight', width: 100, title: '权重值', sort: true, align: 'center'},
                 {field: 'ddTargetAppId', width: 180, title: '推广AppId', sort: false},
                 {field: 'ddTargetAppName', width: 140, title: '推广App名称', sort: false},
@@ -227,7 +207,7 @@
             toolbar: '#toolbar',
             limit: 30,
             defaultToolbar: ['filter', 'exports'],
-            height: 'full-175'
+            height: 'full-160'
         });
 
         // 初始化数据

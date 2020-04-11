@@ -17,10 +17,21 @@ public interface ProductDataMapper {
     ProductData selectByPrimaryKey(@Param("wxAppid") String wxAppid, @Param("wxDate") Date wxDate);
 
     ProductData selectByAppid(@Param("wxAppid") String wxAppId, @Param("wxDate") String wxDate);
-    List<ProductData> searchData(String sql);
+
+    List<ProductData> searchProgramData(String wxAppid, String start,String end);
+
+    /**
+     * 根据日期查询小程序数据
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    List<ProductData> queryProgramByDate(@Param("beginTime") String beginTime, @Param("endTime") String endTime);
+
     int updateByPrimaryKeySelective(ProductData record);
 
     int updateByPrimaryKey(ProductData record);
+
     void insertBatch(List<ProductData> lists);
 
     List<String> allDate();

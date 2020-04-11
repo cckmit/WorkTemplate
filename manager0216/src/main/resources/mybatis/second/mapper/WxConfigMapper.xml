@@ -5,6 +5,7 @@
         <id column="ddAppId" jdbcType="VARCHAR" property="ddappid"/>
         <result column="ddAppSecret" jdbcType="VARCHAR" property="ddappsecret"/>
         <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="ddAppPlatform" jdbcType="VARCHAR" property="ddAppPlatform"/>
         <result column="ddMchId" jdbcType="VARCHAR" property="ddmchid"/>
         <result column="ddP12Password" jdbcType="VARCHAR" property="ddp12password"/>
         <result column="ddKey" jdbcType="VARCHAR" property="ddkey"/>
@@ -41,7 +42,7 @@
 
     </resultMap>
     <sql id="Base_Column_List">
-    ddAppId, ddAppSecret, product_name, ddMchId, ddP12Password, ddKey, ddP12, ddShareRes, ddSubscribe,
+    ddAppId, ddAppSecret, product_name,ddAppPlatform, ddMchId, ddP12Password, ddKey, ddP12, ddShareRes, ddSubscribe,
     ddAppSkipRes, program_type, origin_id, origin_name, add_id, account, password, code_manager, 
     manager_wechat, belong_company, clear_company, create_time,adminWechat,softWork,phoneNumber,bindEmail,
     settleEmail,adSpaceId,adName,banner,otherBanner,video,otherVideo,screen,otherScreen
@@ -57,14 +58,14 @@
     where ddAppId = #{ddappid,jdbcType=VARCHAR}
   </delete>
     <insert id="insert" parameterType="com.fish.dao.second.model.WxConfig">
-    insert into wx_config (ddAppId, ddAppSecret, product_name, 
+    insert into wx_config (ddAppId, ddAppSecret, product_name, ddAppPlatform,
       ddMchId, ddP12Password, ddKey, 
       ddP12, ddShareRes,ddSubscribe, ddAppSkipRes,
       program_type, origin_id, origin_name, add_id,
       account, password, code_manager, manager_wechat, belong_company,
       clear_company, create_time,adminWechat,softWork,phoneNumber,
       bindEmail,settleEmail,banner,otherBanner,video,otherVideo,screen,otherScreen)
-    values (#{ddappid,jdbcType=VARCHAR}, #{ddappsecret,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR}, 
+    values (#{ddappid,jdbcType=VARCHAR}, #{ddappsecret,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR},  #{ddAppPlatform,jdbcType=VARCHAR},
       #{ddmchid,jdbcType=VARCHAR}, #{ddp12password,jdbcType=VARCHAR}, #{ddkey,jdbcType=VARCHAR}, 
       #{ddp12,jdbcType=VARCHAR}, #{ddshareres,jdbcType=VARCHAR}, #{ddSubscribe,jdbcType=VARCHAR}, #{ddappskipres,jdbcType=VARCHAR},
       #{programType,jdbcType=INTEGER}, #{originId,jdbcType=VARCHAR}, #{originName,jdbcType=VARCHAR}, 
@@ -84,6 +85,9 @@
             </if>
             <if test="productName != null">
                 product_name = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="ddAppPlatform != null">
+                ddAppPlatform = #{ddAppPlatform,jdbcType=VARCHAR},
             </if>
             <if test="ddmchid != null">
                 ddMchId = #{ddmchid,jdbcType=VARCHAR},
@@ -186,6 +190,7 @@
     update wx_config
     set ddAppSecret = #{ddappsecret,jdbcType=VARCHAR},
       product_name = #{productName,jdbcType=VARCHAR},
+      ddAppPlatform = #{ddAppPlatform,jdbcType=VARCHAR},
       ddMchId = #{ddmchid,jdbcType=VARCHAR},
       ddP12Password = #{ddp12password,jdbcType=VARCHAR},
       ddKey = #{ddkey,jdbcType=VARCHAR},

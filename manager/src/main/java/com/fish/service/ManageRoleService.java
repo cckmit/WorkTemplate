@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author CC ccheng0725@outlook.com
@@ -172,7 +173,7 @@ public class ManageRoleService implements BaseService<ManageRole> {
         Set<String> authorizedPages = new HashSet<>();
         if (!StringUtils.isBlank(id) && Integer.parseInt(id) > 0) {
             // 【超级管理员】直接返回
-            if ("1".equals(id)){
+            if ("1".equals(id)) {
                 return authorizationMenu;
             }
             authorizedPages = this.getAuthorizedPageSet(id);

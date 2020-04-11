@@ -12,11 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * 获奖记录查询
+ *
+ * @author
+ * @date
+ */
 @Service
-public class RoundReceiveService implements BaseService<RoundReceive>
-{
+public class RoundReceiveService implements BaseService<RoundReceive> {
     @Autowired
     RoundReceiveMapper roundReceiveMapper;
 
@@ -24,122 +31,103 @@ public class RoundReceiveService implements BaseService<RoundReceive>
     CacheService cacheService;
 
     @Override
-    //查询排名信息
-    public List<RoundReceive> selectAll(GetParameter parameter)
-    {
+    public List<RoundReceive> selectAll(GetParameter parameter) {
         List<RoundReceive> roundReceives;
-
-
         JSONObject search = getSearchData(parameter.getSearchData());
-        if (search == null)
-        {
-            roundReceives = roundReceiveMapper.selectAll();
-        } else
-        {
+        String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+        String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+        if (search == null) {
+            roundReceives = roundReceiveMapper.selectSearchTime(beginTime, endTime);
+        } else {
             String times = search.getString("times");
-            if (StringUtils.isNotBlank(times))
-            {
+            if (StringUtils.isNotBlank(times)) {
                 Date[] parse = XwhTool.parseDate(search.getString("times"));
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 roundReceives = roundReceiveMapper.selectSearchTime(format.format(parse[0]), format.format(parse[1]));
-            } else
-            {
-                roundReceives = roundReceiveMapper.selectAll();
+            } else {
+                roundReceives = roundReceiveMapper.selectSearchTime(beginTime, endTime);
             }
         }
         String className = RoundReceiveService.class.getSimpleName().toLowerCase();
         long current = System.currentTimeMillis();
         Vector<Long> record = new Vector<>();
         record.add(System.currentTimeMillis() - current);
-
         Set<String> users = new HashSet<>();
-        for (RoundReceive roundReceive : roundReceives)
-        {
+        for (RoundReceive roundReceive : roundReceives) {
             users.add(roundReceive.getDduid());
         }
-        for (RoundReceive roundReceive : roundReceives)
-        {
+        for (RoundReceive roundReceive : roundReceives) {
             String dduid = roundReceive.getDduid();
             String ddtype = roundReceive.getDdtype();
-            if("rmb".equals(ddtype)){
-                roundReceive.setDdtotal(roundReceive.getDdtotal()/100);
+            if ("rmb".equals(ddtype)) {
+                roundReceive.setDdtotal(roundReceive.getDdtotal() / 100);
             }
             roundReceive.setUserName(cacheService.getUserName(className, users, dduid));
             ArcadeGames games = cacheService.getGames(roundReceive.getDdgcode());
-            if (games != null)
-            {
+            if (games != null) {
                 roundReceive.setGameName(games.getDdname());
-            } else
-            {
+            } else {
                 roundReceive.setGameName("未知");
             }
             JSONObject roundInfo = cacheService.getRoundInfo(roundReceive.getDdgroup(), roundReceive.getDdmcode());
-            if (roundInfo.containsKey("name"))
-            {
+            if (roundInfo.containsKey("name")) {
                 roundReceive.setRoudName(roundInfo.getString("name"));
-            } else
-            {
+            } else {
                 roundReceive.setRoudName("未知比赛");
             }
-            if (roundInfo.containsKey("time"))
-            {
+            if (roundInfo.containsKey("time")) {
                 roundReceive.setRoudTime(roundInfo.getString("time"));
-            } else
-            {
+            } else {
                 roundReceive.setRoudTime("未知时长");
             }
-            if ((roundInfo.containsKey("code")))
-            {
+            if ((roundInfo.containsKey("code"))) {
                 roundReceive.setRoudCode(roundInfo.getString("code"));
-            } else
-            {
+            } else {
                 roundReceive.setRoudCode("位置赛制");
             }
         }
         record.add(System.currentTimeMillis() - current);
-        System.out.println("获取记录查询1:" + JSONObject.toJSONString(record));
+        //System.out.println("获取记录查询:" + JSONObject.toJSONString(record));
         return roundReceives;
     }
 
-
-    public int insert(RoundReceive record)
-    {
+    public int insert(RoundReceive record) {
         return roundReceiveMapper.insert(record);
     }
 
-    public int updateByPrimaryKeySelective(RoundReceive record)
-    {
+    public int updateByPrimaryKeySelective(RoundReceive record) {
         return roundReceiveMapper.updateByPrimaryKeySelective(record);
     }
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
-        if (parameter.getOrder() != null)
+    public void setDefaultSort(GetParameter parameter) {
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("ddtime");
     }
 
     @Override
-    public Class<RoundReceive> getClassInfo()
-    {
+    public Class<RoundReceive> getClassInfo() {
         return RoundReceive.class;
     }
 
     @Override
-    public boolean removeIf(RoundReceive record, JSONObject searchData)
-    {
-
-        if (existValueFalse(searchData.getString("userName"), record.getUserName()))
+    public boolean removeIf(RoundReceive record, JSONObject searchData) {
+        if (existValueFalse(searchData.getString("userName"), record.getUserName())) {
             return true;
-        if (existValueFalse(searchData.getString("ddGroup"), record.getDdgroup().toString()))
+        }
+        if (existValueFalse(searchData.getString("ddGroup"), record.getDdgroup().toString())) {
             return true;
-        if (existValueFalse(searchData.getString("gameCode"), record.getDdgcode()))
+        }
+        if (existValueFalse(searchData.getString("gameCode"), record.getDdgcode())) {
             return true;
+        }
         String roundCode = searchData.getString("roundCode");
-        if (roundCode != null && roundCode.contains("-"))
+        if (roundCode != null && roundCode.contains("-")) {
             roundCode = roundCode.split("-")[0];
+        }
         return existValueFalse(roundCode, record.getRoudCode());
     }
 }

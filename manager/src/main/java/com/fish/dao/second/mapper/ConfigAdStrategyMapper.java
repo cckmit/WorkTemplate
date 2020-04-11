@@ -42,11 +42,11 @@ public interface ConfigAdStrategyMapper {
     int update(ConfigAdStrategy adContent);
 
     /**
-     * 根据ID删除广告内容
+     * 根据ID删除广告策略
      *
-     * @param id
+     * @param deleteIds
      * @return
      */
-    int delete(int id);
+    int delete(String deleteIds);
 
 }

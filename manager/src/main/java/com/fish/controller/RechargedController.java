@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 /**
- * 提现审核
+ * 提现记录查询
  * RechargedController
  * @author
  * @date
@@ -17,10 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/manage")
 public class RechargedController
 {
-    //提现情况
     @Autowired
     RechargedService rechargedService;
-
 
     @GetMapping(value = "/recharged")
     public GetResult getCharged(GetParameter parameter)

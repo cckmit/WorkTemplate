@@ -15,7 +15,6 @@
         <result column="income" property="income" jdbcType="INTEGER"/>
         <result column="reqSuccCount" property="reqSuccCount" jdbcType="INTEGER"/>
     </resultMap>
-
     <sql id="Base_Column_List">
        id , date, appId, adUnitId, adUnitName, clickCount, clickRate,
         ecpm, exposureCount, exposureRate, income, reqSuccCount
@@ -31,18 +30,29 @@
         </if>
         <if test="groupByType == '2'.toString()">
             slotId,
+            <if test="queryDetail == '1'.toString()">
+                appId,
+                adUnitName,
+            </if>
         </if>
         <if test="groupByType == '3'.toString()">
             adUnitName,
+            <if test="queryDetail == '1'.toString()">
+                appId,
+                slotId,
+            </if>
         </if>
         <if test="groupByType == '4'.toString()">
             appId, slotId,
+            <if test="queryDetail == '1'.toString()">
+                adUnitName,
+            </if>
         </if>
         <if test="groupByType == '5'.toString()">
-            appId, adUnitName,
+            appId, adUnitName,slotId,
         </if>
         sum(a.reqSuccCount) as reqSuccCount, sum(a.exposureCount) as exposureCount,
-        sum(a.clickCount) as clickCount,sum(a.income) as income, sum(a.ecpm) as ecpm
+        sum(a.clickCount) as clickCount,sum(a.income) as income
         from persie_value.ad_value_wx_adunit a
         where DATE(a.date) between #{beginTime} and #{endTime}
         <if test="appId != null and appId != ''">
@@ -63,35 +73,27 @@
         </if>
         <if test="groupByType == '2'.toString()">
             ,slotId
+            <if test="queryDetail == '1'.toString()">
+                ,appId
+                ,adUnitName
+            </if>
         </if>
         <if test="groupByType == '3'.toString()">
             ,adUnitName
+            <if test="queryDetail == '1'.toString()">
+                ,appId
+                ,slotId
+            </if>
         </if>
         <if test="groupByType == '4'.toString()">
             ,appId, slotId
+            <if test="queryDetail == '1'.toString()">
+                ,adUnitName
+            </if>
         </if>
         <if test="groupByType == '5'.toString()">
-            ,appId,adUnitName
-        </if>
-    </select>
+            ,appId, adUnitName, slotId
 
-    <select id="selectAll" resultMap="BaseResultMap">
-        select
-        a.id , a.date, a.appId, a.adUnitId, a.adUnitName, a.slotId, w.product_name AS productName, a.clickCount AS clickCount,
-        ROUND(a.clickRate * 100, 2) AS clickRate, ROUND(a.ecpm, 2) AS ecpm, a.exposureCount AS exposureCount,
-        ROUND(a.exposureRate* 100, 2) AS exposureRate, a.income AS income, a.reqSuccCount AS reqSuccCount,
-        ROUND(a.income /clickCount, 2) AS clickIncome
-        from persie_value.ad_value_wx_adunit a, persie.wx_config w
-        where DATE(date) between #{beginTime} and #{endTime}
-        and a.appId = w.ddAppId
-        <if test="appId != null and appId != ''">
-            and appId = #{appId, jdbcType=VARCHAR}
-        </if>
-        <if test="slotId != null and slotId !=''">
-            and slotId = #{slotId, jdbcType=VARCHAR}
-        </if>
-        <if test="adUnitName !=null and adUnitName !=''">
-            and adUnitName = #{adUnitName, jdbcType=VARCHAR}
         </if>
     </select>
     <select id="selectAllScreenIncome" resultType="com.fish.dao.fourth.model.AdValueWxAdUnit">

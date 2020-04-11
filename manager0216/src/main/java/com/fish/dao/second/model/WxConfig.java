@@ -47,6 +47,8 @@ public class WxConfig {
 
     private String productName;
 
+    private String ddAppPlatform;
+
     private String originName;
 
     private String addId;
@@ -75,6 +77,15 @@ public class WxConfig {
     private String list1;
     private String list2;
     private String local;
+
+
+    public String getDdAppPlatform() {
+        return ddAppPlatform;
+    }
+
+    public void setDdAppPlatform(String ddAppPlatform) {
+        this.ddAppPlatform = ddAppPlatform;
+    }
 
     public String getDdSubscribe() {
         return ddSubscribe;

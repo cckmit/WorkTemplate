@@ -21,8 +21,9 @@ public class MatchCostService implements BaseService<MatchCost>
     @Override
     public void setDefaultSort(GetParameter parameter)
     {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setOrder("desc");
         parameter.setSort("ddtime");
     }

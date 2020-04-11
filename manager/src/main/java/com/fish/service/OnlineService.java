@@ -14,9 +14,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * 游戏在线人数统计 Service
+ *
+ * @author
+ * @date
+ */
 @Service
-public class OnlineService implements BaseService<Online>
-{
+public class OnlineService implements BaseService<Online> {
 
     @Autowired
     OnlineMapper onlineMapper;
@@ -30,14 +35,11 @@ public class OnlineService implements BaseService<Online>
     private String lineType = "online";
 
     @Override
-    public void setDefaultSort(GetParameter parameter)
-    {
-
+    public void setDefaultSort(GetParameter parameter) {
     }
 
     @Override
-    public Class<Online> getClassInfo()
-    {
+    public Class<Online> getClassInfo() {
         return Online.class;
     }
 
@@ -46,14 +48,13 @@ public class OnlineService implements BaseService<Online>
      *
      * @param data 查找数据
      */
-    public JSONObject getEcharts(List<Online> data)
-    {
+    @Override
+    public JSONObject getEcharts(List<Online> data) {
         JSONObject lineData = new JSONObject();
         //xAxis 点数据
         JSONArray xAxis = new JSONArray();
         //点数：144个
-        for (int i = 0; i < 144; i++)
-        {
+        for (int i = 0; i < 144; i++) {
             int val = i * 10;
             int x = val % 60, y = val / 60;
             xAxis.add(String.format("%02d:%02d", y, x));
@@ -82,8 +83,7 @@ public class OnlineService implements BaseService<Online>
         cache.forEach((k, v) ->
         {
             JSONObject info = new JSONObject();
-            if (isCompare && !k.endsWith(lineType))
-            {
+            if (isCompare && !k.endsWith(lineType)) {
                 return;
             }
             String name = "剩余房间数";
@@ -98,8 +98,7 @@ public class OnlineService implements BaseService<Online>
             info.put("smooth", k.endsWith("idle"));
             series.add(info);
         });
-        if (series.isEmpty())
-        {
+        if (series.isEmpty()) {
             lineData.put("xAxis", new JSONArray());
         }
         lineData.put("series", series);
@@ -109,8 +108,7 @@ public class OnlineService implements BaseService<Online>
     /**
      * 设置点值
      */
-    private void putValue(Map<String, int[]> cache, int key, String day, Integer val)
-    {
+    private void putValue(Map<String, int[]> cache, int key, String day, Integer val) {
         int[] value = cache.get(day);
         if (value == null)
             value = new int[144];
@@ -119,24 +117,26 @@ public class OnlineService implements BaseService<Online>
     }
 
     @Override
-    public boolean removeIf(Online online, JSONObject searchData)
-    {
+    public boolean removeIf(Online online, JSONObject searchData) {
         return false;
     }
 
+    /**
+     * 查询
+     *
+     * @param parameter
+     * @return
+     */
     @Override
-    public List<Online> selectAll(GetParameter parameter)
-    {
+    public List<Online> selectAll(GetParameter parameter) {
         isCompare = false;
         JSONObject search = getSearchData(parameter.getSearchData());
         Date now = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String start, end;
-        if (search == null || search.getString("times").isEmpty())
-        {
+        if (search == null || search.getString("times").isEmpty()) {
             end = start = "'" + format.format(now) + "'";
-        } else
-        {
+        } else {
             Date[] parse = XwhTool.parseDate(search.getString("times"));
             start = "'" + format.format(parse[0]) + "'";
             end = "'" + format.format(parse[1]) + "'";
@@ -144,8 +144,7 @@ public class OnlineService implements BaseService<Online>
         }
         //线逻辑
         lineType = "online";
-        if (search != null && search.containsKey("lineType") && !search.getString("lineType").trim().isEmpty())
-        {
+        if (search != null && search.containsKey("lineType") && !search.getString("lineType").trim().isEmpty()) {
             lineType = search.getString("lineType");
         }
         String SQL = "SELECT * FROM  online WHERE Date(insertTime) between " + start + " and " + end;
@@ -153,12 +152,10 @@ public class OnlineService implements BaseService<Online>
         List<Online> data = onlineMapper.selectCurrent(SQL);
         Vector<Online> result = new Vector<>();
         //游戏名称
-        if (search != null && search.containsKey("gameName") && !search.getString("gameName").trim().isEmpty())
-        {
+        if (search != null && search.containsKey("gameName") && !search.getString("gameName").trim().isEmpty()) {
             String gameCode = search.getString("gameName");
             //游戏进行解析
-            for (Online online : data)
-            {
+            for (Online online : data) {
                 String json = online.getGameinfo();
                 if (json == null)
                     continue;
@@ -175,8 +172,7 @@ public class OnlineService implements BaseService<Online>
                 line.setBuzyroom(room.getInteger("room"));
                 result.add(line);
             }
-        } else
-        {
+        } else {
             result.addAll(data);
         }
         return result;

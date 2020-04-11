@@ -8,7 +8,6 @@
         <result column="wx_group_manager" jdbcType="VARCHAR" property="wxGroupManager"/>
         <result column="wx_number" jdbcType="VARCHAR" property="wxNumber"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>-->
-
         <!-- config_confirm 部分 -->
         <result column="describe" jdbcType="VARCHAR" property="describe"/>
         <result column="ddStatus" jdbcType="VARCHAR" property="ddStatus"/>
@@ -18,17 +17,15 @@
     </resultMap>
     <select id="selectAll" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
-         ddId, `describe`, ddStatus, ddYes, ddNo, updateTime
-         cdId, wxGroupName, wxGroupManager, wxNumber, createTime
-        from  config_Confirm, wx_group_manager
-    </select>
-
-    <select id="selectAllConfigSQL" resultType="com.fish.dao.second.model.WxGroupManager">
-        ${_parameter}
+         c.ddId AS ddId, c.describe AS `describe`, c.ddStatus AS ddStatus, c.ddYes AS ddYes, c.ddNo AS ddNo,
+         c.updateTime AS updateTime, w.cdId AS cdId, w.wxGroupName AS wxGroupName, w.wxGroupManager AS wxGroupManager,
+         w.createTime AS createTime, w.updateQrCodeTime AS updateQrCodeTime
+        from  config_confirm c, wx_group_manager w
+        WHERE c.ddId = w.cdId
     </select>
 
     <select id="selectQrCodeByPrimaryKey" resultType="com.fish.dao.second.model.WxGroupManager">
-        select ddYes, ddNo from config_Confirm where ddId = #{ddId,jdbcType=VARCHAR}
+        select ddYes, ddNo from config_confirm where ddId = #{ddId,jdbcType=VARCHAR}
     </select>
     <update id="updateWxGroupManager" parameterType="com.fish.dao.second.model.WxGroupManager">
         update wx_group_manager
@@ -52,6 +49,9 @@
         where id = #{id,jdbcType=VARCHAR}
     </update>
 
+    <update id="changeStatus" parameterType="java.lang.Integer">
+        update config_confirm set ddStatus = ${ddStatus}
+    </update>
     <update id="updateConfigConfirm" parameterType="com.fish.dao.second.model.WxGroupManager">
         update config_confirm
         <set>
@@ -67,9 +67,34 @@
             <if test="ddStatus != null">
                 ddStatus = #{ddStatus,jdbcType=VARCHAR},
             </if>
+             updateTime = NOW()
         </set>
         where ddId = #{ddId,jdbcType=VARCHAR}
     </update>
+
+    <insert id="insertHistoryDate" parameterType="com.fish.dao.second.model.WxGroupManager">
+        insert into wx_group_history
+            (wxGroupName,
+            wxGroupManager,
+            createTime,
+            updateQrCodeTime,
+            `describe`,
+            ddStatus,
+            ddYes,
+            ddNo,
+            updateTime)
+        values (
+            #{wxGroupName},
+            #{wxGroupManager},
+            #{createTime},
+            #{updateQrCodeTime},
+            #{describe},
+            #{ddStatus},
+            #{ddYes},
+            #{ddNo},
+            #{updateTime}
+        )
+    </insert>
    <!-- <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.WxGroupManager">
         update wx_group_manager
         <set>
@@ -103,18 +128,6 @@
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>-->
-    <!--<update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.WxGroupManager">
-    update wx_group_manager
-    set wx_group_name = #{wxGroupName,jdbcType=VARCHAR},
-      wx_group_manager = #{wxGroupManager,jdbcType=VARCHAR},
-      wx_number = #{wxNumber,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=VARCHAR},
-      wx_group_describe = #{wxGroupDescribe,jdbcType=VARCHAR},
-      wx_group_qrcode = #{wxGroupQrcode,jdbcType=VARCHAR},
-      wx_costomer_qrcode = #{wxCostomerQrcode,jdbcType=VARCHAR},
-      last_upload_time = #{lastUploadTime,jdbcType=VARCHAR},
-      wx_qrcode_status = #{wxQrcodeStatus,jdbcType=VARCHAR},
-      operate_time = #{operateTime,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
-  </update>-->
+
+
 </mapper>
