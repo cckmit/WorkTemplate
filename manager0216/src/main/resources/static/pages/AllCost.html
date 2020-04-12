@@ -83,7 +83,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
+                                    lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -279,9 +280,13 @@
                             case "video":
                                 return `剩余${key - 1}次`;
                             case "relive": {
-                                if (d.ddtype === 'coin')
-                                    return `第${key}次复活`;
-                                else if (key > 1000) {
+                                if (d.ddtype === 'coin') {
+                                    if (key < 1000) {
+                                        return `第${key}次复活`;
+                                    } else {
+                                        return gameCodes[key];
+                                    }
+                                } else if (key > 1000) {
                                     return gameCodes[key];
                                 }
                                 return `剩余${key}次`;

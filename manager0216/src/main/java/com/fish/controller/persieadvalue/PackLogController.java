@@ -1,5 +1,6 @@
 package com.fish.controller.persieadvalue;
 
+import com.fish.protocols.GetResult;
 import com.fish.service.persieadvalue.PackLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * WxAdPosController
- *
  * @author
  * @date
  */
@@ -29,13 +28,14 @@ public class PackLogController {
      */
     @ResponseBody
     @GetMapping(value = "/packLog")
-    public void getPackLog(HttpServletRequest request, HttpServletResponse response) {
+    public GetResult getPackLog(HttpServletRequest request, HttpServletResponse response) {
 
         String logPath = request.getParameter("logPath");
         String startTime = request.getParameter("startTime");
         String endTime = request.getParameter("endTime");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
         System.out.println(logPath + "-" + startTime + "==" + endTime);
-
-      //  packLogService.packLog(logPath,startTime,endTime);
+        return this.packLogService.packLog(logPath, startTime, endTime,startDate,endDate);
     }
 }

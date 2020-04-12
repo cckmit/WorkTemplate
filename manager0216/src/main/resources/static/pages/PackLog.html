@@ -20,17 +20,24 @@
             <div class="layui-card">
                 <!-- 搜索表单 -->
                 <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <!--         <div class="layui-inline">
+                                 <label class="layui-form-label">日志路径</label>
+                                 <div class="layui-input-inline" style="width:14rem;">
+                                     <select name="logPath" id="logPath">
+                                         <option value="">全部</option>
+                                         <option value=0>小游戏</option>
+                                         <option value=1>小程序</option>
+                                         <option value=2>公众号</option>
+                                     </select>
+                                 </div>
+                             </div>-->
                     <div class="layui-inline">
                         <label class="layui-form-label">日志路径</label>
-                        <div class="layui-input-inline" style="width:14rem;">
-                            <select name="logPath" id="logPath">
-                                <option value="">全部</option>
-                                <option value=0>小游戏</option>
-                                <option value=1>小程序</option>
-                                <option value=2>公众号</option>
-                            </select>
+                        <div class="layui-input-inline" style="width: 14rem;">
+                            <input type="text" class="layui-input" id="logPath" name="logPath">
                         </div>
                     </div>
+                    <br/>
                     <div class="layui-inline">
                         <label class="layui-form-label">查询时间:</label>
                         <div class="layui-input-inline" style="width:14rem;">
@@ -43,8 +50,7 @@
                             <input type="text" class="layui-input" id="endTime" name="endTime" placeholder=" - ">
                         </div>
                     </div>
-
-
+                    <br/>
                     <div class="layui-inline">
                         <label class="layui-form-label">查询日期:</label>
                         <div class="layui-input-inline" style="width:14rem;">
@@ -60,13 +66,11 @@
                     <div class="layui-inline">
                         <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="search"
                                 onclick="submitTime()">
-                            <i class="layui-icon layuiadmin-button-btn"></i>查询
+                            <i class="layui-icon layuiadmin-button-btn"></i>打包
                         </button>
                     </div>
 
                 </div>
-
-
             </div>
         </div>
     </div>
@@ -133,80 +137,65 @@
                 let startDate = new Date($('#startDate').val()).getTime();
                 let endDate = new Date(value).getTime();
                 if (endDate < startDate) {
-                    layer.msg('结束日期不能小于开始日期');
+                    layer.msg('结束时间不能小于开始时间');
                     $('#endDate').val($('#startDate').val());
                 }
             }
 
         });
-
         form.on('submit(search)', function (data) {
-            let $1 = $.trim($('#startTime').val());
-            let $2 = $.trim($("#endTime").val());
-            if (($1 !== "" && $2 === "") || ($1 === "" && $2 !== "")) {
-                layer.msg('请把查询时间和结束时间填写完整', function () {
-                    time:1500;
-                });
-                return false;
-            }
-            let start = new Date($('#startTime').val()).getTime();
-            let endTime = new Date($('#endTime').val()).getTime();
-            if (start > endTime) {
-                layer.msg('结束时间不能小于开始时间', function () {
-                    time:1500;
-                });
-                return false;
-            }
-
-
-            let $1Date = $.trim($('#startDate').val());
-            let $2Date = $.trim($("#enDate").val());
-            if (($1Date !== "" && $2Date === "") || ($1Date === "" && $2Date !== "")) {
-                layer.msg('请把查询日期和结束日期填写完整', function () {
-                    time:1500;
-                });
-                return false;
-            }
-            let startDate = new Date($('#startDate').val()).getTime();
-            let endDate = new Date($('#endDate').val()).getTime();
-            if (startDate > endDate) {
-                layer.msg('结束日期不能小于开始日期', function () {
-                    time:1500;
-                });
-                return false;
-            }
-            // window.location.href = '../manage/packLog' + "?logPath=" + logPath + "&startTime=" + $1
-            //     + "&endTime=" + $2 ;
-            //     $.ajax({
-            //         type: "get",
-            //         dataType: "json",
-            //         url: '../manage/packLog' + "?logPath=" + logPath + "&startTime=" + $1
-            //             + "&endTime=" + $2,
-            //         success: (res) => {
-            //         },
-            //         error: function () {
-            //             layer.msg("广告类型列表查询失败，请联系管理员！", {icon: 2});
-            //         }
-            //     });
-            // });
 
         })
     })
 
     function submitTime() {
         let $ = layui.$;
-        let $1 = $.trim($('#startTime').val());
-        let $2 = $.trim($("#endTime").val());
+        let startTime = $.trim($('#startTime').val());
+        let endTime = $.trim($("#endTime").val());
+        let startDate = $.trim($('#startDate').val());
+        let endDate = $.trim($("#endDate").val());
         let logPath = $("#logPath").val();
+
+        if ((startTime !== "" && endTime === "") || (startTime === "" && endTime !== "")) {
+            layer.msg('请把查询时间和结束时时间填写完整', function () {
+                time:1500;
+            });
+            return false;
+        }
+
+        if (startTime > endTime) {
+            layer.msg('结束时间不能小于开始时间', function () {
+                time:1500;
+            });
+            return false;
+        }
+        if ((startDate !== "" && endDate === "") || (startDate === "" && endDate !== "")) {
+            layer.msg('请把查询日期和结束日期填写完整', function () {
+                time:1500;
+            });
+            return false;
+        }
+        if (startDate> endDate) {
+            layer.msg('结束日期不能小于开始日期', function () {
+                time:1500;
+            });
+            return false;
+        }
+        if ((startTime != null && startTime !== "") && (startDate != null && startDate !== "")) {
+            layer.msg('选择查询时间或者查询日期一个条件', function () {
+                time:1500;
+            });
+            return false;
+        }
         $.ajax({
             type: "get",
             dataType: "json",
-            url: '../manage/packLog' + "?logPath=" + logPath + "&startTime=" + $1
-                + "&endTime=" + $2,
+            url: '../manage/packLog?logPath=' + encodeURIComponent(logPath) + "&startTime=" + startTime
+                + "&endTime=" + endTime + "&startDate=" + startDate + "&endDate=" + endDate,
             success: (res) => {
             },
             error: function () {
-                layer.msg("广告类型列表查询失败，请联系管理员！", {icon: 2});
+                layer.msg("打包失败，请联系管理员！", {icon: 2});
             }
         });
     }

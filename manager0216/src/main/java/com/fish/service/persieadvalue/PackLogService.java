@@ -1,5 +1,6 @@
 package com.fish.service.persieadvalue;
 
+import com.fish.protocols.GetResult;
 import com.fish.utils.GetFileName;
 import org.springframework.stereotype.Service;
 
@@ -17,30 +18,36 @@ import java.util.zip.ZipOutputStream;
  */
 @Service
 public class PackLogService {
-    public static void main(String[] args) {
-        File[] srcFiles = {new File("E:\\a.zip"), new File("E:\\b.zip")};
-        File zipFile = new File("E:\\ZipFile.zip");
-        packLog("E:\\", "2020041010", "2020041013");
-    }
+//    public static void main(String[] args) {
+//        File[] srcFiles = {new File("E:\\a.zip"), new File("E:\\b.zip")};
+//        File zipFile = new File("E:\\ZipFile.zip");
+//        packLog("E:\\", "2020041010", "2020041013");
+//    }
 
-    public static void packLog(String logPath, String startTime, String endTime) {
-        String start = startTime.replace("-", "").replace(" ", "");
-        String end = endTime.replace("-", "").replace(" ", "");
+    public GetResult packLog(String logPath, String startTime, String endTime, String startDate, String endDate) {
+        GetResult result = new GetResult();
         System.out.println("--------" + startTime + "------" + endTime);
         //创建新的zip位置名称
-        File zipFile = new File("E:\\ZipFile.zip");
-        List<File> file = GetFileName.getFile(logPath, startTime, endTime);
-        // 调用压缩方法
-        zipFiles(file, zipFile);
+        File zipFile = new File(logPath+"pack\\" + endTime + ".zip");
+        try {
+            List<File> file = GetFileName.getFile(logPath, startTime, endTime, startDate, endDate);
+            // 调用压缩方法
+            zipFiles(file, zipFile);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            result.setMsg("打包失败，请联系管理员！");
+        }
+        result.setMsg("打包成功！");
+        return result;
     }
 
-    private static void zipFiles(List<File> srcFiles, File zipFile) {
+    private void zipFiles(List<File> srcFiles, File zipFile) {
         // 判断压缩后的文件存在不，不存在则创建
         if (!zipFile.exists()) {
             try {
                 zipFile.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
         // 创建 FileOutputStream 对象
@@ -79,7 +86,7 @@ public class PackLogService {
             }
             fileOutputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
     }

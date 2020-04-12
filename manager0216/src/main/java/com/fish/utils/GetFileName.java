@@ -1,5 +1,7 @@
 package com.fish.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,20 +31,34 @@ public class GetFileName {
     }
 
 
-    public static List<File> getFile(String path, String start, String end) {
-        int startTime = Integer.parseInt(start);
-        int endTime = Integer.parseInt(end);
+    public static List<File> getFile(String path, String start, String end, String startDate, String endDate) {
+        int startTime;
+        int endTime;
+        List<File> fileList = new ArrayList<>();
         //获取文件夹下的日志名称
         ArrayList<String> allFileName = getAllFileName(path);
-        //筛选复合时间的日志文件名称
-        List<File> fileList = new ArrayList<File>();
-        for (String name : allFileName) {
-            int logTime = Integer.parseInt(name.substring(5, 15));
-            // int logTime = Integer.parseInt(name.substring(5, 12));
-            if (startTime <= logTime && logTime <= endTime) {
-                fileList.add(new File(path + name));
+        if (StringUtils.isNotBlank(start)) {
+            startTime = Integer.parseInt(start);
+            endTime = Integer.parseInt(end);
+            //筛选复合时间的日志文件名称
+            for (String name : allFileName) {
+                int logTime = Integer.parseInt(name.substring(5, 15));
+                if (startTime <= logTime && logTime <= endTime) {
+                    fileList.add(new File(path + name));
+                }
+            }
+        } else {
+            startTime = Integer.parseInt(startDate);
+            endTime = Integer.parseInt(endDate);
+            //筛选复合时间的日志文件名称
+            for (String name : allFileName) {
+                 int logTime = Integer.parseInt(name.substring(5, 12));
+                if (startTime <= logTime && logTime <= endTime) {
+                    fileList.add(new File(path + name));
+                }
             }
         }
+
         return fileList;
     }
 
