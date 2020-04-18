@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+		<meta http-equiv="expires" content="-1">
+		<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../css/icon.css">
+		<link rel="stylesheet" type="text/css" href="../css/demo.css">
+		<script type="text/javascript" src="../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/plupload.full.min.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/decodebase64.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/ztc_upload.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/exportExcel.js" ></script>
+		<script type="text/javascript" src="../js/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/model.js"></script>
+		<script>
+			var operatorurl = 'mini_jump';
+			function save() {
+				$("#ff").form("submit", {
+					url: url,
+					onSubmit: function() {
+						return $(this).form("validate");
+					},
+					success: function(result) {
+						if(result == "1") {
+							$.messager.alert("提示信息", "操作成功");
+							$("#dlg").dialog("close");
+							$("#grid").datagrid("load");
+						} else {
+							$.messager.alert("提示信息", "操作失败");
+						}
+					}
+				});
+			}
+			
+			$(function(){
+				init_gamename_combobox('search_game_id',function(rec){});
+				
+				init_gamename_combobox('jump_gameid',function(rec){
+					$("#gameappid").textbox('setValue',rec.game_appid);
+				});
+				
+				$("#jump_type1,#jump_type2,#jump_type3,#jump_type4,#jump_type5,#jump_type6,#jump_type7,#jump_type8,#jump_type9,#jump_type10").combobox({
+					onSelect:function(rec){  
+						var combobox_id = $(this).attr("id").replace('jump_type','jump_ad');
+						if(rec.id == '1')
+						{
+							// 从绑定关系中获取
+							var gameId = $("#jump_gameid").combobox('getValue');
+							$.ajaxSettings.async = false;
+							var url = "mini_binding?datagrid=spec_json&spec_type=getBindingInfo&binding_gameid="+gameId+"";
+							$.getJSON(url,function(data){
+								$("#"+combobox_id).combobox({
+									valueField:"appid",
+									textField:"name",
+									data:data
+								});
+							});
+						}
+						else if(rec.id == '2')
+						{
+							// 从所有产品信息里获取
+							var url = "mini_game?datagrid=data&newPageSize=1";
+							$.getJSON(url,function(data){
+								var rows = data.rows;
+								$("#"+combobox_id).combobox({
+									valueField:"game_appid",
+									textField:"game_name",
+									data:rows
+								});
+							});
+						}
+			        }
+				});
+			})
+			function reloadClick(){
+				 //var url='http://127.0.0.1:18016/ResetMiniGameInfoCache';
+			    var url='http://192.168.1.197:18016/ResetMiniGameInfoCache';
+				$.post(operatorurl+"?type=flushGet&url="+url,{},function(c){
+					$.messager.show({title:"提示消息",msg:c});},'html');
+			}
+		</script>
+		<meta charset="UTF-8">
+		<title>模板</title>
+	</head>
+	<body class="panel-body">
+		<div class="panel">
+			<!-- 数据表格-->
+			<table id="grid" class="easyui-datagrid" title="模板" style="width:100%;height:auto;display: none;" data-options="url: operatorurl + '?datagrid=data',method: 'get',iconCls: 'icon-save',singleSelect: true,
+				toolbar: '#tb',fitColumns:true,pageList: [5,10,30,50,70,100],pageSize:30,pagination: true,rownumbers: true,multiSort: false,remoteSort: true,collapsible: true,
+				onHeaderContextMenu: function(e, field) {e.preventDefault();if(!cmenu) {createColumnMenu();}cmenu.menu('show', {left: e.pageX,top: e.pageY});}">
+				<thead>
+					<tr>
+						<th data-options="field:'game_name',align:'center',width:80,sortable:true">产品名称</th>
+						<th data-options="field:'game_appid',align:'center',width:80,sortable:true">Appid</th>
+						<th data-options="field:'jump_type1',align:'center',width:80,sortable:true">type1</th>
+						<th data-options="field:'jump_ad1',align:'center',width:80,sortable:true">ad1</th>
+						<th data-options="field:'jump_type2',align:'center',width:80,sortable:true">type2</th>
+						<th data-options="field:'jump_ad2',align:'center',width:80,sortable:true">ad2</th>
+						<th data-options="field:'jump_type3',align:'center',width:80,sortable:true">type3</th>
+						<th data-options="field:'jump_ad3',align:'center',width:80,sortable:true">ad3</th>
+						<th data-options="field:'jump_type4',align:'center',width:80,sortable:true,hidden:true">type4</th>
+						<th data-options="field:'jump_ad4',align:'center',width:80,sortable:true,hidden:true">ad4</th>
+						<th data-options="field:'jump_type5',align:'center',width:80,sortable:true,hidden:true">type5</th>
+						<th data-options="field:'jump_ad5',align:'center',width:80,sortable:true,hidden:true">ad5</th>
+						<th data-options="field:'jump_type6',align:'center',width:80,sortable:true,hidden:true">type6</th>
+						<th data-options="field:'jump_ad6',align:'center',width:80,sortable:true,hidden:true">ad6</th>
+						<th data-options="field:'jump_type7',align:'center',width:80,sortable:true,hidden:true">type7</th>
+						<th data-options="field:'jump_ad7',align:'center',width:80,sortable:true,hidden:true">ad7</th>
+						<th data-options="field:'jump_type8',align:'center',width:80,sortable:true,hidden:true">type8</th>
+						<th data-options="field:'jump_ad8',align:'center',width:80,sortable:true,hidden:true">ad8</th>
+						<th data-options="field:'jump_type9',align:'center',width:80,sortable:true,hidden:true">type9</th>
+						<th data-options="field:'jump_ad9',align:'center',width:80,sortable:true,hidden:true">ad9</th>
+						<th data-options="field:'jump_type10',align:'center',width:80,sortable:true,hidden:true">type10</th>
+						<th data-options="field:'jump_ad10',align:'center',width:80,sortable:true,hidden:true">ad10</th>
+
+						<th data-options="field:'jump_id',align:'center',width:80,sortable:true,hidden:true">主键id</th>
+						<th data-options="field:'jump_gameid',align:'center',width:80,sortable:true,hidden:true">游戏id</th>
+					</tr>
+				</thead>
+			</table>
+			<!--蒙板 -->
+			<div style="width: 100%;height: 100%;z-index: 1; position: fixed;background-color: #FAFAFA;"></div>
+			<!--工具栏 -->
+			<div id="tb" style="padding:2px 5px;">
+				<div style="padding:2px 5px;">
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="add()">添加</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="edit()">修改</a>
+					
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportClick()">导出</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-reload" onclick="reloadClick()" plain="true">通知更新</a>
+				</div>
+				<!--搜索表单 -->
+				<div>
+					<form name="searchform" method="post" action="" id="searchform">
+						&nbsp;产品名称:
+ 						<input class="easyui-combobox" style="width:110px" id="search_game_id" name="jump_gameid">
+						&nbsp;Appid:
+						<input class="easyui-textbox" name="gameappid" style="width:100px;"/>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="doSearch()">查询</a>
+					</form>
+				</div>
+			</div>
+			<!--表单 -->
+			<div id="dlg" class="easyui-dialog" title="New Topic" style="width: 500px;height: 900px;min-height:400px;max-height: 100%;position: relative; padding: 10px 10px;" buttons="#form-buttons" data-options="closed:true">
+				<form id="ff" method="post" action="">
+					
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_gameid" name="jump_gameid" style="width:90%" data-options="label:'产品名称:',required:true">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-textbox" id="gameappid" name="game_appid" style="width:90%" editable="false" data-options="label:'Appid:'">
+					</div>
+					
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type1" name="jump_type1" editable="false" style="width:90%" data-options="label:'type1:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad1" name="jump_ad1" style="width:90%" data-options="label:'ad1:'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type2" name="jump_type2" editable="false" style="width:90%" data-options="label:'type2:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad2" name="jump_ad2" style="width:90%" data-options="label:'ad2:'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type3" name="jump_type3" editable="false" style="width:90%" data-options="label:'type3:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad3" name="jump_ad3" style="width:90%" data-options="label:'ad3:'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type4" name="jump_type4" editable="false" style="width:90%" data-options="label:'type4:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad4" name="jump_ad4" style="width:90%" data-options="label:'ad4:'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type5" name="jump_type5" editable="false" style="width:90%" data-options="label:'type5:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad5" name="jump_ad5" style="width:90%" data-options="label:'ad5:'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type6" name="jump_type6" editable="false" style="width:90%" data-options="label:'type6:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad6" name="jump_ad6" style="width:90%" data-options="label:'ad6:'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type7" name="jump_type7" editable="false" style="width:90%" data-options="label:'type7:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad7" name="jump_ad7" style="width:90%" data-options="label:'ad7:'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type8" name="jump_type8" editable="false" style="width:90%" data-options="label:'type8:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad8" name="jump_ad8" style="width:90%" data-options="label:'ad8:'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type9" name="jump_type9" editable="false" style="width:90%" data-options="label:'type9:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad9" name="jump_ad9" style="width:90%" data-options="label:'ad9:'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_type10" name="jump_type10" editable="false" style="width:90%" data-options="label:'type10:',valueField:'id',textField:'value',data:[{id:'1',value:'内置'},{id:'2',value:'二维码'}]">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="jump_ad10" name="jump_ad10" style="width:90%" data-options="label:'ad10:'">
+					</div>
+
+					<div style="display:none">
+						<input class="easyui-textbox" id="jump_id" name="jump_id" style="width:90%" data-options="label:'主键id:'">
+					</div>
+				</form>
+				<div id="form-buttons"style="margin-bottom:20px;text-align:center;">
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" onclick="save()">保存</a>&nbsp;&nbsp;
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="cancel()">取消</a>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

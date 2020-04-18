@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    	<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
+		<meta http-equiv="expires" content="-1">
+		<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../css/icon.css">
+		<link rel="stylesheet" type="text/css" href="../css/demo.css">
+		<script type="text/javascript" src="../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/plupload.full.min.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/decodebase64.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/ztc_upload.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/exportExcel.js" ></script>
+		<script type="text/javascript" src="../js/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/model.js"></script>
+		<script>
+	
+		var operatorurl = 'cpmini_gameinfo';
+			function save() {
+				$("#ff").form("submit", {
+					url: url,
+					onSubmit: function() {
+						return $(this).form("validate");
+					},
+					success: function(result) {
+						if(result == "1") {
+							$.messager.alert("提示信息", "操作成功");
+							$("#dlg").dialog("close");
+							$("#grid").datagrid("load");
+						} else {
+							$.messager.alert("提示信息", "操作失败");
+						}
+					}
+				});
+			}
+			
+			function add1(){
+				$("#dlg").dialog('open').dialog('setTitle', '新增');
+				url=url = operatorurl + "?operator=new";
+				$("#ff").form('clear');
+				document.getElementById("cp_prices").style.display="block";
+			    document.getElementById("cp_proportion").style.display="block";
+			    		
+			}
+			
+			function alter(){
+				var row = $("#grid").datagrid('getSelected');
+				if(row)
+				{
+					$("#dlg").dialog("open").dialog('setTitle', '修改');
+					url = operatorurl + "?operator=edit";
+					$("#ff").form("clear");
+					$("#ff").form("load", row);
+					var gets = $("#cp_settlement").textbox('getValue');
+			          if(gets==0){
+                     document.getElementById("cp_prices").style.display="none";	
+                     document.getElementById("cp_proportion").style.display="block";			        
+                      }
+			          if(gets==1){
+			          document.getElementById("cp_proportion").style.display="none";	
+			          document.getElementById("cp_prices").style.display="block";	
+			          }
+
+					var arr = new Array();
+					if(row.cpgame_name != undefined){
+						arr = row.cpgame_name;
+					}
+				    $("#game_id").combobox('setValues',arr);
+			
+					
+				}else{
+					$.messager.alert('提示','<div style="text-align:center;margin-top:15px">请选中一行数据!</div>');
+				}
+			}
+	
+			var typeMap = {"0":"CPS","1":"CPA"};
+			function format_type(val,row)
+			{
+				if(val == undefined)
+				{
+					return '-';
+				}
+			     return typeMap[val];
+			}
+			
+			$(function(){
+			   document.getElementById("getcalues").style.display="none";
+			   document.getElementById("cp_prices").style.display="block";
+			   document.getElementById("cp_proportion").style.display="block";			          
+			   document.getElementById("ids").style.display="none";	
+		      $("#cp_settlement").combobox({
+			        onChange: function () {
+			          var getvalue   = $("#cp_settlement").combobox('getValue');
+			          $("#getcalue").textbox('setValue',getvalue);
+			          var gets = $("#getcalue").textbox('getValue');
+			          if(gets==0){
+                      document.getElementById("cp_prices").style.display="none";	
+                      document.getElementById("cp_proportion").style.display="block";			          }
+                      		       
+			          if(gets==1){
+			          document.getElementById("cp_proportion").style.display="none";	
+			          document.getElementById("cp_prices").style.display="block";	
+			          }
+			        }
+			       
+			 });
+			 $("#cpgame_name").next().hide();
+			init_gamename_combobox('game_id',function(rec){
+			$("#cpgame_name").textbox('setValue',rec.game_name);					
+			}); 
+			doSearch();
+			    //quan xian 
+		    zsgc();
+			}); 
+			
+	
+		</script>
+        <meta charset="UTF-8">
+		<title>模板</title>
+  </head>
+  
+ <body class="panel-body">
+		<div class="panel">
+			<!-- 数据表格-->
+			<table id="grid" class="easyui-datagrid" title="模板" style="width:100%;height:auto;display: none;" data-options="url: operatorurl + '?datagrid=data',method: 'get',iconCls: 'icon-save',singleSelect: true,
+				toolbar: '#tb',fitColumns:true,pageList: [5,10,30,50,70,100],pageSize:30,pagination: true,rownumbers: true,multiSort: false,remoteSort: true,collapsible: true,
+				onHeaderContextMenu: function(e, field) {e.preventDefault();if(!cmenu) {createColumnMenu();}cmenu.menu('show', {left: e.pageX,top: e.pageY});}">
+				<thead>
+					<tr>
+						<th data-options="field:'cpgame_name',align:'center',width:80,sortable:true">产品名称</th>
+						<th data-options="field:'cp_partners',align:'center',width:80,sortable:true">合作方</th>
+						<th data-options="field:'cp_settlement',align:'center',width:80,sortable:true" formatter="format_type">结算方式</th>
+						<th data-options="field:'cp_proportion',align:'center',width:80,sortable:true" formatter="format_percent">分成比例</th> 
+						<th data-options="field:'cp_price',align:'center',width:80,sortable:true">单价</th>
+					</tr>
+				</thead>
+			</table>
+				<div style="width: 100%;height: 100%;z-index: 1; position: fixed;background-color: #FAFAFA;"></div>
+			  <!--工具栏 -->
+			   <div id="tb" style="padding:2px 5px;">
+				<div style="padding:2px 5px;">
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="add1()" >添加</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="alter()">修改</a>
+				</div>
+			</div>
+			<div id="dlg" class="easyui-dialog" title="New Topic" style="width: 500px;height: auto;min-height:400px;max-height: 100%;position: relative; padding: 10px 10px;" buttons="#form-buttons" data-options="closed:true">
+				<form id="ff" method="post" action="">
+					 <div style="margin-bottom:20px">
+					     <input class="easyui-textbox" style="width:90%; display:none;" id="cpgame_name" name="cpgame_name">
+					</div>
+					<div style="margin-bottom:20px;" id="ids">
+						<input class="easyui-textbox" id="id" name="id" style="width:90%" data-options="label:'id'">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-combobox" id="game_id" name="game_id" style="width:90%;"  data-options="label:'产品名称',required:true">
+					</div>
+					<div style="margin-bottom:20px" id="getcalues">
+						<input class="easyui-textbox" id="getcalue" name="getcalue" style="width:90%;display: none"  data-options="label:'下拉框值'," >
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-textbox" id="cp_partners" name="cp_partners" style="width:90%" data-options="label:'合作方',required:true">
+					</div>
+						<div style="margin-bottom:20px" >
+						<input class="easyui-combobox"  id="cp_settlement" name="cp_settlement"   editable="false" style="width:90%" data-options="label:'结算方式:',required:true,valueField:'id',textField:'value',data:[{id:'0',value:'CPS'},{id:'1',value:'CPA'}]">
+					</div>
+					<div style="margin-bottom:20px" id="cp_proportion">
+						<input class="easyui-textbox" id="cp_proportion" name="cp_proportion" style="width:90%" data-options="label:'分成比例:'">
+					</div>
+					<div style="margin-bottom:20px" id="cp_prices">
+						<input class="easyui-textbox" id="cp_price" name="cp_price" style="width:90%" data-options="label:'单价:'">
+					</div>
+				</form>
+				<div id="form-buttons"style="margin-bottom:20px;text-align:center;">
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" onclick="save()">保存</a>&nbsp;&nbsp;
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="cancel()">取消</a>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

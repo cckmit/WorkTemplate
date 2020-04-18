@@ -1,0 +1,262 @@
+[
+	{
+		"id": 1,
+		"parendId": 0,
+		"name": "首页",
+		"memo": "首页"
+	},{
+		"id": 10,
+		"parentId": 1,
+		"name": "产品管理",
+		"memo": "产品管理"
+	},{
+		"id": 20,
+		"parentId": 10,
+		"name": "产品信息",
+		"memo": "产品信息",
+		"url":"Mini_game.html"
+	},{
+		"id": 22,
+		"parentId": 10,
+		"name": "cp产品信息",
+		"memo": "cp产品信息",
+		"url":"CpMiniGameInfo.html"
+	},{
+		"id": 21,
+		"parentId": 10,
+		"name": "绑定关系",
+		"memo": "绑定关系",
+		"url":"Mini_binding.html"
+	},{
+		"id": 40,
+		"parentId": 1,
+		"name": "数据统计",
+		"memo": "数据统计"
+	},{
+		"id": 41,
+		"parentId": 40,
+		"name": "实时数据",
+		"memo": "实时数据",
+		"url":"Minitj_runtime.html"
+	},{
+		"id": 42,
+		"parentId": 40,
+		"name": "数据日汇总",
+		"memo": "数据日汇总",
+		"url":"Minitj_daily.html"
+	},{
+		"id": 43,
+		"parentId": 40,
+		"name": "产品概况",
+		"memo": "产品概况",
+		"url":"Minitj_general.html"
+	},{
+		"id": 44,
+		"parentId": 40,
+		"name": "cp产品收益",
+		"memo": "cp产品收益",
+		"url":"Cp_revenue.html"
+	},{
+		"id": 45,
+		"parentId": 40,
+		"name": "广告收益明细",
+		"memo": "广告收益明细",
+		"url":"Minitj_income.html"
+	},{
+		"id": 46,
+		"parentId": 40,
+		"name": "用户数据明细",
+		"memo": "用户数据明细",
+		"url":"Minitj_userdata.html"
+	},{
+		"id": 50,
+		"parentId": 40,
+		"name": "猜你喜欢数据",
+		"memo": "猜你喜欢数据",
+		"url":"Get_Yourlike.html"
+	},{
+		"id": 51,
+		"parentId": 40,
+		"name": "商店数据",
+		"memo": "商店数据",
+		"url":"Game_package_info.html"
+	},{
+		"id": 47,
+		"parentId": 40,
+		"name": "推荐位数据明细",
+		"memo": "推荐位数据明细",
+		"url":"Minitj_recdata.html"
+	},{
+		"id": 48,
+		"parentId": 40,
+		"name": "APP拉活数据明细",
+		"memo": "APP拉活数据明细",
+		"url":"Minitj_pulldata.html"
+	},{
+		"id": 49,
+		"parentId": 40,
+		"name": "金币数据明细",
+		"memo": "金币数据明细",
+		"url":"Minitj_coindata.html"
+	},{
+		"id": 30,
+		"parentId": 1,
+		"name": "策略配置",
+		"memo": "策略配置"
+	},{
+		"id": 70,
+		"parentId": 1,
+		"name": "用户权限",
+		"memo": "用户权限"
+	},{
+		"id": 80,
+		"parentId": 1,
+		"name": "商店配置",
+		"memo": "商店配置"
+	},{
+		"id": 31,
+		"parentId": 30,
+		"name": "审核配置",
+		"memo": "审核配置",
+		"url":"Mini_check.html"
+	},{
+		"id": 32,
+		"parentId": 30,
+		"name": "产品的商店组",
+		"memo": "产品的商店组",
+		"url":"Minigamegroup.html"
+	},{
+		"id": 35,
+		"parentId": 30,
+		"name": "广告配置",
+		"memo": "广告配置",
+		"url":"Mini_ad.html"
+	},{
+		"id": 36,
+		"parentId": 30,
+		"name": "支出导入",
+		"memo": "支出导入",
+		"url":"Minitj_manual.html"
+	},{
+		"id": 37,
+		"parentId": 30,
+		"name": "推荐位配置",
+		"memo": "推荐位配置",
+		"url":"Mini_recconfig.html"
+	},{
+		"id": 38,
+		"parentId": 30,
+		"name": "商店配置",
+		"memo": "商店配置",
+		"url":"Mini_shopconfig.html"
+	},{
+		"id": 51,
+		"parentId": 30,
+		"name": "产品游戏配置",
+		"memo": "产品游戏配置",
+		"url":"Mini_deploy.html"
+	},{
+		"id": 61,
+		"parentId": 30,
+		"name": "拉活任务配置",
+		"memo": "拉活任务配置",
+		"url":"Mini_fromapp.html"
+	},{
+		"id": 39,
+		"parentId": 10,
+		"name": "广告投放账号配置",
+		"memo": "广告投放账号配置",
+		"url":"Minitj_wxsub.html"
+	},{
+		"id": 49,
+		"parentId": 40,
+		"name": "通知查询",
+		"memo": "通知查询",
+		"url":"notice_state.html"
+	},{
+		"id": 50,
+		"parentId": 10,
+		"name": "广告ID信息",
+		"memo": "广告ID信息",
+		"url":"Mini_record.html"
+	},{
+		"id": 57,
+		"parentId": 70,
+		"name": "用户权限",
+		"memo": "用户权限",
+		"url":"Account.html"
+	},{
+		"id": 58,
+		"parentId": 80,
+		"name": "商店1",
+		"memo": "商店1",
+		"url":"Mini_community_1.html"
+	},{
+		"id": 59,
+		"parentId": 80,
+		"name": "商店2",
+		"memo": "商店2",
+		"url":"Mini_community_2.html"
+	},{
+		"id": 60,
+		"parentId": 80,
+		"name": "商店3",
+		"memo": "商店3",
+		"url":"Mini_community_3.html"
+	},{
+		"id": 61,
+		"parentId": 80,
+		"name": "商店4",
+		"memo": "商店4",
+		"url":"Mini_community_4.html"
+	},{
+		"id": 62,
+		"parentId": 80,
+		"name": "商店5",
+		"memo": "商店5",
+		"url":"Mini_community_5.html"
+	},{
+		"id": 63,
+		"parentId": 80,
+		"name": "商店6",
+		"memo": "商店6",
+		"url":"Mini_community_6.html"
+	},{
+		"id": 64,
+		"parentId": 80,
+		"name": "商店7",
+		"memo": "商店7",
+		"url":"Mini_community_7.html"
+	},{
+		"id": 65,
+		"parentId": 80,
+		"name": "商店8",
+		"memo": "商店8",
+		"url":"Mini_community_8.html"
+	},{
+		"id": 66,
+		"parentId": 80,
+		"name": "商店9",
+		"memo": "商店9",
+		"url":"Mini_community_9.html"
+	},{
+		"id": 67,
+		"parentId": 80,
+		"name": "商店10",
+		"memo": "商店10",
+		"url":"Mini_community_10.html"
+	},{
+		"id": 68,
+		"parentId": 80,
+		"name": "商店信息",
+		"memo": "商店信息",
+		"url":"Mini_community_info.html"
+	},{
+		"id": 69,
+		"parentId": 80,
+		"name": "上传zip包",
+		"memo": "上传zip包",
+		"url":"Uploadzip.html"
+	}
+	
+]

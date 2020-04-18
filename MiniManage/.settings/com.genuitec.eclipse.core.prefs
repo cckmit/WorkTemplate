@@ -1,0 +1,3 @@
+eclipse.preferences.version=1
+validator.Checked=WebRoot/js/jquery.min.js,WebRoot/pages/tree_data.json,WebRoot/js/ztc_js/plupload.full.min.js
+validator.Unchecked=

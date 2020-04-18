@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="../css/easyui.css">
+		<link rel="stylesheet" type="text/css" href="../css/icon.css">
+		<link rel="stylesheet" type="text/css" href="../css/demo.css">
+		<script type="text/javascript" src="../js/jquery.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/plupload.full.min.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/decodebase64.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/ztc_upload.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/exportExcel.js" ></script>
+		<script type="text/javascript" src="../js/easyui-lang-zh_CN.js"></script>
+		<script type="text/javascript" src="../js/ztc_js/model.js"></script>
+		<script>
+			var operatorurl = '';
+			function save() {
+				$("#ff").form("submit", {
+					url: url,
+					onSubmit: function() {
+						return $(this).form("validate");
+					},
+					success: function(result) {
+						if(result == "1") {
+							$.messager.alert("提示信息", "操作成功");
+							$("#dlg").dialog("close");
+							$("#grid").datagrid("load");
+						} else {
+							$.messager.alert("提示信息", "操作失败");
+						}
+					}
+				});
+			}
+			
+			
+		</script>
+		<meta charset="UTF-8">
+		<title>模板</title>
+	</head>
+	<body class="panel-body">
+		<div class="panel">
+			<!-- 数据表格-->
+			<table id="grid" class="easyui-datagrid" title="模板" style="width:100%;height:auto;display: none;" data-options="url: operatorurl + '?datagrid=data',method: 'get',iconCls: 'icon-save',singleSelect: true,
+				toolbar: '#tb',fitColumns:true,pageList: [5,10,30,50,70,100],pageSize:30,pagination: true,rownumbers: true,multiSort: false,remoteSort: true,collapsible: true,
+				onHeaderContextMenu: function(e, field) {e.preventDefault();if(!cmenu) {createColumnMenu();}cmenu.menu('show', {left: e.pageX,top: e.pageY});}">
+				<thead>
+					<tr>
+						<th data-options="field:'community_id',align:'center',width:80,sortable:true">主键id</th>
+						<th data-options="field:'community_type',align:'center',width:80,sortable:true">类型</th>
+						<th data-options="field:'community_gameid',align:'center',width:80,sortable:true">游戏id</th>
+						<th data-options="field:'community_status',align:'center',width:80,sortable:true">状态</th>
+						<th data-options="field:'game_name',align:'center',width:80,sortable:true">游戏名称</th>
+						<th data-options="field:'game_appid',align:'center',width:80,sortable:true">Appid</th>
+						<th data-options="field:'community_pos',align:'center',width:80,sortable:true">排序位置</th>
+
+					</tr>
+				</thead>
+			</table>
+			<!--蒙板 -->
+			<div style="width: 100%;height: 100%;z-index: 1; position: fixed;background-color: #FAFAFA;"></div>
+			<!--工具栏 -->
+			<div id="tb" style="padding:2px 5px;">
+				<div style="padding:2px 5px;">
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="add()">添加</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="edit()">修改</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteRow()">删除</a>
+					
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportClick()">导出</a>
+				</div>
+				<!--搜索表单 -->
+				<div>
+					<form name="searchform" method="post" action="" id="searchform">
+						时间查询条件：
+						<select class="easyui-combobox" style="width:80px" name="search-data">
+							<option value="start_time">开始时间</option>
+							<option value="start_time">截止时间</option>
+						</select>
+						<input class="easyui-datebox" style="width:110px" id="st" name="st"> To:
+ 						<input class="easyui-datebox" style="width:110px" id="ed" name="ed">
+						条件查询：&nbsp;
+						<input class="easyui-textbox" id="id" name="id" style="width:100px;"/>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" onclick="doSearch()">查询</a>
+					</form>
+				</div>
+			</div>
+			<!--表单 -->
+			<div id="dlg" class="easyui-dialog" title="New Topic" style="width: 500px;height: auto;min-height:400px;max-height: 100%;position: relative; padding: 10px 10px;" buttons="#form-buttons" data-options="closed:true">
+				<form id="ff" method="post" action="">
+					<div style="margin-bottom:20px">
+						<input class="easyui-textbox" id="community_id" name="community_id" style="width:90%" data-options="label:'主键id:',required:true">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-textbox" id="community_type" name="community_type" style="width:90%" data-options="label:'类型:',required:true">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-textbox" id="community_gameid" name="community_gameid" style="width:90%" data-options="label:'游戏id:',required:true">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-textbox" id="community_status" name="community_status" style="width:90%" data-options="label:'状态:',required:true">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-textbox" id="game_name" name="game_name" style="width:90%" data-options="label:'游戏名称:',required:true">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-textbox" id="game_appid" name="game_appid" style="width:90%" data-options="label:'Appid:',required:true">
+					</div>
+					<div style="margin-bottom:20px">
+						<input class="easyui-textbox" id="community_pos" name="community_pos" style="width:90%" data-options="label:'排序位置:',required:true">
+					</div>
+
+				</form>
+				<div id="form-buttons"style="margin-bottom:20px;text-align:center;">
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-save" onclick="save()">保存</a>&nbsp;&nbsp;
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconcls="icon-cancel" onclick="cancel()">取消</a>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

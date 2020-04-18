@@ -1,0 +1,15 @@
+<table class="fl-table" style=" border-radius: 5px;font-size: 12px;font-weight: normal;border: none;border-collapse: collapse;width: 100%;white-space: nowrap;background-color: white;">
+        <thead>
+			<tr>
+				<th style="color:#ffffff;background:#324960;font-size: 18px;">日期</th>
+				<th style="color:#ffffff;background:#4FC3A1;font-size: 18px;">注册用户数</th>
+				<th style="color:#ffffff;background:#324960;font-size: 18px;">活跃用户数</th>
+				<th style="color:#ffffff;background:#4FC3A1;font-size: 18px;">访问总次数</th>
+				<th style="color:#ffffff;background:#324960;font-size: 18px;">买量支出</th>
+				<th style="color:#ffffff;background:#4FC3A1;font-size: 18px;">广告收入</th>
+			</tr>
+        </thead>
+        <tbody>
+			#data_profit#
+        <tbody>
+</table>

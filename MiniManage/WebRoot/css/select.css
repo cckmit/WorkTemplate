@@ -1,0 +1,61 @@
+.drag-item{
+			list-style-type:none;
+			display:block;
+			padding:5px;
+			border:1px solid #ccc;
+			margin:2px;
+			width:300px;
+			background:#fafafa;
+			color:#444;
+		}
+		.indicator{
+			position:absolute;
+			font-size:9px;
+			width:10px;
+			height:10px;
+			display:none;
+			color:red;
+		}
+		.selectbox{width:500px;height:220px;margin:40px auto 0 auto;}
+		.selectbox1{width:300px;height:220px;margin:40px auto 0 auto;padding-left: 50px;}
+		.selectbox div{float:left;}
+		.selectbox1 div{float:left;}
+		.selectbox .select-bar{padding:0 20px;}
+		.selectbox1 .select-bar{padding:0 30px;}
+		.selectbox .select-bar select{width:160px;height:200px;border:4px #A0A0A4 outset;padding:4px;}
+		.selectbox1 .select-bar select{width:160px;height:200px;border:4px #A0A0A4 outset;padding:4px;}
+		.selectbox .btn{width:50px; height:30px; margin-top:10px; cursor:pointer;}
+		.selectbox1 .btn{width:50px; height:30px; margin-top:10px; cursor:pointer;}
+		#select1 option{
+			line-height:30px;
+			height:10px;
+			margin:5px auto;
+		}
+		#select2 option{
+			line-height:30px;
+			height:10px;
+			margin:5px auto;
+		}
+		#select3 option{
+			line-height:30px;
+			height:10px;
+			margin:5px auto;
+		}
+		.drag-item{
+			list-style-type:none;
+			display:block;
+			padding:5px;
+			border:1px solid #ccc;
+			margin:2px;
+			width:300px;
+			background:#fafafa;
+			color:#444;
+		}
+		.indicator{
+			position:absolute;
+			font-size:9px;
+			width:10px;
+			height:10px;
+			display:none;
+			color:red;
+		}
