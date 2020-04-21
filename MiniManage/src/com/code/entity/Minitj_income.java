@@ -39,7 +39,7 @@ public class Minitj_income {
 
 
     @Comments(name = "插屏曝光量")
-    public int wx_screen_show;
+    public BigDecimal wx_screen_show;
 
     @Comments(name = "插屏点击率")
     public BigDecimal wx_screen_clickrate;
@@ -138,6 +138,13 @@ public class Minitj_income {
         BigDecimal wx_banner_clickrate = new BigDecimal(0);
         BigDecimal bannerEcpm = new BigDecimal(0);
         BigDecimal wx_video_income = new BigDecimal(0);
+
+
+        BigDecimal wx_screen_show = new BigDecimal(0);
+        BigDecimal wx_screen_clickrate = new BigDecimal(0);
+        BigDecimal wx_screen_income = new BigDecimal(0);
+        BigDecimal screenEcpm = new BigDecimal(0);
+
         for (Minitj_income minitj_income : list) {
             if (minitj_income.totalIncome == null) minitj_income.totalIncome = new BigDecimal(0);
             totalIncome = totalIncome.add(minitj_income.totalIncome);
@@ -153,21 +160,37 @@ public class Minitj_income {
             bannerEcpm = bannerEcpm.add(minitj_income.bannerEcpm);
             if (minitj_income.wx_video_income == null) minitj_income.wx_video_income = new BigDecimal(0);
             wx_video_income = wx_video_income.add(minitj_income.wx_video_income);
+
+            if (minitj_income.wx_screen_clickrate != null) {
+                wx_screen_clickrate = wx_screen_clickrate.add(minitj_income.wx_screen_clickrate);
+            }
+            if (minitj_income.wx_screen_show == null) minitj_income.wx_screen_show = new BigDecimal(0);
+            wx_screen_show = wx_screen_show.add(minitj_income.wx_screen_show);
+            if (minitj_income.wx_screen_income == null) minitj_income.wx_screen_income = new BigDecimal(0);
+            wx_screen_income = wx_screen_income.add(minitj_income.wx_screen_income);
+            if (minitj_income.screenEcpm == null) minitj_income.screenEcpm = new BigDecimal(0);
+            screenEcpm = screenEcpm.add(minitj_income.screenEcpm);
+
+            income.wx_date = "总计";
+            income.game_name = "-";
+            income.wx_active = 0;
+            income.totalIncome = totalIncome;
+            income.runtime_videoreq = runtime_videoreq;
+            income.wx_video_show = wx_video_show;
+            income.wx_banner_show = wx_banner_show;
+            income.wx_banner_income = wx_banner_income;
+            BigDecimal size = new BigDecimal(list.size());
+            income.wx_video_clickrate = wx_video_clickrate.divide(size, 2, BigDecimal.ROUND_HALF_UP);
+            income.videoEcpm = videoEcpm.divide(size, 2, BigDecimal.ROUND_HALF_UP);
+            income.wx_banner_clickrate = wx_banner_clickrate.divide(size, 2, BigDecimal.ROUND_HALF_UP);
+            income.bannerEcpm = bannerEcpm.divide(size, 2, BigDecimal.ROUND_HALF_UP);
+            income.wx_video_income = wx_video_income;
+
+            income.wx_screen_show = wx_screen_show;
+            income.wx_screen_clickrate = wx_screen_clickrate.divide(size, 2, BigDecimal.ROUND_HALF_UP);
+            income.wx_screen_income = wx_screen_income;
+            income.screenEcpm = screenEcpm.divide(size, 2, BigDecimal.ROUND_HALF_UP);
         }
-        income.wx_date = "总计";
-        income.game_name = "-";
-        income.wx_active = 0;
-        income.totalIncome = totalIncome;
-        income.runtime_videoreq = runtime_videoreq;
-        income.wx_video_show = wx_video_show;
-        income.wx_banner_show = wx_banner_show;
-        income.wx_banner_income = wx_banner_income;
-        BigDecimal size = new BigDecimal(list.size());
-        income.wx_video_clickrate = wx_video_clickrate.divide(size, 2, BigDecimal.ROUND_HALF_UP);
-        income.videoEcpm = videoEcpm.divide(size, 2, BigDecimal.ROUND_HALF_UP);
-        income.wx_banner_clickrate = wx_banner_clickrate.divide(size, 2, BigDecimal.ROUND_HALF_UP);
-        income.bannerEcpm = bannerEcpm.divide(size, 2, BigDecimal.ROUND_HALF_UP);
-        income.wx_video_income = wx_video_income;
         list.add(income);
     }
 }

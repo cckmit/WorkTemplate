@@ -20,17 +20,6 @@
     id, ddUid, ddMCode, ddGroup, ddMIndex, ddGCode, ddMStart, ddMEnd, ddMark, ddRanking, 
     ddType, ddTotal, ddTime
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select
-    <include refid="Base_Column_List" />
-    from round_receive
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from round_receive
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
   <insert id="insert" parameterType="com.fish.dao.primary.model.RoundReceive" >
     insert into round_receive (id, ddUid, ddMCode, 
       ddGroup, ddMIndex, ddGCode, 
@@ -43,91 +32,7 @@
       #{ddranking,jdbcType=INTEGER}, #{ddtype,jdbcType=VARCHAR}, #{ddtotal,jdbcType=INTEGER}, 
       #{ddtime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.fish.dao.primary.model.RoundReceive" >
-    insert into round_receive
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="dduid != null" >
-        ddUid,
-      </if>
-      <if test="ddmcode != null" >
-        ddMCode,
-      </if>
-      <if test="ddgroup != null" >
-        ddGroup,
-      </if>
-      <if test="ddmindex != null" >
-        ddMIndex,
-      </if>
-      <if test="ddgcode != null" >
-        ddGCode,
-      </if>
-      <if test="ddmstart != null" >
-        ddMStart,
-      </if>
-      <if test="ddmend != null" >
-        ddMEnd,
-      </if>
-      <if test="ddmark != null" >
-        ddMark,
-      </if>
-      <if test="ddranking != null" >
-        ddRanking,
-      </if>
-      <if test="ddtype != null" >
-        ddType,
-      </if>
-      <if test="ddtotal != null" >
-        ddTotal,
-      </if>
-      <if test="ddtime != null" >
-        ddTime,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="dduid != null" >
-        #{dduid,jdbcType=VARCHAR},
-      </if>
-      <if test="ddmcode != null" >
-        #{ddmcode,jdbcType=INTEGER},
-      </if>
-      <if test="ddgroup != null" >
-        #{ddgroup,jdbcType=BIT},
-      </if>
-      <if test="ddmindex != null" >
-        #{ddmindex,jdbcType=INTEGER},
-      </if>
-      <if test="ddgcode != null" >
-        #{ddgcode,jdbcType=INTEGER},
-      </if>
-      <if test="ddmstart != null" >
-        #{ddmstart,jdbcType=TIMESTAMP},
-      </if>
-      <if test="ddmend != null" >
-        #{ddmend,jdbcType=TIMESTAMP},
-      </if>
-      <if test="ddmark != null" >
-        #{ddmark,jdbcType=BIGINT},
-      </if>
-      <if test="ddranking != null" >
-        #{ddranking,jdbcType=INTEGER},
-      </if>
-      <if test="ddtype != null" >
-        #{ddtype,jdbcType=VARCHAR},
-      </if>
-      <if test="ddtotal != null" >
-        #{ddtotal,jdbcType=INTEGER},
-      </if>
-      <if test="ddtime != null" >
-        #{ddtime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
+
   <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.primary.model.RoundReceive" >
     update round_receive
     <set >
@@ -170,22 +75,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.fish.dao.primary.model.RoundReceive" >
-    update round_receive
-    set ddUid = #{dduid,jdbcType=VARCHAR},
-      ddMCode = #{ddmcode,jdbcType=INTEGER},
-      ddGroup = #{ddgroup,jdbcType=BIT},
-      ddMIndex = #{ddmindex,jdbcType=INTEGER},
-      ddGCode = #{ddgcode,jdbcType=INTEGER},
-      ddMStart = #{ddmstart,jdbcType=TIMESTAMP},
-      ddMEnd = #{ddmend,jdbcType=TIMESTAMP},
-      ddMark = #{ddmark,jdbcType=BIGINT},
-      ddRanking = #{ddranking,jdbcType=INTEGER},
-      ddType = #{ddtype,jdbcType=VARCHAR},
-      ddTotal = #{ddtotal,jdbcType=INTEGER},
-      ddTime = #{ddtime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+
   <select id="selectAll"  resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />

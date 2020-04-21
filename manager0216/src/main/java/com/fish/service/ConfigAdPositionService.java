@@ -5,9 +5,10 @@ import com.fish.dao.second.mapper.ConfigAdPositionMapper;
 import com.fish.dao.second.mapper.ConfigAdSpaceMapper;
 import com.fish.dao.second.model.ConfigAdPosition;
 import com.fish.dao.second.model.ConfigAdSpace;
+import com.fish.dao.second.model.ConfigAdStrategy;
+import com.fish.dao.second.model.ConfigAdType;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
-import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -15,13 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author CC ccheng0725@outlook.com
  * @date 2020-02-28 19:07
  */
 @Service
-public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
+public class ConfigAdPositionService extends CacheService<ConfigAdPosition> implements BaseService<ConfigAdPosition> {
 
     @Autowired
     ConfigAdPositionMapper adPositionMapper;
@@ -30,10 +32,16 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
     ConfigAdSpaceMapper adSpaceMapper;
 
     @Autowired
-    CacheService cacheService;
+    BaseConfig baseConfig;
 
     @Autowired
-    BaseConfig baseConfig;
+    ConfigAdStrategyService adStrategyService;
+
+    @Autowired
+    ConfigAdTypeService configAdTypeService;
+
+    @Autowired
+    ConfigAdSpaceService configAdSpaceService;
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
@@ -59,13 +67,14 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
         }
         List<ConfigAdPosition> list = this.adPositionMapper.selectAll(adPosition);
 
+        ConcurrentHashMap<String, ConfigAdStrategy> sMap = this.adStrategyService.getAll(ConfigAdStrategy.class);
         for (ConfigAdPosition configAdPosition : list) {
             // 处理广告类型
             if (StringUtils.isNotBlank(configAdPosition.getDdAdTypes())) {
                 String[] adTypeArray = configAdPosition.getDdAdTypes().split(",");
                 String adTypeNames = "";
                 for (String typeId : adTypeArray) {
-                    String adTypeName = this.cacheService.getConfigAdTypes(Integer.parseInt(typeId)).getDdName();
+                    String adTypeName = this.configAdTypeService.getEntity(ConfigAdType.class, typeId).getDdName();
                     if (StringUtils.isBlank(adTypeNames)) {
                         adTypeNames = typeId + "-" + adTypeName;
                     } else {
@@ -80,7 +89,7 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
                 String[] spaceIdArray = configAdPosition.getDdAdSpaces().split(",");
                 String adSpaceNames = "";
                 for (String spaceId : spaceIdArray) {
-                    String adSpaceName = this.cacheService.getConfigAdSpaces(Integer.parseInt(spaceId)).getDdName();
+                    String adSpaceName = this.configAdSpaceService.getEntity(ConfigAdSpace.class, spaceId).getDdName();
                     if (StringUtils.isBlank(adSpaceNames)) {
                         adSpaceNames = spaceId + "-" + adSpaceName;
                     } else {
@@ -92,7 +101,7 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
 
             // 处理策略ID
             configAdPosition.setAdStrategyNames(
-                    this.cacheService.getConfigAdStrategys(configAdPosition.getDdStrategyId()).getDdName());
+                    sMap.get(String.valueOf(configAdPosition.getDdStrategyId())).getDdName());
         }
         return list;
     }
@@ -187,4 +196,51 @@ public class ConfigAdPositionService implements BaseService<ConfigAdPosition> {
         return null;
     }
 
+    /**
+     * 更新状态
+     *
+     * @param jsonObject
+     * @return
+     */
+    public PostResult changeStatus(JSONObject jsonObject) {
+        int count = 0;
+        PostResult result = new PostResult();
+        Integer ddId = jsonObject.getInteger("ddId");
+        Boolean ddAllowedOperation = jsonObject.getBoolean("ddAllowedOperation");
+        Boolean ddShowWxAd = jsonObject.getBoolean("ddShowWxAd");
+        Boolean ddShowWxReVideoAd = jsonObject.getBoolean("ddShowWxReVideoAd");
+        // 更新运营状态
+        if (ddAllowedOperation != null) {
+            count = this.adPositionMapper.changeDdAllowedOperation(ddId, ddAllowedOperation);
+        }
+        // 更细是否显示微信
+        if (ddShowWxAd != null) {
+            count = this.adPositionMapper.changeDdShowWxAd(ddId, ddShowWxAd);
+        }
+        // 更新是否显示激励视频
+        if (ddShowWxReVideoAd != null) {
+            count = this.adPositionMapper.changeDdShowWxReVideoAd(ddId, ddShowWxReVideoAd);
+        }
+        if (count <= 0) {
+            result.setSuccessed(false);
+            result.setMsg("更新失败");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
+        }
+        return result;
+    }
+
+    @Override
+    void updateAllCache(ConcurrentHashMap<String, ConfigAdPosition> map) {
+        ConfigAdPosition position = new ConfigAdPosition();
+        List<ConfigAdPosition> configAdPositions = this.adPositionMapper.selectAll(position);
+        configAdPositions.forEach(configAdPosition -> {
+            map.put(String.valueOf(configAdPosition.getDdId()), configAdPosition);
+        });
+    }
+
+    @Override
+    ConfigAdPosition queryEntity(Class<ConfigAdPosition> clazz, String key) {
+        return this.adPositionMapper.select(Integer.valueOf(key));
+    }
 }

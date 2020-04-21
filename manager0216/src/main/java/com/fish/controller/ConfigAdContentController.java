@@ -71,6 +71,7 @@ public class ConfigAdContentController {
     public PostResult copyConfigAdSource(@RequestBody ConfigAdContent configAdContent) {
         return this.adContentService.copy(configAdContent);
     }
+
     /**
      * 删除
      *
@@ -82,7 +83,6 @@ public class ConfigAdContentController {
     public PostResult delete(@RequestBody JSONObject jsonObject) {
         return this.adContentService.delete(jsonObject.getString("deleteIds"));
     }
-
 
     /**
      * 获取广告内容下拉框

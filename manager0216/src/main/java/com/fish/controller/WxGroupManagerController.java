@@ -19,7 +19,7 @@ import java.util.Date;
  * 微信群管理
  * WxGroupManagerController
  *
- * @author
+ * @author Host-0311
  * @date
  */
 @Controller
@@ -35,21 +35,20 @@ public class WxGroupManagerController {
     /**
      * 查询
      *
-     * @param parameter
-     * @return
+     * @param parameter parameter
+     * @return 查询结果
      */
     @ResponseBody
     @GetMapping(value = "/wxgroup")
     public GetResult getWxGroupManager(GetParameter parameter) {
-        GetResult result = wxGroupManagerService.findAll(parameter);
-        return result;
+        return wxGroupManagerService.findAll(parameter);
     }
 
     /**
      * 修改
      *
-     * @param productInfo
-     * @return
+     * @param productInfo productInfo
+     * @return 修改结果
      */
     @ResponseBody
     @PostMapping(value = "/wxgroup/edit")
@@ -82,7 +81,7 @@ public class WxGroupManagerController {
         PostResult result = new PostResult();
         boolean status = jsonObject.getBoolean("ddStatus");
         Integer ddStatus = 0;
-        if (status){
+        if (status) {
             ddStatus = 1;
         }
         int count = wxGroupManagerService.changeStatus(ddStatus);

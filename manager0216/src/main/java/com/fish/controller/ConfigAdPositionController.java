@@ -105,4 +105,17 @@ public class ConfigAdPositionController {
         return this.adPositionService.selectSpaceByPositionId(positionId);
     }
 
+    /**
+     * 通过页面开关改变运营状态
+     *
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/configAdPosition/change")
+    public PostResult changeStatus(@RequestBody JSONObject jsonObject) {
+
+        return this.adPositionService.changeStatus(jsonObject);
+    }
+
 }

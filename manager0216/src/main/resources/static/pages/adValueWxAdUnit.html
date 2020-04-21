@@ -134,18 +134,20 @@
             url: '../manage/roundmatch/appname',
             success: (res) => {
                 res.forEach(function (val, index, arr) {
-                    //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
-                    var type;
-                    if (val.programType === 0) {
-                        type = "小游戏";
+                    let type;
+                    let appPlatform;
+                    switch (val.programType) {
+                        case 0:type = "game";break;
+                        case 1:type = "web";break;
+                        case 2:type = "public";break;
+                        default:type = "未知游戏类型";break;
                     }
-                    if (val.programType === 1) {
-                        type = "小程序";
+                    switch (val.ddAppPlatform) {
+                        case "weixin":appPlatform = "wx";break;
+                        case "q":appPlatform = "qq";break;
+                        default:appPlatform = "未知平台";break;
                     }
-                    if (val.programType === 2) {
-                        type = "公众号";
-                    }
-                    let context = {name: val.productName + "（" + type + ")", value: val.ddappid, selected: false};
+                    let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
                     appNames.push(context);
             });
             appSelect.update(
@@ -173,7 +175,6 @@
                 {field: 'date', width: 120, title: '日期', sort: true, align: 'center'},
                 {field: 'appId', width: 180, title: 'appId', sort: true, align: 'left'},
                 {field: 'productName', width: 180, title: '产品名称', sort: true, align: 'left'},
-                {field: 'adUnitName', width: 140, title: '广告位名称', sort: true, align: 'left'},
                 {field: 'slotId', width: 140, title: '广告类型', sort: true, align: 'left',
                     templet: (d) =>{
                         if (d.slotId === '8040321819858439'){
@@ -191,6 +192,7 @@
                         return "";
                     }
                 },
+                {field: 'adUnitName', width: 140, title: '广告位名称', sort: true, align: 'left'},
                 {field: 'reqSuccCount', width: 140, title: '拉取量', sort: true, align: 'left'},
                 {field: 'exposureCount', width: 140, title: '曝光量', sort: false, align: 'left'},
                 {

@@ -25,7 +25,8 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">查询时间</label>
                             <div class="layui-input-inline" style="width: 14rem;">
-                                <input type="text" class="layui-input" id="ddtime" lay-verify="required" name="ddtime" placeholder=" - ">
+                                <input type="text" class="layui-input" id="ddtime" lay-verify="required" name="ddtime"
+                                       placeholder=" - ">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -62,7 +63,8 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
+                                    lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -89,6 +91,7 @@
         var $ = layui.$;
         var gameCodes = {};
         var appNames = {};
+        let data = [];
         layui.form.render("select");
         var gameCodeSelect = xmSelect.render({
             el: '#gameCode',
@@ -154,13 +157,22 @@
                     dataType: "json",
                     url: '../manage/roundmatch/appname',
                     success: (res) => {
-
                         res.forEach(function (val, index, arr) {
                             appNames[val.ddappid] = val.productName;
-                        });
-                        let data = [];
-                        Object.keys(appNames).forEach(key => {
-                            let context = {name: appNames[key], value: key, selected: false};
+                            let type;
+                            let appPlatform;
+                            switch (val.programType) {
+                                case 0:type = "game";break;
+                                case 1:type = "web";break;
+                                case 2:type = "public";break;
+                                default:type = "未知游戏类型";break;
+                            }
+                            switch (val.ddAppPlatform) {
+                                case "weixin":appPlatform = "wx";break;
+                                case "q":appPlatform = "qq";break;
+                                default:appPlatform = "未知平台";break;
+                            }
+                            let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
                             data.push(context);
                         });
                         appSelect.update(

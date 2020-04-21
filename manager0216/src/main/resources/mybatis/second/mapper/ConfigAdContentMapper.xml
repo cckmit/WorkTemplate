@@ -36,12 +36,12 @@
     <select id="selectAll" parameterType="com.fish.dao.second.model.ConfigAdContent"
             resultType="com.fish.dao.second.model.ConfigAdContent">
         select
-        c.ddId as ddId, c.ddAdType as ddAdType, c.ddWeight as ddWeight, c.ddImageUrl as ddImageUrl, c.ddTargetAppId as ddTargetAppId,
-        c.ddTargetAppName as ddTargetAppName, c.ddTargetAppType as ddTargetAppType, c.ddTargetEnvVersion as ddTargetEnvVersion,
-        c.ddTargetAppPage as ddTargetAppPage, c.ddPromoteAppId as ddPromoteAppId, c.ddPromoteAppName asddPromoteAppName,
-        c.ddPromoteAppType as ddPromoteAppType, c.ddPromoteEnvVersion as ddPromoteEnvVersion, c.ddPromoteAppPage as ddPromoteAppPage,
-        c.updateTime as updateTime, t.ddName as adType
-        from config_ad_content as c LEFT JOIN config_ad_type as t ON c.ddAdType =t.ddId
+        c.ddId as ddId, c.ddAdType as ddAdType, c.ddWeight as ddWeight, c.ddImageUrl as ddImageUrl, c.ddVideoUrl as
+        ddVideoUrl, c.ddTargetAppId as ddTargetAppId, c.ddTargetAppName as ddTargetAppName,c.ddTargetAppDesc as
+        ddTargetAppDesc, c.ddTargetAppType as ddTargetAppType, c.ddTargetEnvVersion as ddTargetEnvVersion,
+        c.ddTargetAppPage as ddTargetAppPage, c.ddPromoteAppId as ddPromoteAppId, c.ddPromoteAppName as ddPromoteAppName,
+        c.ddPromoteAppType as ddPromoteAppType, c.ddPromoteEnvVersion as ddPromoteEnvVersion, c.ddPromoteAppPage as
+        ddPromoteAppPage, c.updateTime as updateTime, t.ddName as adType from config_ad_content as c LEFT JOIN config_ad_type as t ON c.ddAdType =t.ddId
         where 1 = 1
         <if test="ddAdType != 0">
             and c.ddAdType = #{ddAdType, jdbcType=INTEGER}

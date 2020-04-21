@@ -3,15 +3,19 @@ package com.fish.service;
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.ConfigAdAppMapper;
 import com.fish.dao.second.model.ConfigAdApp;
+import com.fish.dao.second.model.ConfigAdCombination;
+import com.fish.dao.second.model.ConfigAdStrategy;
+import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
-import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author CC ccheng0725@outlook.com
@@ -24,16 +28,26 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
     ConfigAdAppMapper adAppMapper;
 
     @Autowired
-    CacheService cacheService;
+    WxConfigService wxConfigService;
 
     @Autowired
     BaseConfig baseConfig;
 
-    @Override
-    public void setDefaultSort(GetParameter parameter) { }
+    @Autowired
+    private ConfigAdStrategyService adStrategyService;
+
+    @Autowired
+    private ConfigAdCombinationService configAdCombinationService;
+
 
     @Override
-    public Class getClassInfo() { return ConfigAdApp.class; }
+    public void setDefaultSort(GetParameter parameter) {
+    }
+
+    @Override
+    public Class getClassInfo() {
+        return ConfigAdApp.class;
+    }
 
     @Override
     public boolean removeIf(ConfigAdApp configAdContent, JSONObject searchData) {
@@ -52,17 +66,25 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
     @Override
     public List<ConfigAdApp> selectAll(GetParameter parameter) {
         List<ConfigAdApp> list = this.adAppMapper.selectAll();
+        ConcurrentHashMap<String, WxConfig> wxConfigMap = wxConfigService.getAll(WxConfig.class);
+        ConcurrentHashMap<String, ConfigAdCombination> adCombinationMap = configAdCombinationService.getAll(ConfigAdCombination.class);
         for (ConfigAdApp configAdApp : list) {
-            configAdApp.setAppName(this.cacheService.getWxConfig(configAdApp.getDdAppId()).getProductName());
-            configAdApp.setCombinationName(
-                    configAdApp.getDdCombinationId() + "-" + this.cacheService.getConfigAdCombination(
-                            configAdApp.getDdCombinationId()).getDdName());
-            configAdApp.setWxBannerStrategyName(
-                    configAdApp.getDdWxBannerStrategyId() + "-" + this.cacheService.getConfigAdStrategys(
-                            configAdApp.getDdWxBannerStrategyId()).getDdName());
-            configAdApp.setWxIntStrategyName(
-                    configAdApp.getDdWxIntStrategyId() + "-" + this.cacheService.getConfigAdStrategys(
-                            configAdApp.getDdWxIntStrategyId()).getDdName());
+            try {
+                configAdApp.setAppName(wxConfigMap.get(configAdApp.getDdAppId()).getProductName());
+                String combinationName = adCombinationMap.get(String.valueOf(configAdApp.getDdCombinationId())).getDdName();
+                configAdApp.setCombinationName(
+                        configAdApp.getDdCombinationId() + "-" + combinationName);
+                configAdApp.setWxBannerStrategyName(
+                        configAdApp.getDdWxBannerStrategyId() + "-" + this.adStrategyService.getEntity(
+                                ConfigAdStrategy.class,
+                                String.valueOf(configAdApp.getDdWxBannerStrategyId())).getDdName());
+                configAdApp.setWxIntStrategyName(
+                        configAdApp.getDdWxIntStrategyId() + "-" + this.adStrategyService.getEntity(
+                                ConfigAdStrategy.class,
+                                String.valueOf(configAdApp.getDdWxIntStrategyId())).getDdName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return list;
     }
@@ -75,7 +97,11 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
      */
     public PostResult insert(ConfigAdApp adApp) {
         PostResult result = new PostResult();
-        int id = this.adAppMapper.insert(adApp);
+
+        //更新Banner、插屏、视频ID
+        updateAdAppIds(adApp);
+
+        int id = this.adAppMapper.save(adApp);
         if (id <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
@@ -93,7 +119,11 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
      */
     public PostResult update(ConfigAdApp adApp) {
         PostResult result = new PostResult();
-        int update = this.adAppMapper.update(adApp);
+
+        //更新Banner、插屏、视频ID
+        updateAdAppIds(adApp);
+
+        int update = this.adAppMapper.save(adApp);
         if (update <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
@@ -104,6 +134,42 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
     }
 
     /**
+     * 更新ids
+     *
+     * @param adApp
+     */
+    private void updateAdAppIds(ConfigAdApp adApp) {
+
+        ConcurrentHashMap<String, WxConfig> wxConfigMap = wxConfigService.getAll(WxConfig.class);
+        WxConfig wxConfig = wxConfigMap.get(adApp.getDdAppId());
+        if (wxConfig != null) {
+            if (StringUtils.isNotBlank(wxConfig.getBanner())) {
+                if (wxConfig.getBanner().contains("-")) {
+                    adApp.setDdWxBannerUnit(wxConfig.getBanner().split("-")[1]);
+                } else {
+                    adApp.setDdWxBannerUnit(wxConfig.getBanner());
+                }
+            }
+
+            if (StringUtils.isNotBlank(wxConfig.getScreen())) {
+                if (wxConfig.getBanner().contains("-")) {
+                    adApp.setDdWxIntUint(wxConfig.getScreen().split("-")[1]);
+                } else {
+                    adApp.setDdWxIntUint(wxConfig.getScreen());
+                }
+            }
+
+            if (StringUtils.isNotBlank(wxConfig.getVideo())) {
+                if (wxConfig.getBanner().contains("-")) {
+                    adApp.setDdWxReVideoUnit(wxConfig.getVideo().split("-")[1]);
+                } else {
+                    adApp.setDdWxReVideoUnit(wxConfig.getVideo());
+                }
+            }
+        }
+    }
+
+    /**
      * 复制广告内容
      *
      * @param adApp
@@ -111,8 +177,9 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
      */
     public PostResult copy(ConfigAdApp adApp) {
         PostResult result = new PostResult();
-        adApp.setId(0);
-        int update = this.adAppMapper.insert(adApp);
+        //更新Banner、插屏、视频ID
+        updateAdAppIds(adApp);
+        int update = this.adAppMapper.save(adApp);
         if (update <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，复制广告内容失败！");
@@ -125,12 +192,12 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
     /**
      * 根据ID删除广告内容
      *
-     * @param deleteIds
+     * @param ddAppId
      * @return
      */
-    public PostResult delete(String deleteIds) {
+    public PostResult delete(String ddAppId, String ddMinVersion) {
         PostResult result = new PostResult();
-        int delete = this.adAppMapper.delete(deleteIds);
+        int delete = this.adAppMapper.delete(ddAppId, ddMinVersion);
         if (delete <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，删除广告内容失败！");
@@ -143,26 +210,50 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
     /**
      * 通过ID查询微信广告配置
      *
-     * @param id 广告位置ID
+     * @param key 广告位置key
      * @return 广告位置配置
      */
-    public ConfigAdApp getConfigAdApp(int id) {
-        if (id == 0) {
+    public ConfigAdApp getConfigAdApp(String key) {
+        String[] split;
+        if (StringUtils.isEmpty(key)) {
             return null;
+        } else {
+            split = key.split("-");
         }
-        return this.adAppMapper.select(id);
+        return this.adAppMapper.select(split[0], split[1]);
     }
 
     /**
-     * 通过页面开关改变运营状态
+     * 更新页面按钮状态
      *
-     * @param id          广告位置ID
-     * @param allowedShow 运营开关状态
+     * @param jsonObject
      * @return
      */
-    public PostResult changeAllowedShowStatus(Integer id, Boolean allowedShow) {
+    public PostResult changeAllowedShowStatus(JSONObject jsonObject) {
         PostResult result = new PostResult();
-        int count = this.adAppMapper.changeAllowedShowStatus(id, allowedShow);
+        String id = jsonObject.getString("id");
+        String[] key = id.split("-");
+        Boolean allowedShow = jsonObject.getBoolean("ddAllowedShow");
+        Boolean ddWxBannerAllowedShow = jsonObject.getBoolean("ddWxBannerAllowedShow");
+        Boolean ddWxIntAllowedShow = jsonObject.getBoolean("ddWxIntAllowedShow");
+        Boolean ddWxReVideoAllowedShow = jsonObject.getBoolean("ddWxReVideoAllowedShow");
+        int count = 0;
+        if (allowedShow != null) {
+            count = this.adAppMapper.changeAllowedShowStatus(key[0], key[1], allowedShow);
+        }
+
+        if (ddWxBannerAllowedShow != null) {
+            count = this.adAppMapper.changeBannerStatus(key[0], key[1], ddWxBannerAllowedShow);
+        }
+
+        if (ddWxIntAllowedShow != null) {
+            count = this.adAppMapper.changeIconStatus(key[0], key[1], ddWxIntAllowedShow);
+        }
+
+        if (ddWxReVideoAllowedShow != null) {
+            count = this.adAppMapper.changeVideoStatus(key[0], key[1], ddWxReVideoAllowedShow);
+        }
+
         if (count <= 0) {
             result.setSuccessed(false);
             result.setMsg("更新失败");
@@ -171,4 +262,5 @@ public class ConfigAdAppService implements BaseService<ConfigAdApp> {
         }
         return result;
     }
+
 }

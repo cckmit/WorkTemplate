@@ -110,16 +110,25 @@
             url: '../manage/roundmatch/appname',
             success: (res) => {
                 res.forEach(function (val, index, arr) {
-                    appNames[val.ddappid] = val.productName;
-                });
-                let data = [];
-                Object.keys(appNames).forEach(key => {
-                    let context = {name: appNames[key], value: key, selected: false};
-                    data.push(context);
+                    let type;
+                    let appPlatform;
+                    switch (val.programType) {
+                        case 0:type = "game";break;
+                        case 1:type = "web";break;
+                        case 2:type = "public";break;
+                        default:type = "未知游戏类型";break;
+                    }
+                    switch (val.ddAppPlatform) {
+                        case "weixin":appPlatform = "wx";break;
+                        case "q":appPlatform = "qq";break;
+                        default:appPlatform = "未知平台";break;
+                    }
+                    let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
+                    appNames.push(context);
                 });
                 appSelect.update(
                     {
-                        data: data,
+                        data: appNames,
                         autoRow: true,
                     }
                 );

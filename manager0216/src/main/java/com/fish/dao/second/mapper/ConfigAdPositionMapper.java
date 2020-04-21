@@ -50,4 +50,31 @@ public interface ConfigAdPositionMapper {
      */
     int delete(String deleteIds);
 
+    /**
+     * 更新运营状态
+     *
+     * @param ddId
+     * @param ddAllowedOperation
+     * @return
+     */
+    int changeDdAllowedOperation(Integer ddId, Boolean ddAllowedOperation);
+
+    /**
+     * 更新是否显示微信
+     *
+     * @param ddId
+     * @param ddShowWxAd
+     * @return
+     */
+    int changeDdShowWxAd(Integer ddId, Boolean ddShowWxAd);
+
+    /**
+     * 更新是否显示激励视频
+     *
+     * @param ddId
+     * @param ddShowWxReVideoAd
+     * @return
+     */
+    int changeDdShowWxReVideoAd(Integer ddId, Boolean ddShowWxReVideoAd);
+
 }

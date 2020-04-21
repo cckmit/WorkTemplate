@@ -60,10 +60,10 @@ public class Mini_game {
     @Comments(name = "密码")
     public String game_password;
     @Column(name = "game_admin")
-    @Comments(name = "管理员")
+    @Comments(name = "主体")
     public String game_admin;
     @Column(name = "game_adminwx")
-    @Comments(name = "管理员微信")
+    @Comments(name = "运营者微信")
     public String game_adminwx;
     @Column(name = "game_cellphone")
     @Comments(name = "手机号")
@@ -108,7 +108,9 @@ public class Mini_game {
     @Column(name = "game_jiecompany")
     @Comments(name = "结算公司")
     public Integer game_jiecompany;
-//    @Column(name = "game_jiecompanyemail")
+
+    //数据库增加相应字段后删除@Column注释
+    //@Column(name = "game_jiecompany_email")
     @Comments(name = "结算公司邮箱")
     public String game_jiecompanyemail;
     @Column(name = "show_shop_id")

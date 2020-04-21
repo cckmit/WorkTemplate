@@ -26,8 +26,8 @@ public class Fc_DataCollectController {
     /**
      * 查询数据汇总信息
      *
-     * @param parameter
-     * @return
+     * @param parameter parameter
+     * @return 汇总结果
      */
     @ResponseBody
     @GetMapping(value = "/datacollect")

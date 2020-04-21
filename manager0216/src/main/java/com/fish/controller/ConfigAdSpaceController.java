@@ -94,7 +94,9 @@ public class ConfigAdSpaceController {
      */
     @ResponseBody
     @GetMapping(value = "/configAdSpace/get")
-    public ConfigAdSpace getConfigAdSpace(int id) { return this.adSpaceService.getConfigAdSpace(id); }
+    public ConfigAdSpace getConfigAdSpace(int id) {
+        return this.adSpaceService.getConfigAdSpace(id);
+    }
 
     /**
      * 通过广告位ID查询广告内容列表
@@ -120,5 +122,18 @@ public class ConfigAdSpaceController {
         return this.adSpaceService.selectTypeContentBySpaceId(spaceId);
     }
 
+    /**
+     * 通过开关按钮修改运营状态
+     *
+     * @param jsonObject
+     * @return
+     */
+    @ResponseBody
+    @PostMapping(value = "/configAdSpace/change")
+    public PostResult change(@RequestBody JSONObject jsonObject) {
+        Integer ddId = jsonObject.getInteger("ddId");
+        Boolean ddAllowedOperation = jsonObject.getBoolean("ddAllowedOperation");
+        return this.adSpaceService.change(ddId, ddAllowedOperation);
+    }
 
 }

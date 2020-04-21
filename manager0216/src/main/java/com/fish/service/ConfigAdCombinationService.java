@@ -3,12 +3,9 @@ package com.fish.service;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.second.mapper.ConfigAdCombinationMapper;
-import com.fish.dao.second.model.ConfigAdCombination;
-import com.fish.dao.second.model.ConfigAdPosition;
-import com.fish.dao.second.model.ConfigAdSpace;
+import com.fish.dao.second.model.*;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
-import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -16,19 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author CC ccheng0725@outlook.com
  * @date 2020-03-13 17:19
  */
 @Service
-public class ConfigAdCombinationService implements BaseService<ConfigAdCombination> {
+public class ConfigAdCombinationService extends CacheService<ConfigAdCombination> implements BaseService<ConfigAdCombination> {
 
     @Autowired
     ConfigAdCombinationMapper adCombinationMapper;
-
-    @Autowired
-    CacheService cacheService;
 
     @Autowired
     ConfigAdPositionService adPositionService;
@@ -41,6 +36,12 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
 
     @Autowired
     BaseConfig baseConfig;
+
+    @Autowired
+    ConfigAdPositionService configAdPositionService;
+
+    @Autowired
+    ConfigAdStrategyService configAdStrategyService;
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
@@ -77,26 +78,29 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
                 // 更新广告位置名称
                 int positionId = positionObject.getInteger("positionId");
                 positionObject.put("positionName",
-                        positionId + "-" + this.cacheService.getConfigAdPositions(positionId).getDdName());
+                        positionId + "-" + this.configAdPositionService.getEntity(ConfigAdPosition.class,
+                                String.valueOf(positionId)).getDdName());
+
                 // 更新广告策略名称
                 int strategyId = positionObject.getInteger("strategyId");
                 positionObject.put("strategyName",
-                        strategyId + "-" + this.cacheService.getConfigAdStrategys(strategyId).getDdName());
+                        strategyId + "-" + this.configAdStrategyService.getEntity(ConfigAdStrategy.class,
+                                String.valueOf(strategyId)).getDdName());
                 // 处理广告位
                 JSONArray spaceArray = positionObject.getJSONArray("spaces");
                 for (int spaceIndex = 0; spaceIndex < spaceArray.size(); spaceIndex++) {
                     JSONObject spaceObject = spaceArray.getJSONObject(spaceIndex);
                     // 处理广告位名称
                     int spaceId = spaceObject.getInteger("spaceId");
-                    ConfigAdSpace configAdSpace = this.cacheService.getConfigAdSpaces(spaceId);
+                    ConfigAdSpace configAdSpace = this.adSpaceService.getEntity(ConfigAdSpace.class, String.valueOf(spaceId));
                     spaceObject.put("spaceName", spaceId + "-" + configAdSpace.getDdName());
                     // 将广告内容名拼接起来
                     JSONArray contentArray = spaceObject.getJSONArray("contentIds");
                     String contentNames = "";
                     for (int contentIndex = 0; contentIndex < contentArray.size(); contentIndex++) {
                         int contentId = contentArray.getInteger(contentIndex);
-                        String contentName = contentId + "-" + this.cacheService.getConfigAdContents(
-                                contentId).getDdTargetAppName();
+                        String contentName = contentId + "-" + this.adContentService.getEntity(ConfigAdContent.class,
+                                String.valueOf(contentId)).getDdTargetAppName();
                         if (StringUtils.isBlank(contentNames)) {
                             contentNames = contentName;
                         } else {
@@ -271,7 +275,7 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
         int delete = this.adCombinationMapper.delete(deleteIds);
         if (delete <= 0) {
             postResult.setSuccessed(false);
-            postResult.setMsg("操作失败，删除组合配置内容失败！");
+            postResult.setMsg("操作失败，修改组合配置内容失败！");
         } else {
             ReadJsonUtil.flushTable("config_ad_combination", this.baseConfig.getFlushCache());
         }
@@ -298,5 +302,18 @@ public class ConfigAdCombinationService implements BaseService<ConfigAdCombinati
             ReadJsonUtil.flushTable("config_ad_combination", this.baseConfig.getFlushCache());
         }
         return result;
+    }
+
+    @Override
+    void updateAllCache(ConcurrentHashMap<String, ConfigAdCombination> map) {
+        List<ConfigAdCombination> configAdCombinations = this.adCombinationMapper.selectAll();
+        configAdCombinations.forEach(configAdCombination -> {
+            map.put(String.valueOf(configAdCombination.getDdId()), configAdCombination);
+        });
+    }
+
+    @Override
+    ConfigAdCombination queryEntity(Class<ConfigAdCombination> clazz, String key) {
+        return this.adCombinationMapper.select(Integer.valueOf(key));
     }
 }

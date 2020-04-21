@@ -61,6 +61,13 @@
     </div>
 </script>
 
+<!-- 是否运营开关按钮 -->
+<script type="text/html" id="switchDdAllowedOperation">
+    <input type="checkbox" name="ddAllowedOperation" value="{{d.ddId}}" lay-skin="switch" lay-text="是|否"
+           lay-filter="switchOperation" {{ d.ddAllowedOperation== true ? 'checked' : '' }}>
+</script>
+
+
 <script>
     const operatorurl = '../manage/configAdSpace';
 
@@ -123,6 +130,28 @@
 
     layui.use(['table', 'laydate', 'form', 'layer', 'flow'], () => {
         const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+
+        // 监听switch事件(修改运营状态)
+        form.on('switch(switchOperation)', function (data) {
+            debugger;
+            let statusObj = {ddAllowedOperation: data.elem.checked, ddId: this.value};
+            $.ajax({
+                url: operatorurl + '/change',
+                data: JSON.stringify(statusObj),
+                contentType: "application/json; charset=utf-8",
+                type: 'post',
+                dataType: "json",
+                success: function (res) {
+                    console.log("res:", res);
+                    if (res.successed) {
+                        layer.msg("刷新成功");
+                    } else {
+                        layer.msg('刷新失败，请联系管理员')
+                    }
+                }
+            });
+        })
+
         // 表格渲染
         table.render({
             elem: '#table-page',
@@ -150,9 +179,7 @@
                 },
                 {
                     field: 'ddAllowedOperation', width: 120, title: '允许运营？', sort: false, align: 'center',
-                    templet: (d) => {
-                        return d.ddAllowedOperation ? '是' : '否';
-                    }
+                    templet: '#switchDdAllowedOperation', unresize: true
                 },
                 {field: 'updateTime', width: 220, title: '数据更新时间', sort: true, align: 'center'}
             ]],

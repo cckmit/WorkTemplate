@@ -7,7 +7,6 @@ import com.fish.dao.second.model.ConfigAdContent;
 import com.fish.dao.second.model.ConfigAdSpace;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
-import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -15,13 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author CC ccheng0725@outlook.com
  * @date 2020-02-28 19:07
  */
 @Service
-public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
+public class ConfigAdSpaceService extends CacheService<ConfigAdSpace> implements BaseService<ConfigAdSpace> {
 
     @Autowired
     ConfigAdSpaceMapper adSpaceMapper;
@@ -30,10 +30,10 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
     ConfigAdContentMapper adContentMapper;
 
     @Autowired
-    CacheService cacheService;
+    BaseConfig baseConfig;
 
     @Autowired
-    BaseConfig baseConfig;
+    ConfigAdContentService configAdContentService;
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
@@ -69,8 +69,7 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
                 String[] splitContents = configAdSpace.getDdAdContents().split(",");
                 //处理广告内容数据
                 for (String contentId : splitContents) {
-                    ConfigAdContent configAdContents = this.cacheService.getConfigAdContents(
-                            Integer.parseInt(contentId));
+                    ConfigAdContent configAdContents = this.configAdContentService.getEntity(ConfigAdContent.class, contentId);
                     //防止表内没有对应ID数据异常
                     if (configAdContents != null) {
                         String contentName = configAdContents.getDdTargetAppName();
@@ -102,7 +101,7 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
         } else {
             ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdSpaces();
+        //cacheService.updateAllConfigAdSpaces();
         return result;
     }
 
@@ -121,7 +120,6 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
         } else {
             ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdSpaces();
         return result;
     }
 
@@ -140,7 +138,7 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
         } else {
             ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdSpaces();
+        // cacheService.updateAllConfigAdSpaces();
         return result;
     }
 
@@ -190,5 +188,37 @@ public class ConfigAdSpaceService implements BaseService<ConfigAdSpace> {
             return this.adContentMapper.selectAllByType(configAdSpace.getDdAdType());
         }
         return null;
+    }
+
+    /**
+     * 通过开关按钮修改运营状态
+     *
+     * @param ddId
+     * @param ddAllowedOperation
+     * @return
+     */
+    public PostResult change(Integer ddId, Boolean ddAllowedOperation) {
+        PostResult result = new PostResult();
+        int count = this.adSpaceMapper.changeDdAllowedOperation(ddId, ddAllowedOperation);
+        if (count <= 0) {
+            result.setSuccessed(false);
+            result.setMsg("更新失败请联系管理员");
+        } else {
+            ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
+        }
+        return result;
+    }
+
+    @Override
+    void updateAllCache(ConcurrentHashMap<String, ConfigAdSpace> map) {
+        List<ConfigAdSpace> configAdSpaces = this.adSpaceMapper.selectAll(new ConfigAdSpace());
+        configAdSpaces.forEach(configAdSpace -> {
+            map.put(String.valueOf(configAdSpace.getDdId()), configAdSpace);
+        });
+    }
+
+    @Override
+    ConfigAdSpace queryEntity(Class<ConfigAdSpace> clazz, String key) {
+        return this.adSpaceMapper.select(Integer.valueOf(key));
     }
 }

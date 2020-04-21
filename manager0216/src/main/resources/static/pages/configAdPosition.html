@@ -60,6 +60,23 @@
         </button>
     </div>
 </script>
+<!-- 是否运营开关按钮 -->
+<script type="text/html" id="switchOperation">
+    <input type="checkbox" name="ddAllowedOperation" value="{{d.ddId}}" lay-skin="switch" lay-text="是|否"
+           lay-filter="switchOperation" {{ d.ddAllowedOperation== true ? 'checked' : '' }}>
+</script>
+
+<!-- 是否显示微信开关按钮 -->
+<script type="text/html" id="switchDdShowWxAd">
+    <input type="checkbox" name="ddShowWxAd" value="{{d.ddId}}" lay-skin="switch" lay-text="是|否"
+           lay-filter="switchDdShowWxAd" {{ d.ddShowWxAd== true ? 'checked' : '' }}>
+</script>
+
+<!-- 是否显示微信激励视频开关按钮 -->
+<script type="text/html" id="switchDdShowWxReVideoAd">
+    <input type="checkbox" name="ddShowWxReVideoAd" value="{{d.ddId}}" lay-skin="switch" lay-text="是|否"
+           lay-filter="switchDdShowWxReVideoAd" {{ d.ddShowWxReVideoAd== true ? 'checked' : '' }}>
+</script>
 
 <script>
     const operatorurl = '../manage/configAdPosition';
@@ -138,6 +155,85 @@
 
     layui.use(['table', 'laydate', 'form', 'layer', 'flow'], function () {
         const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+
+        // 监听switch事件(修改运营状态)
+        form.on('switch(switchOperation)', function (data) {
+            debugger;
+            //let switchStatus = data.elem.checked;//判断开关状态
+            let statusObj = {ddAllowedOperation: data.elem.checked, ddId: this.value};
+
+            $.ajax({
+                url: operatorurl + '/change',
+                data: JSON.stringify(statusObj),
+                contentType: "application/json; charset=utf-8",
+                type: 'post',
+                dataType: "json",
+                success: function (res) {
+                    console.log("res:", res);
+                    if (res.successed) {
+                        layer.msg("刷新成功");
+                    } else {
+                        layer.msg('刷新失败，请联系管理员')
+                    }
+                }
+            });
+            //changeStatus(statusObj);
+        })
+
+        // 监听switch事件(修改微信显示状态)
+        form.on('switch(switchDdShowWxAd)', function (data) {
+            debugger;
+            //let switchStatus = data.elem.checked;//判断开关状态
+            let statusObj = {ddShowWxAd: data.elem.checked, ddId: this.value};
+
+            $.ajax({
+                url: operatorurl + '/change',
+                data: JSON.stringify(statusObj),
+                contentType: "application/json; charset=utf-8",
+                type: 'post',
+                dataType: "json",
+                success: function (res) {
+                    console.log("res:", res);
+                    if (res.successed) {
+                        layer.msg("刷新成功");
+                    } else {
+                        layer.msg('刷新失败，请联系管理员')
+                    }
+                }
+            });
+            //changeStatus(statusObj);
+        })
+
+        // 监听switch事件(修改微信激励视频状态)
+        form.on('switch(switchDdShowWxReVideoAd)', function (data) {
+            debugger;
+            //let switchStatus = data.elem.checked;//判断开关状态
+            let statusObj = {ddShowWxReVideoAd: data.elem.checked, ddId: this.value};
+            /*let statusObj = {ddShowWxReVideoAd: false};
+            let ddId = this.value;
+            console.log(ddId);
+            if (switchStatus) {
+                statusObj.ddShowWxReVideoAd = true;
+                statusObj.ddId = ddId;
+            }*/
+            $.ajax({
+                url: operatorurl + '/change',
+                data: JSON.stringify(statusObj),
+                contentType: "application/json; charset=utf-8",
+                type: 'post',
+                dataType: "json",
+                success: function (res) {
+                    console.log("res:", res);
+                    if (res.successed) {
+                        layer.msg("刷新成功");
+                    } else {
+                        layer.msg('刷新失败，请联系管理员')
+                    }
+                }
+            });
+            //changeStatus(statusObj);
+        })
+
         // 表格渲染
         table.render({
             elem: '#table-page',
@@ -149,21 +245,15 @@
                 {field: 'adTypeNames', width: 200, title: '类型列表', sort: true},
                 {
                     field: 'ddAllowedOperation', width: 120, title: '允许运营？', sort: false, align: 'center',
-                    templet: (d) => {
-                        return d.ddAllowedOperation ? '是' : '否';
-                    }
+                    templet: '#switchOperation', unresize: true
                 },
                 {
                     field: 'ddShowWxAd', width: 120, title: '显示微信？', sort: false, align: 'center',
-                    templet: (d) => {
-                        return d.ddShowWxAd ? '是' : '否';
-                    }
+                    templet: '#switchDdShowWxAd', unresize: true
                 },
                 {
                     field: 'ddShowWxReVideoAd', width: 120, title: '显示微信激励视频？', sort: false, align: 'center',
-                    templet: (d) => {
-                        return d.ddShowWxReVideoAd ? '是' : '否';
-                    }
+                    templet: '#switchDdShowWxReVideoAd', unresize: true
                 },
                 {field: 'updateTime', width: 220, title: '数据更新时间', sort: true, align: 'center'}
             ]],
@@ -228,12 +318,33 @@
         });
     });
 
+
+    // 改变状态
+   /* function changeStatus(statusObj) {
+        debugger;
+        $.ajax({
+            url: operatorurl + '/change',
+            data: JSON.stringify(statusObj),
+            contentType: "application/json; charset=utf-8",
+            type: 'post',
+            dataType: "json",
+            success: function (res) {
+                console.log("res:", res);
+                if (res.successed) {
+                    layer.msg("刷新成功");
+                } else {
+                    layer.msg('刷新失败，请联系管理员')
+                }
+            }
+        });
+    }*/
+
     /**
      * 渲染部分下拉框选项
      * @param editData
      * @param type
      */
-    function privateLoadEditData(editData, type) {
+        function privateLoadEditData(editData, type) {
         layui.use(['form', 'layer'], () => {
             const $ = layui.$, form = layui.form, layer = layui.layer;
             const queryData = {id: type === 'new' ? 0 : editData.ddId};
@@ -253,6 +364,7 @@
                 form.val("form_table", editData);
             });
         });
+
     }
 </script>
 

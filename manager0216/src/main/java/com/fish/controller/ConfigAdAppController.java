@@ -78,17 +78,17 @@ public class ConfigAdAppController {
     @ResponseBody
     @PostMapping(value = "/configAdApp/delete")
     public PostResult delete(@RequestBody JSONObject jsonObject) {
-        return this.adAppService.delete(jsonObject.getString("deleteIds"));
+        return this.adAppService.delete(jsonObject.getString("ddAppId"),jsonObject.getString("ddMinVersion"));
     }
 
     /**
-     * @param id 微信广告配置ID
+     * @param key 微信广告配置的key
      * @return
      */
     @ResponseBody
     @GetMapping(value = "/configAdApp/get")
-    public ConfigAdApp getConfigAdApp(int id) {
-        return this.adAppService.getConfigAdApp(id);
+    public ConfigAdApp getConfigAdApp(String key) {
+        return this.adAppService.getConfigAdApp(key);
     }
 
     /**
@@ -100,8 +100,7 @@ public class ConfigAdAppController {
     @ResponseBody
     @PostMapping(value = "/configAdApp/change")
     public PostResult changeStatus(@RequestBody JSONObject jsonObject) {
-        Integer id = jsonObject.getInteger("id");
-        Boolean ddAllowedShow = jsonObject.getBoolean("ddAllowedShow");
-        return this.adAppService.changeAllowedShowStatus(id, ddAllowedShow);
+        return this.adAppService.changeAllowedShowStatus(jsonObject);
     }
+
 }

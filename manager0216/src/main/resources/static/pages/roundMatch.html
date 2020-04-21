@@ -134,7 +134,8 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {},
+        filterDone: function (val, list) {
+        },
     });
     /**
      * 游戏选择框
@@ -152,7 +153,8 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {},
+        filterDone: function (val, list) {
+        },
     });
     /**
      * 产品选择框
@@ -170,7 +172,8 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {},
+        filterDone: function (val, list) {
+        },
     });
     layui.use(['table', 'laydate', 'form', 'layer', 'flow'], function () {
         var table = layui.table,
@@ -186,7 +189,20 @@
                 url: '../manage/roundmatch/appname',
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
-                        let context = {name: val.productName + "-" + val.ddappid, value: val.ddappid, selected: false};
+                        let type;
+                        let appPlatform;
+                        switch (val.programType) {
+                            case 0:type = "game";break;
+                            case 1:type = "web";break;
+                            case 2:type = "public";break;
+                            default:type = "未知游戏类型";break;
+                        }
+                        switch (val.ddAppPlatform) {
+                            case "weixin":appPlatform = "wx";break;
+                            case "q":appPlatform = "qq";break;
+                            default:appPlatform = "未知平台";break;
+                        }
+                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
                         appNames.push(context);
                     });
                     appNameSelect.update(
@@ -411,6 +427,7 @@
             }
         });
     }
+
     /**
      * 根据ddcode删除，重写privateGetDeleteData
      * @param dataArray

@@ -5,30 +5,29 @@ import com.fish.dao.second.mapper.ConfigAdStrategyMapper;
 import com.fish.dao.second.model.ConfigAdStrategy;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
-import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author CC ccheng0725@outlook.com
  * @date 2020-02-28 19:07
  */
 @Service
-public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
+public class ConfigAdStrategyService extends CacheService<ConfigAdStrategy> implements BaseService<ConfigAdStrategy> {
 
     @Autowired
     ConfigAdStrategyMapper adStrategyMapper;
 
     @Autowired
-    CacheService cacheService;
-
-    @Autowired
     BaseConfig baseConfig;
 
+    @Autowired
+    ConfigAdStrategyService adStrategyService;
 
     @Override
     public void setDefaultSort(GetParameter parameter) { }
@@ -40,7 +39,10 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
     public boolean removeIf(ConfigAdStrategy configAdContent, JSONObject searchData) { return false; }
 
     @Override
-    public List selectAll(GetParameter parameter) { return this.adStrategyMapper.selectAll(); }
+    public List selectAll(GetParameter parameter) {
+        //List<ConfigAdStrategy> list = this.adStrategyMapper.selectAll();
+        return this.adStrategyMapper.selectAll();
+    }
 
     /**
      * 新增广告内容
@@ -57,7 +59,6 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
         } else {
             ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdStrategys();
         return result;
     }
 
@@ -76,7 +77,6 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
         } else {
             ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdStrategys();
         return result;
     }
 
@@ -95,7 +95,6 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
         } else {
             ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdStrategys();
         return result;
     }
 
@@ -107,6 +106,17 @@ public class ConfigAdStrategyService implements BaseService<ConfigAdStrategy> {
             configAdStrategy.setDdName(ddId + "-" + ddName);
         }
         return configAdStrategies;
+    }
+
+    @Override
+    void updateAllCache(ConcurrentHashMap<String, ConfigAdStrategy> map) {
+        List<ConfigAdStrategy> list = this.adStrategyMapper.selectAll();
+        list.forEach(adStrategy -> map.put(String.valueOf(adStrategy.getDdId()), adStrategy));
+    }
+
+    @Override
+    ConfigAdStrategy queryEntity(Class<ConfigAdStrategy> clazz, String key) {
+        return this.adStrategyMapper.select(Integer.valueOf(key));
     }
 
 }

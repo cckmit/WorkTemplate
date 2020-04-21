@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping(value = "/manage")
-public class WxAdPosController {
+public class AdValueWxAdPosController {
     @Autowired
     AdValueWxAdposService adValueWxAdposService;
 

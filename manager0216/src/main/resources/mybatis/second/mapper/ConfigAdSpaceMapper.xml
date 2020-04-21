@@ -66,4 +66,8 @@
         where ddId in (${deleteIds})
     </update>
 
+    <update id="changeDdAllowedOperation">
+         update config_ad_space set ddAllowedOperation = #{ddAllowedOperation, jdbcType=BOOLEAN} where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
 </mapper>

@@ -58,4 +58,14 @@ public interface ConfigAdSpaceMapper {
      */
     int delete(String deleteIds);
 
+    /**
+     * 更新运营状态
+     *
+     * @param ddId
+     * @param ddAllowedOperation
+     * @return
+     */
+    int changeDdAllowedOperation(Integer ddId, Boolean ddAllowedOperation);
+
+
 }

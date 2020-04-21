@@ -36,6 +36,8 @@ public class ProductData {
     private MinitjWx minitjWx;
 
     private Integer wxNew;
+    /*** 展示字段  新增单价  买量支出/广告新增人数*/
+    private BigDecimal wxAdNewPrice;
 
     private Integer wxActive;
 
@@ -153,6 +155,15 @@ public class ProductData {
      */
     private String beginTime;
     private String endTime;
+
+
+    public BigDecimal getWxAdNewPrice() {
+        return wxAdNewPrice;
+    }
+
+    public void setWxAdNewPrice(BigDecimal wxAdNewPrice) {
+        this.wxAdNewPrice = wxAdNewPrice;
+    }
 
     public String getWxAppid() {
         return wxAppid;

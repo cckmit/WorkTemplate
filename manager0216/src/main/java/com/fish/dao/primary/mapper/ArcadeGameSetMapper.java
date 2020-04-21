@@ -14,11 +14,7 @@ public interface ArcadeGameSetMapper {
 
     List<ArcadeGameSet> selectAllByAsc();
 
-    int deleteByPrimaryKey(Integer id);
-
     int insert(ArcadeGameSet record);
-
-    int insertSelective(ArcadeGameSet record);
 
     ArcadeGameSet selectByPrimaryKey(Integer id);
 

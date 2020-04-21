@@ -103,17 +103,20 @@
             url: '../manage/roundmatch/appname',
             success: (res) => {
                 res.forEach(function (val, index, arr) {
-                    var type;
-                    if (val.programType === 0) {
-                        type = "小游戏";
+                    let type;
+                    let appPlatform;
+                    switch (val.programType) {
+                        case 0:type = "game";break;
+                        case 1:type = "web";break;
+                        case 2:type = "public";break;
+                        default:type = "未知游戏类型";break;
                     }
-                    if (val.programType === 1) {
-                        type = "小程序";
+                    switch (val.ddAppPlatform) {
+                        case "weixin":appPlatform = "wx";break;
+                        case "q":appPlatform = "qq";break;
+                        default:appPlatform = "未知平台";break;
                     }
-                    if (val.programType === 2) {
-                        type = "公众号";
-                    }
-                    let context = {name: val.productName + "（" + type + ")", value: val.ddappid, selected: false};
+                    let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
                     appNames.push(context);
                 });
                 appSelect.update(
@@ -136,6 +139,16 @@
                     {field: 'wxDate', width: 120, title: '日期', sort: true},
                     {field: 'productName', width: 120, title: '产品名称', sort: true},
                     {field: 'wxNew', width: 120, title: '注册用户数', sort: true},
+                    {
+                        field: 'wxRegSearch', width: 100, title: '搜索', sort: true,
+                        templet: (d) => {
+                            if (d.wxRegSearch != null && d.wxRegSearch !== "") {
+                                return d.wxRegSearch;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
                     {
                         field: 'wxRegAd', width: 100, title: '广告', sort: true,
                         templet: (d) => {
@@ -206,17 +219,6 @@
                             }
                         }
                     },
-                    {
-                        field: 'wxRegSearch', width: 100, title: '搜索', sort: true,
-                        templet: (d) => {
-                            if (d.wxRegSearch != null && d.wxRegSearch !== "") {
-                                return d.wxRegSearch;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    },
-
                     {field: 'wxRegJson', width: 450, title: '注册用户来源', sort: true}
                 ]
             ],

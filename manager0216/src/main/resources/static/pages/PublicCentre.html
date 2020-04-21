@@ -123,7 +123,7 @@
                 {type: 'checkbox'},
                 {type: 'numbers', width: 60, title: '序号'},
                 {
-                    field: 'recommendType', width: 220, title: '推荐位类型', align: 'center',
+                    field: 'recommendType', width: 180, title: '推荐位类型', align: 'center',
                     templet: (d) => {
                         if (d.recommendType === 0) {
                             return 'banner';
@@ -136,7 +136,7 @@
                     }
                 },
                 {field: 'showId', width: 180, title: '展示位顺序', edit: 'text', align: 'center'},
-                {field: 'recommendName', width: 220, title: '推荐位名称', align: 'center'},
+                {field: 'recommendName', width: 180, title: '推荐位名称', align: 'center'},
                 {
                     field: 'skipType', width: 180, title: '跳转类型', align: 'center',
                     templet: (d) => {
@@ -157,8 +157,19 @@
                             return d.skipSet;
                     }
                 },
-                {field: 'resourceName', width: 220, title: '图片名称', align: 'center'},
-                {field: 'detailName', width: 220, title: '详情名称', align: 'center'}
+                {
+                    field: 'bannerType', width: 160, title: 'Banner类型', align: 'center',
+                    templet: (d) => {
+                        if (d.bannerType === 0) {
+                            return 'URL链接';
+                        } else if (d.bannerType === 1) {
+                            return "Banner";
+                        }
+                        return "-";
+                    }
+                },
+                {field: 'resourceName', width: 210, title: '图片名称', align: 'center'},
+                {field: 'detailName', width: 220, title: '展示内容', align: 'center'}
             ]],
             page: true,
             toolbar: '#toolbar',
@@ -171,6 +182,24 @@
             elem: '#times',
             range: true
         });
+
+        //根据跳转合集显示不同输入框
+        form.on('select(skipType)', function (data) {
+            if (data.value === "0") {
+                $("#jumpSets").addClass("layui-hide");
+            } else if (data.value === "1") {
+                $('#jumpSets').removeClass('layui-hide');
+            }
+        });
+        //根据推荐位类型显示不同输入框
+        form.on('select(recommendType)', function (data) {
+            if (data.value === "0") {
+                $("#bannerTypes").removeClass("layui-hide");
+            } else {
+                $('#bannerTypes').addClass('layui-hide');
+            }
+        });
+
         //校验是否为图片格式结尾
         String.prototype.endWith = function (endStr) {
             var d = this.length - endStr.length;
@@ -180,20 +209,30 @@
         let gif = ".gif";
         let png = ".png";
         $('#front-submit').on('click', function () {
+            let bannerType = $('#bannerType').val();
             let content = $('#resourceName').val();
-            if (!content.endWith(img) && !content.endWith(gif) && !content.endWith(png)) {
-                UIConfig.warnMsg("图片名称 请检查后缀填写");
-                return false;
+            let detailName = $('#detailName').val();
+            if (bannerType === "1") {
+                if (!content.endWith(img) && !content.endWith(gif) && !content.endWith(png)) {
+                    UIConfig.warnMsg("图片名称 请检查后缀填写");
+                    return false;
+                }
+                if (!detailName.endWith(img) && !detailName.endWith(gif) && !detailName.endWith(png) && (detailName !== "")) {
+                    UIConfig.warnMsg("展示内容名称 请检查后缀填写");
+                    return false;
+                }
+            } else {
+                //提交链接地址检测
+                let reg = /(http|https):\/\/([\w.]+\/?)\S*/
+                let isTrue = reg.test(detailName);
+                let isNull = (detailName === "");
+                if (!(isNull || isTrue)) {
+                    UIConfig.warnMsg("请以正确链接地址输入链接");
+                    return false;
+                }
             }
         });
-        //根据跳转合集显示不同输入框
-        form.on('select(skipType)', function (data) {
-            if (data.value === "0") {
-                $("#jumpSets").addClass("layui-hide");
-            } else if (data.value === "1") {
-                $('#jumpSets').removeClass('layui-hide');
-            }
-        });
+
         table.on('edit(table-page)', function (obj) {
             console.log(JSON.stringify(obj));
             const value = obj.value //得到修改后的值
@@ -222,6 +261,7 @@
                 }
             }
         });
+
     })
 </script>
 <!-- 表单元素 -->
@@ -275,6 +315,16 @@
             <div id="skipSet" name="skipSet" lay-filter="skipSet"></div>
         </div>
     </div>
+    <div class="layui-form-item" id="bannerTypes">
+        <label class="layui-form-label">Banner类型 </label>
+        <div class="layui-input-inline">
+            <select class="layui-select" id="bannerType" name="bannerType"
+                    lay-filter="bannerType">
+                <option value=0>URL链接</option>
+                <option value=1>Banner</option>
+            </select>
+        </div>
+    </div>
     <div class="layui-form-item ">
         <label class="layui-form-label">图片名称 *</label>
         <div class="layui-input-inline">
@@ -283,11 +333,12 @@
         </div>
     </div>
     <div class="layui-form-item ">
-        <label class="layui-form-label">详情名称 </label>
+        <label class="layui-form-label">展示内容 </label>
         <div class="layui-input-inline">
             <input type="text" id="detailName" name="detailName" autocomplete="off"
                    class="layui-input ">
         </div>
+        <div class="layui-input-inline" style="color: red">Banner类型选择链接时请以URL地址填入</div>
     </div>
     <div class="layui-form-item layui-hide" style="text-align:center;">
         <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认"

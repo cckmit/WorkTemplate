@@ -75,12 +75,38 @@
         </button>
     </div>
 </script>
+
+<!-- 自有广告是否允许运营 -->
 <script type="text/html" id="switchTpl">
-    <input type="checkbox" name="ddAllowedShow" value="{{d.id}}" lay-skin="switch" lay-text="是|否"
+    <input type="checkbox" name="ddAllowedShow" value="{{d.ddAppId+'-'+d.ddMinVersion}}" lay-skin="switch"
+           lay-text="是|否"
            lay-filter="switchAllowed" {{ d.ddAllowedShow== true ? 'checked' : '' }}>
 </script>
+
+<!-- 是否允许运营微信Banner广告 -->
+<script type="text/html" id="switchBannerShow">
+    <input type="checkbox" name="ddWxBannerAllowedShow" value="{{d.ddAppId+'-'+d.ddMinVersion}}" lay-skin="switch"
+           lay-text="是|否"
+           lay-filter="switchBanner" {{ d.ddWxBannerAllowedShow== true ? 'checked' : '' }}>
+</script>
+
+<!-- 是否允许运营微信插屏广告 -->
+<script type="text/html" id="switchIconShow">
+    <input type="checkbox" name="ddWxIntAllowedShow" value="{{d.ddAppId+'-'+d.ddMinVersion}}" lay-skin="switch"
+           lay-text="是|否"
+           lay-filter="switchIcon" {{ d.ddWxIntAllowedShow== true ? 'checked' : '' }}>
+</script>
+
+<!-- 是否允许运营激励视频 -->
+<script type="text/html" id="switchVideoShow">
+    <input type="checkbox" name="ddWxReVideoAllowedShow" value="{{d.ddAppId+'-'+d.ddMinVersion}}" lay-skin="switch"
+           lay-text="是|否"
+           lay-filter="switchVideo" {{ d.ddWxReVideoAllowedShow== true ? 'checked' : '' }}>
+</script>
+
 <script>
     const operatorurl = '../manage/configAdApp';
+
     //产品名称数组
     let appNames = [];
     /**
@@ -97,7 +123,8 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {},
+        filterDone: function (val, list) {
+        },
     });
     //自有广告组合数组
     let combinationNames = [];
@@ -115,7 +142,8 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {},
+        filterDone: function (val, list) {
+        },
     });
     /**
      * 广告组合配置选择器
@@ -155,7 +183,8 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {},
+        filterDone: function (val, list) {
+        },
     });
 
     /**
@@ -174,20 +203,61 @@
         pageSize: 5,
         delay: 500,
         filterable: true,
-        filterDone: function (val, list) {},
+        filterDone: function (val, list) {
+        },
+    });
+
+    /**
+     * 产品名称编辑框
+     */
+    var appNameSelect = xmSelect.render({
+        el: '#ddAppId',
+        name: 'ddAppId',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+        },
+        on: function (data) {
+            //change, 此次选择变化的数据,数组
+            let item = data.change[0];
+            if (item != null) {
+                layui.jquery.get('../manage/wxconfig/get?ddAppId=' + item.value, function (data) {
+                    let typeName = "";
+                    switch (data.programType) {
+                        case 0:
+                            typeName = '小游戏';
+                            break;
+                        case 1:
+                            typeName = '小程序';
+                            break;
+                        case 2:
+                            typeName = '公众号';
+                            break;
+                    }
+                    layui.jquery('#type').val(typeName);
+                })
+            }
+        }
     });
 
     /**
      * 打开页面时初始化加载数据
      */
-    layui.use(['table', 'form', 'layer', 'tree'], () => {
+    layui.use(['table', 'form', 'layer'], () => {
         const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer;
         table.render({
             elem: '#table-page',
             url: operatorurl,
             cols: [[
                 {type: 'checkbox'},
-                {field: 'id', width: 60, title: 'ID', sort: true, align: 'right'},
+                {type: 'numbers', width: 60, title: '序号', sort: true, align: 'right'},
                 {field: 'ddAppId', width: 180, title: 'AppId', sort: true, align: 'left'},
                 {field: 'appName', width: 140, title: '产品名称', sort: true, align: 'left'},
                 {field: 'ddMinVersion', width: 110, title: '最低版本', sort: true, align: 'left'},
@@ -196,31 +266,25 @@
                     field: 'ddAllowedShow', width: 100, title: '自有—运营', sort: false, align: 'center',
                     templet: '#switchTpl', unresize: true
                 },
-                {field: 'ddWxBannerUnit', width: 160, title: 'Banner—Unit', sort: false, align: 'left'},
+                {field: 'ddWxBannerUnit', width: 160, title: 'Banner—Unit', sort: false, align: 'left', hide: true},
                 {field: 'ddWxBannerTime', width: 160, title: 'Banner—切换间隔', sort: false, align: 'center'},
                 {
                     field: 'ddWxBannerAllowedShow', width: 120, title: 'Banner—运营', sort: false, align: 'center',
-                    templet: (d) => {
-                        return d.ddWxBannerAllowedShow ? '是' : '否';
-                    }
+                    templet: '#switchBannerShow', unresize: true
                 },
                 {field: 'wxBannerStrategyName', width: 120, title: 'Banner—策略', sort: false, align: 'center'},
                 {field: 'ddWxBannerStrategyValue', width: 220, title: 'Banner—策略配置', sort: false},
-                {field: 'ddWxIntUint', width: 160, title: '插屏—unit', sort: false, align: 'left'},
+                {field: 'ddWxIntUint', width: 160, title: '插屏—unit', sort: false, align: 'left', hide: true},
                 {
                     field: 'ddWxIntAllowedShow', width: 100, title: '插屏—运营', sort: false, align: 'center',
-                    templet: (d) => {
-                        return d.ddWxIntAllowedShow ? '是' : '否';
-                    }
+                    templet: '#switchIconShow', unresize: true
                 },
                 {field: 'wxIntStrategyName', width: 120, title: '插屏—策略', sort: false, align: 'center'},
                 {field: 'ddWxIntStrategyValue', width: 220, title: '插屏—策略配置', sort: false},
-                {field: 'ddWxReVideoUnit', width: 160, title: '激励视频—unit', sort: false, align: 'left'},
+                {field: 'ddWxReVideoUnit', width: 160, title: '激励视频—unit', sort: false, align: 'left', hide: true},
                 {
                     field: 'ddWxReVideoAllowedShow', width: 100, title: '激励视频—运营', sort: false, align: 'center',
-                    templet: (d) => {
-                        return d.ddWxReVideoAllowedShow ? '是' : '否';
-                    }
+                    templet: '#switchVideoShow', unresize: true
                 },
                 {field: 'updateTime', width: 140, title: '数据更新时间', sort: true, align: 'center'}
             ]],
@@ -272,19 +336,35 @@
                 url: '../manage/roundmatch/appname',
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
-                        //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
-                        var type;
-                        if (val.programType === 0) {
-                            type = "小游戏";
+                        let type;
+                        let appPlatform;
+                        switch (val.programType) {
+                            case 0:
+                                type = "game";
+                                break;
+                            case 1:
+                                type = "web";
+                                break;
+                            case 2:
+                                type = "public";
+                                break;
+                            default:
+                                type = "未知游戏类型";
+                                break;
                         }
-                        if (val.programType === 1) {
-                            type = "小程序";
-                        }
-                        if (val.programType === 2) {
-                            type = "公众号";
+                        switch (val.ddAppPlatform) {
+                            case "weixin":
+                                appPlatform = "wx";
+                                break;
+                            case "q":
+                                appPlatform = "qq";
+                                break;
+                            default:
+                                appPlatform = "未知平台";
+                                break;
                         }
                         let context = {
-                            name: val.productName + "（" + type + ")",
+                            name: appPlatform + "-" + type + "-" + val.productName,
                             value: val.ddappid,
                             selected: false
                         };
@@ -325,6 +405,78 @@
                 }
             });
         });
+
+        //监听自由运营Banner操作
+        form.on('switch(switchBanner)', function (obj) {
+            let statusObj = {id: this.value, ddWxBannerAllowedShow: obj.elem.checked};
+            $.ajax({
+                url: operatorurl + '/change',
+                data: JSON.stringify(statusObj),
+                contentType: "application/json; charset=utf-8",
+                type: 'post',
+                dataType: "json",
+                success: function (res) {
+                    if (res.successed) {
+                        if (obj.elem.checked === true) {
+                            layer.msg("开启成功");
+                        } else {
+                            layer.msg("关闭成功");
+                        }
+                        table.reload('table-page');
+                    } else {
+                        layer.msg('操作失败，请联系管理员')
+                    }
+                }
+            });
+        });
+
+        //监听自由运营Icon操作
+        form.on('switch(switchIcon)', function (obj) {
+            let statusObj = {id: this.value, ddWxIntAllowedShow: obj.elem.checked};
+            $.ajax({
+                url: operatorurl + '/change',
+                data: JSON.stringify(statusObj),
+                contentType: "application/json; charset=utf-8",
+                type: 'post',
+                dataType: "json",
+                success: function (res) {
+                    if (res.successed) {
+                        if (obj.elem.checked === true) {
+                            layer.msg("开启成功");
+                        } else {
+                            layer.msg("关闭成功");
+                        }
+                        table.reload('table-page');
+                    } else {
+                        layer.msg('操作失败，请联系管理员')
+                    }
+                }
+            });
+        });
+
+        //监听自由运营激励视频操作
+        form.on('switch(switchVideo)', function (obj) {
+            let statusObj = {id: this.value, ddWxReVideoAllowedShow: obj.elem.checked};
+            $.ajax({
+                url: operatorurl + '/change',
+                data: JSON.stringify(statusObj),
+                contentType: "application/json; charset=utf-8",
+                type: 'post',
+                dataType: "json",
+                success: function (res) {
+                    if (res.successed) {
+                        if (obj.elem.checked === true) {
+                            layer.msg("开启成功");
+                        } else {
+                            layer.msg("关闭成功");
+                        }
+                        table.reload('table-page');
+                    } else {
+                        layer.msg('操作失败，请联系管理员')
+                    }
+                }
+            });
+        });
     });
 
     /**
@@ -335,37 +487,72 @@
     function privateLoadEditData(editData, type) {
         layui.use(['form', 'layer'], () => {
             const $ = layui.$, form = layui.form, layer = layui.layer;
+            $.get('../manage/roundmatch/appname', {}, function (data) {
+                let appIdNames = [];
+                data.forEach(function (val, index, arr) {
+                    let context = {
+                        name: val.productName + "-" + val.ddappid,
+                        value: val.ddappid,
+                        selected: editData && editData.ddAppId === val.ddappid
+                    };
+                    appIdNames.push(context);
+                });
+                appNameSelect.update(
+                    {
+                        data: appIdNames,
+                        autoRow: true,
+                    }
+                );
+            });
             $.get('../manage/configAdCombination/select', {}, function (data) {
-
                 let combinationOptionArr = [];
                 data.forEach((val, index, arr) => {
-                    let context = {
-                        name: val.ddId + '-' + val.ddName,
-                        value: val.ddId,
-                        selected: editData && editData.ddCombinationId === val.ddId
-                    };
+                    let context = {};
+                    if (type === "new") {
+                        context = {
+                            name: val.ddId + '-' + val.ddName,
+                            value: val.ddId,
+                            selected: val.ddId === 5
+                        }
+                    } else {
+                        context = {
+                            name: val.ddId + '-' + val.ddName,
+                            value: val.ddId,
+                            selected: editData && editData.ddCombinationId === val.ddId
+                        };
+                    }
                     combinationOptionArr.push(context);
                 });
-                console.log(combinationOptionArr);
+                console.log("combinationOptionArr:", combinationOptionArr);
                 combinationSelect.update({
                     data: combinationOptionArr,
                     autoRow: true,
                 });
             });
-            const queryData = {id: type === 'new' ? 0 : editData.id};
+
+            const queryData = {key: type === 'new' ? "" : editData.ddAppId + "-" + editData.ddMinVersion};
             $.get(operatorurl + '/get', queryData, function (data) {
                 let bannerStrategyOptionArr = [];
                 let intStrategyOptionArr = [];
                 strategyOptionArr.forEach((val, index, arr) => {
                     const valStr = JSON.stringify(val);
+                    console.log('valStr:', valStr);
                     {
                         let value = JSON.parse(valStr);
-                        value.selected = data && value.value === data.ddWxBannerStrategyId;
+                        if (type === "new") {
+                            value.selected = value.value === 1;
+                        } else {
+                            value.selected = data && value.value === data.ddWxBannerStrategyId;
+                        }
                         bannerStrategyOptionArr.push(value);
                     }
                     {
                         let value = JSON.parse(valStr);
-                        value.selected = data && value.value === data.ddWxIntStrategyId;
+                        if (type === "new") {
+                            value.selected = value.value === 1;
+                        } else {
+                            value.selected = data && value.value === data.ddWxIntStrategyId;
+                        }
                         intStrategyOptionArr.push(value);
                     }
                 });
@@ -382,21 +569,28 @@
         });
     }
 
+    /**
+     * 根据ddAppId，ddMinVer参数删除，重写privateGetDeleteData
+     * @param dataArray
+     * @param deleteObj
+     */
+    function privateGetDeleteData(dataArray, deleteObj) {
+        if (dataArray.length > 1) {
+            UIConfig.warnMsg("请选择一行数据删除！")
+            return false;
+        }
+        deleteObj.ddAppId = dataArray[0].ddAppId;
+        deleteObj.ddMinVersion = dataArray[0].ddMinVersion;
+        deleteObj.deleteCount++;
+    }
 </script>
 <!-- 表单元素 -->
 <form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
       style="padding: 20px 0 0 0;width: 600px;height: 700px;">
     <div class="layui-form-item">
-        <label class="layui-form-label">ID</label>
-        <div class="layui-input-inline">
-            <input type="text" id="id" name="id" class="layui-input" autocomplete="off" disabled
-                   placeholder="保存成功后自动生成">
-        </div>
-    </div>
-    <div class="layui-form-item">
         <label class="layui-form-label">AppId</label>
-        <div class="layui-input-inline ">
-            <input type="text" id="ddAppId" name="ddAppId" class="layui-input" autocomplete="off" lay-verify="required">
+        <div class="layui-input-inline">
+            <div id="ddAppId" lay-filter="ddAppId" name="ddAppId"></div>
         </div>
     </div>
     <div class="layui-form-item ">
@@ -417,17 +611,12 @@
             <input type="checkbox" checked="" name="ddAllowedShow" lay-skin="switch" lay-text="是|否">
         </div>
     </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">Banner—Unit</label>
-        <div class="layui-input-inline">
-            <input type="text" id="ddWxBannerUnit" name="ddWxBannerUnit" class="layui-input"
-                   autocomplete="off">
-        </div>
-    </div>
+
     <div class="layui-form-item ">
         <label class="layui-form-label">Banner—切换间隔</label>
         <div class="layui-input-inline ">
-            <input type="text" class="layui-input" id="ddWxBannerTime" name="ddWxBannerTime" class="layui-input"
+            <input type="text" class="layui-input" id="ddWxBannerTime" value="5" name="ddWxBannerTime"
+                   class="layui-input"
                    autocomplete="off" lay-verify="required|number">
         </div>
     </div>
@@ -446,14 +635,7 @@
         <label class="layui-form-label">Banner—策略配置</label>
         <div class="layui-input-inline">
             <input type="text" class="layui-input" id="ddWxBannerStrategyValue" name="ddWxBannerStrategyValue"
-                   autocomplete="off">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">插屏—unit</label>
-        <div class="layui-input-inline">
-            <input type="text" class="layui-input" id="ddWxIntUint" name="ddWxIntUint" class="layui-input"
-                   autocomplete="off" lay-verify="required">
+                   autocomplete="off" value='{"time":5,"firstType":5}'>
         </div>
     </div>
     <div class="layui-form-item ">
@@ -472,13 +654,6 @@
         <div class="layui-input-inline">
             <input type="text" class="layui-input" id="ddWxIntStrategyValue" name="ddWxIntStrategyValue"
                    autocomplete="off">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">激励视频—unit</label>
-        <div class="layui-input-inline">
-            <input type="text" class="layui-input" id="ddWxReVideoUnit" name="ddWxReVideoUnit" class="layui-input"
-                   autocomplete="off" lay-verify="required">
         </div>
     </div>
     <div class="layui-form-item ">

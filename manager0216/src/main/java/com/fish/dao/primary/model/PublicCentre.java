@@ -15,6 +15,8 @@ public class PublicCentre {
 
     private Integer skipSet;
 
+    private Integer bannerType;
+
     private String resourceName;
 
     private String detailName;
@@ -89,6 +91,14 @@ public class PublicCentre {
 
     public void setDetailName(String detailName) {
         this.detailName = detailName == null ? null : detailName.trim();
+    }
+
+    public Integer getBannerType() {
+        return bannerType;
+    }
+
+    public void setBannerType(Integer bannerType) {
+        this.bannerType = bannerType;
     }
 
     @Override

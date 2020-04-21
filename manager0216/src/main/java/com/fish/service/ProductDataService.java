@@ -164,6 +164,7 @@ public class ProductDataService implements BaseService<ProductData> {
                         productDatum.setBuyClickPrice(buyPay.getBuyClickPrice());
                     }
                 }
+                productDatum.setWxAdNewPrice(new BigDecimal(0));
                 //查询小程序是否存在充值数据
                 if (!programReChargeMap.isEmpty()) {
                     Orders orders = programReChargeMap.get(wxAppid + "_" + new SimpleDateFormat("yyyy-MM-dd").format(wxDate));
@@ -174,7 +175,6 @@ public class ProductDataService implements BaseService<ProductData> {
             }
         } catch (Exception e) {
             LOGGER.error("查询小游戏数据处理异常" + ", 详细信息:{}", e.getMessage());
-            // System.out.println(e.getMessage());
         }
         return productDatas;
     }
@@ -199,39 +199,23 @@ public class ProductDataService implements BaseService<ProductData> {
             String appId = adValueWxAdPo.getAppId();
             String date = adValueWxAdPo.getDate();
             AdValueWxAdpos adValueWxAdpos = wxAdpPosMap.get(appId + "_" + date);
+            switch (adValueWxAdPo.getSlotId()) {
+                case "8040321819858439":
+                    adValueWxAdPo.setWxBannerIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                    break;
+                case "1030436212907001":
+                    adValueWxAdPo.setWxVideoIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                    break;
+                case "3030046789020061":
+                    adValueWxAdPo.setScreenIncome(new BigDecimal(adValueWxAdPo.getIncome()));
+                    break;
+                case "7070083760581921":
+                    break;
+                default:
+                    break;
+            }
             if (adValueWxAdpos == null) {
-                switch (adValueWxAdPo.getSlotId()) {
-                    case "8040321819858439":
-                        adValueWxAdPo.setWxBannerIncome(new BigDecimal(adValueWxAdPo.getIncome()));
-                        break;
-                    case "1030436212907001":
-                        adValueWxAdPo.setWxVideoIncome(new BigDecimal(adValueWxAdPo.getIncome()));
-                        break;
-                    case "3030046789020061":
-                        adValueWxAdPo.setScreenIncome(new BigDecimal(adValueWxAdPo.getIncome()));
-                        break;
-                    case "7070083760581921":
-                        break;
-                    default:
-                        break;
-                }
                 wxAdpPosMap.put(appId + "_" + date, adValueWxAdPo);
-            } else {
-                switch (adValueWxAdPo.getSlotId()) {
-                    case "8040321819858439":
-                        adValueWxAdpos.setWxBannerIncome(new BigDecimal(adValueWxAdPo.getIncome()));
-                        break;
-                    case "1030436212907001":
-                        adValueWxAdpos.setWxVideoIncome(new BigDecimal(adValueWxAdPo.getIncome()));
-                        break;
-                    case "3030046789020061":
-                        adValueWxAdpos.setScreenIncome(new BigDecimal(adValueWxAdPo.getIncome()));
-                        break;
-                    case "7070083760581921":
-                        break;
-                    default:
-                        break;
-                }
             }
         }
         return wxAdpPosMap;
@@ -316,11 +300,14 @@ public class ProductDataService implements BaseService<ProductData> {
                     //处理活跃用户来源数据
                     activeSourceDetail(productData, wxActiveSource);
                 }
+                productData.setWxAdNewPrice(new BigDecimal(0));
                 if (buyPayMap != null && !buyPayMap.isEmpty()) {
                     BuyPay buyPay = buyPayMap.get(wxData.getWxAppid() + "_" + dateFormat.format(wxData.getWxDate()));
                     if (buyPay != null) {
                         productData.setBuyCost(buyPay.getBuyCost());
                         productData.setBuyClickPrice(buyPay.getBuyClickPrice());
+                        productData.setWxAdNewPrice(buyPay.getBuyCost().compareTo(BigDecimal.ZERO) == 0 ? new BigDecimal(0) :
+                                buyPay.getBuyCost().divide(new BigDecimal(productData.getWxRegAd()), 2, ROUND_HALF_UP));
                     }
                 }
                 //赋值相同属性
@@ -342,55 +329,14 @@ public class ProductDataService implements BaseService<ProductData> {
     private void activeSourceDetail(ProductData productData, String wxActiveSource) {
         JSONObject jsonObject = JSONObject.parseObject(wxActiveSource);
         if (jsonObject != null) {
-            Integer taskBarMySp = (Integer) jsonObject.get("任务栏-我的小程序");
-            Integer findMySp = (Integer) jsonObject.get("发现-小程序");
-            Integer taskBarRecent = (Integer) jsonObject.get("任务栏-最近使用");
-            Integer otherReturn = (Integer) jsonObject.get("其他小程序返回");
-            Integer otherSp = (Integer) jsonObject.get("其他小程序");
-            Integer other = (Integer) jsonObject.get("其他");
-            Integer search = (Integer) jsonObject.get("搜索");
-            //广告
-            Integer ad = (Integer) jsonObject.get("微信广告");
-            if (taskBarMySp != null) {
-                productData.setWxActiveTaskBarMySp(taskBarMySp);
-            } else {
-                productData.setWxActiveTaskBarMySp(0);
-            }
-            if (findMySp != null) {
-                productData.setWxActiveFindMySp(findMySp);
-            } else {
-                productData.setWxActiveFindMySp(0);
-            }
-            if (taskBarRecent != null) {
-                productData.setWxActiveTaskBarRecent(taskBarRecent);
-            } else {
-                productData.setWxActiveTaskBarRecent(0);
-            }
-            if (otherReturn != null) {
-                productData.setWxActiveOtherReturn(otherReturn);
-            } else {
-                productData.setWxActiveOtherReturn(0);
-            }
-            if (otherSp != null) {
-                productData.setWxActiveOtherSp(otherSp);
-            } else {
-                productData.setWxActiveOtherSp(0);
-            }
-            if (other != null) {
-                productData.setWxActiveOther(other);
-            } else {
-                productData.setWxActiveOther(0);
-            }
-            if (search != null) {
-                productData.setWxActiveSearch(search);
-            } else {
-                productData.setWxActiveSearch(0);
-            }
-            if (ad != null) {
-                productData.setWxActiveAd(ad);
-            } else {
-                productData.setWxActiveAd(0);
-            }
+            productData.setWxActiveTaskBarMySp(jsonObject.get("任务栏-我的小程序") != null ? (Integer) jsonObject.get("任务栏-我的小程序") : 0);
+            productData.setWxActiveFindMySp(jsonObject.get("发现-小程序") != null ? (Integer) jsonObject.get("发现-小程序") : 0);
+            productData.setWxActiveTaskBarRecent(jsonObject.get("任务栏-最近使用") != null ? (Integer) jsonObject.get("任务栏-最近使用") : 0);
+            productData.setWxActiveOtherReturn(jsonObject.get("其他小程序") != null ? (Integer) jsonObject.get("其他小程序返回") : 0);
+            productData.setWxActiveOtherSp(jsonObject.get("其他小程序") != null ? (Integer) jsonObject.get("其他小程序") : 0);
+            productData.setWxActiveOther(jsonObject.get("其他") != null ? (Integer) jsonObject.get("其他") : 0);
+            productData.setWxActiveSearch(jsonObject.get("搜索") != null ? (Integer) jsonObject.get("搜索") : 0);
+            productData.setWxActiveAd(jsonObject.get("微信广告") != null ? (Integer) jsonObject.get("微信广告") : 0);
         }
     }
 
@@ -529,43 +475,12 @@ public class ProductDataService implements BaseService<ProductData> {
     private void newSourceOther(ProductData productData, String wxRegJson) {
         JSONObject jsonObject = JSONObject.parseObject(wxRegJson);
         if (jsonObject != null) {
-            Integer other = (Integer) jsonObject.get("其他");
-            Integer wxRegTaskBarMySp = (Integer) jsonObject.get("任务栏-我的小程序");
-            Integer wxRegFindMySp = (Integer) jsonObject.get("发现-我的小程序");
-            Integer wxRegTaskBarRecent = (Integer) jsonObject.get("任务栏-最近使用");
-            Integer wxRegOtherSp = (Integer) jsonObject.get("其他小程序");
-            Integer wxRegOtherReturn = (Integer) jsonObject.get("其他小程序返回");
-            if (other != null) {
-                productData.setWxRegOther(other);
-            } else {
-                productData.setWxRegOther(0);
-            }
-
-            if (wxRegTaskBarMySp != null) {
-                productData.setWxRegTaskBarMySp(wxRegTaskBarMySp);
-            } else {
-                productData.setWxRegTaskBarMySp(0);
-            }
-            if (wxRegFindMySp != null) {
-                productData.setWxRegFindMySp(wxRegFindMySp);
-            } else {
-                productData.setWxRegFindMySp(0);
-            }
-            if (wxRegTaskBarRecent != null) {
-                productData.setWxRegTaskBarRecent(wxRegTaskBarRecent);
-            } else {
-                productData.setWxRegTaskBarRecent(0);
-            }
-            if (wxRegOtherSp != null) {
-                productData.setWxRegOtherSp(wxRegOtherSp);
-            } else {
-                productData.setWxRegOtherSp(0);
-            }
-            if (wxRegOtherReturn != null) {
-                productData.setWxRegOtherReturn(wxRegOtherReturn);
-            } else {
-                productData.setWxRegOtherReturn(0);
-            }
+            productData.setWxRegOther(jsonObject.get("其他") != null ? (Integer) jsonObject.get("其他") : 0);
+            productData.setWxRegTaskBarMySp(jsonObject.get("任务栏-我的小程序") != null ? (Integer) jsonObject.get("任务栏-我的小程序") : 0);
+            productData.setWxRegFindMySp(jsonObject.get("发现-我的小程序") != null ? (Integer) jsonObject.get("发现-我的小程序") : 0);
+            productData.setWxRegTaskBarRecent(jsonObject.get("任务栏-最近使用") != null ? (Integer) jsonObject.get("任务栏-最近使用") : 0);
+            productData.setWxRegOtherSp(jsonObject.get("其他小程序") != null ? (Integer) jsonObject.get("其他小程序") : 0);
+            productData.setWxRegOtherReturn(jsonObject.get("其他小程序返回") != null ? (Integer) jsonObject.get("其他小程序返回") : 0);
         }
     }
 

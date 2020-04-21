@@ -15,6 +15,7 @@
         <result column="income" property="income" jdbcType="INTEGER"/>
         <result column="reqSuccCount" property="reqSuccCount" jdbcType="INTEGER"/>
     </resultMap>
+
     <sql id="Base_Column_List">
        id , date, appId, adUnitId, adUnitName, clickCount, clickRate,
         ecpm, exposureCount, exposureRate, income, reqSuccCount
@@ -96,6 +97,8 @@
 
         </if>
     </select>
+
+
     <select id="selectAllScreenIncome" resultType="com.fish.dao.fourth.model.AdValueWxAdUnit">
         SELECT appId,SUM(income) AS screenIncome,DATE
         FROM persie_value.ad_value_wx_adunit WHERE DATE(DATE) BETWEEN  #{beginTime} and #{endTime}

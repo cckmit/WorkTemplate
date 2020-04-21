@@ -391,13 +391,6 @@ public class CacheService {
         return userAllInfo;
     }
 
-    public List<RoundRecord> getAllRoundRecord() {
-        List<RoundRecord> roundRecords = roundRecordMapper.selectAllRank();
-        roundRecords.forEach(
-                roundRecord -> roundRecordCache.put(String.valueOf(roundRecord.getDdindex()), roundRecord));
-        return roundRecords;
-    }
-
     public GoodsValue getGoodsValue(int gid) {
         if (gameValueCache.containsKey(gid)) {
             return gameValueCache.get(gid);

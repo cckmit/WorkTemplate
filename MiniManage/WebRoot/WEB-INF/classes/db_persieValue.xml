@@ -5,13 +5,13 @@
         <!-- 基本内容配置 -->
         <!--?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8-->
         <alias>persie_value</alias>
-        <driver-url>jdbc:mysql://106.14.201.174:3306/persie_value?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8</driver-url>
+        <driver-url>jdbc:mysql://127.0.0.1:3307/persie_value?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8
         <driver-class>com.mysql.jdbc.Driver</driver-class>
 
         <!-- 数据库用户名密码信息 -->
         <driver-properties>
             <property name="user" value="root"/>
-            <property name="password" value="@Xmg123456"/>
+            <property name="password" value="root"/>
         </driver-properties>
 
         <!-- proxool自动侦察各个连接状态的时间间隔(毫秒),侦察到空闲的连接就马上回收,超时的销毁 -->

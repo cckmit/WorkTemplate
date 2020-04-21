@@ -24,7 +24,7 @@ import java.util.Objects;
  * 买量支出
  * Fc_BuyPayController
  *
- * @author
+ * @author CF
  * @date
  */
 @Controller
@@ -33,14 +33,15 @@ public class Fc_BuyPayController {
     private static final Logger LOG = LoggerFactory.getLogger(Fc_BuyPayController.class);
     @Autowired
     BaseConfig baseConfig;
+
     @Autowired
     BuyPayService buyPayService;
 
     /**
      * 查询买量信息
      *
-     * @param parameter
-     * @return
+     * @param parameter parameter
+     * @return 查询结果
      */
     @ResponseBody
     @GetMapping(value = "/buypay")
@@ -51,8 +52,8 @@ public class Fc_BuyPayController {
     /**
      * 导入买量信息EXCEL
      *
-     * @param file
-     * @return
+     * @param file file
+     * @return 导入结果
      */
     @ResponseBody
     @PostMapping("/buypay/uploadExcel")
@@ -78,9 +79,9 @@ public class Fc_BuyPayController {
     /**
      * 买量信息搜索
      *
-     * @param request
-     * @param parameter
-     * @return
+     * @param request   request
+     * @param parameter parameter
+     * @return 搜索结果
      */
     @ResponseBody
     @PostMapping(value = "/buypay/search")
@@ -94,8 +95,8 @@ public class Fc_BuyPayController {
     /**
      * 新增买量
      *
-     * @param productInfo
-     * @return
+     * @param productInfo productInfo
+     * @return 新增结果
      */
     @ResponseBody
     @PostMapping(value = "/buypay/new")
@@ -112,8 +113,8 @@ public class Fc_BuyPayController {
     /**
      * 修改买量信息
      *
-     * @param productInfo
-     * @return
+     * @param productInfo productInfo
+     * @return 修改结果
      */
     @ResponseBody
     @PostMapping(value = "/buypay/edit")
@@ -130,12 +131,13 @@ public class Fc_BuyPayController {
     /**
      * 删除买量信息
      *
-     * @param jsonObject
-     * @return
+     * @param jsonObject jsonObject
+     * @return 删除结果
      */
     @ResponseBody
     @PostMapping(value = "/buypay/delete")
     public PostResult deleteBuyPay(@RequestBody JSONObject jsonObject) {
         return this.buyPayService.deleteSelective(jsonObject);
     }
+
 }

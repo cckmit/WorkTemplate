@@ -83,8 +83,7 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
-                                    lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -205,21 +204,20 @@
                     success: (res) => {
                         res.forEach(function (val, index, arr) {
                             appNames[val.ddappid] = val.productName;
-                            var type;
-                            if (val.programType === 0) {
-                                type = "小游戏";
+                            let type;
+                            let appPlatform;
+                            switch (val.programType) {
+                                case 0:type = "game";break;
+                                case 1:type = "web";break;
+                                case 2:type = "public";break;
+                                default:type = "未知游戏类型";break;
                             }
-                            if (val.programType === 1) {
-                                type = "小程序";
+                            switch (val.ddAppPlatform) {
+                                case "weixin":appPlatform = "wx";break;
+                                case "q":appPlatform = "qq";break;
+                                default:appPlatform = "未知平台";break;
                             }
-                            if (val.programType === 2) {
-                                type = "公众号";
-                            }
-                            let context = {
-                                name: val.productName + "（" + type + ")",
-                                value: val.ddappid,
-                                selected: false
-                            };
+                            let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
                             appSelects.push(context);
                         });
                         appSelect.update(

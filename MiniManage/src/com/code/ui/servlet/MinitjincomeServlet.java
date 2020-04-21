@@ -1,5 +1,7 @@
 package com.code.ui.servlet;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.code.dao.MiniGamebackDao;
 import com.code.dao.MiniPersieValueDao;
 import com.code.entity.Minitj_income;
@@ -11,8 +13,12 @@ import com.tools.XwhTool;
 import javax.servlet.annotation.WebServlet;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 @WebServlet(urlPatterns = {"/minitj_income", "/pages/minitj_income"})
 public class MinitjincomeServlet extends UIMoudleServlet {
@@ -98,31 +104,27 @@ public class MinitjincomeServlet extends UIMoudleServlet {
 
     @SuppressWarnings("unchecked")
     public Vector<Minitj_income> findData() {
-        Date nowtime = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String date = sdf.format(nowtime);
+        String wxDateS = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+        String wxDateE = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+        JSONObject jsonDate = JSON.parseObject(get("search-data"));
+        if (jsonDate != null) {
+            wxDateS = (String) jsonDate.get("wx_date_s");
+            wxDateE = (String) jsonDate.get("wx_date_e");
+        }
         Vector<Minitj_income> list = (Vector<Minitj_income>) MiniGamebackDao.instance
                 .findBySQL(getSQL(), Minitj_income.class);
-
-        Vector<Persie_value> screenList = (Vector<Persie_value>) MiniPersieValueDao.instance.findBySQL("SELECT appId as wx_appid,SUM(income) AS wx_screen_income,SUM(exposureCount) AS wx_screen_show,SUM(clickCount) as wx_screen_click, DATE as  wx_date FROM persie_value.ad_value_wx_adunit WHERE DATE(DATE) BETWEEN '2020-04-16' and '2020-04-16' AND slotId='3030046789020061'  GROUP BY DATE ,appId", Persie_value.class);
+        //查询插屏数据
+        Vector<Persie_value> screenList = MiniPersieValueDao.instance.findBySQL("SELECT appId as wx_appid,SUM(income) AS wx_screen_income,SUM(exposureCount) AS wx_screen_show,SUM(clickCount) as wx_screen_click, DATE as  wx_date FROM persie_value.ad_value_wx_adunit WHERE DATE(DATE) BETWEEN '" + wxDateS + "' and '" + wxDateE + "' AND slotId='3030046789020061'  GROUP BY DATE ,appId", Persie_value.class);
         Map<String, Persie_value> screenMap = new HashMap<>(16);
-        Persie_value.addSum(screenList);
+        //处理插屏点击率数据
+        Persie_value.addSumScreen(screenList);
         for (Persie_value persieValue : screenList) {
             screenMap.put(persieValue.wx_appid + "-" + persieValue.wx_date, persieValue);
         }
-
+        //拼接插屏数据
+        dataDeal(list, screenMap);
         Minitj_income.addSumLine(list);
         for (Minitj_income general : list) {
-            Persie_value persieValue = screenMap.get(general.wx_appid + "-" + general.wx_date);
-            if("wx0f42a37e32eb59b5".equals(general.wx_appid)){
-                System.out.println(general.wx_date);
-            }
-            if (persieValue != null) {
-                general.wx_screen_show = persieValue.wx_screen_show;
-                general.wx_screen_clickrate = persieValue.wx_screen_clickrate;
-                general.wx_screen_income = persieValue.wx_screen_income;
-                general.screenEcpm = persieValue.screenEcpm;
-            }
 			/*if(general.wx_banner_income.compareTo(BigDecimal.ZERO)!=0)
 			{*/
             general.totalIncome = general.wx_video_income.add(general.wx_banner_income);
@@ -135,9 +137,32 @@ public class MinitjincomeServlet extends UIMoudleServlet {
                 general.bannerEcpm = general.wx_banner_income.multiply(new BigDecimal(1000)).setScale(2, BigDecimal.ROUND_HALF_UP)
                         .divide(new BigDecimal(general.wx_banner_show), 2, BigDecimal.ROUND_HALF_UP);
             }
+            if (general.wx_screen_show.compareTo(BigDecimal.ZERO) != 0) {
+                general.screenEcpm = general.wx_screen_income.multiply(new BigDecimal(10)).setScale(2, BigDecimal.ROUND_HALF_UP)
+                        .divide(general.wx_screen_show, 2, BigDecimal.ROUND_HALF_UP);
+            }
         }
 
         return list;
+    }
+
+    /**
+     * 拼接插屏数据
+     *
+     * @param list      数据集合
+     * @param screenMap 插屏数据集合
+     */
+    private void dataDeal(Vector<Minitj_income> list, Map<String, Persie_value> screenMap) {
+        for (Minitj_income general : list) {
+            Persie_value persieValue = screenMap.get(general.wx_appid + "-" + general.wx_date);
+            //数据赋值
+            if (persieValue != null) {
+                general.wx_screen_show = persieValue.wx_screen_show;
+                general.wx_screen_clickrate = persieValue.wx_screen_clickrate;
+                general.wx_screen_income = persieValue.wx_screen_income;
+                general.screenEcpm = persieValue.screenEcpm;
+            }
+        }
     }
 
 }

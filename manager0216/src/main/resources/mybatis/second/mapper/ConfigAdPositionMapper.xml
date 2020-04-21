@@ -70,4 +70,17 @@
         where ddId in (${deleteIds})
     </update>
 
+    <update id="changeDdAllowedOperation">
+         update config_ad_position set ddAllowedOperation = #{ddAllowedOperation, jdbcType=BOOLEAN} where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+    <update id="changeDdShowWxAd">
+         update config_ad_position set ddShowWxAd = #{ddShowWxAd, jdbcType=BOOLEAN} where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+    <update id="changeDdShowWxReVideoAd">
+         update config_ad_position set ddShowWxReVideoAd = #{ddShowWxReVideoAd, jdbcType=BOOLEAN} where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+
 </mapper>

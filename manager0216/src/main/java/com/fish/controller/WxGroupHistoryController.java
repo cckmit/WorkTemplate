@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 微信群管理记录
  * WxGroupHistoryController
  *
- * @author
+ * @author Host-0311
  * @date
  */
 @Controller
@@ -26,8 +26,7 @@ public class WxGroupHistoryController {
     @ResponseBody
     @GetMapping(value = "/history")
     public GetResult getWxGroupManager(GetParameter parameter) {
-        GetResult result = wxGroupHistoryService.findAll(parameter);
-        return result;
+        return wxGroupHistoryService.findAll(parameter);
     }
 
 }

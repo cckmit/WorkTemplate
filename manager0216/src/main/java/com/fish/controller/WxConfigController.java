@@ -123,4 +123,5 @@ public class WxConfigController {
     public PostResult deleteBuyPay(@RequestBody JSONObject jsonObject) {
         return this.wxConfigService.delete(jsonObject);
     }
+
 }

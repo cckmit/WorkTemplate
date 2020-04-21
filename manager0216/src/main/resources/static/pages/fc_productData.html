@@ -102,16 +102,37 @@
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
                         let type;
-                        if (val.programType === 0) {
-                            type = "小游戏";
+                        let appPlatform;
+                        switch (val.programType) {
+                            case 0:
+                                type = "game";
+                                break;
+                            case 1:
+                                type = "web";
+                                break;
+                            case 2:
+                                type = "public";
+                                break;
+                            default:
+                                type = "未知游戏类型";
+                                break;
                         }
-                        if (val.programType === 1) {
-                            type = "小程序";
+                        switch (val.ddAppPlatform) {
+                            case "weixin":
+                                appPlatform = "wx";
+                                break;
+                            case "q":
+                                appPlatform = "qq";
+                                break;
+                            default:
+                                appPlatform = "未知平台";
+                                break;
                         }
-                        if (val.programType === 2) {
-                            type = "公众号";
-                        }
-                        let context = {name: val.productName + "（" + type + ")", value: val.ddappid, selected: false};
+                        let context = {
+                            name: appPlatform + "-" + type + "-" + val.productName,
+                            value: val.ddappid,
+                            selected: false
+                        };
                         appNames.push(context);
                     });
                     appSelect.update(
@@ -147,6 +168,7 @@
                         }
                     },
                     {field: 'wxNew', width: 120, title: '新增', sort: true},
+                    {field: 'wxAdNewPrice', width: 120, title: '新增单价', sort: true},
                     {field: 'wxActive', width: 120, title: '活跃', sort: true},
                     {field: 'wxVisit', width: 120, title: '访问次数', sort: true},
                     {
@@ -244,7 +266,7 @@
                         }
                     },
                     {
-                        field: 'buyClickPrice', width: 160, title: '买量单价(元)', sort: true,
+                        field: 'buyClickPrice', width: 160, title: '点击单价(元)', sort: true,
                         templet: (d) => {
                             if (d.buyClickPrice != null && d.buyClickPrice !== "") {
                                 return d.buyClickPrice;

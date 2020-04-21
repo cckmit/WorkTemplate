@@ -24,11 +24,12 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/config" />
+    <property name="last_opened_file_path" value="F:/MiniManage" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15234375" />
     <property name="project.structure.side.proportion" value="0.24754634" />
-    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -56,6 +57,7 @@
   </component>
   <component name="RunManager">
     <configuration name="Tomcat 8.5.28" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 8.5.28" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
+      <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8082/MiniManage/" />
       <option name="COMMON_VM_ARGUMENTS" value="-Dfile.encoding=UTF-8" />
       <option name="UPDATE_ON_FRAME_DEACTIVATION" value="true" />
       <option name="UPDATE_CLASSES_ON_FRAME_DEACTIVATION" value="true" />
@@ -68,8 +70,8 @@
       </deployment>
       <server-settings>
         <option name="BASE_DIRECTORY_NAME" value="Unnamed_MiniManage" />
-        <option name="HTTP_PORT" value="8081" />
-        <option name="JNDI_PORT" value="1091" />
+        <option name="HTTP_PORT" value="8082" />
+        <option name="JNDI_PORT" value="1092" />
       </server-settings>
       <predefined_log_file enabled="true" id="Tomcat" />
       <predefined_log_file enabled="true" id="Tomcat Catalina" />
@@ -150,7 +152,9 @@
       <workItem from="1586844358586" duration="3396000" />
       <workItem from="1587021462200" duration="2351000" />
       <workItem from="1587109910099" duration="6060000" />
-      <workItem from="1587116476488" duration="6728000" />
+      <workItem from="1587116476488" duration="23704000" />
+      <workItem from="1587365965651" duration="2766000" />
+      <workItem from="1587371161051" duration="8592000" />
     </task>
     <servers />
   </component>
@@ -160,16 +164,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/code/ui/servlet/MinitjincomeServlet.java</url>
-          <line>103</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/code/ui/servlet/MinitjincomeServlet.java</url>
-          <line>114</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/com/tools/db/OpDbPersieValue.java</url>
           <line>183</line>
@@ -187,17 +181,17 @@
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/com/code/ui/UIMoudleServlet.java</url>
-          <line>702</line>
+          <line>611</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/com/code/ui/UIMoudleServlet.java</url>
-          <line>717</line>
+          <line>625</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/com/code/ui/UIMoudleServlet.java</url>
-          <line>716</line>
+          <line>624</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint type="java-line">
@@ -210,35 +204,20 @@
           <line>41</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/tools/db/OpDbPersieValue.java</url>
-          <line>58</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/tools/db/OpDbPersieValue.java</url>
-          <line>60</line>
-          <option name="timeStamp" value="24" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/code/ui/servlet/MinitjincomeServlet.java</url>
-          <line>139</line>
-          <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/code/ui/servlet/MinitjincomeServlet.java</url>
-          <line>106</line>
-          <option name="timeStamp" value="30" />
-        </line-breakpoint>
-        <line-breakpoint type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/tools/XWHResultSetMapper.java</url>
-          <line>712</line>
-          <option name="timeStamp" value="31" />
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/code/dao/MiniPackageDao.java</url>
+          <line>56</line>
+          <option name="timeStamp" value="83" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/code/ui/servlet/MinitjincomeServlet.java</url>
-          <line>117</line>
-          <option name="timeStamp" value="33" />
+          <url>file://$PROJECT_DIR$/src/com/tools/db/OpDbGamePackage.java</url>
+          <line>63</line>
+          <option name="timeStamp" value="87" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/tools/db/OpDbGamePackage.java</url>
+          <line>80</line>
+          <option name="timeStamp" value="88" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

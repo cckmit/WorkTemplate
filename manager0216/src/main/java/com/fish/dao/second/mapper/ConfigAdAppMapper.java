@@ -15,10 +15,10 @@ public interface ConfigAdAppMapper {
     /**
      * 通过ID查询广告类型
      *
-     * @param id
+     * @param ddAppId appId
      * @return
      */
-    ConfigAdApp select(int id);
+    ConfigAdApp select(String ddAppId, String ddMinVersion);
 
     /**
      * 查询全部广告类型
@@ -26,6 +26,14 @@ public interface ConfigAdAppMapper {
      * @return
      */
     List<ConfigAdApp> selectAll();
+
+    /**
+     * 新增更新广告类型
+     *
+     * @param configAdType configAdType
+     * @return 处理结果
+     */
+    int save(ConfigAdApp configAdType);
 
     /**
      * 新增广告类型
@@ -46,16 +54,45 @@ public interface ConfigAdAppMapper {
     /**
      * 根据ID删除微信广告配置
      *
-     * @param deleteIds
+     * @param ddAppId ddAppId
      * @return
      */
-    int delete(String deleteIds);
+    int delete(String ddAppId, String ddMinVersion);
 
     /**
      * 通过页面开关改变运营状态
-     * @param id
+     *
+     * @param ddAppId
      * @param ddAllowedShow
      * @return
      */
-    int changeAllowedShowStatus(Integer id, Boolean ddAllowedShow);
+    int changeAllowedShowStatus(String ddAppId, String ddMinVersion, Boolean ddAllowedShow);
+
+    /**
+     * 通过页面开关改变Banner状态
+     *
+     * @param ddAppId
+     * @param ddWxBannerAllowedShow
+     * @return
+     */
+    int changeBannerStatus(String ddAppId, String ddMinVersion, Boolean ddWxBannerAllowedShow);
+
+    /**
+     * 通过页面开关改变插屏状态
+     *
+     * @param ddAppId
+     * @param ddWxIntAllowedShow
+     * @return
+     */
+    int changeIconStatus(String ddAppId, String ddMinVersion, Boolean ddWxIntAllowedShow);
+
+    /**
+     * 通过页面开关改变激励视频状态
+     *
+     * @param ddAppId
+     * @param ddWxReVideoAllowedShow
+     * @return
+     */
+    int changeVideoStatus(String ddAppId, String ddMinVersion, Boolean ddWxReVideoAllowedShow);
+
 }

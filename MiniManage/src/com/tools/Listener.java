@@ -26,16 +26,14 @@ public class Listener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
-		try {
-			OpDbConnector.init();
-			OpDbGamePackage.init();
-			OpDbPersieValue.init();
-			//初始化权限json文件
-			initPerssionJson(arg0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+
+        OpDbConnector.init();
+        OpDbGamePackage.init();
+
+        OpDbPersieValue.init();
+        //初始化权限json文件
+        initPerssionJson(arg0);
+    }
 
 
     private void initPerssionJson(ServletContextEvent servletContextEvent) {

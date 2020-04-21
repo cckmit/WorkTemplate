@@ -22,7 +22,7 @@
                     return $(this).form("validate");
                 },
                 success: function (result) {
-                    if (result == "1") {
+                    if (result === "1") {
                         $.messager.alert("提示信息", "操作成功");
                         $("#dlg").dialog("close");
                         $("#grid").datagrid("load");
@@ -40,7 +40,11 @@
         })
 
         function rate(val, row) {
-            return val + '%';
+            return val ? val + '%' : '0%';
+        }
+
+        function formatNull(val) {
+            return val ? val : 0;
         }
     </script>
     <meta charset="UTF-8">
@@ -71,10 +75,16 @@
             <th data-options="field:'wx_banner_income',align:'center',width:80,sortable:true">bannel收入</th>
             <th data-options="field:'bannerEcpm',align:'center',width:80,sortable:true">banner ECPM</th>
 
-            <th data-options="field:'wx_screen_show',align:'center',width:80,sortable:true">插屏曝光量</th>
-            <th data-options="field:'wx_screen_clickrate',align:'center',width:80,sortable:true">插屏点击率</th>
-            <th data-options="field:'wx_screen_income',align:'center',width:80,sortable:true">插屏收入</th>
-            <th data-options="field:'screenEcpm',align:'center',width:80,sortable:true">插屏 ECPM</th>
+            <th data-options="field:'wx_screen_show',align:'center',width:80,sortable:true,formatter:formatNull">插屏曝光量
+            </th>
+            <th data-options="field:'wx_screen_clickrate',align:'center',width:80,sortable:true,formatter:rate">
+                插屏点击率
+            </th>
+            <th data-options="field:'wx_screen_income',align:'center',width:80,sortable:true,formatter:formatNull">
+                插屏收入
+            </th>
+            <th data-options="field:'screenEcpm',align:'center',width:80,sortable:true,formatter:rate">插屏 ECPM
+            </th>
 
             <!-- <th data-options="field:'wx_reg_ad',align:'center',width:80,sortable:true">注册用户来自广告占比</th>
             <th data-options="field:'wx_reg_jump',align:'center',width:80,sortable:true">注册用户来自跳转占比</th>

@@ -180,21 +180,22 @@
                 url: '../manage/roundmatch/appname',
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
-                        var type;
-                        if (val.programType === 0) {
-                            type = "小游戏";
+                        let type;
+                        let appPlatform;
+                        switch (val.programType) {
+                            case 0:type = "game";break;
+                            case 1:type = "web";break;
+                            case 2:type = "public";break;
+                            default:type = "未知游戏类型";break;
                         }
-                        if (val.programType === 1) {
-                            type = "小程序";
+                        switch (val.ddAppPlatform) {
+                            case "weixin":appPlatform = "wx";break;
+                            case "q":appPlatform = "qq";break;
+                            case "tt":appPlatform = "头条";break;
+                            case "quick":appPlatform = "快应用";break;
+                            default:appPlatform = "未知平台";break;
                         }
-                        if (val.programType === 2) {
-                            type = "公众号";
-                        }
-                        let context = {
-                            name: val.productName + "（" + type + ")",
-                            value: val.ddappid,
-                            selected: false
-                        };
+                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
                         appNames.push(context);
                     });
                     appSelect.update(
@@ -214,11 +215,22 @@
                 url: '../manage/roundmatch/appname',
                 success: (res) => {
                     res.forEach(function (val, index, arr) {
-                        let context = {
-                            name: val.productName + "-" + val.ddappid,
-                            value: val.ddappid,
-                            selected: false
-                        };
+                        let type;
+                        let appPlatform;
+                        switch (val.programType) {
+                            case 0:type = "game";break;
+                            case 1:type = "web";break;
+                            case 2:type = "public";break;
+                            default:type = "未知游戏类型";break;
+                        }
+                        switch (val.ddAppPlatform) {
+                            case "weixin":appPlatform = "wx";break;
+                            case "q":appPlatform = "qq";break;
+                            case "tt":appPlatform = "头条";break;
+                            case "quick":appPlatform = "快应用";break;
+                            default:appPlatform = "未知平台";break;
+                        }
+                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
                         appIdNames.push(context);
                     });
                     appNameSelect.update(
@@ -353,7 +365,7 @@
 </script>
 
 <!-- 表单元素 -->
-<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;">
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;width: 600px;height: 700px;">
     <div class="layui-form-item ">
         <label class="layui-form-label">产品名称</label>
         <div class="layui-input-inline">

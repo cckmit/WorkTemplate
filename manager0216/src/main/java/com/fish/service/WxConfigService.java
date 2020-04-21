@@ -8,7 +8,6 @@ import com.fish.dao.second.model.AppConfig;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
-import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
 import com.fish.utils.XwhTool;
@@ -17,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 产品信息配置 Service
@@ -27,19 +28,16 @@ import java.util.List;
  * @date
  */
 @Service
-public class WxConfigService implements BaseService<WxConfig> {
+public class WxConfigService extends CacheService<WxConfig> implements BaseService<WxConfig> {
     @Autowired
     WxConfigMapper wxConfigMapper;
     @Autowired
     AppConfigMapper appConfigMapper;
     @Autowired
     AppConfig appConfig;
-    @Autowired
-    WxConfig wxConfig;
+
     @Autowired
     BaseConfig baseConfig;
-    @Autowired
-    CacheService cacheService;
 
     /**
      * 查询所有WxConfig内容
@@ -49,7 +47,9 @@ public class WxConfigService implements BaseService<WxConfig> {
      */
     @Override
     public List<WxConfig> selectAll(GetParameter parameter) {
-        List<WxConfig> wxConfigs = cacheService.getAllWxConfig();
+
+        List<WxConfig> wxConfigList = new ArrayList<>();
+        List<WxConfig> wxConfigs = this.wxConfigMapper.selectAll();
         String url = baseConfig.getResHost();
         for (WxConfig config : wxConfigs) {
             String ddShareRes = config.getDdshareres();
@@ -67,11 +67,12 @@ public class WxConfigService implements BaseService<WxConfig> {
                         }
                     }
                 }
+                wxConfigList.add(config);
             } catch (Exception e) {
                 LOGGER.error("查询产品信息失败" + ", 详细信息:{}", e.getMessage());
             }
         }
-        return wxConfigs;
+        return wxConfigList;
     }
 
     /**
@@ -243,5 +244,18 @@ public class WxConfigService implements BaseService<WxConfig> {
             result.setMsg("操作失败，请联系管理员！");
         }
         return result;
+    }
+
+    @Override
+    void updateAllCache(ConcurrentHashMap map) {
+        List<WxConfig> wxConfigList = this.wxConfigMapper.selectAll();
+        wxConfigList.forEach(wxConfig -> {
+            map.put(wxConfig.getDdappid(), wxConfig);
+        });
+    }
+
+    @Override
+    WxConfig queryEntity(Class clazz, String key) {
+        return this.wxConfigMapper.selectByPrimaryKey(key);
     }
 }

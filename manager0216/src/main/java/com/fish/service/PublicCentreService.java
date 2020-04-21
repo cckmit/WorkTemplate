@@ -43,13 +43,12 @@ public class PublicCentreService implements BaseService<PublicCentre> {
      */
     @Override
     public List<PublicCentre> selectAll(GetParameter parameter) {
-        List<PublicCentre> publicCentre = new ArrayList<>();
         List<PublicCentre> banners;
         List<PublicCentre> recommends;
         List<PublicCentre> games;
         //根据推荐位类型做数据排序处理
         banners = publicCentreMapper.selectAllBanner();
-        publicCentre.addAll(banners);
+        List<PublicCentre> publicCentre = new ArrayList<>(banners);
         recommends = publicCentreMapper.selectAllRecommend();
         publicCentre.addAll(recommends);
         games = publicCentreMapper.selectAllGame();
@@ -60,10 +59,9 @@ public class PublicCentreService implements BaseService<PublicCentre> {
     /**
      * 查询所有数据上传JSON到客户端
      *
-     * @param parameter
      * @return
      */
-    public void selectAllForJson(GetParameter parameter) {
+    public void selectAllForJson() {
 
         //查询不同类型的数据分别处理
         List<PublicCentre> publicBanners = publicCentreMapper.selectAllBanner();
@@ -78,7 +76,7 @@ public class PublicCentreService implements BaseService<PublicCentre> {
             // 读取原始json文件
             BufferedReader br = new BufferedReader(
                     new FileReader(PublicCentreService.class.getResource("/").getPath() + "config.json"));
-            // 输出新的json文件
+            // 输出新的json文件  mui_wxoa_debug 测试 mui_wxoa 线上实际使用
             BufferedWriter bw = new BufferedWriter(
                     new FileWriter("/data/tomcat8/apache-public/webapps/public/mui_wxoa/config.json"));
             String ws = null;
@@ -177,9 +175,16 @@ public class PublicCentreService implements BaseService<PublicCentre> {
         for (PublicCentre publicBanner : publicBanners) {
             String img = publicBanner.getResourceName();
             String detailImg = publicBanner.getDetailName();
+            Integer bannerType = publicBanner.getBannerType();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("img", "images/banner/" + img);
-            jsonObject.put("detailimg", "images/banner/" + detailImg);
+            if (bannerType == 0) {
+                jsonObject.put("detailimg", detailImg);
+                jsonObject.put("jumpType", "url");
+            } else {
+                jsonObject.put("detailimg", "images/banner/" + detailImg);
+                jsonObject.put("jumpType", "banner");
+            }
             banners.add(jsonObject);
         }
         return banners;
@@ -266,4 +271,5 @@ public class PublicCentreService implements BaseService<PublicCentre> {
         }
         return result;
     }
+
 }

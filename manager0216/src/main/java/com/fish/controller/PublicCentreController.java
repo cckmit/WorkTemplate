@@ -84,18 +84,16 @@ public class PublicCentreController {
     /**
      * 修改完毕公众号中心内容提交JSON文件到客户端
      *
-     * @param parameter
      * @return
      */
     @ResponseBody
     @GetMapping(value = "/public/submitJson")
-    public PostResult submitPublicCentre(GetParameter parameter) {
+    public PostResult submitPublicCentre() {
         PostResult result = new PostResult();
         try {
-            publicCentreService.selectAllForJson(parameter);
+            publicCentreService.selectAllForJson();
             result.setMsg("更新JSON成功");
         } catch (Exception e) {
-            e.printStackTrace();
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
         }

@@ -35,7 +35,6 @@ public class PackLogController {
         String endTime = request.getParameter("endTime");
         String startDate = request.getParameter("startDate");
         String endDate = request.getParameter("endDate");
-        System.out.println(logPath + "-" + startTime + "==" + endTime);
         return this.packLogService.packLog(logPath, startTime, endTime,startDate,endDate);
     }
 }

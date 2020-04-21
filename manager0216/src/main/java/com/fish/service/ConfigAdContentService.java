@@ -6,7 +6,6 @@ import com.fish.dao.second.mapper.ConfigAdContentMapper;
 import com.fish.dao.second.model.ConfigAdContent;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
-import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -15,31 +14,34 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author CC ccheng0725@outlook.com
  * @date 2020-02-28 19:07
  */
 @Service
-public class ConfigAdContentService implements BaseService<ConfigAdContent> {
+public class ConfigAdContentService extends CacheService<ConfigAdContent> implements BaseService<ConfigAdContent> {
 
     @Autowired
     ConfigAdContentMapper adContentMapper;
 
     @Autowired
-    CacheService cacheService;
-
-    @Autowired
     BaseConfig baseConfig;
 
     @Override
-    public void setDefaultSort(GetParameter parameter) { }
+    public void setDefaultSort(GetParameter parameter) {
+    }
 
     @Override
-    public Class getClassInfo() { return ConfigAdContent.class; }
+    public Class getClassInfo() {
+        return ConfigAdContent.class;
+    }
 
     @Override
-    public boolean removeIf(ConfigAdContent configAdContent, JSONObject searchData) { return false; }
+    public boolean removeIf(ConfigAdContent configAdContent, JSONObject searchData) {
+        return false;
+    }
 
     @Override
     public List<ConfigAdContent> selectAll(GetParameter parameter) {
@@ -71,7 +73,6 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
         } else {
             ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdContents();
         return result;
     }
 
@@ -90,7 +91,6 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
         } else {
             ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdContents();
         return result;
     }
 
@@ -110,7 +110,6 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
         } else {
             ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdContents();
         return result;
     }
 
@@ -129,7 +128,6 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
         } else {
             ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
-        cacheService.updateAllConfigAdContents();
         return result;
     }
 
@@ -194,5 +192,19 @@ public class ConfigAdContentService implements BaseService<ConfigAdContent> {
             selectArray.add(selectJson);
         }
         return selectArray;
+    }
+
+    @Override
+    void updateAllCache(ConcurrentHashMap<String, ConfigAdContent> map) {
+        ConfigAdContent configAdContent = new ConfigAdContent();
+        List<ConfigAdContent> configAdContents = this.adContentMapper.selectAll(configAdContent);
+        configAdContents.forEach(configAdContent1 -> {
+            map.put(String.valueOf(configAdContent1.getDdId()), configAdContent1);
+        });
+    }
+
+    @Override
+    ConfigAdContent queryEntity(Class<ConfigAdContent> clazz, String key) {
+        return this.select(Integer.valueOf(key));
     }
 }
