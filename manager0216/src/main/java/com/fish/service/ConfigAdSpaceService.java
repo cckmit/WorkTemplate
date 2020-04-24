@@ -99,9 +99,9 @@ public class ConfigAdSpaceService extends CacheService<ConfigAdSpace> implements
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
         } else {
+            this.updateAllCache(ConfigAdSpace.class);
             ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
-        //cacheService.updateAllConfigAdSpaces();
         return result;
     }
 
@@ -118,6 +118,7 @@ public class ConfigAdSpaceService extends CacheService<ConfigAdSpace> implements
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
+            this.updateCache(ConfigAdSpace.class, String.valueOf(adSpace.getDdId()), adSpace);
             ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
         return result;
@@ -136,12 +137,11 @@ public class ConfigAdSpaceService extends CacheService<ConfigAdSpace> implements
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
+            this.updateAllCache(ConfigAdSpace.class);
             ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
-        // cacheService.updateAllConfigAdSpaces();
         return result;
     }
-
 
     /**
      * select组件数据
@@ -204,6 +204,7 @@ public class ConfigAdSpaceService extends CacheService<ConfigAdSpace> implements
             result.setSuccessed(false);
             result.setMsg("更新失败请联系管理员");
         } else {
+            this.updateAllCache(ConfigAdSpace.class);
             ReadJsonUtil.flushTable("config_ad_space", this.baseConfig.getFlushCache());
         }
         return result;
@@ -212,13 +213,11 @@ public class ConfigAdSpaceService extends CacheService<ConfigAdSpace> implements
     @Override
     void updateAllCache(ConcurrentHashMap<String, ConfigAdSpace> map) {
         List<ConfigAdSpace> configAdSpaces = this.adSpaceMapper.selectAll(new ConfigAdSpace());
-        configAdSpaces.forEach(configAdSpace -> {
-            map.put(String.valueOf(configAdSpace.getDdId()), configAdSpace);
-        });
+        configAdSpaces.forEach(configAdSpace -> map.put(String.valueOf(configAdSpace.getDdId()), configAdSpace));
     }
 
     @Override
     ConfigAdSpace queryEntity(Class<ConfigAdSpace> clazz, String key) {
-        return this.adSpaceMapper.select(Integer.valueOf(key));
+        return this.adSpaceMapper.select(Integer.parseInt(key));
     }
 }

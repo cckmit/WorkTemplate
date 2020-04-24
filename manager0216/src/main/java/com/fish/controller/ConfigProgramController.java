@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * 合集及版本号配置
  * AppConfigController
  *
- * @author CF
+ * @author
  * @date
  */
 @Controller
@@ -27,8 +27,8 @@ public class ConfigProgramController {
     /**
      * 查询合集跳转信息
      *
-     * @param parameter parameter
-     * @return 查询结果
+     * @param parameter
+     * @return
      */
     @ResponseBody
     @GetMapping(value = "/configProgram")
@@ -39,20 +39,21 @@ public class ConfigProgramController {
     /**
      * 新增
      *
-     * @param productInfo productInfo
-     * @return 新增结果
+     * @param productInfo
+     * @return
      */
     @ResponseBody
     @PostMapping(value = "/configProgram/new")
     public PostResult insertConfigProgram(@RequestBody ConfigProgram productInfo) {
         return this.configProgramService.insert(productInfo);
+
     }
 
     /**
      * 更新
      *
-     * @param productInfo productInfo
-     * @return 更新结果
+     * @param productInfo
+     * @return
      */
     @ResponseBody
     @PostMapping(value = "/configProgram/edit")
@@ -73,13 +74,12 @@ public class ConfigProgramController {
     /**
      * 删除
      *
-     * @param jsonObject jsonObject
-     * @return 删除结果
+     * @param jsonObject
+     * @return
      */
     @ResponseBody
     @PostMapping(value = "/configProgram/delete")
     public PostResult delete(@RequestBody JSONObject jsonObject) {
-        return this.configProgramService.delete(jsonObject.getString("deleteIds"), jsonObject.getString("ddMinVer"));
+        return this.configProgramService.delete(jsonObject.getString("deleteIds"),jsonObject.getString("ddMinVer"));
     }
-
 }

@@ -147,7 +147,7 @@ window.UIConfig = {
     warnMsg(msg) {
         msg && layer.msg(msg, {icon: 0});
     }
-}
+};
 
 layui.config({
     base: '../layuiadmin/' //静态资源所在路径
@@ -262,7 +262,7 @@ layui.config({
                 content: $('#form_table'),
                 maxmin: true,
                 shade: 0,
-                area: ['38%', '60%'],
+                area: ['42%', '75%'],
                 offset: ['15%', '20%'],
                 btn: ['确定', '取消'],
                 btnAlign: 'c',
@@ -334,7 +334,7 @@ layui.config({
             console.log('deleteObj:', deleteObj);
 
             if (deleteObj.deleteCount === 0) {
-                UIConfig.warnMsg("当前删除操作未选中任何可删除数据！")
+                UIConfig.warnMsg("当前删除操作未选中任何可删除数据！");
                 return false;
             }
 
@@ -357,7 +357,7 @@ layui.config({
             });
         }
     });
-})
+});
 
 Date.prototype.Format = function (fmt) {
     var o = {
@@ -374,4 +374,4 @@ Date.prototype.Format = function (fmt) {
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[
             k]).substr(("" + o[k]).length)));
     return fmt;
-}
+};

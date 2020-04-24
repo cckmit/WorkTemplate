@@ -213,7 +213,6 @@
                     <proc>none</proc>
                 </configuration>
             </plugin>
-
             <!-- mybatis generator 自动生成代码插件 -->
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
@@ -228,7 +227,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <configurationFile>${basedir}/src/main/resources/generator/fourthConfig.xml</configurationFile>
+                    <configurationFile>${basedir}/src/main/resources/generator/primaryConfig.xml</configurationFile>
                     <overwrite>true</overwrite>
                     <verbose>true</verbose>
                 </configuration>

@@ -10,8 +10,8 @@
 
         <!-- 数据库用户名密码信息 -->
         <driver-properties>
-            <property name="user" value="chufan"/>
-            <property name="password" value="QWE!@#1234"/>
+            <property name="user" value="queryMiniWx" />
+            <property name="password" value="blazefire103." />
         </driver-properties>
 
         <!-- proxool自动侦察各个连接状态的时间间隔(毫秒),侦察到空闲的连接就马上回收,超时的销毁 -->

@@ -1,7 +1,6 @@
 package com.fish.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fish.dao.primary.model.ManageUser;
 import com.fish.dao.second.mapper.ConfigAdTypeMapper;
 import com.fish.dao.second.model.ConfigAdType;
 import com.fish.protocols.GetParameter;
@@ -59,9 +58,9 @@ public class ConfigAdTypeService extends CacheService<ConfigAdType> implements B
         if (id <= 0) {
             postResult.setSuccessed(false);
             postResult.setMsg("操作失败，请联系管理员！");
+        } else {
+            this.updateAllCache(ConfigAdType.class);
         }
-
-        //cacheService.updateAllConfigAdTypes();
         return postResult;
     }
 
@@ -77,6 +76,8 @@ public class ConfigAdTypeService extends CacheService<ConfigAdType> implements B
         if (id <= 0) {
             postResult.setSuccessed(false);
             postResult.setMsg("操作失败，请联系管理员！");
+        } else {
+            this.updateCache(ConfigAdType.class, String.valueOf(configAdType.getDdId()), configAdType);
         }
         return postResult;
     }
@@ -107,6 +108,6 @@ public class ConfigAdTypeService extends CacheService<ConfigAdType> implements B
 
     @Override
     ConfigAdType queryEntity(Class<ConfigAdType> clazz, String key) {
-        return this.configAdTypeMapper.select(Integer.valueOf(key));
+        return this.configAdTypeMapper.select(Integer.parseInt(key));
     }
 }

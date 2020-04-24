@@ -68,8 +68,6 @@ public class AdValueWxAdUnit {
     private String beginTime;
     private String endTime;
 
-
-
     /**
      * 分组方式:
      *    0:时间

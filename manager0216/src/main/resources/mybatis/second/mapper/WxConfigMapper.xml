@@ -229,10 +229,21 @@
         <include refid="Base_Column_List"/>
         from wx_config
     </select>
+
     <select id="selectAllGames" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from wx_config where program_type = 0
+    </select>
+    <select id="selectGamesAndPrograms" resultType="com.fish.dao.second.model.WxConfig">
+        select
+        <include refid="Base_Column_List"/>
+        from wx_config where program_type != 2
+    </select>
+    <select id="selectAllPrograms" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wx_config where program_type = 1
     </select>
     <select id="selectByProductName" parameterType="java.lang.String" resultMap="BaseResultMap">
         select

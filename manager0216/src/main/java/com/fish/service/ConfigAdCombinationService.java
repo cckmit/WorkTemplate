@@ -165,6 +165,7 @@ public class ConfigAdCombinationService extends CacheService<ConfigAdCombination
             postResult.setSuccessed(false);
             postResult.setMsg("操作失败，新增组合配置内容失败！");
         } else {
+            this.updateAllCache(ConfigAdCombination.class);
             ReadJsonUtil.flushTable("config_ad_combination", this.baseConfig.getFlushCache());
         }
         return postResult;
@@ -183,6 +184,7 @@ public class ConfigAdCombinationService extends CacheService<ConfigAdCombination
             postResult.setSuccessed(false);
             postResult.setMsg("操作失败，修改组合配置内容失败！");
         } else {
+            this.updateCache(ConfigAdCombination.class, String.valueOf(configAdCombination.getDdId()), configAdCombination);
             ReadJsonUtil.flushTable("config_ad_combination", this.baseConfig.getFlushCache());
         }
         return postResult;
@@ -264,6 +266,7 @@ public class ConfigAdCombinationService extends CacheService<ConfigAdCombination
                 postResult.setSuccessed(false);
                 postResult.setMsg("操作失败，广告组合配置保存失败，请联系管理员！");
             } else {
+                this.updateAllCache(ConfigAdCombination.class);
                 ReadJsonUtil.flushTable("config_ad_combination", this.baseConfig.getFlushCache());
             }
         }
@@ -275,8 +278,9 @@ public class ConfigAdCombinationService extends CacheService<ConfigAdCombination
         int delete = this.adCombinationMapper.delete(deleteIds);
         if (delete <= 0) {
             postResult.setSuccessed(false);
-            postResult.setMsg("操作失败，修改组合配置内容失败！");
+            postResult.setMsg("操作失败，删除组合配置内容失败！");
         } else {
+            this.updateAllCache(ConfigAdCombination.class);
             ReadJsonUtil.flushTable("config_ad_combination", this.baseConfig.getFlushCache());
         }
         return postResult;
@@ -299,6 +303,7 @@ public class ConfigAdCombinationService extends CacheService<ConfigAdCombination
             result.setSuccessed(false);
             result.setMsg("操作失败，复制广告合集失败！");
         } else {
+            this.updateAllCache(ConfigAdCombination.class);
             ReadJsonUtil.flushTable("config_ad_combination", this.baseConfig.getFlushCache());
         }
         return result;
@@ -307,13 +312,11 @@ public class ConfigAdCombinationService extends CacheService<ConfigAdCombination
     @Override
     void updateAllCache(ConcurrentHashMap<String, ConfigAdCombination> map) {
         List<ConfigAdCombination> configAdCombinations = this.adCombinationMapper.selectAll();
-        configAdCombinations.forEach(configAdCombination -> {
-            map.put(String.valueOf(configAdCombination.getDdId()), configAdCombination);
-        });
+        configAdCombinations.forEach(configAdCombination -> map.put(String.valueOf(configAdCombination.getDdId()), configAdCombination));
     }
 
     @Override
     ConfigAdCombination queryEntity(Class<ConfigAdCombination> clazz, String key) {
-        return this.adCombinationMapper.select(Integer.valueOf(key));
+        return this.adCombinationMapper.select(Integer.parseInt(key));
     }
 }

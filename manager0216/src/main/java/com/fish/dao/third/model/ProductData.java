@@ -6,10 +6,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * @author: CF
- * @pragram: ProductData
- * @description: fc数据对应展示实体类
- * @create:
+ * @author CF
+ * ProductData
+ * fc数据对应展示实体类
  */
 public class ProductData {
     private String wxAppid;
@@ -24,6 +23,8 @@ public class ProductData {
     private String wxRegJson;
 
     private String productName;
+    private String ddAppPlatform;
+
     /*** 充值收入 */
     private BigDecimal recharge;
 
@@ -124,7 +125,6 @@ public class ProductData {
     private Integer wxActiveOtherReturn;
     /*** 活跃来源展示字段-- 其他小程序 */
     private Integer wxActiveOtherSp;
-
 
     public BigDecimal getScreenIncome() {
         return screenIncome;
@@ -588,5 +588,13 @@ public class ProductData {
 
     public void setWxRegOtherReturn(Integer wxRegOtherReturn) {
         this.wxRegOtherReturn = wxRegOtherReturn;
+    }
+
+    public String getDdAppPlatform() {
+        return ddAppPlatform;
+    }
+
+    public void setDdAppPlatform(String ddAppPlatform) {
+        this.ddAppPlatform = ddAppPlatform;
     }
 }

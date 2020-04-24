@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.fish.utils.tool.CmTool.createNonceStr;
 
@@ -31,9 +32,11 @@ public class OrdersService implements BaseService<ShowOrders> {
     OrdersMapper ordersMapper;
 
     @Autowired
-    CacheService cacheService;
-    @Autowired
     BaseConfig baseConfig;
+    @Autowired
+    WxConfigService wxConfigService;
+    @Autowired
+    CacheService cacheService;
 
     /**
      * 查询展示所有订单信息
@@ -46,6 +49,9 @@ public class OrdersService implements BaseService<ShowOrders> {
         ArrayList<ShowOrders> shows = new ArrayList<>();
         List<Orders> orders;
         JSONObject search = getSearchData(parameter.getSearchData());
+
+        ConcurrentHashMap<String, WxConfig> wxConfigMap = wxConfigService.getAll(WxConfig.class);
+
         //判断是否存在查询条件
         if (search == null || search.getString("times").isEmpty()) {
             orders = ordersMapper.selectAll();
@@ -74,7 +80,7 @@ public class OrdersService implements BaseService<ShowOrders> {
             }
             String userName = cacheService.getUserName(className, users, dduId);
             showOrders.setUserName(userName);
-            WxConfig wxConfig = cacheService.getWxConfig(appId);
+            WxConfig wxConfig = wxConfigMap.get(appId);
             if (wxConfig != null) {
                 String productName = wxConfig.getProductName();
                 String originName = wxConfig.getOriginName();
@@ -111,9 +117,10 @@ public class OrdersService implements BaseService<ShowOrders> {
      * @return
      */
     public int singleOrder(String appId, String uid, String orderId) {
+        ConcurrentHashMap<String, WxConfig> wxConfigMap = wxConfigService.getAll(WxConfig.class);
         //查询订单产品信息
         Orders order = ordersMapper.selectByPrimaryKey(orderId);
-        WxConfig wxConfig = cacheService.getWxConfig(appId);
+        WxConfig wxConfig = wxConfigMap.get(appId);
         String ddMchId = wxConfig.getDdmchid();
         Map<String, String> stringStringMap = searchPayOrder(appId, ddMchId, orderId);
         boolean status = orderIsSuccess(stringStringMap);
@@ -144,8 +151,9 @@ public class OrdersService implements BaseService<ShowOrders> {
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
-        if (parameter.getOrder() != null)
+        if (parameter.getOrder() != null) {
             return;
+        }
         parameter.setSort("productName");
         parameter.setOrder("desc");
     }
@@ -181,7 +189,7 @@ public class OrdersService implements BaseService<ShowOrders> {
      * @param orderId 订单号
      */
     private Map<String, String> searchPayOrder(String ddAppId, String ddMchId, String orderId) {
-
+        ConcurrentHashMap<String, WxConfig> wxConfigMap = wxConfigService.getAll(WxConfig.class);
         // 查询订单在数据库中是否存在
         // 封装查询订单参数
         Map<String, String> searchOrder_map = new HashMap<>();
@@ -190,7 +198,7 @@ public class OrdersService implements BaseService<ShowOrders> {
         searchOrder_map.put("out_trade_no", orderId);
         searchOrder_map.put("nonce_str", createNonceStr());
         searchOrder_map.put("sign_type", SIGN_TYPE);
-        WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
+        WxConfig wxConfig = wxConfigMap.get(ddAppId);
         SignatureAlgorithm signatureAlgorithm = new SignatureAlgorithm(wxConfig.getDdkey(), searchOrder_map);
         String searchOrderXml = signatureAlgorithm.getSignXml();
         try {

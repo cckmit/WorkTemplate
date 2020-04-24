@@ -90,9 +90,9 @@ fourth:
     druid:
       filters: stat
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/persie_value?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true
-      username: root
-      password: root
+      url: jdbc:mysql://103.20.249.243:3307/persie_value?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true
+      username: queryMiniWx
+      password: blazefire103.
       minIdle: 1
       initial-size: 2
       max-active: 300
@@ -118,4 +118,4 @@ config:
   uploadJson: {"share":"/data/res.qinyougames.com/persieRes/","public":"/data/tomcat8/apache-public/webapps/public/mui_wxoa_debug/","public-config":"/data/tomcat8/apache-public/webapps/public/mui_wxoa_debug/","qr":"/data/res.qinyougames.com/images/qrcode/","game":"/data/res.qinyougames.com/images/","host-share":"https://res.qinyougames.com/persieRes/",
                "host-public":"https://res.qinyougames.com/public/mui_wxoa_debug/","host-qr":"https://res.qinyougames.com/images/qrcode/"}
   wxQueryUrl: https://api.mch.weixin.qq.com/pay/orderquery
-  supplementUrl: http://192.168.1.55:8080/persieService/pay/callback
+  supplementUrl: https://logic.qinyougames.com/persieService/pay/callback

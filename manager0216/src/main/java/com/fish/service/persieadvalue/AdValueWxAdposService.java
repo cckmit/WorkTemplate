@@ -6,6 +6,7 @@ import com.fish.dao.fourth.model.AdValueWxAdpos;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
 import com.fish.service.BaseService;
+import com.fish.service.WxConfigService;
 import com.fish.service.cache.CacheService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author
+ * @author CF
  * @date
  */
 @Service
@@ -30,6 +31,8 @@ public class AdValueWxAdposService implements BaseService<AdValueWxAdpos> {
 
     @Autowired
     CacheService cacheService;
+    @Autowired
+    WxConfigService wxConfigService;
 
     @Override
     public void setDefaultSort(GetParameter parameter) {
@@ -71,7 +74,7 @@ public class AdValueWxAdposService implements BaseService<AdValueWxAdpos> {
             adValueWxAdPos = adValueWxAdposMapper.selectAll();
         }
         for (AdValueWxAdpos wxAdPos : adValueWxAdPos) {
-            WxConfig wxConfig = cacheService.getWxConfig(wxAdPos.getAppId());
+            WxConfig wxConfig = wxConfigService.getEntity(WxConfig.class, wxAdPos.getAppId());
             if (wxConfig != null) {
                 //赋值产品名称
                 wxAdPos.setAppName(wxConfig.getProductName() != null ? wxConfig.getProductName() : "");

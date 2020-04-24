@@ -18,6 +18,19 @@
     ddCode, ddGroup, ddIndex, ddName, ddGame, ddRound, ddStart, ddEnd, ddSubmit, ddResult, 
     ddTime
   </sql>
+    <select id="selectByPrimaryKey" parameterType="com.fish.dao.primary.model.RoundRecordKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from round_record
+        where ddCode = #{ddcode,jdbcType=INTEGER}
+        and ddGroup = #{ddgroup,jdbcType=BIT}
+        and ddIndex = #{ddindex,jdbcType=INTEGER}
+    </select>
+    <select id="selectAllRank" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from round_record
+    </select>
     <select id="selectGRank" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -39,5 +52,139 @@
         from round_record WHERE ddResult>0 AND ddGroup = FALSE
     </select>
 
-
+    <delete id="deleteByPrimaryKey" parameterType="com.fish.dao.primary.model.RoundRecordKey">
+    delete from round_record
+    where ddCode = #{ddcode,jdbcType=INTEGER}
+      and ddGroup = #{ddgroup,jdbcType=BIT}
+      and ddIndex = #{ddindex,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.fish.dao.primary.model.RoundRecord">
+    insert into round_record (ddCode, ddGroup, ddIndex, 
+      ddName, ddGame, ddRound, 
+      ddStart, ddEnd, ddSubmit, 
+      ddResult, ddTime)
+    values (#{ddcode,jdbcType=INTEGER}, #{ddgroup,jdbcType=BIT}, #{ddindex,jdbcType=INTEGER}, 
+      #{ddname,jdbcType=VARCHAR}, #{ddgame,jdbcType=INTEGER}, #{ddround,jdbcType=VARCHAR}, 
+      #{ddstart,jdbcType=TIMESTAMP}, #{ddend,jdbcType=TIMESTAMP}, #{ddsubmit,jdbcType=TIMESTAMP}, 
+      #{ddresult,jdbcType=INTEGER}, #{ddtime,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.fish.dao.primary.model.RoundRecord">
+        insert into round_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ddcode != null">
+                ddCode,
+            </if>
+            <if test="ddgroup != null">
+                ddGroup,
+            </if>
+            <if test="ddindex != null">
+                ddIndex,
+            </if>
+            <if test="ddname != null">
+                ddName,
+            </if>
+            <if test="ddgame != null">
+                ddGame,
+            </if>
+            <if test="ddround != null">
+                ddRound,
+            </if>
+            <if test="ddstart != null">
+                ddStart,
+            </if>
+            <if test="ddend != null">
+                ddEnd,
+            </if>
+            <if test="ddsubmit != null">
+                ddSubmit,
+            </if>
+            <if test="ddresult != null">
+                ddResult,
+            </if>
+            <if test="ddtime != null">
+                ddTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ddcode != null">
+                #{ddcode,jdbcType=INTEGER},
+            </if>
+            <if test="ddgroup != null">
+                #{ddgroup,jdbcType=BIT},
+            </if>
+            <if test="ddindex != null">
+                #{ddindex,jdbcType=INTEGER},
+            </if>
+            <if test="ddname != null">
+                #{ddname,jdbcType=VARCHAR},
+            </if>
+            <if test="ddgame != null">
+                #{ddgame,jdbcType=INTEGER},
+            </if>
+            <if test="ddround != null">
+                #{ddround,jdbcType=VARCHAR},
+            </if>
+            <if test="ddstart != null">
+                #{ddstart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ddend != null">
+                #{ddend,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ddsubmit != null">
+                #{ddsubmit,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ddresult != null">
+                #{ddresult,jdbcType=INTEGER},
+            </if>
+            <if test="ddtime != null">
+                #{ddtime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.primary.model.RoundRecord">
+        update round_record
+        <set>
+            <if test="ddname != null">
+                ddName = #{ddname,jdbcType=VARCHAR},
+            </if>
+            <if test="ddgame != null">
+                ddGame = #{ddgame,jdbcType=INTEGER},
+            </if>
+            <if test="ddround != null">
+                ddRound = #{ddround,jdbcType=VARCHAR},
+            </if>
+            <if test="ddstart != null">
+                ddStart = #{ddstart,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ddend != null">
+                ddEnd = #{ddend,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ddsubmit != null">
+                ddSubmit = #{ddsubmit,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ddresult != null">
+                ddResult = #{ddresult,jdbcType=INTEGER},
+            </if>
+            <if test="ddtime != null">
+                ddTime = #{ddtime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ddCode = #{ddcode,jdbcType=INTEGER}
+        and ddGroup = #{ddgroup,jdbcType=BIT}
+        and ddIndex = #{ddindex,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.fish.dao.primary.model.RoundRecord">
+    update round_record
+    set ddName = #{ddname,jdbcType=VARCHAR},
+      ddGame = #{ddgame,jdbcType=INTEGER},
+      ddRound = #{ddround,jdbcType=VARCHAR},
+      ddStart = #{ddstart,jdbcType=TIMESTAMP},
+      ddEnd = #{ddend,jdbcType=TIMESTAMP},
+      ddSubmit = #{ddsubmit,jdbcType=TIMESTAMP},
+      ddResult = #{ddresult,jdbcType=INTEGER},
+      ddTime = #{ddtime,jdbcType=TIMESTAMP}
+    where ddCode = #{ddcode,jdbcType=INTEGER}
+      and ddGroup = #{ddgroup,jdbcType=BIT}
+      and ddIndex = #{ddindex,jdbcType=INTEGER}
+  </update>
 </mapper>

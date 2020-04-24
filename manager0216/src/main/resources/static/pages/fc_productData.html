@@ -42,6 +42,18 @@
                             </div>
                         </div>
                         <div class="layui-inline">
+                            <label class="layui-form-label">平台类型</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <select name="appPlatform" id="appPlatform">
+                                    <option value=""> -</option>
+                                    <option value="weixin">微信</option>
+                                    <option value="q">QQ</option>
+                                    <option value="tt">头条</option>
+                                    <option value="quick">快应用</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
                             <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
                                     lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
@@ -167,8 +179,34 @@
                             }
                         }
                     },
+                    {
+                        field: 'ddAppPlatform', width: 120, title: '平台', sort: true,
+                        templet: (d) => {
+                            switch (d.ddAppPlatform) {
+                                case 'weixin':
+                                    return '微信';
+                                case 'q':
+                                    return 'QQ';
+                                case 'tt':
+                                    return '头条';
+                                case 'quick':
+                                    return '快应用';
+                                default:
+                                    return '未知平台';
+                            }
+                        }
+                    },
                     {field: 'wxNew', width: 120, title: '新增', sort: true},
-                    {field: 'wxAdNewPrice', width: 120, title: '新增单价', sort: true},
+                    {
+                        field: 'wxAdNewPrice', width: 120, title: '新增单价', sort: true,
+                        templet: (d) => {
+                            if (d.wxAdNewPrice != null && d.wxAdNewPrice !== "null") {
+                                return d.wxAdNewPrice;
+                            } else {
+                                return "0";
+                            }
+                        },
+                    },
                     {field: 'wxActive', width: 120, title: '活跃', sort: true},
                     {field: 'wxVisit', width: 120, title: '访问次数', sort: true},
                     {

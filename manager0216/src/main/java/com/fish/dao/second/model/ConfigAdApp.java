@@ -12,6 +12,7 @@ import java.util.Date;
  */
 public class ConfigAdApp {
 
+    private int id;
     private String ddAppId;
     private String ddMinVersion;
     private int ddCombinationId;
@@ -48,6 +49,13 @@ public class ConfigAdApp {
      */
     private String wxIntStrategyName;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getDdAppId() {
         return ddAppId;

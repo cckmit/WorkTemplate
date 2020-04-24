@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 微信广告数据明细
  * FcWxAddDataController
  *
- * @author CF
+ * @author
  * @date
  */
 @Controller
@@ -23,15 +23,14 @@ public class FcWxAddDataController {
 
     @Autowired
     WxAddDataService wxAddDataService;
-
     @Autowired
     BaseConfig baseConfig;
 
     /**
      * 查询微信广告数据
      *
-     * @param parameter parameter
-     * @return 查询结果
+     * @param parameter
+     * @return
      */
     @ResponseBody
     @GetMapping(value = "/wxAddData")

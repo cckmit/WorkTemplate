@@ -84,6 +84,7 @@ public class ConfigAdContentController {
         return this.adContentService.delete(jsonObject.getString("deleteIds"));
     }
 
+
     /**
      * 获取广告内容下拉框
      *
@@ -115,6 +116,16 @@ public class ConfigAdContentController {
     @GetMapping(value = "/configAdContent/selectByType")
     public JSONArray getAdContentJsonByType(String adType) {
         return this.adContentService.getAdContentJsonByType(adType);
+    }
+
+    /**
+     * @return 查询所有目标App名称
+     */
+    @ResponseBody
+    @GetMapping(value = "/configAdContent/getAppInfo")
+    public List<ConfigAdContent> getTargetAndPromoteAppInfo() {
+        List<ConfigAdContent> targetAndPromoteAppInfo = this.adContentService.getTargetAndPromoteAppInfo();
+        return targetAndPromoteAppInfo;
     }
 
 }

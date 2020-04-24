@@ -123,4 +123,9 @@
         where ddId in (${deleteIds})
     </update>
 
+    <select id="getTargetAndPromoteAppInfo" resultType="com.fish.dao.second.model.ConfigAdContent">
+        SELECT
+        DISTINCT(ddTargetAppId) AS ddTargetAppId, ddTargetAppName, ddTargetAppType
+        FROM config_ad_content GROUP BY ddTargetAppId,ddTargetAppName, ddTargetAppType
+    </select>
 </mapper>

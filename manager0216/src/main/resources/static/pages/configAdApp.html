@@ -247,10 +247,11 @@
         }
     });
 
+
     /**
      * 打开页面时初始化加载数据
      */
-    layui.use(['table', 'form', 'layer'], () => {
+    layui.use(['table', 'form', 'layer', 'tree'], () => {
         const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer;
         table.render({
             elem: '#table-page',
@@ -611,7 +612,13 @@
             <input type="checkbox" checked="" name="ddAllowedShow" lay-skin="switch" lay-text="是|否">
         </div>
     </div>
-
+    <!-- <div class="layui-form-item ">
+         <label class="layui-form-label">Banner—Unit</label>
+         <div class="layui-input-inline">
+             <input type="text" id="ddWxBannerUnit" name="ddWxBannerUnit" class="layui-input"
+                    autocomplete="off" aria-hidden="true">
+         </div>
+     </div>-->
     <div class="layui-form-item ">
         <label class="layui-form-label">Banner—切换间隔</label>
         <div class="layui-input-inline ">
@@ -638,6 +645,13 @@
                    autocomplete="off" value='{"time":5,"firstType":5}'>
         </div>
     </div>
+    <!-- <div class="layui-form-item ">
+         <label class="layui-form-label">插屏—unit</label>
+         <div class="layui-input-inline">
+             <input type="text" class="layui-input" id="ddWxIntUint" name="ddWxIntUint" class="layui-input"
+                    autocomplete="off" lay-verify="required" aria-hidden="true">
+         </div>
+     </div>-->
     <div class="layui-form-item ">
         <label class="layui-form-label">插屏—展示？</label>
         <div class="layui-input-inline">
@@ -656,6 +670,13 @@
                    autocomplete="off">
         </div>
     </div>
+    <!--<div class="layui-form-item ">
+        <label class="layui-form-label">激励视频—unit</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" id="ddWxReVideoUnit" name="ddWxReVideoUnit" class="layui-input"
+                   autocomplete="off" lay-verify="required" aria-hidden="true">
+        </div>
+    </div>-->
     <div class="layui-form-item ">
         <label class="layui-form-label">激励视频—展示？</label>
         <div class="layui-input-inline">

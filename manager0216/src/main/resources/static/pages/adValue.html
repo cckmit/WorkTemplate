@@ -29,20 +29,49 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 6rem;">AppId</label>
+                            <label class="layui-form-label" style="width: 6rem;">类型</label>
                             <div class="layui-input-inline" style="width: 14rem;">
-                                <input type="text" class="layui-input" id="appId" name="appId">
+                                <select name="dateType" id="dateType" >
+                                    <option value="">-</option>
+                                    <option value="day">按日</option>
+                                    <option value="month">按月</option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 6rem;">版本</label>
+                            <label class="layui-form-label" style="width: 6rem;">推广APP名称</label>
+                            <div class="layui-input-inline" style="width: 14rem;" id="adContent" name="adContent"
+                                 lay-filter="adContent" autocomplete="off"></div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">产品名称</label>
                             <div class="layui-input-inline" style="width: 14rem;">
-                                <input type="text" class="layui-input" id="version" name="version">
+                                <div id="productsName" name="productsName" lay-filter="productsName"></div>
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">分组方式</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <select name="groupByType" id="groupByType">
+                                    <option value="adContent" selected>推广名称</option>
+                                    <option value="adPosition">广告位置</option>
+                                    <option value="productName">产品名称</option>
+                                    <option value="adSpace">广告位</option>
+                                    <option value="all" >全部明细</option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 6rem;"></label>
+                            <label class="layui-form-label" style="width: 6rem;">平台</label>
                             <div class="layui-input-inline" style="width: 14rem;">
+                                <select name="appPlatform" id="appPlatform">
+                                    <option value=""> -</option>
+                                    <option value="weixin">微信</option>
+                                    <option value="q">QQ</option>
+                                    <option value="tt">头条</option>
+                                    <option value="quick">快应用</option>
+                                </select>
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -55,11 +84,7 @@
                             <div class="layui-input-inline" style="width: 14rem;" id="adSpace" name="adSpace"
                                  lay-filter="adSpace" autocomplete="off"></div>
                         </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 6rem;">广告内容</label>
-                            <div class="layui-input-inline" style="width: 14rem;" id="adContent" name="adContent"
-                                 lay-filter="adContent" autocomplete="off"></div>
-                        </div>
+
                         <div class="layui-inline">
                             <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
@@ -75,10 +100,30 @@
         </div>
     </div>
 </div>
-
+<script type="text/html" id="barDetail">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看详情</a>
+</script>
 <script>
     const operatorurl = '../manage/adValue';
-
+    //产品名称数组
+    let appNames = [];
+    /**
+     * 产品名称查询框
+     */
+    let appSelect = xmSelect.render({
+        el: '#productsName',
+        name: 'productsName',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+        },
+    });
     // 广告位置数组
     let positionOptionArr = [];
     /**
@@ -133,40 +178,42 @@
      */
     layui.use(['table', 'form', 'laydate'], () => {
         const $ = layui.$, table = layui.table, form = layui.form, laydate = layui.laydate;
-        table.render({
-            elem: '#table-page',
-            url: operatorurl,
-            cols: [[
-                {type: 'numbers', title: '序号'},
-                {field: 'hourNum', width: 120, title: '日期', sort: true, align: 'center'},
-                {field: 'appId', width: 180, title: 'appId', sort: true, align: 'left'},
-                {field: 'appName', width: 140, title: '产品名称', sort: true, align: 'left'},
-                {field: 'version', width: 100, title: '版本', sort: true, align: 'center'},
-                {field: 'positionName', width: 140, title: '广告位置', sort: false, align: 'left'},
-                {field: 'spaceName', width: 140, title: '广告位', sort: false, align: 'left'},
-                {field: 'contentName', width: 140, title: '广告内容', sort: false, align: 'left'},
-                {field: 'adShowIndex', width: 140, title: '展示位置序号', sort: false, align: 'center'},
-                {field: 'showNum', width: 140, title: '展示次数', sort: true, align: 'right'},
-                {field: 'clickNum', width: 140, title: '点击次数', sort: true, align: 'right'},
-                {field: 'promoteShowNum', width: 140, title: '中转App展示次数', sort: true, align: 'right'},
-                {field: 'promoteClickNum', width: 140, title: '中转App点击次数', sort: true, align: 'right'},
-                {field: 'targetShowNum', width: 140, title: '目标App展示次数', sort: true, align: 'right'}
-            ]],
-            page: true,
-            toolbar: '#toolbar',
-            limit: 30,
-            defaultToolbar: ['filter', 'exports'],
-            height: 'full-160'
-        });
-
-        // 渲染时间查询框
-        laydate.render({
-            elem: '#dateNum',
-            range: true
-        });
-
         // 初始化数据
         $(() => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/roundmatch/appname',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
+                        let type;
+                        let appPlatform;
+                        switch (val.programType) {
+                            case 0:type = "game";break;
+                            case 1:type = "web";break;
+                            case 2:type = "public";break;
+                            default:type = "未知游戏类型";break;
+                        }
+                        switch (val.ddAppPlatform) {
+                            case "weixin":appPlatform = "wx";break;
+                            case "q":appPlatform = "qq";break;
+                            default:appPlatform = "未知平台";break;
+                        }
+                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
+                        appNames.push(context);
+                    });
+                    appSelect.update(
+                        {
+                            data: appNames,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            });
             $.ajax({
                 type: "get",
                 dataType: "json",
@@ -222,6 +269,146 @@
                 }
             });
         });
+        table.render({
+            elem: '#table-page',
+            url: operatorurl,
+            cols: [[
+                {type: 'numbers', title: '序号'},
+                {field: 'hourNum', width: 120, title: '日期', sort: true, align: 'center'},
+
+                {field: 'contentName', width: 140, title: '推广名称', sort: false, align: 'left'},
+                {field: 'appPlatform', width: 140, title: '平台类型', sort: true, align: 'left'},
+
+                {field: 'positionName', width: 140, title: '广告位置', sort: false, align: 'left'},
+                {field: 'spaceName', width: 140, title: '广告位', sort: false, align: 'left'},
+
+                {field: 'adShowIndex', width: 140, title: '展示位置序号', sort: false, align: 'center'},
+                {field: 'showNum', width: 140, title: '展示次数', sort: true, align: 'right'},
+                {field: 'clickNum', width: 140, title: '点击次数', sort: true, align: 'right'},
+                {field: 'clickRate', width: 140, title: '点击率', sort: true, align: 'right',
+                templet: (d) => {
+                    if(d.clickNum === 0 || d.showNum === 0){
+                        return 0+"%";
+                    }else {
+                        return Math.round(parseFloat(d.clickNum / d.showNum)*100)+"%";
+                    }
+                }},
+                {field: 'promoteShowNum', width: 140, title: '中转App展示次数', sort: true, align: 'right'},
+                {field: 'promoteClickNum', width: 140, title: '中转App点击次数', sort: true, align: 'right'},
+                {field: 'promoteClickRate', width: 140, title: '目标点击率', sort: true, align: 'right',
+                    templet: (d) => {
+                        if(d.promoteShowNum === 0 || d.promoteClickNum === 0){
+                            return 0+"%"
+                        }else {
+                            return Math.round(parseFloat(d.promoteClickNum / d.promoteShowNum)*100)+"%";
+                        }
+                    }},
+                {field: 'targetShowNum', width: 140, title: '目标App展示次数', sort: true, align: 'right'},
+                {field: 'operator', width: 140, title: '操作', sort: true, align: 'left',toolbar: '#barDetail'}
+            ]],
+            page: true,
+            toolbar: '#toolbar',
+            limit: 30,
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-160',
+            done:function (res, curr, count) {
+                // 有数据的时候判断
+                if (res.data[0] != null){
+                    let type = res.data[0].groupByType;
+                    const queryDetail = res.data[0].queryDetail;
+                    const isHidden = (queryDetail === "1");
+                    console.log("isHidden1:",isHidden);
+                    if (type === 'adContent'){
+                        // 按推广App名称查询，隐藏所有非数据的列
+                        $('.layui-table-box').find('[data-field = "appId"]').css("display","none");
+                        $('.layui-table-box').find('[data-field = "productName"]').css("display","none");
+
+                        $('.layui-table-box').find('[data-field = "appPlatform"]').css("display","none");
+                        $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
+                        $('.layui-table-box').find('[data-field = "spaceName"]').css("display","none");
+                        $('.layui-table-box').find('[data-field = "adShowIndex"]').css("display","none");
+                        $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                    }else if (type === 'adPosition') {
+                        // 按广告位置 查隐藏所有非产品的列
+                        $('.layui-table-box').find('[data-field = "slotId"]').css("display","none");
+                        // 如果点了详情之后隐藏操作列
+                        if (queryDetail === "1"){
+                            $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                        }else {
+                            $('.layui-table-box').find('[data-field = "appId"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "productName"]').css("display","none");
+
+                            $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "adShowIndex"]').css("display","none");
+                        }
+                    }else if (type === 'productName'){
+                        // 按产品名称查 隐藏所有非广告类型的列
+                        // 如果点了详情之后隐藏操作列
+                        if (queryDetail === "1"){
+                            $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                        }else{
+                            // 没点详情的话隐藏产品和广告位名
+                            $('.layui-table-box').find('[data-field = "appId"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "productName"]').css("display","none");
+
+                            $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "contentName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "adShowIndex"]').css("display","none");
+                        }
+                    }
+                    else if (type === 'adSpace'){
+                        //按广告位查隐藏所有非广告位的列
+                        // 如果点了详情之后隐藏操作列
+                        if (queryDetail === "1"){
+                            $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                        }else {
+                            // 没点详情隐藏产品和广告类型
+                            $('.layui-table-box').find('[data-field = "appId"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "productName"]').css("display","none");
+
+                            $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "contentName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "adShowIndex"]').css("display","none");
+                        }
+                    }
+                  else if (type === 'all'){
+                        // 产品+广告位组合，隐藏详情按钮
+                        $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                    }
+                }else {
+                    $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                }
+            }
+        });
+        // 渲染时间查询框
+        laydate.render({
+            elem: '#dateNum',
+            range: true
+        });
+/*        //监听行工具事件
+        table.on('tool(table-page)', function(obj){
+            //debugger;
+            let dates = obj.data;
+            if(obj.event === 'detail'){
+                console.log(JSON.stringify(dates))
+                let newDate = dates.date.replace(/-/g,'/');
+                let searchDate = '{"dateNum":"'+ newDate +'-'+ newDate +'", "productsName": "'+ dates.appId +'",' +
+                    '"slotId":"'+ dates.slotId +'","adUnitName":"'+ dates.adUnitName +'","groupByType":"'+ dates.groupByType +
+                    '","queryDetail": "1"}';
+                // 点击详情重载表格
+                table.reload('table-page', {
+                    where: { //设定异步数据接口的额外参数，任意设
+                        'searchData': searchDate
+                    },
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                });
+            }
+        });*/
+
     });
 
 </script>

@@ -81,6 +81,10 @@ public class Minitj_general
 	@Column(name="wx_banner_income")
 	@Comments(name="bannel收入")
 	public BigDecimal wx_banner_income;
+
+	@Comments(name="插屏收入")
+	public BigDecimal wx_screen_income;
+
 	@Column(name="wx_reg_ad")
 	@Comments(name="注册用户来自广告占比")
 	public int wx_reg_ad;

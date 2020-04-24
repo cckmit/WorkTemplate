@@ -2,8 +2,8 @@ package com.fish.service.persieadvalue;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.fourth.mapper.AdValueWxAdUnitMapper;
-import com.fish.dao.second.mapper.WxConfigMapper;
 import com.fish.dao.fourth.model.AdValueWxAdUnit;
+import com.fish.dao.second.mapper.WxConfigMapper;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
 import com.fish.service.BaseService;
@@ -93,7 +93,7 @@ public class AdValueWxAdUnitService implements BaseService<AdValueWxAdUnit> {
         boolean isQueryConfig = false;
 
         // 判断是否查询产品名
-        if (groupByType.equals("1") || groupByType.equals("4") || groupByType.equals("5") || queryDetail.equals("1")) {
+        if ("1".equals(groupByType) || "4".equals(groupByType) || "5".equals(groupByType) || "1".equals(queryDetail)) {
             isQueryConfig = true;
         }
 
@@ -107,9 +107,9 @@ public class AdValueWxAdUnitService implements BaseService<AdValueWxAdUnit> {
         int allClickCount = 0;
         int allIncome = 0;
 
-        if (!adValueWxAdUnits.isEmpty() && adValueWxAdUnits.size() > 0) {
-
+        if (!adValueWxAdUnits.isEmpty()) {
             for (AdValueWxAdUnit adValueWxAdUnit : adValueWxAdUnits) {
+
                 // 标记是否查询了详情
                 allReqSuccCount += adValueWxAdUnit.getReqSuccCount();
                 allExposureCount += adValueWxAdUnit.getExposureCount();
@@ -119,7 +119,7 @@ public class AdValueWxAdUnitService implements BaseService<AdValueWxAdUnit> {
                 adValueWxAdUnit.setQueryDetail(queryDetail);
                 adValueWxAdUnit.setGroupByType(groupByType);
                 if (isQueryConfig) {
-                    adValueWxAdUnit.setProductName(wxConfigMap.get(adValueWxAdUnit.getAppId()).getProductName());
+                    adValueWxAdUnit.setProductName(wxConfigMap.get(adValueWxAdUnit.getAppId())!=null?wxConfigMap.get(adValueWxAdUnit.getAppId()).getProductName():"未知产品");
                 }
                 // 点击率 = 点击量/曝光量
                 Double clickRate = getRate(adValueWxAdUnit.getClickCount(), adValueWxAdUnit.getExposureCount());

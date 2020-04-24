@@ -31,5 +31,4 @@ public class AdValueController {
     public GetResult getConfigAdSource(GetParameter getParameter) {
         return this.adValueService.findAll(getParameter);
     }
-
 }

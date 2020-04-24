@@ -30,17 +30,21 @@ public class ConfigAdStrategyService extends CacheService<ConfigAdStrategy> impl
     ConfigAdStrategyService adStrategyService;
 
     @Override
-    public void setDefaultSort(GetParameter parameter) { }
+    public void setDefaultSort(GetParameter parameter) {
+    }
 
     @Override
-    public Class getClassInfo() { return ConfigAdStrategy.class; }
+    public Class getClassInfo() {
+        return ConfigAdStrategy.class;
+    }
 
     @Override
-    public boolean removeIf(ConfigAdStrategy configAdContent, JSONObject searchData) { return false; }
+    public boolean removeIf(ConfigAdStrategy configAdContent, JSONObject searchData) {
+        return false;
+    }
 
     @Override
     public List selectAll(GetParameter parameter) {
-        //List<ConfigAdStrategy> list = this.adStrategyMapper.selectAll();
         return this.adStrategyMapper.selectAll();
     }
 
@@ -57,6 +61,7 @@ public class ConfigAdStrategyService extends CacheService<ConfigAdStrategy> impl
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
         } else {
+            this.updateAllCache(ConfigAdStrategy.class);
             ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
         return result;
@@ -75,6 +80,7 @@ public class ConfigAdStrategyService extends CacheService<ConfigAdStrategy> impl
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
+            this.updateCache(ConfigAdStrategy.class, String.valueOf(adStrategy.getDdId()), adStrategy);
             ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
         return result;
@@ -93,6 +99,7 @@ public class ConfigAdStrategyService extends CacheService<ConfigAdStrategy> impl
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
+            this.updateAllCache(ConfigAdStrategy.class);
             ReadJsonUtil.flushTable("config_ad_strategy", this.baseConfig.getFlushCache());
         }
         return result;
@@ -116,7 +123,7 @@ public class ConfigAdStrategyService extends CacheService<ConfigAdStrategy> impl
 
     @Override
     ConfigAdStrategy queryEntity(Class<ConfigAdStrategy> clazz, String key) {
-        return this.adStrategyMapper.select(Integer.valueOf(key));
+        return this.adStrategyMapper.select(Integer.parseInt(key));
     }
 
 }

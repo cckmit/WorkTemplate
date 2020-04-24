@@ -119,6 +119,7 @@ public class ConfigAdPositionService extends CacheService<ConfigAdPosition> impl
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
         } else {
+            this.updateAllCache(ConfigAdPosition.class);
             ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
         }
         return result;
@@ -127,16 +128,17 @@ public class ConfigAdPositionService extends CacheService<ConfigAdPosition> impl
     /**
      * 修改广告内容
      *
-     * @param adContent
+     * @param adPosition
      * @return
      */
-    public PostResult update(ConfigAdPosition adContent) {
+    public PostResult update(ConfigAdPosition adPosition) {
         PostResult result = new PostResult();
-        int update = this.adPositionMapper.update(adContent);
+        int update = this.adPositionMapper.update(adPosition);
         if (update <= 0) {
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
+            this.updateCache(ConfigAdPosition.class, String.valueOf(adPosition.getDdId()), adPosition);
             ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
         }
         return result;
@@ -155,6 +157,7 @@ public class ConfigAdPositionService extends CacheService<ConfigAdPosition> impl
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
+            this.updateAllCache(ConfigAdPosition.class);
             ReadJsonUtil.flushTable("config_ad_position", this.baseConfig.getFlushCache());
         }
         return result;
@@ -234,13 +237,11 @@ public class ConfigAdPositionService extends CacheService<ConfigAdPosition> impl
     void updateAllCache(ConcurrentHashMap<String, ConfigAdPosition> map) {
         ConfigAdPosition position = new ConfigAdPosition();
         List<ConfigAdPosition> configAdPositions = this.adPositionMapper.selectAll(position);
-        configAdPositions.forEach(configAdPosition -> {
-            map.put(String.valueOf(configAdPosition.getDdId()), configAdPosition);
-        });
+        configAdPositions.forEach(configAdPosition -> map.put(String.valueOf(configAdPosition.getDdId()), configAdPosition));
     }
 
     @Override
     ConfigAdPosition queryEntity(Class<ConfigAdPosition> clazz, String key) {
-        return this.adPositionMapper.select(Integer.valueOf(key));
+        return this.adPositionMapper.select(Integer.parseInt(key));
     }
 }

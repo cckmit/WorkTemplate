@@ -20,10 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/allCost")
 public class AllCostController {
-
     @Autowired
     AllCostService allCostService;
-
     @Autowired
     MatchCostService matchCostService;
 
@@ -38,5 +36,4 @@ public class AllCostController {
     public GetResult getMatchCost(GetParameter parameter) {
         return matchCostService.findAll(parameter);
     }
-
 }

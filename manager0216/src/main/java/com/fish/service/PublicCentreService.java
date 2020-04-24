@@ -78,7 +78,7 @@ public class PublicCentreService implements BaseService<PublicCentre> {
                     new FileReader(PublicCentreService.class.getResource("/").getPath() + "config.json"));
             // 输出新的json文件  mui_wxoa_debug 测试 mui_wxoa 线上实际使用
             BufferedWriter bw = new BufferedWriter(
-                    new FileWriter("/data/tomcat8/apache-public/webapps/public/mui_wxoa/config.json"));
+                    new FileWriter("/data/tomcat8/apache-public/webapps/public/mui_wxoa_debug/config.json"));
             String ws = null;
             StringBuilder sb = new StringBuilder();
             String line;

@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,9 +50,9 @@ public class ConfigAdContentService extends CacheService<ConfigAdContent> implem
             String adType = searchObject.getString("adType");
             configAdContent.setDdAdType(StringUtils.isNotBlank(adType) ? Integer.parseInt(adType) : 0);
             configAdContent.setDdTargetAppId(searchObject.getString("targetAppId"));
-            configAdContent.setDdTargetAppName(searchObject.getString("targetAppName"));
+            configAdContent.setDdTargetAppId(searchObject.getString("targetAppName"));
             configAdContent.setDdPromoteAppId(searchObject.getString("promoteAppId"));
-            configAdContent.setDdPromoteAppName(searchObject.getString("promoteAppName"));
+            configAdContent.setDdPromoteAppId(searchObject.getString("promoteAppName"));
         }
         return this.adContentMapper.selectAll(configAdContent);
     }
@@ -71,6 +70,7 @@ public class ConfigAdContentService extends CacheService<ConfigAdContent> implem
             result.setSuccessed(false);
             result.setMsg("操作失败，新增广告内容失败！");
         } else {
+            this.updateAllCache(ConfigAdContent.class);
             ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
         return result;
@@ -89,6 +89,7 @@ public class ConfigAdContentService extends CacheService<ConfigAdContent> implem
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
+            this.updateCache(ConfigAdContent.class, String.valueOf(adContent.getDdId()), adContent);
             ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
         return result;
@@ -108,6 +109,7 @@ public class ConfigAdContentService extends CacheService<ConfigAdContent> implem
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
+            this.updateAllCache(ConfigAdContent.class);
             ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
         return result;
@@ -126,6 +128,7 @@ public class ConfigAdContentService extends CacheService<ConfigAdContent> implem
             result.setSuccessed(false);
             result.setMsg("操作失败，修改广告内容失败！");
         } else {
+            this.updateAllCache(ConfigAdContent.class);
             ReadJsonUtil.flushTable("config_ad_content", this.baseConfig.getFlushCache());
         }
         return result;
@@ -206,5 +209,9 @@ public class ConfigAdContentService extends CacheService<ConfigAdContent> implem
     @Override
     ConfigAdContent queryEntity(Class<ConfigAdContent> clazz, String key) {
         return this.select(Integer.valueOf(key));
+    }
+
+    public List<ConfigAdContent> getTargetAndPromoteAppInfo() {
+        return this.adContentMapper.getTargetAndPromoteAppInfo();
     }
 }

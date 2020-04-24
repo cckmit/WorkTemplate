@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 实时付费信息
@@ -24,36 +27,26 @@ import java.util.*;
  */
 @Service
 public class PayStatisticService implements BaseService<ShowPayStatistic> {
+
     @Autowired
     OrdersMapper ordersMapper;
 
     @Autowired
     CacheService cacheService;
 
-    /**
-     * 获取微信配置表
-     *
-     * @return
-     */
-    private Map<String, WxConfig> getWxConfigMap() {
-        Map<String, WxConfig> wxConfigMap = new HashMap<>();
-        List<WxConfig> allWxConfig = cacheService.getAllWxConfig();
-        allWxConfig.forEach(wxConfig -> {
-            wxConfigMap.put(wxConfig.getDdappid(), wxConfig);
-        });
-        return wxConfigMap;
-    }
+    @Autowired
+    WxConfigService wxConfigService;
 
     /**
      * 查询付费信息
      *
-     * @param parameter
-     * @return
+     * @param parameter parameter
+     * @return 付费信息
      */
     @Override
     public List<ShowPayStatistic> selectAll(GetParameter parameter) {
         List<ShowPayStatistic> showPayStatistics = new ArrayList<>();
-        Map<String, WxConfig> wxConfigMap = getWxConfigMap();
+        Map<String, WxConfig> wxConfigMap = this.wxConfigService.getAll(WxConfig.class);
         JSONObject search = getSearchData(parameter.getSearchData());
         String start = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String end = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
@@ -113,4 +106,5 @@ public class PayStatisticService implements BaseService<ShowPayStatistic> {
     public boolean removeIf(ShowPayStatistic showPayStatistic, JSONObject searchData) {
         return false;
     }
+
 }

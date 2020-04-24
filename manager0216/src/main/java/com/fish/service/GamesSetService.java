@@ -4,10 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.fish.dao.primary.mapper.ArcadeGamesMapper;
 import com.fish.dao.primary.model.ArcadeGameSet;
 import com.fish.dao.primary.model.ArcadeGames;
-import com.fish.dao.second.mapper.WxConfigMapper;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
-import com.fish.service.cache.CacheService;
 import com.fish.utils.HexToStringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 合集配置  Service
@@ -30,9 +29,8 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
     @Autowired
     ArcadeGamesMapper arcadeGamesMapper;
     @Autowired
-    WxConfigMapper wxConfigMapper;
-    @Autowired
-    CacheService cacheService;
+    WxConfigService wxConfigService;
+
 
     /**
      * 查询
@@ -43,6 +41,7 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
     @Override
     public List<ArcadeGameSet> selectAll(GetParameter parameter) {
         List<ArcadeGameSet> arcadeGameSets;
+        ConcurrentHashMap<String, WxConfig> wxConfigMap = wxConfigService.getAll(WxConfig.class);
         //手动设值升序降序
         if ("asc".equals(parameter.getOrder())) {
             arcadeGameSets = arcadeGameSetMapper.selectAllByAsc();
@@ -81,7 +80,7 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
             }
             arcadeGameSet.setDdcontent512a(ddContents.toString());
             if (StringUtils.isNotBlank(arcadeGameSet.getDdappid())) {
-                WxConfig wxConfigName = cacheService.getWxConfig(arcadeGameSet.getDdappid());
+                WxConfig wxConfigName = wxConfigMap.get(arcadeGameSet.getDdappid());
                 if (wxConfigName != null) {
                     if (StringUtils.isNotBlank(wxConfigName.getProductName())) {
                         arcadeGameSet.setDdappid(arcadeGameSet.getDdappid() + "-" + wxConfigName.getProductName());

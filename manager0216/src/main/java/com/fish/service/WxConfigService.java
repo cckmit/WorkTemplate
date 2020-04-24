@@ -190,6 +190,9 @@ public class WxConfigService extends CacheService<WxConfig> implements BaseServi
         if (existValueFalse(searchData.getString("addName"), wxConfig.getAdName())) {
             return true;
         }
+        if (existValueFalse(searchData.getString("appPlatform"), wxConfig.getDdAppPlatform())) {
+            return true;
+        }
         return existValueFalse(searchData.getString("productsName"), wxConfig.getDdappid());
     }
 

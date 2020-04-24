@@ -138,10 +138,10 @@ public class MangerApplicationTests
 //        createAccount();
 //    }
 
-    @Test
-    public  void creat(){
-        createLayUi();
-    }
+//    @Test
+//    public  void creat(){
+//        createLayUi();
+//    }
 
     @Test
     public void redisData() {

@@ -65,6 +65,9 @@
 					$("#dianji").css("display","none");
 				}
 			}
+			function formatNull(val) {
+				return val ? val : 0;
+			}
 		</script>
 		<meta charset="UTF-8">
 		<title>模板</title>
@@ -88,6 +91,7 @@
 						<th data-options="field:'daily_income_ad',align:'center',width:80,sortable:true">广告收入</th>
 						<th data-options="field:'daily_income_video',align:'center',width:80,sortable:true">视频收入</th>
 						<th data-options="field:'daily_income_banner',align:'center',width:80,sortable:true">banner收入</th>
+						<th data-options="field:'daily_income_screen',align:'center',width:80,sortable:true,formatter:formatNull">插屏收入</th>
 						<th data-options="field:'daily_share',align:'center',width:80,sortable:true">分享次数</th>
 					</tr>
 				</thead>

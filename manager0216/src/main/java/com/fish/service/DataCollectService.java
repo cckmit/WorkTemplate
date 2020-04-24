@@ -66,13 +66,15 @@ public class DataCollectService implements BaseService<DataCollect> {
         String[] times = getTimes(parameter);
         JSONObject search = getSearchData(parameter.getSearchData());
         String type = "";
+        String appPlatform = "";
         List<DataCollect> dataCollects = new ArrayList<>();
         if (search != null) {
             type = search.getString("type");
+            appPlatform = search.getString("appPlatform");
         }
         if (StringUtils.isBlank(type)) {
-            dataCollects = queryProgramStatis(times[0], times[1]);
-            Map<String, DataCollect> dataCollectMap = queryMinitjWxStatis(times[0], times[1], type);
+            dataCollects = queryProgramStatis(times[0], times[1], appPlatform);
+            Map<String, DataCollect> dataCollectMap = queryMinitjWxStatis(times[0], times[1], type, appPlatform);
             // 合并小游戏和小程序数据
             if (!dataCollectMap.isEmpty() && !dataCollects.isEmpty()) {
                 dataCollects = countProgramAndMititjWx(dataCollects, dataCollectMap);
@@ -84,10 +86,10 @@ public class DataCollectService implements BaseService<DataCollect> {
         } else {
             if ("1".equals(type)) {
                 // 小程序查询
-                dataCollects = queryProgramStatis(times[0], times[1]);
+                dataCollects = queryProgramStatis(times[0], times[1], appPlatform);
             } else {
                 // 小游戏查询
-                Map<String, DataCollect> dataCollectMap = queryMinitjWxStatis(times[0], times[1], type);
+                Map<String, DataCollect> dataCollectMap = queryMinitjWxStatis(times[0], times[1], type, appPlatform);
                 dataCollects = new ArrayList<>(dataCollectMap.values());
             }
         }
@@ -207,14 +209,14 @@ public class DataCollectService implements BaseService<DataCollect> {
      * @param type      选择的类型
      * @return 汇总结果
      */
-    private Map<String, DataCollect> queryMinitjWxStatis(String beginTime, String endTime, String type) {
+    private Map<String, DataCollect> queryMinitjWxStatis(String beginTime, String endTime, String type, String ddAppPlatform) {
         // 获取配置
         Map<String, WxConfig> wxConfigMap = getWxConfigMap();
         // 查询列表
         List<MinitjWx> minitjWxes = minitjWxMapper.queryMinitjWxByDate(beginTime, endTime);
         // 生成map集合
         Map<String, List<MinitjWx>> minitjWxListMap;
-        minitjWxListMap = getMinitjListMap(minitjWxes, wxConfigMap, type);
+        minitjWxListMap = getMinitjListMap(minitjWxes, wxConfigMap, type, ddAppPlatform);
         return countMinitWxData(minitjWxListMap);
     }
 
@@ -278,7 +280,7 @@ public class DataCollectService implements BaseService<DataCollect> {
      * @param type        查询类型
      * @return Map集合
      */
-    private Map<String, List<MinitjWx>> getMinitjListMap(List<MinitjWx> minitjWxes, Map<String, WxConfig> wxConfigMap, String type) {
+    private Map<String, List<MinitjWx>> getMinitjListMap(List<MinitjWx> minitjWxes, Map<String, WxConfig> wxConfigMap, String type, String ddAppPlatform) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Map<String, List<MinitjWx>> minitjWxListMap = new HashMap<>(16);
         for (MinitjWx minitjWx : minitjWxes) {
@@ -290,7 +292,7 @@ public class DataCollectService implements BaseService<DataCollect> {
                 // 如果类型不为空
                 if (!StringUtils.isBlank(type)) {
                     // 判断类型：如果该条数据的类型不符合不做处理
-                    if (!String.valueOf(wxConfig.getProgramType()).equals(type)) {
+                    if (!String.valueOf(wxConfig.getProgramType()).equals(type) || existValueFull(ddAppPlatform, wxConfig.getDdAppPlatform())) {
                         continue;
                     }
                 }
@@ -314,7 +316,7 @@ public class DataCollectService implements BaseService<DataCollect> {
      *
      * @return 汇总数据
      */
-    private List<DataCollect> queryProgramStatis(String beginTime, String endTime) {
+    private List<DataCollect> queryProgramStatis(String beginTime, String endTime, String appPlatform) {
         List<DataCollect> dataCollects = new ArrayList<>();
 
         List<ProductData> productData = wxDailyVisitTrendMapper.selectVisitTrendSummary(beginTime, endTime);
@@ -348,8 +350,16 @@ public class DataCollectService implements BaseService<DataCollect> {
             } else {
                 dataCollect.setRechargeCount(new BigDecimal(0));
             }
+            if (StringUtils.isNotBlank(appPlatform)) {
+                Map<String, WxConfig> wxConfigMap = getWxConfigMap();
+                WxConfig wxConfig = wxConfigMap.get(productData1.getWxAppid());
+                if (appPlatform.equals(wxConfig.getDdAppPlatform())) {
+                    dataCollects.add(dataCollect);
+                }
+            } else {
+                dataCollects.add(dataCollect);
+            }
 
-            dataCollects.add(dataCollect);
         });
         return dataCollects;
     }
@@ -435,7 +445,7 @@ public class DataCollectService implements BaseService<DataCollect> {
     private String[] getTimes(GetParameter parameter) {
         String[] times = new String[2];
         JSONObject search = getSearchData(parameter.getSearchData());
-        String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+        String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(14));
         String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
         if (search != null) {
             if (!StringUtils.isBlank(search.getString("beginDate"))) {

@@ -311,8 +311,8 @@
             //debugger;
             let dates = obj.data;
             if(obj.event === 'detail'){
-               let newDate = dates.date.replace(/-/g,'/');
-               let searchDate = '{"dateNum":"'+ newDate +'-'+ newDate +'", "productsName": "'+ dates.appId +'",' +
+                let newDate = dates.date.replace(/-/g,'/');
+                let searchDate = '{"dateNum":"'+ newDate +'-'+ newDate +'", "productsName": "'+ dates.appId +'",' +
                     '"slotId":"'+ dates.slotId +'","adUnitName":"'+ dates.adUnitName +'","groupByType":"'+ dates.groupByType +
                     '","queryDetail": "1"}';
                 // 点击详情重载表格

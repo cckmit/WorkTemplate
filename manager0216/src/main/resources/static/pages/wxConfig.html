@@ -35,6 +35,18 @@
                             </div>
                         </div>
                         <div class="layui-inline">
+                            <label class="layui-form-label" style="width: 6rem;">平台类型</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                            <select name="appPlatform" id="appPlatform">
+                                <option value=""> -</option>
+                                <option value="weixin">微信</option>
+                                <option value="q">QQ</option>
+                                <option value="tt">头条</option>
+                                <option value="quick">快应用</option>
+                            </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
                             <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
                                     lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
@@ -174,7 +186,6 @@
                     }
                 },
                 {field: 'originId', width: 180, title: '原始ID', sort: true},
-                {field: 'addId', width: 120, title: '广告id', sort: true, hide: true},
                 {field: 'account', width: 200, title: '账户', sort: true},
                 {field: 'password', width: 160, title: '密码', sort: true},
                 {field: 'codeManager', width: 120, title: '主体', sort: true},
@@ -388,13 +399,6 @@
         <label class="layui-form-label">原始ID</label>
         <div class="layui-input-inline">
             <input type="text" id="originId" name="originId" autocomplete="off"
-                   class="layui-input layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item ">
-        <label class="layui-form-label">广告ID</label>
-        <div class="layui-input-inline">
-            <input type="text" id="addId" name="addId" autocomplete="off"
                    class="layui-input layui-input">
         </div>
     </div>

@@ -75,4 +75,9 @@ public interface ConfigAdContentMapper {
      */
     void updateImageUrl(@Param("imageUrl") String imageUrl, @Param("id") int id);
 
+    /**
+     * 推广App下拉框选项
+     * @return App合集
+     */
+    List<ConfigAdContent> getTargetAndPromoteAppInfo();
 }

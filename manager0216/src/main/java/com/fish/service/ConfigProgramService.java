@@ -8,7 +8,6 @@ import com.fish.dao.second.model.ConfigProgram;
 import com.fish.dao.second.model.WxConfig;
 import com.fish.protocols.GetParameter;
 import com.fish.protocols.PostResult;
-import com.fish.service.cache.CacheService;
 import com.fish.utils.BaseConfig;
 import com.fish.utils.ReadJsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 合集及版本号配置
@@ -28,13 +28,13 @@ import java.util.List;
 public class ConfigProgramService implements BaseService<ConfigProgram> {
 
     @Autowired
-    CacheService cacheService;
-    @Autowired
     ConfigProgramMapper configProgramMapper;
     @Autowired
     ArcadeGameSetMapper arcadeGameSetMapper;
     @Autowired
     BaseConfig baseConfig;
+    @Autowired
+    WxConfigService wxConfigService;
 
     /**
      * 查询
@@ -45,9 +45,10 @@ public class ConfigProgramService implements BaseService<ConfigProgram> {
     @Override
     public List<ConfigProgram> selectAll(GetParameter parameter) {
         List<ConfigProgram> configPrograms = configProgramMapper.selectAll();
+        ConcurrentHashMap<String, WxConfig> wxConfigMap = wxConfigService.getAll(WxConfig.class);
         for (ConfigProgram configProgram : configPrograms) {
             String ddAppId = configProgram.getDdAppId();
-            WxConfig wxConfig = cacheService.getWxConfig(ddAppId);
+            WxConfig wxConfig = wxConfigMap.get(ddAppId);
             if (wxConfig != null) {
                 configProgram.setProductName(wxConfig.getProductName());
                 configProgram.setProgramType(wxConfig.getProgramType());

@@ -19,15 +19,14 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping(value = "/manage")
 public class OdersController {
-
     @Autowired
     OrdersService ordersService;
 
     /**
      * 查询订单信息
      *
-     * @param parameter parameter
-     * @return 查询结果
+     * @param parameter
+     * @return
      */
     @ResponseBody
     @GetMapping(value = "/orders")
@@ -38,8 +37,8 @@ public class OdersController {
     /**
      * 补发订单
      *
-     * @param singleOrder singleOrder
-     * @return 补发结果
+     * @param singleOrder
+     * @return
      */
     @ResponseBody
     @PostMapping(value = "/orders/single")
@@ -58,6 +57,8 @@ public class OdersController {
             result.setMsg("操作失败，请联系管理员");
             return result;
         }
+
     }
+
 
 }

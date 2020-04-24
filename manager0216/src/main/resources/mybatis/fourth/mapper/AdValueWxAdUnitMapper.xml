@@ -97,8 +97,6 @@
 
         </if>
     </select>
-
-
     <select id="selectAllScreenIncome" resultType="com.fish.dao.fourth.model.AdValueWxAdUnit">
         SELECT appId,SUM(income) AS screenIncome,DATE
         FROM persie_value.ad_value_wx_adunit WHERE DATE(DATE) BETWEEN  #{beginTime} and #{endTime}

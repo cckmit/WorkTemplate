@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * 用户来源明细
  * Fc_UserSourceController
  *
- * @author CF
+ * @author
  * @date
  */
 @Controller
@@ -29,8 +29,8 @@ public class Fc_UserSourceController {
     /**
      * 查询用户来源信息
      *
-     * @param parameter parameter
-     * @return 查询结果
+     * @param parameter
+     * @return
      */
     @ResponseBody
     @GetMapping(value = "/usersource")
@@ -41,8 +41,8 @@ public class Fc_UserSourceController {
     /**
      * 搜索用户来源信息
      *
-     * @param parameter parameter
-     * @return 搜索结果
+     * @param parameter
+     * @return
      */
     @ResponseBody
     @PostMapping(value = "/usersource/search")
