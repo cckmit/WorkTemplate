@@ -105,19 +105,10 @@ public class MinitjgeneralServlet extends UIMoudleServlet {
 
     @SuppressWarnings("unchecked")
     public Vector<Minitj_general> findData() {
-        //查询时间处理
-        String wxDateS = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-        String wxDateE = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-        JSONObject jsonDate = JSON.parseObject(get("search-data"));
-        if (jsonDate != null) {
-            wxDateS = (String) jsonDate.get("wx_date_s");
-            wxDateE = (String) jsonDate.get("wx_date_e");
-        }
         Vector<Minitj_general> list = (Vector<Minitj_general>) MiniGamebackDao.instance
                 .findBySQL(getSQL(), Minitj_general.class);
-
         //查询插屏数据
-        Vector<Persie_value> screenList = MiniPersieValueDao.instance.findBySQL("SELECT appId as wx_appid,SUM(income) AS wx_screen_income,SUM(exposureCount) AS wx_screen_show,SUM(clickCount) as wx_screen_click, DATE as  wx_date FROM persie_value.ad_value_wx_adunit WHERE DATE(DATE) BETWEEN '" + wxDateS + "' and '" + wxDateE + "' AND slotId='3030046789020061'  GROUP BY DATE ,appId", Persie_value.class);
+        Vector<Persie_value> screenList = MiniPersieValueDao.instance.findBySQL("SELECT appId as wx_appid,SUM(income)/100 AS wx_screen_income,SUM(exposureCount) AS wx_screen_show,SUM(clickCount) as wx_screen_click, DATE as  wx_date FROM persie_value.ad_value_wx_adunit WHERE  slotId='3030046789020061'  GROUP BY DATE ,appId", Persie_value.class);
         Map<String, Persie_value> screenMap = new HashMap<>(16);
         for (Persie_value persieValue : screenList) {
             screenMap.put(persieValue.wx_appid + "-" + persieValue.wx_date, persieValue);

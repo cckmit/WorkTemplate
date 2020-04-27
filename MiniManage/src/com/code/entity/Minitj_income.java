@@ -174,7 +174,7 @@ public class Minitj_income {
             income.wx_date = "总计";
             income.game_name = "-";
             income.wx_active = 0;
-            income.totalIncome = totalIncome;
+            income.totalIncome = totalIncome.add(wx_screen_income);
             income.runtime_videoreq = runtime_videoreq;
             income.wx_video_show = wx_video_show;
             income.wx_banner_show = wx_banner_show;

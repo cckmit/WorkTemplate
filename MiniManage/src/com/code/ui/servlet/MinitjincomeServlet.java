@@ -104,17 +104,10 @@ public class MinitjincomeServlet extends UIMoudleServlet {
 
     @SuppressWarnings("unchecked")
     public Vector<Minitj_income> findData() {
-        String wxDateS = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-        String wxDateE = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-        JSONObject jsonDate = JSON.parseObject(get("search-data"));
-        if (jsonDate != null) {
-            wxDateS = (String) jsonDate.get("wx_date_s");
-            wxDateE = (String) jsonDate.get("wx_date_e");
-        }
         Vector<Minitj_income> list = (Vector<Minitj_income>) MiniGamebackDao.instance
                 .findBySQL(getSQL(), Minitj_income.class);
         //查询插屏数据
-        Vector<Persie_value> screenList = MiniPersieValueDao.instance.findBySQL("SELECT appId as wx_appid,SUM(income) AS wx_screen_income,SUM(exposureCount) AS wx_screen_show,SUM(clickCount) as wx_screen_click, DATE as  wx_date FROM persie_value.ad_value_wx_adunit WHERE DATE(DATE) BETWEEN '" + wxDateS + "' and '" + wxDateE + "' AND slotId='3030046789020061'  GROUP BY DATE ,appId", Persie_value.class);
+        Vector<Persie_value> screenList = MiniPersieValueDao.instance.findBySQL("SELECT appId as wx_appid,SUM(income)/100 AS wx_screen_income,SUM(exposureCount) AS wx_screen_show,SUM(clickCount) as wx_screen_click, DATE as  wx_date FROM persie_value.ad_value_wx_adunit WHERE  slotId='3030046789020061'  GROUP BY DATE ,appId", Persie_value.class);
         Map<String, Persie_value> screenMap = new HashMap<>(16);
         //处理插屏点击率数据
         Persie_value.addSumScreen(screenList);
@@ -127,7 +120,7 @@ public class MinitjincomeServlet extends UIMoudleServlet {
         for (Minitj_income general : list) {
 			/*if(general.wx_banner_income.compareTo(BigDecimal.ZERO)!=0)
 			{*/
-            general.totalIncome = general.wx_video_income.add(general.wx_banner_income);
+            general.totalIncome = general.wx_video_income.add(general.wx_banner_income).add(general.wx_screen_income);
             //	}
             if (general.wx_video_show != 0) {
                 general.videoEcpm = general.wx_video_income.multiply(new BigDecimal(1000)).setScale(2, BigDecimal.ROUND_HALF_UP)
@@ -138,11 +131,10 @@ public class MinitjincomeServlet extends UIMoudleServlet {
                         .divide(new BigDecimal(general.wx_banner_show), 2, BigDecimal.ROUND_HALF_UP);
             }
             if (general.wx_screen_show.compareTo(BigDecimal.ZERO) != 0) {
-                general.screenEcpm = general.wx_screen_income.multiply(new BigDecimal(10)).setScale(2, BigDecimal.ROUND_HALF_UP)
+                general.screenEcpm = general.wx_screen_income.multiply(new BigDecimal(1000)).setScale(2, BigDecimal.ROUND_HALF_UP)
                         .divide(general.wx_screen_show, 2, BigDecimal.ROUND_HALF_UP);
             }
         }
-
         return list;
     }
 

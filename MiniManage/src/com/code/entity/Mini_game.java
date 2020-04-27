@@ -110,7 +110,7 @@ public class Mini_game {
     public Integer game_jiecompany;
 
     //数据库增加相应字段后删除@Column注释
-    //@Column(name = "game_jiecompany_email")
+    @Column(name = "game_jiecompany_email")
     @Comments(name = "结算公司邮箱")
     public String game_jiecompanyemail;
     @Column(name = "show_shop_id")

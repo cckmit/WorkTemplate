@@ -797,7 +797,12 @@ public abstract class XWHResultSetMapper
 							{
 								Column column = field.getAnnotation(Column.class);
 								String name = column.name();
-								Object columnValue = rs.getObject(name);
+								Object columnValue = null;
+								try {
+									columnValue = rs.getObject(name);
+								} catch (SQLException e) {
+									//此处抛出SQL @Column列没查询到数据查询不全影响
+								}
 								if (columnValue != null)
 								{
 									if(columnValue instanceof java.sql.Date 

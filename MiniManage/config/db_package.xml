@@ -4,12 +4,14 @@
 	<proxool>
 		<!-- 基本内容配置 -->
 		<alias>mini_package</alias>
-		<driver-url>jdbc:mysql://103.20.249.243:3307/mini_package?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8
+
+
+		<driver-url>jdbc:mysql://127.0.0.1:3307/mini_package?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8
 		</driver-url>
 		<driver-class>com.mysql.jdbc.Driver</driver-class>
 		<driver-properties>
-			<property name="user" value="queryMiniWx" />
-			<property name="password" value="blazefire103." />
+			<property name="user" value="root" />
+			<property name="password" value="root" />
 		</driver-properties>
 		<!-- proxool自动侦察各个连接状态的时间间隔(毫秒),侦察到空闲的连接就马上回收,超时的销毁 -->
 		<house-keeping-sleep-time>900</house-keeping-sleep-time>

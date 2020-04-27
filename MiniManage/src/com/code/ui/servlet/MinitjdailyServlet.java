@@ -102,7 +102,7 @@ public class MinitjdailyServlet extends UIMoudleServlet {
         Vector<Minitj_daily> list = (Vector<Minitj_daily>) MiniGamebackDao.instance
                 .findBySQL(getSQL(), Minitj_daily.class);
         //查询插屏数据
-        Vector<Persie_value> screenList = MiniPersieValueDao.instance.findBySQL("SELECT appId AS wx_appid,SUM(income) AS wx_screen_income,SUM(exposureCount) AS wx_screen_show,SUM(clickCount) AS wx_screen_click, DATE AS  wx_date FROM persie_value.ad_value_wx_adunit WHERE  slotId='3030046789020061'  GROUP BY DATE ", Persie_value.class);
+        Vector<Persie_value> screenList =(Vector<Persie_value>) MiniPersieValueDao.instance.findBySQL("SELECT SUM(income)/100 AS wx_screen_income,SUM(exposureCount) AS wx_screen_show,SUM(clickCount) as wx_screen_click, DATE as wx_date FROM persie_value.ad_value_wx_adunit WHERE slotId='3030046789020061' GROUP BY DATE", Persie_value.class);
         Map<String, Persie_value> screenMap = new HashMap<>(16);
         for (Persie_value persieValue : screenList) {
             screenMap.put(persieValue.wx_date, persieValue);
