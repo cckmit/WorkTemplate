@@ -80,4 +80,12 @@ public interface ConfigAdContentMapper {
      * @return App合集
      */
     List<ConfigAdContent> getTargetAndPromoteAppInfo();
+
+    /**
+     * 根据推广ddTargetAppId查询广告内容id
+     *
+     * @param ddTargetAppId ddTargetAppId
+     * @return  list
+     */
+    List<Integer> selectContentIdByDdTargetAppId(String  ddTargetAppId);
 }

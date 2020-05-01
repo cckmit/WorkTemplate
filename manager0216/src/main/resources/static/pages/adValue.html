@@ -32,16 +32,14 @@
                             <label class="layui-form-label" style="width: 6rem;">类型</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <select name="dateType" id="dateType" >
-                                    <option value="">-</option>
                                     <option value="day">按日</option>
-                                    <option value="month">按月</option>
                                 </select>
                             </div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label" style="width: 6rem;">推广APP名称</label>
-                            <div class="layui-input-inline" style="width: 14rem;" id="adContent" name="adContent"
-                                 lay-filter="adContent" autocomplete="off"></div>
+                            <div class="layui-input-inline" style="width: 14rem;" id="ddTargetAppName" name="ddTargetAppName"
+                                 lay-filter="ddTargetAppName" autocomplete="off"></div>
                         </div>
                         <div class="layui-inline">
                             <label class="layui-form-label" style="width: 6rem;">产品名称</label>
@@ -54,15 +52,17 @@
                             <label class="layui-form-label" style="width: 6rem;">分组方式</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <select name="groupByType" id="groupByType">
-                                    <option value="adContent" selected>推广名称</option>
+                                    <option value="time" >时间</option>
+                                    <option value="ddTargetAppName" selected>推广名称</option>
                                     <option value="adPosition">广告位置</option>
                                     <option value="productName">产品名称</option>
                                     <option value="adSpace">广告位</option>
+                                    <option value="adContent">广告内容</option>
                                     <option value="all" >全部明细</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="layui-inline">
+       <!--                 <div class="layui-inline">
                             <label class="layui-form-label" style="width: 6rem;">平台</label>
                             <div class="layui-input-inline" style="width: 14rem;">
                                 <select name="appPlatform" id="appPlatform">
@@ -73,7 +73,7 @@
                                     <option value="quick">快应用</option>
                                 </select>
                             </div>
-                        </div>
+                        </div>-->
                         <div class="layui-inline">
                             <label class="layui-form-label" style="width: 6rem;">广告位置</label>
                             <div class="layui-input-inline" style="width: 14rem;" id="adPosition" name="adPosition"
@@ -112,7 +112,7 @@
      */
     let appSelect = xmSelect.render({
         el: '#productsName',
-        name: 'productsName',
+        name: 'appId',
         language: 'zn',
         data: [],
         radio: true,
@@ -156,21 +156,23 @@
         delay: 500,
         layVerify: 'required'
     });
-    // 广告内容数组
-    let contentOptionArr = [];
+
+
     /**
-     *  广告内容
+     * 查询框推广App名称渲染
      */
-    let searchContentSelect = xmSelect.render({
-        el: '#adContent',
-        name: 'adContent',
+    let searchTargetAppNameSelect = xmSelect.render({
+        el: '#ddTargetAppName',
+        name: 'ddTargetAppId',
         language: 'zn',
         data: [],
         radio: true,
         clickClose: true,
         autoRow: true,
         delay: 500,
-        layVerify: 'required'
+        filterable: true,
+        layVerify: 'required',
+        filterDone: function (val, list) {}
     });
 
     /**
@@ -253,19 +255,23 @@
             $.ajax({
                 type: "get",
                 dataType: "json",
-                url: '../manage/configAdContent/select',
+                url: '../manage/configAdContent/getAppInfo',
                 success: (res) => {
+                    let targetAppNameSearchArr = [];
                     res.forEach(function (val, index, arr) {
-                        let context = {name: val.ddId + ' - ' + val.ddTargetAppName, value: val.ddId, selected: false};
-                        contentOptionArr.push(context);
-                    });
-                    searchContentSelect.update({
-                        data: contentOptionArr,
-                        autoRow: true,
+                        console.log("我是appName :"+val.ddTargetAppId+"名字:"+ val.ddTargetAppName)
+                        let context = {name: val.ddTargetAppName+ "-" + val.ddTargetAppId, value: val.ddTargetAppId, selected: false};
+                        targetAppNameSearchArr.push(context);
+                        searchTargetAppNameSelect.update(
+                            {
+                                data: targetAppNameSearchArr,
+                                autoRow: true,
+                            }
+                        );
                     });
                 },
                 error: function () {
-                    layer.msg("广告内容列表查询失败，请联系管理员！", {icon: 2});
+                    alert("查询失败")
                 }
             });
         });
@@ -274,15 +280,37 @@
             url: operatorurl,
             cols: [[
                 {type: 'numbers', title: '序号'},
-                {field: 'hourNum', width: 120, title: '日期', sort: true, align: 'center'},
-
-                {field: 'contentName', width: 140, title: '推广名称', sort: false, align: 'left'},
-                {field: 'appPlatform', width: 140, title: '平台类型', sort: true, align: 'left'},
-
+                {field: 'hourNum', width: 120, title: '日期', sort: true, align: 'center',
+                    templet: (d) => {
+                        if (d.hourNum !== 0) {
+                            return d.hourNum;
+                        } else {
+                            return "";
+                        }
+                    }},
+                {field: 'ddTargetAppName', width: 140, title: '推广名称', sort: true, align: 'left'},
+                {field: 'appName', width: 140, title: '产品名称', sort: true, align: 'left'},
+               /* {field: 'appPlatform', width: 140, title: '平台类型', sort: true, align: 'left',
+                    templet: (d) => {
+                        switch (d.appPlatform) {
+                            case 'weixin':
+                                return '微信';
+                            case 'q':
+                                return 'QQ';
+                            case 'tt':
+                                return '头条';
+                            case 'quick':
+                                return '快应用';
+                            case '-':
+                                return '';
+                            default:
+                                return '未知平台';
+                        }
+                    }},*/
                 {field: 'positionName', width: 140, title: '广告位置', sort: false, align: 'left'},
                 {field: 'spaceName', width: 140, title: '广告位', sort: false, align: 'left'},
-
-                {field: 'adShowIndex', width: 140, title: '展示位置序号', sort: false, align: 'center'},
+                {field: 'contentName', width: 140, title: '广告内容', sort: false, align: 'left'},
+                {field: 'adTypeName', width: 140, title: '广告类型', sort: false, align: 'center'},
                 {field: 'showNum', width: 140, title: '展示次数', sort: true, align: 'right'},
                 {field: 'clickNum', width: 140, title: '点击次数', sort: true, align: 'right'},
                 {field: 'clickRate', width: 140, title: '点击率', sort: true, align: 'right',
@@ -295,7 +323,7 @@
                 }},
                 {field: 'promoteShowNum', width: 140, title: '中转App展示次数', sort: true, align: 'right'},
                 {field: 'promoteClickNum', width: 140, title: '中转App点击次数', sort: true, align: 'right'},
-                {field: 'promoteClickRate', width: 140, title: '目标点击率', sort: true, align: 'right',
+                {field: 'promoteClickRate', width: 140, title: '中转点击率', sort: true, align: 'right',
                     templet: (d) => {
                         if(d.promoteShowNum === 0 || d.promoteClickNum === 0){
                             return 0+"%"
@@ -318,44 +346,67 @@
                     const queryDetail = res.data[0].queryDetail;
                     const isHidden = (queryDetail === "1");
                     console.log("isHidden1:",isHidden);
-                    if (type === 'adContent'){
-                        // 按推广App名称查询，隐藏所有非数据的列
-                        $('.layui-table-box').find('[data-field = "appId"]').css("display","none");
-                        $('.layui-table-box').find('[data-field = "productName"]').css("display","none");
-
-                        $('.layui-table-box').find('[data-field = "appPlatform"]').css("display","none");
-                        $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
-                        $('.layui-table-box').find('[data-field = "spaceName"]').css("display","none");
-                        $('.layui-table-box').find('[data-field = "adShowIndex"]').css("display","none");
+                    if (type === 'ddTargetAppName'){
+                        if (queryDetail === "1"){
+                            $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "appName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "positionName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
+                        }else {
+                            // 按推广App名称查询，隐藏所有非数据的列
+                            $('.layui-table-box').find('[data-field = "appName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "positionName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "contentName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "adTypeName"]').css("display", "none");
+                        }
+                    }else if (type === 'time') {
                         $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
-                    }else if (type === 'adPosition') {
-                        // 按广告位置 查隐藏所有非产品的列
-                        $('.layui-table-box').find('[data-field = "slotId"]').css("display","none");
+                        $('.layui-table-box').find('[data-field = "appName"]').css("display", "none");
+                        $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
+                        $('.layui-table-box').find('[data-field = "ddTargetAppName"]').css("display", "none");
+                        $('.layui-table-box').find('[data-field = "positionName"]').css("display", "none");
+                        $('.layui-table-box').find('[data-field = "spaceName"]').css("display", "none");
+                        $('.layui-table-box').find('[data-field = "contentName"]').css("display", "none");
+                        $('.layui-table-box').find('[data-field = "adTypeName"]').css("display", "none");
+                    }
+                    else if (type === 'adPosition') {
                         // 如果点了详情之后隐藏操作列
                         if (queryDetail === "1"){
                             $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
-                        }else {
-                            $('.layui-table-box').find('[data-field = "appId"]').css("display","none");
-                            $('.layui-table-box').find('[data-field = "productName"]').css("display","none");
-
-                            $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "appName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display","none");
                             $('.layui-table-box').find('[data-field = "spaceName"]').css("display","none");
-                            $('.layui-table-box').find('[data-field = "adShowIndex"]').css("display","none");
+
+                        }else {
+                            // 按广告位置 查隐藏所有非产品的列
+                            $('.layui-table-box').find('[data-field = "ddTargetAppName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "contentName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "adTypeName"]').css("display","none");
                         }
                     }else if (type === 'productName'){
                         // 按产品名称查 隐藏所有非广告类型的列
                         // 如果点了详情之后隐藏操作列
                         if (queryDetail === "1"){
                             $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "ddTargetAppName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "adTypeName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
                         }else{
                             // 没点详情的话隐藏产品和广告位名
-                            $('.layui-table-box').find('[data-field = "appId"]').css("display","none");
-                            $('.layui-table-box').find('[data-field = "productName"]').css("display","none");
-
+                            $('.layui-table-box').find('[data-field = "ddTargetAppName"]').css("display", "none");
                             $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display", "none");
                             $('.layui-table-box').find('[data-field = "contentName"]').css("display","none");
-                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display","none");
-                            $('.layui-table-box').find('[data-field = "adShowIndex"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "adTypeName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
                         }
                     }
                     else if (type === 'adSpace'){
@@ -363,22 +414,49 @@
                         // 如果点了详情之后隐藏操作列
                         if (queryDetail === "1"){
                             $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "appName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
                         }else {
                             // 没点详情隐藏产品和广告类型
-                            $('.layui-table-box').find('[data-field = "appId"]').css("display","none");
-                            $('.layui-table-box').find('[data-field = "productName"]').css("display","none");
-
+                            $('.layui-table-box').find('[data-field = "ddTargetAppName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
                             $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
                             $('.layui-table-box').find('[data-field = "contentName"]').css("display","none");
-                            $('.layui-table-box').find('[data-field = "adShowIndex"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "adTypeName"]').css("display","none");
                         }
                     }
-                  else if (type === 'all'){
+                    else if (type === 'adContent'){
+                        //按广告位查隐藏所有非广告位的列
+                        // 如果点了详情之后隐藏操作列
+                        if (queryDetail === "1"){
+                            $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "ddTargetAppName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display","none");
+                        }else {
+                            // 没点详情隐藏产品和广告类型
+                            $('.layui-table-box').find('[data-field = "ddTargetAppName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appName"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
+                            $('.layui-table-box').find('[data-field = "positionName"]').css("display","none");
+                            $('.layui-table-box').find('[data-field = "spaceName"]').css("display","none");
+                        }
+                    }
+                  else if (type === 'all' || type === null ){
                         // 产品+广告位组合，隐藏详情按钮
+                        $('.layui-table-box').find('[data-field = "ddTargetAppName"]').css("display", "none");
                         $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                        $('.layui-table-box').find('[data-field = "adTypeName"]').css("display","none");
+                        $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
                     }
                 }else {
+                    $('.layui-table-box').find('[data-field = "ddTargetAppName"]').css("display", "none");
                     $('.layui-table-box').find('[data-field = "operator"]').css("display","none");
+                    $('.layui-table-box').find('[data-field = "adTypeName"]').css("display","none");
+                    $('.layui-table-box').find('[data-field = "appPlatform"]').css("display", "none");
                 }
             }
         });
@@ -387,15 +465,15 @@
             elem: '#dateNum',
             range: true
         });
-/*        //监听行工具事件
+        //监听行工具事件
         table.on('tool(table-page)', function(obj){
             //debugger;
             let dates = obj.data;
             if(obj.event === 'detail'){
-                console.log(JSON.stringify(dates))
-                let newDate = dates.date.replace(/-/g,'/');
-                let searchDate = '{"dateNum":"'+ newDate +'-'+ newDate +'", "productsName": "'+ dates.appId +'",' +
-                    '"slotId":"'+ dates.slotId +'","adUnitName":"'+ dates.adUnitName +'","groupByType":"'+ dates.groupByType +
+                console.log(JSON.stringify(dates));
+                let newDate = dates.hourNum;
+                let searchDate = '{"dateNum":"'+ dates.hourNum +'-'+ dates.hourNum +'", "appId": "'+ dates.appId +'",' +
+                    '"adPosition":"'+ dates.adPositionId +'","adContent":"'+ dates.adContentId+'","adSpace":"'+ dates.adSpaceId+'","ddTargetAppId":"'+ dates.ddTargetAppId+'","contentIds":"'+ dates.contentIds +'","groupByType":"'+ dates.groupByType +
                     '","queryDetail": "1"}';
                 // 点击详情重载表格
                 table.reload('table-page', {
@@ -407,7 +485,7 @@
                     }
                 });
             }
-        });*/
+        });
 
     });
 

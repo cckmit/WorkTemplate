@@ -42,18 +42,6 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">平台类型</label>
-                            <div class="layui-input-inline" style="width: 14rem;">
-                                <select name="appPlatform" id="appPlatform">
-                                    <option value=""> -</option>
-                                    <option value="weixin">微信</option>
-                                    <option value="q">QQ</option>
-                                    <option value="tt">头条</option>
-                                    <option value="quick">快应用</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="layui-inline">
                             <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
                                     lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
@@ -106,8 +94,10 @@
             layer = layui.layer,
             laydate = layui.laydate;
         var $ = layui.$;
-        $(() => {
-            $.ajax({
+        // 定时初始化数据
+        let selectBoxFlush = ()=>{
+            appNames = [];
+            $(() => {$.ajax({
                 type: "get",
                 dataType: "json",
                 url: '../manage/roundmatch/appname',
@@ -116,35 +106,17 @@
                         let type;
                         let appPlatform;
                         switch (val.programType) {
-                            case 0:
-                                type = "game";
-                                break;
-                            case 1:
-                                type = "web";
-                                break;
-                            case 2:
-                                type = "public";
-                                break;
-                            default:
-                                type = "未知游戏类型";
-                                break;
+                            case 0:type = "game";break;
+                            case 1:type = "web";break;
+                            case 2:type = "public";break;
+                            default:type = "未知游戏类型";break;
                         }
                         switch (val.ddAppPlatform) {
-                            case "weixin":
-                                appPlatform = "wx";
-                                break;
-                            case "q":
-                                appPlatform = "qq";
-                                break;
-                            default:
-                                appPlatform = "未知平台";
-                                break;
+                            case "weixin":appPlatform = "wx";break;
+                            case "q":appPlatform = "qq";break;
+                            default:appPlatform = "未知平台";break;
                         }
-                        let context = {
-                            name: appPlatform + "-" + type + "-" + val.productName,
-                            value: val.ddappid,
-                            selected: false
-                        };
+                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
                         appNames.push(context);
                     });
                     appSelect.update(
@@ -157,8 +129,8 @@
                 error: function () {
                     alert("查询失败")
                 }
-            });
-        });
+            });}) }
+        setInterval(selectBoxFlush, 5000);
         table.render({
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',
@@ -191,6 +163,9 @@
                                     return '头条';
                                 case 'quick':
                                     return '快应用';
+                                case "":
+                                    return "平台汇总";
+                                    break;
                                 default:
                                     return '未知平台';
                             }
@@ -318,7 +293,7 @@
             page: true,
             toolbar: '#toolbar',
             limit: 20,
-            defaultToolbar: ['filter'],
+            defaultToolbar: ['filter', 'exports'],
             statusName: 'status',//数据状态的字段名称，默认：code
             statusCode: 200, //成功的状态码，默认：0
             height: 'full-120'

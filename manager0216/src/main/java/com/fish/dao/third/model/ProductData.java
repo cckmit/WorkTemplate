@@ -597,4 +597,5 @@ public class ProductData {
     public void setDdAppPlatform(String ddAppPlatform) {
         this.ddAppPlatform = ddAppPlatform;
     }
+
 }

@@ -71,7 +71,6 @@ public class ConfigAdContentController {
     public PostResult copyConfigAdSource(@RequestBody ConfigAdContent configAdContent) {
         return this.adContentService.copy(configAdContent);
     }
-
     /**
      * 删除
      *
@@ -124,8 +123,7 @@ public class ConfigAdContentController {
     @ResponseBody
     @GetMapping(value = "/configAdContent/getAppInfo")
     public List<ConfigAdContent> getTargetAndPromoteAppInfo() {
-        List<ConfigAdContent> targetAndPromoteAppInfo = this.adContentService.getTargetAndPromoteAppInfo();
-        return targetAndPromoteAppInfo;
+        return this.adContentService.getTargetAndPromoteAppInfo();
     }
 
 }

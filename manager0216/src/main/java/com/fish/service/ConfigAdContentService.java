@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -211,7 +212,12 @@ public class ConfigAdContentService extends CacheService<ConfigAdContent> implem
         return this.select(Integer.valueOf(key));
     }
 
+    /**
+     * 查询所有目标App名称 提供下拉框支持
+     * @return List
+     */
     public List<ConfigAdContent> getTargetAndPromoteAppInfo() {
         return this.adContentMapper.getTargetAndPromoteAppInfo();
     }
+
 }

@@ -16,12 +16,22 @@ public interface AdValueMapper {
     /**
      * 查询全部广告数据
      *
-     * @param beginDate
-     * @param endDate
-     * @param adValue
-     * @return
+     * @param beginDate 开始时间
+     * @param endDate  结束时间
+     * @param adValue  adValue
+     * @return List
      */
     List<AdValue> selectAll(@Param("beginDate") int beginDate, @Param("endDate") int endDate,
             @Param("adValue") AdValue adValue);
+
+    /**
+     *  查询明细数据
+     * @param beginDate 开始时间
+     * @param endDate  结束时间
+     * @param adValue  adValue
+     * @return List
+     */
+    List<AdValue> queryDetail(@Param("beginDate") int beginDate, @Param("endDate") int endDate,
+                            @Param("adValue") AdValue adValue);
 
 }

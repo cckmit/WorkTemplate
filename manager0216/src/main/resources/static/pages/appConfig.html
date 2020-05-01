@@ -131,7 +131,11 @@
                     alert("查询失败")
                 }
             })
-            $.ajax({
+        });
+        // 定时初始化数据
+        let selectBoxFlush = ()=>{
+            appNames = [];
+            $(() => {$.ajax({
                 type: "get",
                 dataType: "json",
                 url: '../manage/roundmatch/appname',
@@ -163,8 +167,8 @@
                 error: function () {
                     alert("查询失败")
                 }
-            });
-        });
+            });}) }
+        setInterval(selectBoxFlush, 5000);
         table.render({
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',

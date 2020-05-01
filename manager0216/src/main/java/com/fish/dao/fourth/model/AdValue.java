@@ -1,5 +1,7 @@
 package com.fish.dao.fourth.model;
 
+import java.util.List;
+
 /**
  * 广告数据查询
  *
@@ -45,11 +47,11 @@ public class AdValue {
 
     /**
      * 分组方式:
-     *    adContent:推广名称
-     *    asPosition:广告位置
-     *    productName:产品名称
-     *    asSpace:广告位
-     *    all:全部明细
+     * adContent:推广名称
+     * asPosition:广告位置
+     * productName:产品名称
+     * asSpace:广告位
+     * all:全部明细
      */
     private String groupByType;
 
@@ -57,10 +59,29 @@ public class AdValue {
      * 查询详情标志0:未查- 1:查询了详情
      */
     private String queryDetail;
+    /**
+     * 推广AppId
+     */
+    private String ddTargetAppId;
+    /**
+     * 推广App名称
+     */
+    private String ddTargetAppName;
 
-    public int getHourNum() { return hourNum; }
+    private String contentIds;
 
-    public void setHourNum(int hourNum) { this.hourNum = hourNum; }
+    /**
+     * 展示字段 广告类型
+     */
+    private String adTypeName;
+
+    public int getHourNum() {
+        return hourNum;
+    }
+
+    public void setHourNum(int hourNum) {
+        this.hourNum = hourNum;
+    }
 
     public String getAppId() {
         return appId;
@@ -204,5 +225,38 @@ public class AdValue {
 
     public void setQueryDetail(String queryDetail) {
         this.queryDetail = queryDetail;
+    }
+
+    public String getDdTargetAppId() {
+        return ddTargetAppId;
+    }
+
+    public void setDdTargetAppId(String ddTargetAppId) {
+        this.ddTargetAppId = ddTargetAppId;
+    }
+
+    public String getDdTargetAppName() {
+        return ddTargetAppName;
+    }
+
+    public void setDdTargetAppName(String ddTargetAppName) {
+        this.ddTargetAppName = ddTargetAppName;
+    }
+
+    public String getContentIds() {
+        return contentIds;
+    }
+
+    public void setContentIds(String contentIds) {
+        this.contentIds = contentIds;
+    }
+
+
+    public String getAdTypeName() {
+        return adTypeName;
+    }
+
+    public void setAdTypeName(String adTypeName) {
+        this.adTypeName = adTypeName;
     }
 }

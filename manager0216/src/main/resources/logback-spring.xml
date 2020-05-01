@@ -4,7 +4,7 @@
 
     <contextName>SpringBootLogback</contextName>
     <property name="LOG_PATH" value="/usr/logs" />
-    <property name="APPDIR" value="managerV5_testLog" />
+    <property name="APPDIR" value="managerV5_new" />
 
     <!-- 日志记录器，日期滚动记录 -->
     <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -152,10 +152,10 @@
         <appender-ref ref="DEBUG" />
         <appender-ref ref="INFO" />
         <!-- 生产环境将请 stdout 去掉 -->
-       <!-- <appender-ref ref="STDOUT" />-->
+     <!--   <appender-ref ref="STDOUT" />-->
     </logger>
     <root level="DEBUG">
         <!-- 生产环境将请 stdout 去掉 -->
-<!--        <appender-ref ref="STDOUT" />-->
+      <!--  <appender-ref ref="STDOUT" />-->
     </root>
 </configuration>

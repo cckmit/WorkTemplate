@@ -90,9 +90,9 @@ fourth:
     druid:
       filters: stat
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://103.20.249.243:3307/persie_value?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true
-      username: queryMiniWx
-      password: blazefire103.
+      url: jdbc:mysql://localhost:3306/persie_value?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true
+      username: root
+      password: root
       minIdle: 1
       initial-size: 2
       max-active: 300

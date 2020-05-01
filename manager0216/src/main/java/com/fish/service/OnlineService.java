@@ -71,7 +71,7 @@ public class OnlineService implements BaseService<Online> {
             String time = format.format(point.getTimes());
             String[] val = time.split(":");
             //获取当前key值
-            int key = (Integer.parseInt(val[0]) * 60 + Integer.parseInt(val[1])) / 10;
+            int key = (Integer.valueOf(val[0]) * 60 + Integer.valueOf(val[1])) / 10;
             String day = dateFormat.format(point.getTimes());
             Integer online = point.getOnline();
             Integer buzy = point.getBuzyroom();

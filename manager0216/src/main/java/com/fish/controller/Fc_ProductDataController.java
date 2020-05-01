@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 @RequestMapping(value = "/manage")
 public class Fc_ProductDataController {
-
+    private final static Logger logger = LoggerFactory.getLogger(Fc_ProductDataController.class);
     @Autowired
     ProductDataService fcProductDataService;
     @Autowired

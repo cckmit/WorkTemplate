@@ -30,21 +30,17 @@ public class ConfigAdStrategyService extends CacheService<ConfigAdStrategy> impl
     ConfigAdStrategyService adStrategyService;
 
     @Override
-    public void setDefaultSort(GetParameter parameter) {
-    }
+    public void setDefaultSort(GetParameter parameter) { }
 
     @Override
-    public Class getClassInfo() {
-        return ConfigAdStrategy.class;
-    }
+    public Class getClassInfo() { return ConfigAdStrategy.class; }
 
     @Override
-    public boolean removeIf(ConfigAdStrategy configAdContent, JSONObject searchData) {
-        return false;
-    }
+    public boolean removeIf(ConfigAdStrategy configAdContent, JSONObject searchData) { return false; }
 
     @Override
     public List selectAll(GetParameter parameter) {
+        //List<ConfigAdStrategy> list = this.adStrategyMapper.selectAll();
         return this.adStrategyMapper.selectAll();
     }
 

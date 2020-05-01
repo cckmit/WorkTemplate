@@ -152,7 +152,9 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
                 return 5;
             }
         }
-        String select = record.getSelect();
+        String selects = record.getSelect();
+        String replace = selects.replace('[', ' ');
+        String select = replace.replace(']', ' ');
         String[] split = select.split(",");
         List<String> gameBox = new ArrayList<>(Arrays.asList(split));
         StringBuilder ddContents = new StringBuilder();
@@ -160,7 +162,7 @@ public class GamesSetService implements BaseService<ArcadeGameSet> {
         if (gameBox.size() >= 1) {
             for (String box : gameBox) {
                 if (!"".equals(box)) {
-                    ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(Integer.valueOf(box));
+                    ArcadeGames arcadeGames = arcadeGamesMapper.selectByPrimaryKey(Integer.valueOf(box.trim()));
                     String ddname = arcadeGames.getDdname();
                     if (ddName.length() > 0) {
                         ddName.append(",");

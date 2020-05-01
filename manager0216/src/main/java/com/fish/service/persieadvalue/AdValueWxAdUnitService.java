@@ -76,7 +76,7 @@ public class AdValueWxAdUnitService implements BaseService<AdValueWxAdUnit> {
         adValueWxAdUnit.setEndTime(endTime);
         //汇总查询
         List<AdValueWxAdUnit> adValueWxAdUnits = adValueWxAdunitMapper.queryCollectData(adValueWxAdUnit);
-        collectData(adValueWxAdUnits, groupByType, queryDetail);
+        adValueWxAdUnits = collectData(adValueWxAdUnits, groupByType, queryDetail);
         return adValueWxAdUnits;
     }
 
@@ -86,10 +86,10 @@ public class AdValueWxAdUnitService implements BaseService<AdValueWxAdUnit> {
      * @param adValueWxAdUnits
      * @param groupByType
      */
-    private void collectData(List<AdValueWxAdUnit> adValueWxAdUnits, String groupByType, String queryDetail) {
-
-
-        Map<String, WxConfig> wxConfigMap = new HashMap<>();
+    private List<AdValueWxAdUnit> collectData(List<AdValueWxAdUnit> adValueWxAdUnits, String groupByType, String queryDetail) {
+        //过滤不属于街机产品集合
+        List<AdValueWxAdUnit> newAdValueWxAdUnits  = new ArrayList<>();
+        Map<String, WxConfig> wxConfigMap = new HashMap<>(16);
         boolean isQueryConfig = false;
 
         // 判断是否查询产品名
@@ -107,9 +107,9 @@ public class AdValueWxAdUnitService implements BaseService<AdValueWxAdUnit> {
         int allClickCount = 0;
         int allIncome = 0;
 
-        if (!adValueWxAdUnits.isEmpty()) {
-            for (AdValueWxAdUnit adValueWxAdUnit : adValueWxAdUnits) {
+        if (!adValueWxAdUnits.isEmpty() && adValueWxAdUnits.size() > 0) {
 
+            for (AdValueWxAdUnit adValueWxAdUnit : adValueWxAdUnits) {
                 // 标记是否查询了详情
                 allReqSuccCount += adValueWxAdUnit.getReqSuccCount();
                 allExposureCount += adValueWxAdUnit.getExposureCount();
@@ -119,7 +119,11 @@ public class AdValueWxAdUnitService implements BaseService<AdValueWxAdUnit> {
                 adValueWxAdUnit.setQueryDetail(queryDetail);
                 adValueWxAdUnit.setGroupByType(groupByType);
                 if (isQueryConfig) {
-                    adValueWxAdUnit.setProductName(wxConfigMap.get(adValueWxAdUnit.getAppId())!=null?wxConfigMap.get(adValueWxAdUnit.getAppId()).getProductName():"未知产品");
+                    if(wxConfigMap.get(adValueWxAdUnit.getAppId())!=null){
+                        adValueWxAdUnit.setProductName(wxConfigMap.get(adValueWxAdUnit.getAppId()).getProductName());
+                    }else {
+                        continue;
+                    }
                 }
                 // 点击率 = 点击量/曝光量
                 Double clickRate = getRate(adValueWxAdUnit.getClickCount(), adValueWxAdUnit.getExposureCount());
@@ -141,6 +145,7 @@ public class AdValueWxAdUnitService implements BaseService<AdValueWxAdUnit> {
                 // 单次点击收入(四舍五入保留两位小数)
                 adValueWxAdUnit.setClickIncome(new BigDecimal(clickIncome).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                 adValueWxAdUnit.setEcpm(new BigDecimal(ecpm).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                newAdValueWxAdUnits.add(adValueWxAdUnit);
             }
             AdValueWxAdUnit valueWxAdUnit = new AdValueWxAdUnit();
             valueWxAdUnit.setReqSuccCount(allReqSuccCount);
@@ -164,8 +169,9 @@ public class AdValueWxAdUnitService implements BaseService<AdValueWxAdUnit> {
             valueWxAdUnit.setExposureRate(allExposureRate);
             valueWxAdUnit.setClickIncome(new BigDecimal(allClickIncome).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
             valueWxAdUnit.setEcpm(new BigDecimal(allEcpm).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-            adValueWxAdUnits.add(valueWxAdUnit);
+            newAdValueWxAdUnits.add(valueWxAdUnit);
         }
+        return newAdValueWxAdUnits;
     }
 
     /**

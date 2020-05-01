@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,8 +73,9 @@ public class PayStatisticService implements BaseService<ShowPayStatistic> {
             BigDecimal countPrice = order.getDdprice();
             payStatistic.setPayMoney(countPrice.doubleValue());
             double up = countPrice.doubleValue() / order.getPayUsers();
+            DecimalFormat df = new DecimalFormat("#.00");
             // 人均付费
-            payStatistic.setPayUp(up + "");
+            payStatistic.setPayUp(df.format(up) + "");
             // 时间
             payStatistic.setDdtrans(order.getDdtrans());
             // 付费人数

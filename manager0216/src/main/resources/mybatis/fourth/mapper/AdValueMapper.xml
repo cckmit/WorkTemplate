@@ -23,37 +23,10 @@
 
     <select id="selectAll" resultMap="BaseResultMap">
         select
-        LEFT(hourNum, 8) AS hourNum,
-        <if test="adValue.groupByType == 'adContent'.toString()">
-            adContentId,
-            <if test="adValue.queryDetail == '1'.toString()">
-             adSpaceId, adShowIndex,
-            </if>
-        </if>
-        <if test="adValue.groupByType == 'adPosition'.toString()">
-            adPositionId,
-            <if test="adValue.queryDetail == '1'.toString()">
-                , adSpaceId, adContentId, adShowIndex,
-            </if>
-        </if>
-        <if test="adValue.groupByType == 'productName'.toString()">
-            appId,
-            <if test="adValue.queryDetail == '1'.toString()">
-                adPositionId, adSpaceId, adContentId, adShowIndex,
-            </if>
-        </if>
-        <if test="adValue.groupByType == 'adSpace'.toString()">
-            adSpaceId,
-            <if test="adValue.queryDetail == '1'.toString()">
-                adPositionId, adContentId, adShowIndex,
-            </if>
-        </if>
-        <if test="adValue.groupByType == 'all'.toString()">
-            appId,adPositionId, adSpaceId, adContentId, adShowIndex,
-        </if>
-        sum(showNum) as showNum, sum(clickNum) as clickNum, sum(promoteShowNum) as promoteShowNum, sum(promoteClickNum) as promoteClickNum, sum(targetShowNum) as targetShowNum
+        <include refid="Base_Column_List"/>
         from persie_value.ad_value
         where left(hourNum, 8) between #{beginDate, jdbcType=INTEGER} and #{endDate, jdbcType=INTEGER}
+        and adPositionId > 0 and adSpaceId > 0 and adContentId > 0
         <if test="adValue.appId != null and adValue.appId != ''">
             and appId like concat('%',#{adValue.appId, jdbcType=VARCHAR},'%')
         </if>
@@ -69,34 +42,69 @@
         <if test="adValue.adContentId != 0">
             and adContentId = #{adValue.adContentId, jdbcType=INTEGER}
         </if>
-        group by left(hourNum, 8),
-        <if test="adValue.groupByType == 'adContent'.toString()">
-            adContentId,
-            <if test="adValue.queryDetail == '1'.toString()">
-                adSpaceId, adShowIndex,
-            </if>
+        <if test="adValue.contentIds != null and adValue.contentIds != ''">
+            and  adContentId in (${adValue.contentIds})
         </if>
-        <if test="adValue.groupByType == 'adPosition'.toString()">
-            adPositionId,
-            <if test="adValue.queryDetail == '1'.toString()">
-                , adSpaceId, adContentId, adShowIndex,
-            </if>
-        </if>
-        <if test="adValue.groupByType == 'productName'.toString()">
-            appId,
-            <if test="adValue.queryDetail == '1'.toString()">
-                adPositionId, adSpaceId, adContentId, adShowIndex,
-            </if>
-        </if>
-        <if test="adValue.groupByType == 'adSpace'.toString()">
-            adSpaceId,
-            <if test="adValue.queryDetail == '1'.toString()">
-                adPositionId, adContentId, adShowIndex,
-            </if>
-        </if>
-        <if test="adValue.groupByType == 'all'.toString()">
-            appId,adPositionId, adSpaceId, adContentId, adShowIndex,
-        </if>
+        group by left(hourNum, 8), appId, version, adPositionId, adSpaceId, adContentId, adShowIndex
     </select>
 
+    <select id="queryDetail" resultMap="BaseResultMap">
+        select
+        LEFT(hourNum, 8) AS hourNum
+        <if test="adValue.groupByType == 'ddTargetAppName'.toString()">
+            ,adContentId
+        </if>
+        <if test="adValue.groupByType == 'adPosition'.toString()">
+            ,adPositionId   ,adContentId
+        </if>
+        <if test="adValue.groupByType == 'productName'.toString()">
+            , appId, adContentId
+        </if>
+        <if test="adValue.groupByType == 'adSpace'.toString()">
+            , adSpaceId, adContentId
+        </if>
+        <if test="adValue.groupByType == 'adContent'.toString()">
+            ,adContentId,adPositionId
+        </if>
+        <if test="adValue.groupByType == 'all'.toString()">
+            , appId,adPositionId, adSpaceId, adContentId, adShowIndex
+        </if>
+        , sum(showNum) as showNum, sum(clickNum) as clickNum, sum(promoteShowNum) as promoteShowNum, sum(promoteClickNum) as promoteClickNum, sum(targetShowNum) as targetShowNum
+        from persie_value.ad_value
+        where left(hourNum, 8) between #{beginDate, jdbcType=INTEGER} and #{endDate, jdbcType=INTEGER}
+        <if test="adValue.appId != null and adValue.appId != ''">
+            and appId like concat('%',#{adValue.appId, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="adValue.adPositionId != 0">
+            and adPositionId = #{adValue.adPositionId, jdbcType=INTEGER}
+        </if>
+        <if test="adValue.adSpaceId != 0">
+            and adSpaceId = #{adValue.adSpaceId, jdbcType=INTEGER}
+        </if>
+        <if test="adValue.adContentId != 0">
+            and adContentId = #{adValue.adContentId, jdbcType=INTEGER}
+        </if>
+        <if test="adValue.contentIds != null">
+            and adContentId in (${adValue.contentIds})
+        </if>
+        group by left(hourNum, 8)
+        <if test="adValue.groupByType == 'ddTargetAppName'.toString()">
+            ,adContentId
+        </if>
+        <if test="adValue.groupByType == 'adPosition'.toString()">
+            ,adPositionId , adContentId
+        </if>
+        <if test="adValue.groupByType == 'productName'.toString()">
+            , appId, adContentId
+        </if>
+        <if test="adValue.groupByType == 'adSpace'.toString()">
+            , adSpaceId, adContentId
+        </if>
+        <if test="adValue.groupByType == 'adContent'.toString()">
+            ,adContentId,adPositionId
+        </if>
+        <if test="adValue.groupByType == 'all'.toString()">
+            ,appId,adPositionId, adSpaceId, adContentId, adShowIndex
+        </if>
+    </select>
 </mapper>

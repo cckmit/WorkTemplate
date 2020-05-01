@@ -94,44 +94,46 @@
             pageSize: 5,
             delay: 500,
             filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
+            filterDone: function (val, list) {}
         });
-        $.ajax({
-            type: "get",
-            dataType: "json",
-            url: '../manage/roundmatch/appname',
-            success: (res) => {
-                res.forEach(function (val, index, arr) {
-                    let type;
-                    let appPlatform;
-                    switch (val.programType) {
-                        case 0:type = "game";break;
-                        case 1:type = "web";break;
-                        case 2:type = "public";break;
-                        default:type = "未知游戏类型";break;
-                    }
-                    switch (val.ddAppPlatform) {
-                        case "weixin":appPlatform = "wx";break;
-                        case "q":appPlatform = "qq";break;
-                        default:appPlatform = "未知平台";break;
-                    }
-                    let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
-                    appNames.push(context);
-                });
-                appSelect.update(
-                    {
-                        data: appNames,
-                        autoRow: true,
-                    }
-                );
-                table.render();
-            },
-            error: function () {
-                alert("查询失败")
-            }
-        });
+        // 定时初始化数据
+        let selectBoxFlush = ()=>{
+            appNames = [];
+            $(() => {$.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/roundmatch/appname',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
+                        let type;
+                        let appPlatform;
+                        switch (val.programType) {
+                            case 0:type = "game";break;
+                            case 1:type = "web";break;
+                            case 2:type = "public";break;
+                            default:type = "未知游戏类型";break;
+                        }
+                        switch (val.ddAppPlatform) {
+                            case "weixin":appPlatform = "wx";break;
+                            case "q":appPlatform = "qq";break;
+                            default:appPlatform = "未知平台";break;
+                        }
+                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
+                        appNames.push(context);
+                    });
+                    appSelect.update(
+                        {
+                            data: appNames,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            });}) }
+        setInterval(selectBoxFlush, 5000);
         form.on('submit(search)', function (data) {
             var field = data.field;
             var $1 = $.trim($('#start').val());

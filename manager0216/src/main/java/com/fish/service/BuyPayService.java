@@ -72,6 +72,7 @@ public class BuyPayService implements BaseService<BuyPay> {
             for (int i = 0; i < param.size(); i++) {
                 String singleData = param.get(i).toString();
                 String singleString = singleData.substring(1, singleData.length() - 1);
+                System.out.println("我是singleString :" + singleString);
                 String[] split = singleString.split("], ");
                 for (int j = 0; j < split.length; j++) {
                     if (j != 0 && j < split.length) {

@@ -40,16 +40,7 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label" style="width: 6rem;">平台类型</label>
-                        <div class="layui-input-inline" style="width: 14rem;">
-                            <select name="appPlatform" id="appPlatform">
-                                <option value=""> -</option>
-                                <option value="weixin">微信</option>
-                                <option value="q">QQ</option>
-                                <option value="tt">头条</option>
-                                <option value="quick">快应用</option>
-                            </select>
-                        </div>
+                        <div></div>
                     </div>
                     <div class="layui-inline">
                         <div></div>
@@ -112,38 +103,17 @@
             url: '../manage/roundmatch/appname',
             success: (res) => {
                 res.forEach(function (val, index, arr) {
-                    let type;
-                    let appPlatform;
-                    switch (val.programType) {
-                        case 0:
-                            type = "game";
-                            break;
-                        case 1:
-                            type = "web";
-                            break;
-                        case 2:
-                            type = "public";
-                            break;
-                        default:
-                            type = "未知游戏类型";
-                            break;
+                    var type;
+                    if (val.programType === 0) {
+                        type = "小游戏";
                     }
-                    switch (val.ddAppPlatform) {
-                        case "weixin":
-                            appPlatform = "wx";
-                            break;
-                        case "q":
-                            appPlatform = "qq";
-                            break;
-                        default:
-                            appPlatform = "未知平台";
-                            break;
+                    if (val.programType === 1) {
+                        type = "小程序";
                     }
-                    let context = {
-                        name: appPlatform + "-" + type + "-" + val.productName,
-                        value: val.ddappid,
-                        selected: false
-                    };
+                    if (val.programType === 2) {
+                        type = "公众号";
+                    }
+                    let context = {name: val.productName + "（" + type + ")", value: val.ddappid, selected: false};
                     appNames.push(context);
                 });
                 appSelect.update(
@@ -165,23 +135,6 @@
                     {type: 'checkbox'},
                     {field: 'wxDate', width: 120, title: '日期', sort: true},
                     {field: 'productName', width: 120, title: '产品名称', sort: true},
-                    {
-                        field: 'ddAppPlatform', width: 120, title: '平台', sort: true,
-                        templet: (d) => {
-                            switch (d.ddAppPlatform) {
-                                case 'weixin':
-                                    return '微信';
-                                case 'q':
-                                    return 'QQ';
-                                case 'tt':
-                                    return '头条';
-                                case 'quick':
-                                    return '快应用';
-                                default:
-                                    return '未知平台';
-                            }
-                        }
-                    },
                     {field: 'wxActive', width: 120, title: '活跃用户数', sort: true},
                     {
                         field: 'wxActiveSearch', width: 100, title: '搜索', sort: true,

@@ -173,78 +173,57 @@
                 error: function () {
                     alert("查询失败")
                 }
-            })
-            $.ajax({
-                type: "get",
-                dataType: "json",
-                url: '../manage/roundmatch/appname',
-                success: (res) => {
-                    res.forEach(function (val, index, arr) {
-                        let type;
-                        let appPlatform;
-                        switch (val.programType) {
-                            case 0:type = "game";break;
-                            case 1:type = "web";break;
-                            case 2:type = "public";break;
-                            default:type = "未知游戏类型";break;
-                        }
-                        switch (val.ddAppPlatform) {
-                            case "weixin":appPlatform = "wx";break;
-                            case "q":appPlatform = "qq";break;
-                            case "tt":appPlatform = "头条";break;
-                            case "quick":appPlatform = "快应用";break;
-                            default:appPlatform = "未知平台";break;
-                        }
-                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
-                        appNames.push(context);
-                    });
-                    appSelect.update(
-                        {
-                            data: appNames,
-                            autoRow: true,
-                        }
-                    );
-                },
-                error: function () {
-                    alert("查询失败")
-                }
-            });
-            $.ajax({
-                type: "get",
-                dataType: "json",
-                url: '../manage/roundmatch/appname',
-                success: (res) => {
-                    res.forEach(function (val, index, arr) {
-                        let type;
-                        let appPlatform;
-                        switch (val.programType) {
-                            case 0:type = "game";break;
-                            case 1:type = "web";break;
-                            case 2:type = "public";break;
-                            default:type = "未知游戏类型";break;
-                        }
-                        switch (val.ddAppPlatform) {
-                            case "weixin":appPlatform = "wx";break;
-                            case "q":appPlatform = "qq";break;
-                            case "tt":appPlatform = "头条";break;
-                            case "quick":appPlatform = "快应用";break;
-                            default:appPlatform = "未知平台";break;
-                        }
-                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
-                        appIdNames.push(context);
-                    });
-                    appNameSelect.update(
-                        {
-                            data: appIdNames,
-                            autoRow: true,
-                        }
-                    );
-                },
-                error: function () {
-                    alert("查询失败")
-                }
             });
         });
+        // 定时初始化数据
+        let selectBoxFlush = ()=>{
+            appNames = [];
+            appIdNames = [];
+            $(() => {
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    url: '../manage/roundmatch/appname',
+                    success: (res) => {
+                        res.forEach(function (val, index, arr) {
+                            let type;
+                            let appPlatform;
+                            switch (val.programType) {
+                                case 0:type = "game";break;
+                                case 1:type = "web";break;
+                                case 2:type = "public";break;
+                                default:type = "未知游戏类型";break;
+                            }
+                            switch (val.ddAppPlatform) {
+                                case "weixin":appPlatform = "wx";break;
+                                case "q":appPlatform = "qq";break;
+                                case "tt":appPlatform = "头条";break;
+                                case "quick":appPlatform = "快应用";break;
+                                default:appPlatform = "未知平台";break;
+                            }
+                            let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
+                            appNames.push(context);
+                            appIdNames.push(context);
+                        });
+                        appSelect.update(
+                            {
+                                data: appNames,
+                                autoRow: true,
+                            }
+                        );
+                        appNameSelect.update(
+                            {
+                                data: appIdNames,
+                                autoRow: true,
+                            }
+                        );
+                    },
+                    error: function () {
+                        alert("查询失败")
+                    }
+                });
+            }) }
+        setInterval(selectBoxFlush, 5000);
         table.render({
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',

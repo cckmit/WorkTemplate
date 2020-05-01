@@ -45,7 +45,7 @@ public class Fc_UserSourceController {
      * @return
      */
     @ResponseBody
-    @PostMapping(value = "/usersource/search")
+    @RequestMapping(value = "/usersource/search")
     public GetResult searchUserSource(HttpServletRequest request, GetParameter parameter) {
         String beginDate = request.getParameter("beginDate");
         String endDate = request.getParameter("endDate");

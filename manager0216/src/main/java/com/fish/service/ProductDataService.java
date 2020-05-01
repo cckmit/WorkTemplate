@@ -67,13 +67,27 @@ public class ProductDataService implements BaseService<ProductData> {
     @Autowired
     OrdersMapper ordersMapper;
 
+    /**
+     * 获取微信配置表
+     *
+     * @return 配置结果集
+     *//*
+    private Map<String, WxConfig> getWxConfigMap() {
+        Map<String, WxConfig> wxConfigMap = new HashMap<>();
+        List<WxConfig> allWxConfig = cacheService.getAllWxConfig();
+        allWxConfig.forEach(wxConfig -> {
+            wxConfigMap.put(wxConfig.getDdappid(), wxConfig);
+        });
+        return wxConfigMap;
+    }*/
+
     @Override
     public List<ProductData> selectAll(GetParameter parameter) {
         ConcurrentHashMap<String, WxConfig> wxConfigMap = this.wxConfigService.getAll(WxConfig.class);
         //Map<String, WxConfig> wxConfigMap = getWxConfigMap();
         Map<String, BuyPay> buyPayMap = getBuyPayMap(parameter);
         Map<String, AdValueWxAdUnit> wxAdUnitMap = getWxAdUnitMap(parameter);
-        List<ProductData> productDatas = null;
+        List<ProductData> productDatas;
         JSONObject search = getSearchData(parameter.getSearchData());
         if (search != null) {
             //搜索
@@ -98,7 +112,6 @@ public class ProductDataService implements BaseService<ProductData> {
             List<ProductData> list = selectPersieDeamon(parameter, null, wxConfigMap, buyPayMap);
             productDatas.addAll(list);
         }
-
         return productDatas;
     }
 
@@ -294,7 +307,7 @@ public class ProductDataService implements BaseService<ProductData> {
                     if (buyPay != null) {
                         productData.setBuyCost(buyPay.getBuyCost());
                         productData.setBuyClickPrice(buyPay.getBuyClickPrice());
-                        productData.setWxAdNewPrice(wxData.getWxRegAd().equals(0) ? new BigDecimal(0):buyPay.getBuyCost().divide(new BigDecimal(wxData.getWxRegAd()), 2, ROUND_HALF_UP));
+                        productData.setWxAdNewPrice(wxData.getWxRegAd().equals(0) ? new BigDecimal(0) : buyPay.getBuyCost().divide(new BigDecimal(wxData.getWxRegAd()), 2, ROUND_HALF_UP));
                     }
                 }
                 //赋值相同属性
@@ -302,7 +315,7 @@ public class ProductDataService implements BaseService<ProductData> {
                 productDatas.add(productData);
             }
         } catch (Exception e) {
-            LOGGER.info("查询小游戏数据处理异常" + ", 详细信息:{}", e.getMessage());
+            LOGGER.error("查询小游戏数据处理异常" + ", 详细信息:{}", e.getMessage());
         }
         return productDatas;
     }
@@ -416,7 +429,7 @@ public class ProductDataService implements BaseService<ProductData> {
 
     @Override
     public boolean removeIf(ProductData productData, JSONObject searchData) {
-        return existValueFalse(searchData.getString("appPlatform"), productData.getDdAppPlatform());
+        return false;
     }
 
     /**
@@ -466,6 +479,7 @@ public class ProductDataService implements BaseService<ProductData> {
             if (wxConfig != null) {
                 String ddName = wxConfig.getProductName();
                 productData.setProductName(ddName);
+                productData.setDdAppPlatform(wxConfig.getDdAppPlatform());
                 productData.setMinitjWx(wxData);
                 productData.setAdRevenue(wxData.getWxBannerIncome().add(wxData.getWxVideoIncome()));
                 BigDecimal adRevenue = productData.getAdRevenue();
@@ -515,6 +529,7 @@ public class ProductDataService implements BaseService<ProductData> {
             } else {
                 productData.setWxRegOther(0);
             }
+
             if (wxRegTaskBarMySp != null) {
                 productData.setWxRegTaskBarMySp(wxRegTaskBarMySp);
             } else {

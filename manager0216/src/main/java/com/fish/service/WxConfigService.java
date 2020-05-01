@@ -132,8 +132,9 @@ public class WxConfigService extends CacheService<WxConfig> implements BaseServi
 
         if (insertWxConfig != 0 && insertAppConfig != 0) {
             //刷新业务表结构
-            String resWx = ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
-            String resApp = ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
+            ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
+            ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
+            this.updateAllCache(WxConfig.class);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员");
@@ -165,7 +166,11 @@ public class WxConfigService extends CacheService<WxConfig> implements BaseServi
             String minify = ReadJsonUtil.minify(ddAppSkipRes);
             record.setDdappskipres(minify);
         }
-        return wxConfigMapper.updateByPrimaryKeySelective(record);
+        int update = wxConfigMapper.updateByPrimaryKeySelective(record);
+        if (update != 0) {
+            this.updateAllCache(WxConfig.class);
+        }
+        return update;
     }
 
     @Override
@@ -242,6 +247,7 @@ public class WxConfigService extends CacheService<WxConfig> implements BaseServi
             }
             ReadJsonUtil.flushTable("wx_config", baseConfig.getFlushCache());
             ReadJsonUtil.flushTable("app_config", baseConfig.getFlushCache());
+            this.updateAllCache(WxConfig.class);
         } else {
             result.setSuccessed(false);
             result.setMsg("操作失败，请联系管理员！");

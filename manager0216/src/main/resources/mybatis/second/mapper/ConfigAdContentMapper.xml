@@ -128,4 +128,10 @@
         DISTINCT(ddTargetAppId) AS ddTargetAppId, ddTargetAppName, ddTargetAppType
         FROM config_ad_content GROUP BY ddTargetAppId,ddTargetAppName, ddTargetAppType
     </select>
+    <select id="selectContentIdByDdTargetAppId" resultType="java.lang.Integer">
+        select
+        ddId
+        from config_ad_content
+        where ddTargetAppId = #{ddTargetAppId, jdbcType=VARCHAR}
+    </select>
 </mapper>

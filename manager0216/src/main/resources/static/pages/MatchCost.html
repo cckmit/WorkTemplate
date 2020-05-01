@@ -25,8 +25,7 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">查询时间</label>
                             <div class="layui-input-inline" style="width: 14rem;">
-                                <input type="text" class="layui-input" id="ddtime" lay-verify="required" name="ddtime"
-                                       placeholder=" - ">
+                                <input type="text" class="layui-input" id="ddtime" lay-verify="required" name="ddtime" placeholder=" - ">
                             </div>
                         </div>
                         <div class="layui-inline">
@@ -63,8 +62,7 @@
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
-                                    lay-filter="front-search">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
                                 <i class="layui-icon layuiadmin-button-btn"></i>查询
                             </button>
                         </div>
@@ -151,44 +149,46 @@
                 error: function () {
                     alert("查询失败")
                 }
-            }),
-                $.ajax({
-                    type: "get",
-                    dataType: "json",
-                    url: '../manage/roundmatch/appname',
-                    success: (res) => {
-                        res.forEach(function (val, index, arr) {
-                            appNames[val.ddappid] = val.productName;
-                            let type;
-                            let appPlatform;
-                            switch (val.programType) {
-                                case 0:type = "game";break;
-                                case 1:type = "web";break;
-                                case 2:type = "public";break;
-                                default:type = "未知游戏类型";break;
-                            }
-                            switch (val.ddAppPlatform) {
-                                case "weixin":appPlatform = "wx";break;
-                                case "q":appPlatform = "qq";break;
-                                default:appPlatform = "未知平台";break;
-                            }
-                            let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
-                            data.push(context);
-                        });
-                        appSelect.update(
-                            {
-                                data: data,
-                                autoRow: true,
-                            }
-                        );
-                        table.render();
-                    },
-                    error: function () {
-                        alert("查询失败")
-                    }
-                });
+            })
         });
-
+        // 定时初始化数据
+        let selectBoxFlush = ()=>{
+            data = [];
+            $(() => {$.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/roundmatch/appname',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        //console.log("我是appName :"+val.ddappid+"名字:"+ val.productName)
+                        let type;
+                        let appPlatform;
+                        switch (val.programType) {
+                            case 0:type = "game";break;
+                            case 1:type = "web";break;
+                            case 2:type = "public";break;
+                            default:type = "未知游戏类型";break;
+                        }
+                        switch (val.ddAppPlatform) {
+                            case "weixin":appPlatform = "wx";break;
+                            case "q":appPlatform = "qq";break;
+                            default:appPlatform = "未知平台";break;
+                        }
+                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
+                        data.push(context);
+                    });
+                    appSelect.update(
+                        {
+                            data: data,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            });}) }
+        setInterval(selectBoxFlush, 5000);
         table.render({
             elem: '#table-page',
             url: operatorurl + '?datagrid=data',

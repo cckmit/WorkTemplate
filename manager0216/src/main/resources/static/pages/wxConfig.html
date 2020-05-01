@@ -109,7 +109,10 @@
             layer = layui.layer,
             laydate = layui.laydate, flow = layui.flow;
         var $ = layui.$;
-        $.ajax({
+        // 定时初始化数据
+        let selectBoxFlush = ()=>{
+            appNames = [];
+            $(() => {$.ajax({
             type: "get",
             dataType: "json",
             url: '../manage/roundmatch/appname',
@@ -142,7 +145,8 @@
             error: function () {
                 alert("查询失败")
             }
-        });
+        });}) }
+        setInterval(selectBoxFlush, 5000);
         flow.lazyimg();
         table.render({
             elem: '#table-page',

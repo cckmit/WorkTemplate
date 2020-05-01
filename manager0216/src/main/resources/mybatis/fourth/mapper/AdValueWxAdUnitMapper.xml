@@ -55,7 +55,7 @@
         sum(a.reqSuccCount) as reqSuccCount, sum(a.exposureCount) as exposureCount,
         sum(a.clickCount) as clickCount,sum(a.income) as income
         from persie_value.ad_value_wx_adunit a
-        where DATE(a.date) between #{beginTime} and #{endTime}
+        where DATE(a.date) between #{beginTime} and #{endTime} and appSource ="JJ"
         <if test="appId != null and appId != ''">
             and a.appId = #{appId, jdbcType=VARCHAR}
         </if>
@@ -100,13 +100,13 @@
     <select id="selectAllScreenIncome" resultType="com.fish.dao.fourth.model.AdValueWxAdUnit">
         SELECT appId,SUM(income) AS screenIncome,DATE
         FROM persie_value.ad_value_wx_adunit WHERE DATE(DATE) BETWEEN  #{beginTime} and #{endTime}
-        AND slotId='3030046789020061'
+        AND slotId='3030046789020061' and appSource ="JJ"
         GROUP BY DATE ,appId
     </select>
     <select id="queryScreenIncomeByDate" resultType="com.fish.dao.fourth.model.AdValueWxAdUnit">
         SELECT SUM(income) AS screenIncome,DATE
         FROM ad_value_wx_adunit WHERE DATE(DATE) BETWEEN  #{beginTime} and #{endTime}
-        AND slotId='3030046789020061'
+        AND slotId='3030046789020061' and appSource ="JJ"
         GROUP BY DATE
     </select>
 </mapper>

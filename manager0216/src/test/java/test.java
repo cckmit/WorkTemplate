@@ -38,6 +38,7 @@ public class test
     public static void main(String[] args) throws Exception
     {
 
+
         //https://sgame.qinyougames.com/persieService/flush/logic
         //http://192.168.1.55:8080/persieService/flush/logic
         //persieDeamon   persieService    public
@@ -54,10 +55,16 @@ public class test
 //        String res= HttpUtil.post("http://192.168.1.55:8080/persieService/flush/logic", paramMap.toJSONString());
 //        System.out.println("我是返回值 :"+res);
 
-        JSONObject paramMap = new JSONObject();
-        paramMap.put("name","config_program");
-        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
-        System.out.println("我是返回值 :"+res);
+
+//        JSONObject paramMap = new JSONObject();
+//        paramMap.put("name","deamon");//deamon , online   persieDeamon
+//        String res= HttpUtil.post("https://logic.qinyougames.com/persieService/flush/logic", paramMap.toJSONString());
+//        System.out.println("我是返回值 :"+res);
+
+//        JSONObject paramMap = new JSONObject();
+//        paramMap.put("name","games");
+//        String res= HttpUtil.post("http://192.168.1.55:8080/persieService/flush/logic", paramMap.toJSONString());
+//        System.out.println("我是返回值 :"+res);
 
 
 //        JSONObject paramMap = new JSONObject();
@@ -201,7 +208,19 @@ public class test
 //        String path = test.class.getResource("/").getPath();
 //        System.out.println(path);
 
+        DateFormat format = new SimpleDateFormat("yyMM-dd HH:mm:ss");
+        Timestamp timestamp = new Timestamp(new Date().getTime());
 
+        String gameTime = format.format(timestamp);
+        System.out.println(gameTime);
+
+        long current=System.currentTimeMillis();    //当前时间毫秒数
+        long zeroT=current/(1000*3600*24)*(1000*3600*24)- TimeZone.getDefault().getRawOffset();  //今天零点零分零秒的毫秒数
+        String zero = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(zeroT);
+        String end = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(current);
+
+        System.out.println(zero);				//	2018-07-23 00:00:00
+        System.out.println(end);				//	2018-07-23 23:59:59
 
     }
 
