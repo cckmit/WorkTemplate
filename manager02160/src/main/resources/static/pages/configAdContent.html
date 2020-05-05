@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="chs">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+    <script src="../layuiadmin/layui/layui.js"></script>
+    <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
+    <script></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!-- 搜索表单 -->
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <form class="layui-form-item" id="search-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">类型</label>
+                            <div class="layui-input-inline" style="width: 14rem;" id="adType" name="adType"
+                                 lay-filter="adType" autocomplete="off"></div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">推广AppId</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="targetAppId" name="targetAppId">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">推广App名称</label>
+                            <div class="layui-input-inline" style="width: 18rem;">
+                                <div  id="targetAppName" name="targetAppName" lay-filter="targetAppName"></div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">中转AppId</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="promoteAppId" name="promoteAppId">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">中转App名称</label>
+                            <div class="layui-input-inline" style="width: 18rem;">
+                                <div  id="promoteAppName" name="promoteAppName" lay-filter="promoteAppName"></div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!-- 数据表格 -->
+                <div class="layui-card-body">
+                    <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-table-tool-temp">
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe654;</i>复制
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
+
+    </div>
+</script>
+<script type="text/html" id="imgShow">
+    {{#  if(d.ddImageUrl != null){ }}
+    <a href="{{ d.ddImageUrl }}" target="_blank " title="点击查看">
+        <img src="{{ d.ddImageUrl }}"></a>
+    {{#  } else { }}
+    {{""}}
+    {{#  } }}
+</script>
+<script>
+    const operatorurl = '../manage/configAdContent';
+
+    /**
+     * 查询框类型渲染
+     */
+    let searchTypeSelect = xmSelect.render({
+        el: '#adType',
+        name: 'adType',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        layVerify: 'required'
+    });
+    /**
+     * 查询框推广App名称渲染
+     */
+    let searchTargetAppNameSelect = xmSelect.render({
+        el: '#targetAppName',
+        name: 'targetAppName',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        filterable: true,
+        layVerify: 'required',
+        filterDone: function (val, list) {}
+    });
+    /**
+     * 查询框中转App名称渲染
+     */
+    let searchPromoteAppNameSelect = xmSelect.render({
+        el: '#promoteAppName',
+        name: 'promoteAppName',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        filterable: true,
+        layVerify: 'required',
+        filterDone: function (val, list) {}
+    });
+    // 广告类型数组
+    let editTypeOptionArr = [];
+    /**
+     * 编辑框渲染
+     */
+    let editTypeSelect = xmSelect.render({
+        el: '#ddAdType',
+        name: 'ddAdType',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        layVerify: 'required'
+    });
+    /**
+     * 打开页面时初始化加载数据
+     */
+    layui.use(['table', 'form', 'layer', 'tree', 'flow'], () => {
+        const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree,
+            flow = layui.flow;
+        flow.lazyimg();
+        table.render({
+            elem: '#table-page',
+            url: operatorurl,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'ddId', width: 60, title: 'ID', sort: true, align: 'right',hide: true},
+                {field: 'adType', width: 140, title: '类型', sort: true, align: 'center'},
+                {field: 'ddWeight', width: 100, title: '权重值', sort: true, align: 'center',hide: true},
+                {field: 'ddTargetAppId', width: 180, title: '推广AppId', sort: false,hide: true},
+                {field: 'ddTargetAppName', width: 140, title: '推广App名称', sort: false},
+                {field: 'ddTargetAppDesc', width: 140, title: '推广APP描述', sort: false,hide: true},
+                {
+                    field: 'ddTargetAppType',
+                    width: 140,
+                    title: '推广App类型',
+                    sort: true,
+                    align: 'center',
+                    templet: (d) => {
+                        return d.ddTargetAppType === 1 ? '小游戏' : '小程序';
+                    }
+                    ,hide: true},
+                {
+                    field: 'ddTargetEnvVersion',
+                    width: 140,
+                    title: '推广App版本',
+                    sort: false,
+                    align: 'center',
+                    templet: (d) => {
+                        let ddTargetEnvVersionName = '未知';
+                        if (d.ddTargetEnvVersion === 'develop') {
+                            ddTargetEnvVersionName = '开发版';
+                        } else if (d.ddTargetEnvVersion === 'trial') {
+                            ddTargetEnvVersionName = '体验版';
+                        } else if (d.ddTargetEnvVersion === 'release') {
+                            ddTargetEnvVersionName = '正式版';
+                        }
+                        return ddTargetEnvVersionName;
+                    }
+                },
+                {field: 'ddTargetAppPage', width: 140, title: '推广App页面', sort: false,hide: true},
+                {field: 'ddImageUrl', width: 120, title: '图片资源', sort: false, align: 'center', templet: '#imgShow'},
+                {
+                    field: 'ddVideoUrl', width: 140, title: '视频地址', sort: false,
+                    templet: (d) => {
+                        if (d.ddVideoUrl !== null && d.ddVideoUrl !== '') {
+                            //alert(d.ddVideoUrl);
+                            return '<a title="点击查看" class="layui-table-link" target="_blank" href="' + d.ddVideoUrl + '">' + d.ddVideoUrl + '</a>';
+                        } else {
+                            return "";
+                        }
+                    }
+                },
+                {field: 'ddPromoteAppId', width: 180, title: '中转AppId', sort: false,hide: true},
+                {field: 'ddPromoteAppName', width: 140, title: '中转App名称', sort: false},
+                {
+                    field: 'ddPromoteAppType',
+                    width: 140,
+                    title: '中转App类型',
+                    sort: true,
+                    align: 'center',
+                    templet: (d) => {
+                        return d.ddPromoteAppType === 1 ? '小游戏' : '小程序';
+                    }
+                    ,hide: true },
+                {
+                    field: 'ddPromoteEnvVersion',
+                    width: 140,
+                    title: '推广App版本',
+                    sort: false,
+                    align: 'center',
+                    templet: (d) => {
+                        let ddPromoteEnvVersionName = '未知';
+                        if (d.ddPromoteEnvVersion === 'develop') {
+                            ddPromoteEnvVersionName = '开发版';
+                        } else if (d.ddPromoteEnvVersion === 'trial') {
+                            ddPromoteEnvVersionName = '体验版';
+                        } else if (d.ddPromoteEnvVersion === 'release') {
+                            ddPromoteEnvVersionName = '正式版';
+                        }
+                        return ddPromoteEnvVersionName;
+                    }
+                },
+                {field: 'ddPromoteAppPage', width: 140, title: '中转App页面', sort: false,hide: true},
+                {field: 'updateTime', width: 160, title: '数据更新时间', sort: true, align: 'center'}
+            ]],
+            page: true,
+            toolbar: '#toolbar',
+            limit: 30,
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-160'
+        });
+
+        // 初始化数据
+        $(() => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdType/select',
+                success: (res) => {
+                    let typeSearchArr = [];
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddName, value: val.ddId, selected: false};
+                        typeSearchArr.push(context);
+                        editTypeOptionArr.push(context);
+                    });
+                    searchTypeSelect.update({
+                        data: typeSearchArr,
+                        autoRow: true,
+                    });
+                },
+                error: function () {
+                    layer.msg("广告类型列表查询失败，请联系管理员！", {icon: 2});
+                }
+            });
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdContent/getAppInfo',
+                success: (res) => {
+                    let targetAppNameSearchArr = [];
+                    res.forEach(function (val, index, arr) {
+                        console.log("我是appName :"+val.ddTargetAppId+"名字:"+ val.ddTargetAppName)
+                        let context = {name: val.ddTargetAppName+ "-" + val.ddTargetAppId, value: val.ddTargetAppId, selected: false};
+                        targetAppNameSearchArr.push(context);
+                        searchTargetAppNameSelect.update(
+                            {
+                                data: targetAppNameSearchArr,
+                                autoRow: true,
+                            }
+                        );
+                        searchPromoteAppNameSelect.update(
+                            {
+                                data: targetAppNameSearchArr,
+                                autoRow: true,
+                            }
+                        );
+                    });
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            });
+
+        });
+    });
+
+    /**
+     * 渲染部分下拉框选项
+     * @param editData
+     * @param type
+     */
+    function privateLoadEditData(editData, type) {
+        layui.use(['form', 'layer'], () => {
+            const $ = layui.$, form = layui.form, layer = layui.layer;
+            const queryData = {id: type === 'new' ? 0 : editData.ddId};
+            $.get(operatorurl + '/get', queryData, function (data) {
+                console.log(data);
+                // 处理广告类型
+                let newTypeOptionArray = [];
+                editTypeOptionArr.forEach((val, index, arr) => {
+                    val.selected = data && val.value === data.ddAdType;
+                    newTypeOptionArray.push(val);
+                });
+                editTypeSelect.update({
+                    data: newTypeOptionArray,
+                    autoRow: true,
+                });
+                form.val("form_table", editData);
+            });
+        });
+    }
+</script>
+
+<!-- 表单元素 -->
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">ID</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddId" name="ddId" class="layui-input" autocomplete="off" disabled
+                   placeholder="保存成功后自动生成">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">类型列表 </label>
+        <div class="layui-input-inline" style="width: 14rem;" id="ddAdType" name="ddAdType"
+             lay-filter="ddAdType" autocomplete="off"></div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">权重</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddWeight" name="ddWeight" class="layui-input" autocomplete="off"
+                   lay-verify="required|number">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">推广AppId</label>
+        <div class="layui-input-inline ">
+            <input type="text" id="ddTargetAppId" name="ddTargetAppId" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">推广AppId名称</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddTargetAppName" name="ddTargetAppName" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">推广App描述</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddTargetAppDesc" name="ddTargetAppDesc" class="layui-input" autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">推广App类型</label>
+        <div class="layui-input-inline">
+            <select id="ddTargetAppType" name="ddTargetAppType" lay-verify="required">
+                <option value="1" selected>小游戏</option>
+                <option value="2">小程序</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">推广App版本</label>
+        <div class="layui-input-inline">
+            <select id="ddTargetEnvVersion" name="ddTargetEnvVersion" lay-verify="required">
+                <option value="develop">开发版</option>
+                <option value="trial">体验版</option>
+                <option value="release" selected>正式版</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">推广App页面</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddTargetAppPage" name="ddTargetAppPage" class="layui-input" autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">图片地址</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddImageUrl" name="ddImageUrl" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">视频地址</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddVideoUrl" name="ddVideoUrl" class="layui-input" autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">中转AppId</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddPromoteAppId" name="ddPromoteAppId" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">中转App名称</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddPromoteAppName" name="ddPromoteAppName" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">中转App类型</label>
+        <div class="layui-input-inline">
+            <select id="ddPromoteAppType" name="ddPromoteAppType" lay-verify="required">
+                <option value="1" selected>小游戏</option>
+                <option value="2">小程序</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">推广App版本</label>
+        <div class="layui-input-inline">
+            <select id="ddPromoteEnvVersion" name="ddPromoteEnvVersion" lay-verify="required">
+                <option value="develop">开发版</option>
+                <option value="trial">体验版</option>
+                <option value="release" selected>正式版</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">中转App页面</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddPromoteAppPage" name="ddPromoteAppPage" class="layui-input" autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide" style="text-align:center;">
+        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认"
+               style="text-align:center;">
+    </div>
+</form>
+</body>
+</html>

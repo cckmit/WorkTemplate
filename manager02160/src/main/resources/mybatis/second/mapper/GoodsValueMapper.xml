@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fish.dao.second.mapper.GoodsValueMapper">
+    <resultMap id="BaseResultMap" type="com.fish.dao.second.model.GoodsValue">
+        <id column="ddId" jdbcType="INTEGER" property="ddId"/>
+        <result column="ddState" jdbcType="BIT" property="ddState"/>
+        <result column="ddMatch" jdbcType="INTEGER" property="ddMatch"/>
+        <result column="ddMinVer" jdbcType="VARCHAR" property="ddMinVer"/>
+        <result column="ddIOS" jdbcType="BIT" property="ddIOS"/>
+        <result column="ddName" jdbcType="VARCHAR" property="ddName"/>
+        <result column="ddDesc" jdbcType="VARCHAR" property="ddDesc"/>
+        <result column="ddCostType" jdbcType="VARCHAR" property="ddCostType"/>
+        <result column="ddPrice" jdbcType="DECIMAL" property="ddPrice"/>
+        <result column="ddGoodsType" jdbcType="VARCHAR" property="ddGoodsType"/>
+        <result column="ddValue" jdbcType="INTEGER" property="ddValue"/>
+        <result column="ddFirst" jdbcType="BIT" property="ddFirst"/>
+        <result column="insertTime" jdbcType="TIMESTAMP" property="insertTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ddId, ddState, ddMatch, ddMinVer, ddIOS, ddName, ddDesc, ddCostType, ddPrice, ddGoodsType,
+    ddValue, ddFirst, insertTime
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from goods_value_ext
+        where ddId = #{ddId,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from goods_value_ext
+    where ddId = #{ddId,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.fish.dao.second.model.GoodsValue">
+        insert into goods_value_ext
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ddId != null">
+                ddId,
+            </if>
+            <if test="ddState != null">
+                ddState,
+            </if>
+            <if test="ddMatch != null">
+                ddMatch,
+            </if>
+            <if test="ddMinVer != null">
+                ddMinVer,
+            </if>
+            <if test="ddIOS != null">
+                ddIOS,
+            </if>
+            <if test="ddName != null">
+                ddName,
+            </if>
+            <if test="ddDesc != null">
+                ddDesc,
+            </if>
+            <if test="ddCostType != null">
+                ddCostType,
+            </if>
+            <if test="ddPrice != null">
+                ddPrice,
+            </if>
+            <if test="ddGoodsType != null">
+                ddGoodsType,
+            </if>
+            <if test="ddValue != null">
+                ddValue,
+            </if>
+            <if test="ddFirst != null">
+                ddFirst,
+            </if>
+            <if test="insertTime != null">
+                insertTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ddId != null">
+                #{ddId,jdbcType=INTEGER},
+            </if>
+            <if test="ddState != null">
+                #{ddState,jdbcType=BIT},
+            </if>
+            <if test="ddMatch != null">
+                #{ddMatch,jdbcType=INTEGER},
+            </if>
+            <if test="ddMinVer != null">
+                #{ddMinVer,jdbcType=VARCHAR},
+            </if>
+            <if test="ddIOS != null">
+                #{ddIOS,jdbcType=BIT},
+            </if>
+            <if test="ddName != null">
+                #{ddName,jdbcType=VARCHAR},
+            </if>
+            <if test="ddDesc != null">
+                #{ddDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="ddCostType != null">
+                #{ddCostType,jdbcType=VARCHAR},
+            </if>
+            <if test="ddPrice != null">
+                #{ddPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="ddGoodsType != null">
+                #{ddGoodsType,jdbcType=VARCHAR},
+            </if>
+            <if test="ddValue != null">
+                #{ddValue,jdbcType=INTEGER},
+            </if>
+            <if test="ddFirst != null">
+                #{ddFirst,jdbcType=BIT},
+            </if>
+            <if test="insertTime != null">
+                #{insertTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.fish.dao.second.model.GoodsValue">
+        update goods_value_ext
+        <set>
+            <if test="ddState != null">
+                ddState = #{ddState,jdbcType=BIT},
+            </if>
+            <if test="ddMatch != null">
+                ddMatch = #{ddMatch,jdbcType=INTEGER},
+            </if>
+            <if test="ddMinVer != null">
+                ddMinVer = #{ddMinVer,jdbcType=VARCHAR},
+            </if>
+            <if test="ddIOS != null">
+                ddIOS = #{ddIOS,jdbcType=BIT},
+            </if>
+            <if test="ddName != null">
+                ddName = #{ddName,jdbcType=VARCHAR},
+            </if>
+            <if test="ddDesc != null">
+                ddDesc = #{ddDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="ddCostType != null">
+                ddCostType = #{ddCostType,jdbcType=VARCHAR},
+            </if>
+            <if test="ddPrice != null">
+                ddPrice = #{ddPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="ddGoodsType != null">
+                ddGoodsType = #{ddGoodsType,jdbcType=VARCHAR},
+            </if>
+            <if test="ddValue != null">
+                ddValue = #{ddValue,jdbcType=INTEGER},
+            </if>
+            <if test="ddFirst != null">
+                ddFirst = #{ddFirst,jdbcType=BIT},
+            </if>
+            <if test="insertTime != null">
+                insertTime = #{insertTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ddId = #{ddId,jdbcType=INTEGER}
+    </update>
+    <select id="selectAll" resultType="com.fish.dao.second.model.GoodsValue">
+        select
+        <include refid="Base_Column_List"/>
+        from goods_value_ext
+    </select>
+
+
+</mapper>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="chs">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+    <script src="../layuiadmin/layui/layui.js"></script>
+    <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
+    <script></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!-- 搜索表单 -->
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <form class="layui-form-item" id="search-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">获奖日期</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户昵称</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="userName" name="userName">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">游戏名称</label>
+                            <div class="layui-input-inline">
+                                <div class="layui-input-inline" style="width: 14rem;"
+                                     id="gameCode" name="gameCodeSelect" lay-filter="gameCode" autocomplete="off"></div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">赛制名称</label>
+                            <div class="layui-input-inline">
+                                <div class="layui-input-inline" style="width: 14rem;"
+                                     id="roundcode" name="roundSelect" lay-filter="roundcode" autocomplete="off"></div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">比赛类型</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <select name="ddgroup" id="ddgroup">
+                                    <option value="">-</option>
+                                    <option value=true>小程序</option>
+                                    <option value=false>小游戏</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="submit"  type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-type="reload">
+                            <i class="layui-icon layuiadmin-button-btn"></i>查询
+                        </button>
+                    </form>
+                </div>
+                <!-- 数据表格 -->
+                <div class="layui-card-body">
+                    <table class="layui-hide" lay-filter="table-result" id="table-result"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-table-tool-temp">
+    </div>
+</script>
+<script>
+    const operatorurl = '../manage/roundreceive';
+    layui.use(['table', 'laydate', 'form', 'layer'], function () {
+        var table = layui.table,
+            laydate = layui.laydate;
+        var $ = layui.$;
+        let codesArr = [];
+        var gameCodes = [];
+        var appNames = [];
+        var codeSelect = xmSelect.render({
+            el: '#roundcode',
+            name: 'roundSelect',
+            language: 'zn',
+            toolbar: {show: true},
+            data: [],
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            paging: true,
+            pageSize: 5,
+            delay: 500,
+            filterable: true,
+            filterDone: function (val, list) {
+            },
+        });
+        var gameCodeSelect = xmSelect.render({
+            el: '#gameCode',
+            name: 'gameCodeSelect',
+            language: 'zn',
+            toolbar: {show: true},
+            data: [],
+            radio: true,
+            clickClose: true,
+            autoRow: true,
+            paging: true,
+            pageSize: 5,
+            delay: 500,
+            filterable: true,
+            filterDone: function (val, list) {
+            },
+        });
+        $(() => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/roundmatch/roundall',
+                success: (res) => {
+
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddcode, value: val.ddcode, selected: false};
+                        codesArr.push(context);
+                    });
+                    codeSelect.update(
+                        {
+                            data: codesArr,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            }),
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    url: '../manage/games/selectBox',
+                    success: (res) => {
+                        res.forEach(function (val, index, arr) {
+                            gameCodes.push(val);
+                        });
+                        let data = [];
+                        for (let i = 0; i < gameCodes.length; i++) {
+                            let val = gameCodes[i];
+                            let context = {name: val.title, value: val.value, selected: false};
+                            data.push(context);
+                        }
+                        gameCodeSelect.update(
+                            {
+                                data: data,
+                                autoRow: true,
+                            }
+                        );
+                    },
+                    error: function () {
+                        alert("查询失败")
+                    }
+                });
+        });
+        table.render({
+            elem: '#table-result',
+            url: operatorurl + '?datagrid=data',
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'ddtime', width: 160, title: '获奖时间', sort: true},
+                {field: 'dduid', width: 280, title: '用户ID', sort: true},
+                {field: 'userName', width: 200, title: '用户昵称', sort: true},
+                {field: 'gameName', width: 120, title: '游戏名称', sort: true},
+                {field: 'ddgcode', width: 120, title: '游戏编号', sort: true},
+                {field: 'ddmcode', width: 120, title: '赛场编号', sort: true},
+                {field: 'roudName', width: 120, title: '赛制名称', sort: true},
+                {field: 'roudTime', width: 120, title: '赛制时长', sort: true},
+                {field: 'ddmstart', width: 160, title: '赛区开始时间', sort: true},
+                {field: 'ddmend', width: 160, title: '赛区结束时间', sort: true},
+                {field: 'ddranking', width: 120, title: '游戏排名', sort: true},
+                {
+                    field: 'ddtotal', width: 120, title: '获奖情况', sort: true,
+                    templet: (d) => {
+                        return d.ddtotal + "" + d.ddtype;
+                    }
+                }
+            ]],
+            page: true,
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter', 'exports'],
+            limit: 20,
+            statusName: 'status',//数据状态的字段名称，默认：code
+            statusCode: 200, //成功的状态码，默认：0
+            height: 'full-160'
+        });
+
+        $('#submit').click(function () {
+            let times = $('#times').val();
+            let userName = $('#userName').val();
+            // let appName = $('#appName').val();
+            let roundCode = codeSelect.getValue("roundcode");
+            let search = 'value';
+            let round = "";
+            if (roundCode.length !== 0) {
+                round = roundCode[0][search];
+            }
+            let gameCode = gameCodeSelect.getValue("gameCode");
+            let game = "";
+            if (gameCode.length !== 0) {
+                game = gameCode[0][search];
+            }
+            let ddGroup = $('#ddgroup').val();
+            console.log("times :" + times);
+            console.log("userName :" + userName);
+            console.log("gameCode :" + game);
+            console.log("roundCode :" + round);
+            console.log("ddGroup :" + ddGroup);
+            table.reload('table-result', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                    , limit: 20
+                },
+                url: '../manage/roundreceive/result',
+                method: "get",
+                where: {
+                    times: times,
+                    userName: userName,
+                    gameCode: game,
+                    roundCode: round,
+                    ddGroup: ddGroup
+                }
+                , page: {curr: 1}
+            });
+        })
+
+        laydate.render({
+            elem: '#times',
+            range: true
+        });
+    })
+</script>
+
+<!-- 表单元素 -->
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+</form>
+</body>
+</html>

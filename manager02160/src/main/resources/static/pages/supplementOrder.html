@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="chs">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+    <script src="../layuiadmin/layui/layui.js"></script>
+    <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
+    <script></script>
+    <style type="text/css">
+        input[disabled]{background:#fff;opacity:1;color:red;}
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!-- 搜索表单 -->
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <form class="layui-form-item" id="search-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">时间范围</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">UID</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="uid" name="uid">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户昵称</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="name" name="name">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <!-- 数据表格 -->
+                <div class="layui-card-body">
+                    <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-table-tool-temp">
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>补单
+        </button>
+    </div>
+</script>
+<script>
+    let appNameOptionArr = [];
+    let appNameSelect = xmSelect.render({
+        el: '#appid',
+        name: 'appid',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {},
+    });
+    const operatorurl = '../manage/supplementorder';
+    layui.use(['table', 'laydate', 'form', 'layer'], function () {
+        var table = layui.table,
+            form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate;
+        var $ = layui.$;
+        $.ajax({
+            type: "get",
+            dataType: "json",
+            url: '../manage/roundmatch/appname',
+            success: (res) => {
+                res.forEach(function (val, index, arr) {
+                    let type;
+                    let appPlatform;
+                    switch (val.programType) {
+                        case 0:type = "game";break;
+                        case 1:type = "web";break;
+                        case 2:type = "public";break;
+                        default:type = "未知游戏类型";break;
+                    }
+                    switch (val.ddAppPlatform) {
+                        case "weixin":appPlatform = "wx";break;
+                        case "q":appPlatform = "qq";break;
+                        default:appPlatform = "未知平台";break;
+                    }
+                    let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
+                    appNameOptionArr.push(context);
+                });
+            },
+            error: function () {
+                alert("查询失败")
+            }
+        });
+        table.render({
+            elem: '#table-page',
+            url: operatorurl + '?datagrid=data',
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'userid', width: 280, title: '用户ID', sort: true},
+                {field: 'username', width: 140, title: '用户昵称', sort: true},
+                {field: 'appid', width: 220, title: '来源APPID', sort: true},
+                {field: 'appname', width: 140, title: '来源产品名称', sort: true},
+                {
+                    field: 'programType', width: 140, title: '来源类型', sort: true,
+                    templet: (d) => {
+                        if (d.programType === 0) {
+                            return "小游戏";
+                        } else if (d.programType === 1) {
+                            return "小程序";
+                        } else if (d.programType === 2) {
+                            return "公众号";
+                        }
+                    }
+                },
+                {field: 'coinCount', width: 140, title: '补发数量', sort: true},
+                {field: 'createTime', width: 220, title: '操作时间', sort: true}
+            ]],
+            page: true,
+            toolbar: '#toolbar',
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-120'
+        });
+
+        laydate.render({
+            elem: '#times',
+            range: true
+        });
+
+        $("#query").click(function () {
+            let userid = $('#userid').val();
+            if (userid !== "") {
+                $.ajax({
+                    url: '../manage/supplementorder/query?uid=' + userid,
+                    success: function (result) {
+                        UIConfig.postMsg(result);
+                        $("#username").val(result.username);
+                        $("#currentCoin").val(result.currentCoin);
+                        // 返回产品信息
+                        let newAppNameOptionArr = [];
+                        appNameOptionArr.forEach((val, index, arr) => {
+                            if (val.value === result.appid) {
+                                val.selected = true;
+                                newAppNameOptionArr.push(val);
+                            }else{
+                                val.selected =false;
+                                newAppNameOptionArr.push(val);
+                            }
+                        });
+                        appNameSelect.update({
+                            data: newAppNameOptionArr,
+                            autoRow: true,
+                        });
+                    }
+                });
+            } else {
+                layer.msg("请输入Uid后进行查询用户信息");
+            }
+        })
+    })
+
+    /**
+     * 渲染部分下拉框选项
+     * @param editData
+     * @param type
+     */
+    function privateLoadEditData(editData, type) {
+        layui.use(['form', 'layer'], () => {
+            const $ = layui.$, form = layui.form, layer = layui.layer;
+            const queryData = {id: type === 'new' ? 0 : editData.ddId};
+            if (queryData.id === 0) {
+                appNameOptionArr.forEach((val, index, arr) => {
+                  val.selected =false;
+                });
+                appNameSelect.update(
+                    {
+                        data: appNameOptionArr,
+                        autoRow: true,
+                    }
+                );
+                form.val("form_table", editData);
+            }
+        })
+    };
+
+</script>
+
+<!-- 表单元素 -->
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+    <div class="layui-form-item ">
+        <label class="layui-form-label">用户ID *</label>
+        <div class="layui-input-inline">
+            <input type="text" id="userid" name="userid" lay-verify="required" autocomplete="off"
+                   class="layui-input layui-input">
+        </div>
+        <button type="button" id="query" name="query" class="layui-btn layui-btn-normal">查询</button>
+    </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">用户昵称</label>
+        <div class="layui-input-inline">
+            <input type="text" id="username" name="username" autocomplete="off"
+                   class="layui-input layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">来源AppID *</label>
+        <div class="layui-input-inline" id="appid" name="appid" lay-filter="appid" autocomplete="off"></div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">当前剩余金币</label>
+        <div class="layui-input-inline">
+            <input type="text"  id="currentCoin" name="currentCoin" autocomplete="off"
+                   class="layui-input layui-input " disabled>
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">增加金币 *</label>
+        <div class="layui-input-inline">
+            <input type="text" id="coinCount" name="coinCount" lay-verify="required" autocomplete="off"
+                   class="layui-input layui-input"  placeholder="只能输入数字" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认">
+    </div>
+</form>
+</body>
+</html>

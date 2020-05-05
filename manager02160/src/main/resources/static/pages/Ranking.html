@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="chs">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+    <script src="../layuiadmin/layui/layui.js"></script>
+    <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
+    <script></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!-- 搜索表单 -->
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <form class="layui-form-item" id="search-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">时间范围</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">游戏名称</label>
+                            <div class="layui-input-inline">
+                                <div class="layui-input-inline" style="width: 14rem;"
+                                     id="gameName" name="gameName" lay-filter="gameName" autocomplete="off"></div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">赛制名称</label>
+                            <div class="layui-input-inline">
+                                <div class="layui-input-inline" style="width: 14rem;"
+                                     id="roundName" name="roundName" lay-filter="roundName" autocomplete="off"></div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit="" lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
+                            </button>
+                        </div>
+                        <div class="layui-btn-group demoTable">
+                            <button type="button" class="layui-btn" data-type="getCheckData">比赛结果导出</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- 数据表格 -->
+                <div class="layui-card-body">
+                    <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-table-tool-temp">
+    </div>
+</script>
+<script>
+    const operatorurl = '../manage/ranking';
+    let codesArr = [];
+    let gameCodes = [];
+    let codeSelect = xmSelect.render({
+        el: '#roundName',
+        name: 'roundName',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+            console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+        },
+    });
+    let gameCodeSelect = xmSelect.render({
+        el: '#gameName',
+        name: 'gameName',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+            console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
+        },
+    });
+    layui.use(['table', 'laydate', 'form', 'layer'], function () {
+        var table = layui.table,
+            form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate;
+        var $ = layui.$;
+        $(() => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/roundmatch/roundall',
+                success: (res) => {
+
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddcode, value: val.ddcode, selected: false};
+                        codesArr.push(context);
+                    });
+                    codeSelect.update(
+                        {
+                            data: codesArr,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            }),
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    url: '../manage/games/selectBox',
+                    success: (res) => {
+                        res.forEach(function (val, index, arr) {
+                            gameCodes.push(val);
+                        });
+                        let data = [];
+                        for (let i = 0; i < gameCodes.length; i++) {
+                            let val = gameCodes[i];
+                            let context = {name: val.title, value: val.value, selected: false};
+                            data.push(context);
+                        }
+                        gameCodeSelect.update(
+                            {
+                                data: data,
+                                autoRow: true,
+                            }
+                        );
+                    },
+                    error: function () {
+                        alert("查询失败")
+                    }
+                });
+        })
+        table.render({
+            elem: '#table-page',
+            url: operatorurl + '?datagrid=data',
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'gamesName', width: '14%', title: '游戏名称', sort: true},
+                {field: 'gamesCode', width: '14%', title: '游戏ID', sort: true},
+                {field: 'matchdate', width: '22%', title: '比赛结束时间', sort: true},
+                {field: 'roundName', width: '18%', title: '赛制名称', sort: true},
+                {field: 'roundLength', width: '14%', title: '赛制时长', sort: true},
+                {field: 'ddNumber', width: '14%', title: '参赛人数', sort: true}
+            ]],
+            page: true,
+            toolbar: '#toolbar',
+            limit: 30,
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-120'
+        });
+
+        let active = {
+            getCheckData: function () { //获取选中数据
+                let checkStatus = table.checkStatus('table-page');
+                let l = checkStatus.data.length;
+                let data = checkStatus.data;
+                if (l === 0) {
+                    layer.msg('请选择一行');
+                } else if (l > 1) {
+                    layer.msg('只能查看一行哦');
+                } else {
+                    let submitDatas = JSON.stringify(data);
+                    let arry = submitDatas.substr(1, submitDatas.length - 2);
+                    console.log("jasonarry :" + arry)
+                    let jsonArry = JSON.parse(arry);
+                    layer.confirm('确定导出结果吗', function (index) {
+                        window.location.href = '../manage/ranking/result' + "?ddCode=" + jsonArry.ddCode + "&ddGroup=" + jsonArry.ddGroup
+                            + "&ddIndex=" + jsonArry.ddIndex + "&roundCode=" + jsonArry.roundCode + "&roundName=" + jsonArry.roundName
+                            + "&roundLength=" + jsonArry.roundLength + "&ddNumber=" + jsonArry.ddNumber + "&matchdate=" + jsonArry.matchdate
+                            + "&gamesCode=" + jsonArry.gamesCode;
+                        layer.close(index);
+                    })
+                }
+            }
+        };
+        $('.demoTable .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+        laydate.render({
+            elem: '#times',
+            range: true
+        });
+        laydate.render({
+            elem: '#matchdate',
+            format: 'yyyy/MM/dd'
+        });
+        laydate.render({
+            elem: '#inserttime',
+            format: 'yyyy/MM/dd HH:mm'
+        });
+    })
+
+</script>
+
+<!-- 表单元素 -->
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+</form>
+</body>
+</html>

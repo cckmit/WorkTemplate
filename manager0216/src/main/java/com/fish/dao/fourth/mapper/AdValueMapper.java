@@ -34,4 +34,5 @@ public interface AdValueMapper {
     List<AdValue> queryDetail(@Param("beginDate") int beginDate, @Param("endDate") int endDate,
                             @Param("adValue") AdValue adValue);
 
+    List<AdValue> selectAdData(int beginDate, int endDate, AdValue adValue);
 }

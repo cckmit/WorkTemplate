@@ -8,6 +8,10 @@ public class ManagerApplication
 {
     public static void main(String[] args)
     {
-        SpringApplication.run(ManagerApplication.class, args);
+        try {
+            SpringApplication.run(ManagerApplication.class, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

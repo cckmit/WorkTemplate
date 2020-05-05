@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.ConfigAdContentMapper">
+
+    <resultMap id="BaseResultMap" type="com.fish.dao.second.model.ConfigAdContent">
+        <id column="ddId" property="ddId" jdbcType="INTEGER"/>
+        <result column="ddAdType" property="ddAdType" jdbcType="INTEGER"/>
+        <result column="ddWeight" property="ddWeight" jdbcType="INTEGER"/>
+        <result column="ddImageUrl" property="ddImageUrl" jdbcType="VARCHAR"/>
+        <result column="ddTargetAppId" property="ddTargetAppId" jdbcType="VARCHAR"/>
+        <result column="ddTargetAppName" property="ddTargetAppName" jdbcType="VARCHAR"/>
+        <result column="ddTargetAppDesc" property="ddTargetAppDesc" jdbcType="VARCHAR"/>
+        <result column="ddTargetAppType" property="ddTargetAppType" jdbcType="INTEGER"/>
+        <result column="ddTargetEnvVersion" property="ddTargetEnvVersion" jdbcType="VARCHAR"/>
+        <result column="ddTargetAppPage" property="ddTargetAppPage" jdbcType="VARCHAR"/>
+        <result column="ddPromoteAppId" property="ddPromoteAppId" jdbcType="VARCHAR"/>
+        <result column="ddPromoteAppName" property="ddPromoteAppName" jdbcType="VARCHAR"/>
+        <result column="ddPromoteAppType" property="ddPromoteAppType" jdbcType="INTEGER"/>
+        <result column="ddPromoteEnvVersion" property="ddPromoteEnvVersion" jdbcType="VARCHAR"/>
+        <result column="ddPromoteAppPage" property="ddPromoteAppPage" jdbcType="VARCHAR"/>
+        <result column="updateTime" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        ddId, ddAdType, ddWeight, ddImageUrl,ddVideoUrl, ddTargetAppId, ddTargetAppName, ddTargetAppDesc, ddTargetAppType, ddTargetEnvVersion, ddTargetAppPage,
+        ddPromoteAppId, ddPromoteAppName, ddPromoteAppType, ddPromoteEnvVersion, ddPromoteAppPage, updateTime
+    </sql>
+
+    <select id="select" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from config_ad_content
+        where ddId = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" parameterType="com.fish.dao.second.model.ConfigAdContent"
+            resultType="com.fish.dao.second.model.ConfigAdContent">
+        select
+        c.ddId as ddId, c.ddAdType as ddAdType, c.ddWeight as ddWeight, c.ddImageUrl as ddImageUrl, c.ddVideoUrl as
+        ddVideoUrl, c.ddTargetAppId as ddTargetAppId, c.ddTargetAppName as ddTargetAppName,c.ddTargetAppDesc as
+        ddTargetAppDesc, c.ddTargetAppType as ddTargetAppType, c.ddTargetEnvVersion as ddTargetEnvVersion,
+        c.ddTargetAppPage as ddTargetAppPage, c.ddPromoteAppId as ddPromoteAppId, c.ddPromoteAppName as ddPromoteAppName,
+        c.ddPromoteAppType as ddPromoteAppType, c.ddPromoteEnvVersion as ddPromoteEnvVersion, c.ddPromoteAppPage as
+        ddPromoteAppPage, c.updateTime as updateTime, t.ddName as adType from config_ad_content as c LEFT JOIN config_ad_type as t ON c.ddAdType =t.ddId
+        where 1 = 1
+        <if test="ddAdType != 0">
+            and c.ddAdType = #{ddAdType, jdbcType=INTEGER}
+        </if>
+        <if test="ddTargetAppId != null and ddTargetAppId != ''">
+            and c.ddTargetAppId like concat('%',#{ddTargetAppId, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="ddTargetAppName != null and ddTargetAppName != ''">
+            and c.ddTargetAppName like concat('%',#{ddTargetAppName, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="ddPromoteAppId != null and ddPromoteAppId != ''">
+            and c.ddPromoteAppId like concat('%',#{ddPromoteAppId, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="ddPromoteAppName != null and ddPromoteAppName != ''">
+            and c.ddPromoteAppName like concat('%',#{ddPromoteAppName, jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+
+    <select id="selectAllByType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from config_ad_content
+        where ddAdType = #{ddAdType, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectContentBySpaceId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from config_ad_content
+        where ddId in (${contentIds, jdbcType=VARCHAR})
+    </select>
+
+    <insert id="insert" parameterType="com.fish.dao.second.model.ConfigAdContent">
+        insert into config_ad_content (ddAdType, ddWeight, ddImageUrl, ddVideoUrl, ddTargetAppId, ddTargetAppName, ddTargetAppDesc, ddTargetAppType,
+                                       ddTargetEnvVersion, ddTargetAppPage, ddPromoteAppId, ddPromoteAppName,
+                                       ddPromoteAppType, ddPromoteEnvVersion, ddPromoteAppPage, updateTime)
+        values (#{ddAdType, jdbcType=INTEGER}, #{ddWeight, jdbcType=INTEGER}, #{ddImageUrl, jdbcType=VARCHAR},
+                #{ddVideoUrl, jdbcType=VARCHAR}, #{ddTargetAppId, jdbcType=VARCHAR}, #{ddTargetAppName, jdbcType=VARCHAR},
+                #{ddTargetAppDesc, jdbcType=VARCHAR}, #{ddTargetAppType, jdbcType=INTEGER}, #{ddTargetEnvVersion, jdbcType=VARCHAR},
+                #{ddTargetAppPage, jdbcType=VARCHAR}, #{ddPromoteAppId, jdbcType=VARCHAR},
+                #{ddPromoteAppName, jdbcType=VARCHAR}, #{ddPromoteAppType, jdbcType=INTEGER},
+                #{ddPromoteEnvVersion, jdbcType=VARCHAR}, #{ddPromoteAppPage, jdbcType=VARCHAR}, NOW())
+    </insert>
+
+    <update id="update" parameterType="com.fish.dao.second.model.ConfigAdContent">
+        update config_ad_content
+        <set>
+            ddAdType = #{ddAdType, jdbcType=INTEGER},
+            ddWeight = #{ddWeight, jdbcType=INTEGER},
+            ddImageUrl = #{ddImageUrl, jdbcType=VARCHAR},
+            ddVideoUrl = #{ddVideoUrl, jdbcType=VARCHAR},
+            ddTargetAppId = #{ddTargetAppId, jdbcType=VARCHAR},
+            ddTargetAppName = #{ddTargetAppName, jdbcType=VARCHAR},
+            ddTargetAppDesc = #{ddTargetAppDesc, jdbcType=VARCHAR},
+            ddTargetAppType = #{ddTargetAppType, jdbcType=INTEGER},
+            ddTargetEnvVersion = #{ddTargetEnvVersion, jdbcType=VARCHAR},
+            ddTargetAppPage = #{ddTargetAppPage, jdbcType=VARCHAR},
+            ddPromoteAppId = #{ddPromoteAppId, jdbcType=VARCHAR},
+            ddPromoteAppName = #{ddPromoteAppName, jdbcType=VARCHAR},
+            ddPromoteAppType = #{ddPromoteAppType, jdbcType=INTEGER},
+            ddPromoteEnvVersion = #{ddPromoteEnvVersion, jdbcType=VARCHAR},
+            ddPromoteAppPage = #{ddPromoteAppPage, jdbcType=VARCHAR},
+            updateTime = NOW()
+        </set>
+        where ddId = #{ddId, jdbcType=INTEGER}
+    </update>
+
+    <update id="updateImageUrl">
+        update config_ad_content
+        <set>
+            ddImageUrl = '${imageUrl}'
+        </set>
+        where ddId = '${id}'
+    </update>
+
+    <update id="delete" parameterType="java.lang.String">
+        delete
+        from config_ad_content
+        where ddId in (${deleteIds})
+    </update>
+
+    <select id="getTargetAndPromoteAppInfo" resultType="com.fish.dao.second.model.ConfigAdContent">
+        SELECT
+        DISTINCT(ddTargetAppId) AS ddTargetAppId, ddTargetAppName, ddTargetAppType
+        FROM config_ad_content GROUP BY ddTargetAppId,ddTargetAppName, ddTargetAppType
+    </select>
+    <select id="selectContentIdByDdTargetAppId" resultType="java.lang.Integer">
+        select
+        ddId
+        from config_ad_content
+        where ddTargetAppId = #{ddTargetAppId, jdbcType=VARCHAR}
+    </select>
+</mapper>

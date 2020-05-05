@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.third.mapper.MinitjWxMapper">
+    <resultMap id="BaseResultMap" type="com.fish.dao.third.model.MinitjWx">
+        <id column="wx_appid" property="wxAppid" jdbcType="VARCHAR"/>
+        <id column="wx_date" property="wxDate" jdbcType="DATE"/>
+        <result column="wx_new" property="wxNew" jdbcType="INTEGER"/>
+        <result column="wx_active" property="wxActive" jdbcType="INTEGER"/>
+        <result column="wx_visit" property="wxVisit" jdbcType="INTEGER"/>
+        <result column="wx_avg_login" property="wxAvgLogin" jdbcType="DECIMAL"/>
+        <result column="wx_avg_online" property="wxAvgOnline" jdbcType="DECIMAL"/>
+        <result column="wx_remain2" property="wxRemain2" jdbcType="DECIMAL"/>
+        <result column="wx_video_show" property="wxVideoShow" jdbcType="INTEGER"/>
+        <result column="wx_video_clickrate" property="wxVideoClickrate" jdbcType="DECIMAL"/>
+        <result column="wx_video_income" property="wxVideoIncome" jdbcType="DECIMAL"/>
+        <result column="wx_banner_show" property="wxBannerShow" jdbcType="INTEGER"/>
+        <result column="wx_banner_clickrate" property="wxBannerClickrate" jdbcType="DECIMAL"/>
+        <result column="wx_banner_income" property="wxBannerIncome" jdbcType="DECIMAL"/>
+        <result column="wx_reg_ad" property="wxRegAd" jdbcType="INTEGER"/>
+        <result column="wx_reg_jump" property="wxRegJump" jdbcType="INTEGER"/>
+        <result column="wx_reg_search" property="wxRegSearch" jdbcType="INTEGER"/>
+        <result column="wx_reg_app" property="wxRegApp" jdbcType="INTEGER"/>
+        <result column="wx_reg_code" property="wxRegCode" jdbcType="INTEGER"/>
+        <result column="wx_reg_session" property="wxRegSession" jdbcType="INTEGER"/>
+        <result column="wx_active_women" property="wxActiveWomen" jdbcType="DECIMAL"/>
+        <result column="wx_share_user" property="wxShareUser" jdbcType="INTEGER"/>
+        <result column="wx_share_count" property="wxShareCount" jdbcType="INTEGER"/>
+        <result column="wx_share_rate" property="wxShareRate" jdbcType="DECIMAL"/>
+        <result column="wx_updatetime" property="wxUpdatetime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.fish.dao.third.model.MinitjWx" extends="BaseResultMap">
+        <result column="wx_reg_json" property="wxRegJson" jdbcType="LONGVARCHAR"/>
+        <result column="wx_active_source" property="wxActiveSource" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    wx_appid, wx_date, wx_new, wx_active, wx_visit, wx_avg_login, wx_avg_online, wx_remain2,
+    wx_video_show, wx_video_clickrate, wx_video_income, wx_banner_show, wx_banner_clickrate,
+    wx_banner_income, wx_reg_ad, wx_reg_jump, wx_reg_search, wx_reg_app, wx_reg_code,
+    wx_reg_session, wx_active_women, wx_share_user, wx_share_count, wx_share_rate, wx_updatetime
+  </sql>
+    <sql id="Blob_Column_List">
+    wx_reg_json,wx_active_source
+  </sql>
+    <select id="queryMinitjWxByDate" resultType="com.fish.dao.third.model.MinitjWx">
+        SELECT
+            m.wx_date AS wxDate,
+            m.wx_appid AS wxAppid,
+            m.wx_new AS wxNew,
+            m.wx_active AS wxActive,
+            m.wx_video_income AS wxVideoIncome,
+            m.wx_banner_income AS wxBannerIncome,
+            m.wx_share_user AS wxShareUser,
+            m.wx_share_count AS wxShareCount
+        FROM
+            minitj_wx m
+        WHERE DATE(m.wx_date) BETWEEN #{beginTime} AND #{endTime}
+        ORDER BY m.wx_date ASC
+    </select>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from minitj_wx
+        where wx_appid = #{wxAppid,jdbcType=VARCHAR}
+        and wx_date = #{wxDate,jdbcType=VARCHAR}
+    </select>
+    <select id="searchData" resultMap="ResultMapWithBLOBs" parameterType="string">
+       ${_parameter}
+    </select>
+    <select id="dateCash" resultType="String">
+    SELECT wx_date FROM  minitj_wx GROUP BY  wx_date ORDER BY  wx_date DESC
+  </select>
+    <insert id="insert" parameterType="com.fish.dao.third.model.MinitjWx">
+    insert into minitj_wx (wx_appid, wx_date, wx_new,
+      wx_active, wx_visit, wx_avg_login,
+      wx_avg_online, wx_remain2, wx_video_show,
+      wx_video_clickrate, wx_video_income, wx_banner_show,
+      wx_banner_clickrate, wx_banner_income, wx_reg_ad,
+      wx_reg_jump, wx_reg_search, wx_reg_app,
+      wx_reg_code, wx_reg_session, wx_active_women,
+      wx_share_user, wx_share_count, wx_share_rate,
+      wx_updatetime, wx_reg_json)
+    values (#{wxAppid,jdbcType=VARCHAR}, #{wxDate,jdbcType=DATE}, #{wxNew,jdbcType=INTEGER},
+      #{wxActive,jdbcType=INTEGER}, #{wxVisit,jdbcType=INTEGER}, #{wxAvgLogin,jdbcType=DECIMAL},
+      #{wxAvgOnline,jdbcType=DECIMAL}, #{wxRemain2,jdbcType=DECIMAL}, #{wxVideoShow,jdbcType=INTEGER},
+      #{wxVideoClickrate,jdbcType=DECIMAL}, #{wxVideoIncome,jdbcType=DECIMAL}, #{wxBannerShow,jdbcType=INTEGER},
+      #{wxBannerClickrate,jdbcType=DECIMAL}, #{wxBannerIncome,jdbcType=DECIMAL}, #{wxRegAd,jdbcType=INTEGER},
+      #{wxRegJump,jdbcType=INTEGER}, #{wxRegSearch,jdbcType=INTEGER}, #{wxRegApp,jdbcType=INTEGER},
+      #{wxRegCode,jdbcType=INTEGER}, #{wxRegSession,jdbcType=INTEGER}, #{wxActiveWomen,jdbcType=DECIMAL},
+      #{wxShareUser,jdbcType=INTEGER}, #{wxShareCount,jdbcType=INTEGER}, #{wxShareRate,jdbcType=DECIMAL},
+      #{wxUpdatetime,jdbcType=TIMESTAMP}, #{wxRegJson,jdbcType=LONGVARCHAR})
+  </insert>
+
+    <select id="searchDatas" resultMap="ResultMapWithBLOBs" parameterType="string">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from minitj_wx
+        where DATE(wx_date) BETWEEN #{beginTime, jdbcType=VARCHAR} and #{endTime, jdbcType=VARCHAR}
+        <if test="wxAppid != null and wxAppid != ''">
+            and wx_appid = #{wxAppid,jdbcType=VARCHAR}
+        </if>
+    </select>
+</mapper>

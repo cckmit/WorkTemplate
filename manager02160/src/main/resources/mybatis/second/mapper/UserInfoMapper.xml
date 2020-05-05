@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fish.dao.second.mapper.UserInfoMapper">
+    <resultMap id="BaseResultMap" type="com.fish.dao.second.model.UserInfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="ddUid" property="dduid" jdbcType="VARCHAR"/>
+        <result column="ddOId" property="ddoid" jdbcType="VARCHAR"/>
+        <result column="ddAppId" property="ddappid" jdbcType="VARCHAR"/>
+        <result column="ddClientVersion" property="ddclientversion" jdbcType="VARCHAR"/>
+        <result column="ddName" property="ddname" jdbcType="VARCHAR"/>
+        <result column="ddAvatarUrl" property="ddavatarurl" jdbcType="VARCHAR"/>
+        <result column="ddAvatarFrame" property="ddavatarframe" jdbcType="INTEGER"/>
+        <result column="ddAvatarFrameGain" property="ddavatarframegain" jdbcType="VARCHAR"/>
+        <result column="ddSex" property="ddsex" jdbcType="INTEGER"/>
+        <result column="ddProvince" property="ddprovince" jdbcType="VARCHAR"/>
+        <result column="ddCity" property="ddcity" jdbcType="VARCHAR"/>
+        <result column="ddCountry" property="ddcountry" jdbcType="VARCHAR"/>
+        <result column="ddLanguage" property="ddlanguage" jdbcType="VARCHAR"/>
+        <result column="ddAwardList" property="ddawardlist" jdbcType="VARCHAR"/>
+        <result column="ddCollected" property="ddcollected" jdbcType="INTEGER"/>
+        <result column="ddInterested" property="ddinterested" jdbcType="INTEGER"/>
+        <result column="ddServicedTime" property="ddservicedtime" jdbcType="VARCHAR"/>
+        <result column="ddSharedTime" property="ddsharedtime" jdbcType="VARCHAR"/>
+        <result column="ddDayWatchVideo" property="dddaywatchvideo" jdbcType="INTEGER"/>
+        <result column="ddDayLoginGift" property="dddaylogingift" jdbcType="INTEGER"/>
+        <result column="ddRegisterTime" property="ddregistertime" jdbcType="TIMESTAMP"/>
+        <result column="ddLoginTime" property="ddlogintime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, ddUid, ddOId, ddAppId, ddClientVersion, ddName, ddAvatarUrl, ddAvatarFrame, ddAvatarFrameGain, 
+    ddSex, ddProvince, ddCity, ddCountry, ddLanguage, ddAwardList, ddCollected, ddInterested, 
+    ddServicedTime, ddSharedTime, ddDayWatchVideo, ddDayLoginGift, ddRegisterTime, ddLoginTime
+  </sql>
+    <sql id="Base_List">
+     ddUid,ddName
+  </sql>
+    <select id="selectAll" resultType="com.fish.dao.second.model.UserAllInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info
+    </select>
+    <select id="selectByDdUid" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info
+        where ddUid = #{dduid,jdbcType=VARCHAR}
+    </select>
+    <select id="selectUserInfo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_List"/>
+        from user_info
+        where ddUid in ( ${_parameter})
+    </select>
+    <select id="selectByDdName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from user_info
+        where ddName like '${_parameter}%'
+    </select>
+    <select id="selectAllUserInfo" resultType="com.fish.dao.second.model.UserAllInfo">
+        SELECT
+        w.product_name as productName , i.ddUid as dduid,i.ddName as ddname,i.ddAppId as ddappid,i.ddOId as ddoid,
+        i.ddRegisterTime as ddregistertime,i.ddLoginTime as ddlogintime,v.ddCoinCount as ddcoincount,
+        v.ddMoney * 0.01 as ddmoney FROM user_info AS i LEFT JOIN user_value AS v
+        ON i.ddUid = v.ddUid LEFT JOIN wx_config w ON w.ddAppId = i.ddAppId
+        WHERE 1 = 1
+        <if test="dduid != null and dduid !=''">
+            and i.ddUid like concat('%',#{dduid, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="ddoid != null and ddoid !=''">
+            and i.ddOId like concat('%',#{ddoid, jdbcType=VARCHAR},'%')
+        </if>
+        <if test="ddname != null and ddname !=''">
+            and i.ddName like concat('%',#{ddname, jdbcType=VARCHAR},'%')
+        </if>
+    </select>
+    <select id="selectUserCoin" resultType="com.fish.dao.second.model.UserAllInfo">
+        SELECT  i.ddUid as dduid,i.ddName as ddname,i.ddAppId as ddappid,v.ddCoinCount as ddCoinCount
+        FROM user_info as i LEFT JOIN user_value as v ON i.ddUid = v.ddUid
+        WHERE i.ddUid = #{dduid, jdbcType=VARCHAR}
+    </select>
+</mapper>

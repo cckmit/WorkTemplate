@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="chs">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <!-- 搜索表单 -->
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <form class="layui-form-item" id="search-form">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">查询日期</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <input type="text" class="layui-input" id="times" name="times"
+                                       placeholder=" - ">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">产品名称</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <div id="ddappid" name="ddappid"></div>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">类型</label>
+                            <div class="layui-input-inline" style="width: 14rem;">
+                                <select name="type" id="type">
+                                    <option value="">全部</option>
+                                    <option value=0>小游戏</option>
+                                    <option value=1>小程序</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-submit=""
+                                    lay-filter="front-search">
+                                <i class="layui-icon layuiadmin-button-btn"></i>查询
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+                <!-- 数据表格 -->
+                <div class="layui-card-body">
+                    <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 表单元素 -->
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table" style="padding: 20px 0 0 0;width: 600px;">
+
+</form>
+<script src="../layuiadmin/layui/layui.js"></script>
+<script src="../layuiadmin/modules/operation.js"></script>
+<script src="../layuiadmin/xm-select.js"></script>
+<script src="../layuiadmin/layui_exts/excel.js"></script>
+<script type="text/html" id="toolbar">
+</script>
+<script>
+    const operatorurl = '../manage/productdata';
+    let appNames = [];
+    let appSelect = xmSelect.render({
+        el: '#ddappid',
+        name: 'ddappid',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        filterDone: function (val, list) {
+        },
+    });
+    layui.use(['table', 'laydate', 'form', 'layer'], function () {
+        var table = layui.table,
+            form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate;
+        var $ = layui.$;
+        // 定时初始化数据
+        let selectBoxFlush = ()=>{
+            appNames = [];
+            $(() => {$.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/roundmatch/appname',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        let type;
+                        let appPlatform;
+                        switch (val.programType) {
+                            case 0:type = "game";break;
+                            case 1:type = "web";break;
+                            case 2:type = "public";break;
+                            default:type = "未知游戏类型";break;
+                        }
+                        switch (val.ddAppPlatform) {
+                            case "weixin":appPlatform = "wx";break;
+                            case "q":appPlatform = "qq";break;
+                            default:appPlatform = "未知平台";break;
+                        }
+                        let context = {name: appPlatform+ "-" +type + "-" + val.productName, value: val.ddappid, selected: false};
+                        appNames.push(context);
+                    });
+                    appSelect.update(
+                        {
+                            data: appNames,
+                            autoRow: true,
+                        }
+                    );
+                },
+                error: function () {
+                    alert("查询失败")
+                }
+            });}) }
+        setInterval(selectBoxFlush, 5000);
+        table.render({
+            elem: '#table-page',
+            url: operatorurl + '?datagrid=data',
+            cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'},
+                    {field: 'wxDate', width: 120, title: '日期', sort: true},
+                    {field: 'productName', width: 120, title: '产品名称', sort: true},
+                    {
+                        field: 'programType', width: 120, title: '来源类型', sort: true,
+                        templet: (d) => {
+                            if (d.programType === 1) {
+                                return '小程序';
+                            } else if (d.programType === 0) {
+                                return '小游戏';
+                            } else {
+                                return '--';
+                            }
+                        }
+                    },
+                    {
+                        field: 'ddAppPlatform', width: 120, title: '平台', sort: true,
+                        templet: (d) => {
+                            switch (d.ddAppPlatform) {
+                                case 'weixin':
+                                    return '微信';
+                                case 'q':
+                                    return 'QQ';
+                                case 'tt':
+                                    return '头条';
+                                case 'quick':
+                                    return '快应用';
+                                case "":
+                                    return "平台汇总";
+                                    break;
+                                default:
+                                    return '未知平台';
+                            }
+                        }
+                    },
+                    {field: 'wxNew', width: 120, title: '新增', sort: true},
+                    {
+                        field: 'wxAdNewPrice', width: 120, title: '新增单价', sort: true,
+                        templet: (d) => {
+                            if (d.wxAdNewPrice != null && d.wxAdNewPrice !== "null") {
+                                return d.wxAdNewPrice;
+                            } else {
+                                return "0";
+                            }
+                        },
+                    },
+                    {field: 'wxActive', width: 120, title: '活跃', sort: true},
+                    {field: 'wxVisit', width: 120, title: '访问次数', sort: true},
+                    {
+                        field: 'recharge', width: 120, title: '充值', sort: true,
+                        templet: (d) => {
+                            if (d.recharge != null && d.recharge !== "null") {
+                                return d.recharge;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
+                    {
+                        field: 'adRevenue', width: 120, title: '广告收入', sort: true,
+                        templet: (d) => {
+                            if (d.adRevenue != null && d.adRevenue !== "null") {
+                                return d.adRevenue;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
+                    {
+                        field: 'screenIncome', width: 120, title: '插屏总收入', sort: true,
+                        templet: (d) => {
+                            if (d.screenIncome != null && d.screenIncome !== "null") {
+                                return d.screenIncome;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxVideoIncome', width: 120, title: '视频收入', sort: true,
+                        templet: (d) => {
+                            if (d.wxVideoIncome != null && d.wxVideoIncome !== "null") {
+                                return d.wxVideoIncome;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxBannerIncome', width: 120, title: 'banner收入', sort: true,
+                        templet: (d) => {
+                            if (d.wxBannerIncome != null && d.wxBannerIncome !== "null") {
+                                return d.wxBannerIncome;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
+                    {
+                        field: 'activeUp', width: 120, title: '活跃ARPU', sort: true,
+                        templet: (d) => {
+                            if (d.activeUp != null && d.activeUp !== "null") {
+                                return d.activeUp;
+                            } else {
+                                return "0";
+                            }
+                        }
+                    },
+                    {field: 'wxShareUser', width: 120, title: '分享人数', sort: true},
+                    {field: 'wxShareCount', width: 120, title: '分享次数', sort: true},
+                    {
+                        field: 'wxShareRate', width: 120, title: '分享率', sort: true,
+                        templet: (d) => {
+                            if (d.wxShareRate != null && d.wxShareRate !== "null") {
+                                return d.wxShareRate + "%";
+                            } else {
+                                return "";
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxRemain2', width: 120, title: '次留', sort: true,
+                        templet: (d) => {
+                            if (d.wxRemain2 != null && d.wxRemain2 !== "null") {
+                                return d.wxRemain2 + "%";
+                            } else {
+                                return "";
+                            }
+                        }
+                    },
+                    {field: 'wxAvgLogin', width: 160, title: '人均登录次数', sort: true},
+                    {field: 'wxAvgOnline', width: 160, title: '人均在线时长', sort: true},
+                    {
+                        field: 'buyCost', width: 160, title: '买量支出(元)', sort: true,
+                        templet: (d) => {
+                            if (d.buyCost != null && d.buyCost !== "") {
+                                return d.buyCost;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'buyClickPrice', width: 160, title: '点击单价(元)', sort: true,
+                        templet: (d) => {
+                            if (d.buyClickPrice != null && d.buyClickPrice !== "") {
+                                return d.buyClickPrice;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    }
+                ]
+            ],
+            page: true,
+            toolbar: '#toolbar',
+            limit: 20,
+            defaultToolbar: ['filter', 'exports'],
+            statusName: 'status',//数据状态的字段名称，默认：code
+            statusCode: 200, //成功的状态码，默认：0
+            height: 'full-120'
+        });
+
+        laydate.render({
+            elem: '#times',
+            range: true
+        });
+    })
+
+    function privateSumbitFormatData(data) {
+        return UIConfig.sumbitFormatData(data);
+    }
+
+    /**
+     * 根据wxAppId，wxDate参数删除，重写privateGetDeleteData
+     * @param dataArray
+     * @param deleteObj
+     */
+    function privateGetDeleteData(dataArray, deleteObj) {
+        if (dataArray.length > 1) {
+            UIConfig.warnMsg("请选择一行数据删除！")
+            return false;
+        }
+        deleteObj.deleteIds = dataArray[0].wxAppid;
+        deleteObj.wxDate = dataArray[0].wxDate;
+        deleteObj.deleteCount++;
+    }
+</script>
+</body>
+</html>

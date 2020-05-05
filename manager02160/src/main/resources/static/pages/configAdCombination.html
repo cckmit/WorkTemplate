@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="chs">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../layuiadmin/style/admin.css" media="all">
+    <script src="../layuiadmin/layui/layui.js"></script>
+    <script src="../layuiadmin/modules/operation.js"></script>
+    <script src="../layuiadmin/xm-select.js"></script>
+    <script></script>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md5">
+            <div class="layui-card">
+                <!-- 搜索表单 -->
+                <!-- 数据表格 -->
+                <div class="layui-card-body">
+                    <table class="layui-hide" lay-filter="table-page" id="table-page"></table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md7">
+            <div class="layui-card" style="height: 100%;">
+                <div class="layui-card-header">
+                    <span id="selectedInfo">请在左边选择一个配置，点击【查看/编辑】按钮</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="layui-btn layui-btn-sm" id="addAdPosition" onclick="addAdPosition();"
+                            disabled>
+                        <i class="layui-icon">&#xe608;</i>新增广告位置
+                    </button>
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" id="saveCombinationJson"
+                            onclick="saveCombinationJson();" disabled>
+                        <i class="layui-icon">&#xe608;</i>保存组合配置
+                    </button>
+                </div>
+                <div class="layui-card-body" style="height: 100%;">
+                    <form id="combination_json_form" class="layui-form" id="combination_json_form"
+                          lay-filter="combination_json_form" style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+                        <input id="combinationId" name="combinationId" hidden>
+                        <div class="layui-form-item layui-hide" style="text-align:center;">
+                            <input type="button" lay-submit lay-filter="combination-json-submit"
+                                   id="combination-json-submit" value="确认"
+                                   style="text-align:center;">
+                        </div>
+                        <div id="combinationHtml"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="toolbar">
+    <div class="layui-table-tool-temp">
+        <button type="button" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon">&#xe654;</i>新增
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="update"><i class="layui-icon">&#xe642;</i>编辑
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe654;</i>复制
+        </button>
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除
+        </button>
+    </div>
+</script>
+
+<script type="text/html" id="editBar">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">查看/编辑</a>
+</script>
+
+<script>
+    const operatorurl = '../manage/configAdCombination';
+
+    // 广告策略数组
+    let strategyOptionArr = [];
+    // 当前广告策略内容
+    let currentStrategy = '';
+    /**
+     * 广告策略选择器
+     */
+    let strategySelect = xmSelect.render({
+        el: '#adStrategy',
+        name: 'adStrategy',
+        language: 'zn',
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        delay: 500,
+        layVerify: 'required',
+        on: (data) => {
+            const selectedData = data.arr;
+            if (selectedData && selectedData.length >= 1) {
+                currentStrategy = selectedData[0].name;
+            } else {
+                currentStrategy = '';
+            }
+        }
+    });
+
+    // 广告位置选择结果
+    let currentPosition = {};
+    /**
+     * 广告位置选择器
+     */
+    let positionSelect = xmSelect.render({
+        el: '#adPosition',
+        name: 'adPosition',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        on: (data) => {
+            const selectedData = data.arr;
+            if (selectedData && selectedData.length >= 1) {
+                currentPosition.value = selectedData[0].value;
+                currentPosition.positionName = selectedData[0].name;
+            } else {
+                currentPosition = {};
+            }
+        }
+    });
+
+    // 广告位选择结果
+    let currentSpace = {};
+    /**
+     * 广告位选择器
+     */
+    let spaceSelect = xmSelect.render({
+        el: '#adSpace',
+        name: 'adSpace',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: true,
+        clickClose: true,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        on: (data) => {
+            const selectedData = data.arr;
+            if (selectedData && selectedData.length >= 1) {
+                currentSpace.value = selectedData[0].value;
+                currentSpace.spaceName = selectedData[0].name;
+            } else {
+                currentSpace = {};
+            }
+        }
+    });
+
+    let currentContent = '';
+    /**
+     * 广告内容选择器
+     */
+    let contentSelect = xmSelect.render({
+        el: '#adContents',
+        name: 'adContents',
+        language: 'zn',
+        toolbar: {show: true},
+        data: [],
+        radio: false,
+        clickClose: false,
+        autoRow: true,
+        paging: true,
+        pageSize: 5,
+        delay: 500,
+        filterable: true,
+        on: (data) => {
+            currentContent = '';
+            const selectedData = data.arr;
+            if (selectedData && selectedData.length >= 1) {
+                selectedData.forEach((val, index, arr) => {
+                    if (currentContent) {
+                        currentContent += ', ' + val.name;
+                    } else {
+                        currentContent = val.name;
+                    }
+                });
+            }
+        }
+    });
+
+    layui.use(['table', 'form', 'layer', 'tree'], () => {
+        const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+        /**
+         * 打开页面时初始化加载数据
+         */
+        table.render({
+            elem: '#table-page',
+            url: operatorurl,
+            cols: [[
+                {type: 'checkbox'},
+                {field: 'ddId', width: 60, title: 'ID', sort: true, align: 'right'},
+                {field: 'ddName', width: 180, title: '名称', sort: true, align: 'left'},
+                {field: 'updateTime', width: 140, title: '数据更新时间', sort: true, align: 'center'},
+                {width: 120, title: '操作', sort: false, align: 'center', toolbar: '#editBar'}
+            ]],
+            page: true,
+            toolbar: '#toolbar',
+            limit: 30,
+            defaultToolbar: ['filter', 'exports'],
+            height: 'full-75'
+        });
+
+        // 初始化数据
+        $(() => {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                url: '../manage/configAdStrategy/select',
+                success: (res) => {
+                    res.forEach(function (val, index, arr) {
+                        let context = {name: val.ddName, value: val.ddId, selected: false};
+                        strategyOptionArr.push(context);
+                    });
+
+                },
+                error: function () {
+                    layer.msg("广告策略列表查询失败，请联系管理员！", {icon: 2});
+                }
+            })
+        });
+
+        //监听工具条
+        table.on('tool(table-page)', (obj) => {
+            const data = obj.data;
+            $("#combinationHtml").empty();
+            if (obj.event === 'edit') {
+                $('#combinationId').attr('value', data.ddId);
+                $('#selectedInfo').text('当前配置选择：' + data.ddId + '-' + data.ddName);
+                $('#addAdPosition').removeAttr("disabled");
+                $('#saveCombinationJson').removeAttr("disabled");
+                $.get(operatorurl + '/getEditJson', {id: data.ddId}, (result) => {
+                    // 由于引号和花括号的问题，直接拼接会出现异常，采用赋值的方式
+                    let strategyValue = {};
+                    result && result.forEach((adPosition, index, arr) => {
+                        let positionHTMLArray = [];
+                        positionHTMLArray.push('<fieldset class="layui-elem-field" id="position_fieldset_' + adPosition.positionId + '"><legend>');
+                        positionHTMLArray.push('<span id="position_span_' + adPosition.positionId + '" class="position_name_span">' + adPosition.positionName + '</span>');
+                        positionHTMLArray.push('<div class="layui-btn-group">');
+                        positionHTMLArray.push('<button type="button" class="layui-btn layui-btn-xs" onclick="addAdSpace(' + adPosition.positionId + ');">新增广告位<i class="layui-icon">&#xe654;</i></button>');
+                        positionHTMLArray.push('<button type="button" class="layui-btn layui-btn-danger layui-btn-xs" onclick="deleteAdPosition(' + adPosition.positionId + ');">删除当前广告位置<i class="layui-icon">&#xe640;</i></button></div></legend>');
+                        positionHTMLArray.push('<input id="position_input_' + adPosition.positionId + '" class="position_input" name="position_' + adPosition.positionId + '" value="' + adPosition.positionId + '" hidden>');
+                        positionHTMLArray.push('<div class="layui-form-item "><label class="layui-form-label">策略</label><div class="layui-input-inline">');
+                        positionHTMLArray.push('<input type="text" class="layui-input" id="strategy_id_' + adPosition.positionId + '" name="strategy_id_' + adPosition.positionId + '" value="' + adPosition.strategyName + '" onclick="selectStrategy(' + adPosition.positionId + ')" placeholder="点击选择策略" readonly></div></div>');
+                        positionHTMLArray.push('<div class="layui-form-item "><label class="layui-form-label">策略配置</label><div class="layui-input-inline">');
+                        positionHTMLArray.push('<input type="text" class="layui-input" id="strategy_value_' + adPosition.positionId + '" name="strategy_value_' + adPosition.positionId + '" value="" autocomplete="off"></div></div>');
+                        // 直接拼接会有双引号的问题，采用赋值的方式
+                        strategyValue['strategy_value_' + adPosition.positionId] = adPosition.strategyValue;
+                        if (adPosition.spaces) {
+                            adPosition.spaces.forEach((adSpaceVal, adSpaceIndex, adSpaceArr) => {
+                                let spaceHTMLArray = [];
+                                spaceHTMLArray.push('<fieldset class="layui-elem-field" id="space_field_' + adPosition.positionId + '_' + adSpaceVal.spaceId + '"><legend>');
+                                spaceHTMLArray.push('<span id="space_span_' + adPosition.positionId + '_' + adSpaceVal.spaceId + '" class="space_name_span" style="font-size: 16px;">' + adSpaceVal.spaceName + '</span>');
+                                spaceHTMLArray.push('<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteSpace(' + adPosition.positionId + ', ' + adSpaceVal.spaceId + ');">删除广告位<i class="layui-icon">&#xe640;</i></button></legend>');
+                                spaceHTMLArray.push('<input id="space_input_' + adPosition.positionId + '_' + adSpaceVal.spaceId + '" class="space_input" name="space_' + adPosition.positionId + '_' + adSpaceVal.spaceId + '" value="' + adSpaceVal.spaceId + '" hidden>');
+                                spaceHTMLArray.push('<div class="layui-form-item "><label class="layui-form-label">广告内容</label><div class="layui-input-inline">');
+                                spaceHTMLArray.push('<textarea class="layui-textarea" rows="1" id="content_' + adPosition.positionId + '_' + adSpaceVal.spaceId + '" name="content_' + adPosition.positionId + '_' + adSpaceVal.spaceId + '" onclick="selectContents(' + adPosition.positionId + ', ' + adSpaceVal.spaceId + ')" placeholder="点击选择广告内容" readonly>' + adSpaceVal.contentNames + '</textarea>');
+                                spaceHTMLArray.push('</div></div></fieldset>');
+                                positionHTMLArray.push(spaceHTMLArray.join(' '));
+                            });
+                        }
+                        positionHTMLArray.push('</fieldset>');
+                        $("#combinationHtml").append(positionHTMLArray.join(' '));
+                    });
+                    Object.getOwnPropertyNames(strategyValue).forEach((key) => {
+                        $('#' + key).attr('value', strategyValue [key]);
+                    })
+                });
+            }
+        });
+    });
+
+    function saveCombinationJson() {
+        layui.use(['form'], () => {
+            const $ = layui.$, form = layui.form;
+            form.on('submit(combination-json-submit)', (data) => {
+                const postData = UIConfig.sumbitFormatData(data);
+                $.ajax({
+                    url: operatorurl + '/saveCombinationJson',
+                    data: postData,
+                    contentType: "application/json; charset=utf-8",
+                    type: 'post',
+                    dataType: "json",
+                    success: (result) => {
+                        UIConfig.postMsg(result);
+                    },
+                    error: function () {
+                        layer.msg("广告组合配置保存失败，请联系管理员！", {icon: 2});
+                    }
+                })
+            });
+            $('#combination-json-submit').trigger('click');
+        });
+    }
+
+    /**
+     * 新增广告位置
+     */
+    function addAdPosition() {
+        layui.use(['table', 'form', 'layer', 'tree'], () => {
+            const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+            $('#ad_position_select').removeClass('layui-hide').addClass('layui-show');
+            layui.layer.open({
+                type: 1,
+                title: '选择广告位置',
+                content: $('#ad_position_select'),
+                maxmin: true,
+                shade: 0,
+                area: ['38%', '50%'],
+                offset: ['15%', '20%'],
+                btn: ['确定', '取消'],
+                btnAlign: 'c',
+                success: (layero, index) => {
+                    $.get('../manage/configAdPosition/selectAll', {}, (data) => {
+                        let positionOptionArr = [];
+                        data.forEach(function (val, index, arr) {
+                            let context = {name: val.ddId + '-' + val.ddName, value: val.ddId, selected: false};
+                            positionOptionArr.push(context);
+                        });
+                        positionSelect.update({
+                            data: positionOptionArr,
+                            autoRow: true,
+                        });
+                    });
+                }, yes: (index, layero) => {
+                    form.on('submit(ad_position_confirm)', function (data) {
+                        if (currentPosition) {
+                            let positionHTMLArray = [];
+                            positionHTMLArray.push('<fieldset class="layui-elem-field" id="position_fieldset_' + currentPosition.value + '"><legend>');
+                            positionHTMLArray.push('<span id="position_span_' + currentPosition.value + '" class="position_name_span">' + currentPosition.positionName + '</span>');
+                            positionHTMLArray.push('<div class="layui-btn-group">');
+                            positionHTMLArray.push('<button type="button" class="layui-btn layui-btn-xs" onclick="addAdSpace(' + currentPosition.value + ');">新增广告位<i class="layui-icon">&#xe654;</i></button>');
+                            positionHTMLArray.push('<button type="button" class="layui-btn layui-btn-danger layui-btn-xs" onclick="deleteAdPosition(' + currentPosition.value + ');">删除当前广告位置<i class="layui-icon">&#xe640;</i></button></div></legend>');
+                            positionHTMLArray.push('<input id="position_input_' + currentPosition.value + '" class="position_input" name="position_' + currentPosition.value + '" value="' + currentPosition.value + '" hidden>');
+                            positionHTMLArray.push('<div class="layui-form-item "><label class="layui-form-label">策略</label><div class="layui-input-inline">');
+                            positionHTMLArray.push('<input type="text" class="layui-input" id="strategy_id_' + currentPosition.value + '" name="strategy_id_' + currentPosition.value + '" value="0-默认" onclick="selectStrategy(' + currentPosition.value + ')" placeholder="点击选择策略" readonly></div></div>');
+                            positionHTMLArray.push('<div class="layui-form-item "><label class="layui-form-label">策略配置</label><div class="layui-input-inline">');
+                            positionHTMLArray.push('<input type="text" class="layui-input" id="strategy_value_' + currentPosition.value + '" name="strategy_value_' + currentPosition.value + '" value="" autocomplete="off"></div></div>');
+                            positionHTMLArray.push('</fieldset>');
+                            $("#combinationHtml").append(positionHTMLArray.join(' '));
+                        }
+                        layer.close(index);
+                    });
+                    $('#ad_position_confirm').trigger('click');
+                },
+                end: () => {
+                    $('#ad_position_select').removeClass('layui-hide').addClass('layui-show');
+                    return false;
+                }
+            });
+        });
+    }
+
+    /**
+     * 删除广告位置
+     */
+    function deleteAdPosition(positionId) {
+        layui.use(['table', 'form',], () => {
+            const $ = layui.$, table = layui.table, form = layui.form;
+            const positionName = $('#position_span_' + positionId).text();
+            layer.confirm('确认删除广告位置【' + positionName + '】吗？', {btn: ['确定', '取消'], title: "广告位置删除"}, function () {
+                $("#position_fieldset_" + positionId).remove();
+                layer.msg('广告位置【' + positionName + '】成功', {icon: 1});
+            });
+        });
+    }
+
+    /**
+     * 选择广告策略
+     * @param strategyInputId
+     */
+    function selectStrategy(strategyInputId) {
+        layui.use(['table', 'form', 'layer', 'tree'], () => {
+            const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+            // 展示策略选择弹出框
+            $('#ad_strategy_select').removeClass('layui-hide').addClass('layui-show');
+            layui.layer.open({
+                type: 1,
+                title: '选择广告策略',
+                content: $('#ad_strategy_select'),
+                maxmin: true,
+                shade: 0,
+                area: ['38%', '50%'],
+                offset: ['15%', '20%'],
+                btn: ['确定', '取消'],
+                btnAlign: 'c',
+                success: (layero, index) => {
+                    const strategyValue = $('#strategy_id_' + strategyInputId).val();
+                    let strategyId = 0;
+                    if (strategyValue) {
+                        strategyId = Number.parseInt(strategyValue.split('-')[0]);
+                    }
+                    let newStrategyOptionArr = [];
+                    strategyOptionArr.forEach(function (val, index, arr) {
+                        let context = JSON.parse(JSON.stringify(val));
+                        context.selected = context.value === strategyId;
+                        newStrategyOptionArr.push(context);
+                    });
+                    strategySelect.update({
+                        data: newStrategyOptionArr,
+                        autoRow: true,
+                    });
+                }, yes: (index, layero) => {
+                    form.on('submit(ad_strategy_confirm)', function (data) {
+                        $('#strategy_id_' + strategyInputId).attr('value', currentStrategy);
+                        layer.close(index);
+                    });
+                    $('#ad_strategy_confirm').trigger('click');
+                },
+                end: () => {
+                    $('#ad_strategy_select').removeClass('layui-hide').addClass('layui-show');
+                    return false;
+                }
+            });
+        });
+    }
+
+    /**
+     * 新增广告位
+     */
+    function addAdSpace(positionId) {
+        layui.use(['table', 'form', 'layer', 'tree'], () => {
+            const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+            $('#ad_space_select').removeClass('layui-hide').addClass('layui-show');
+            layui.layer.open({
+                type: 1,
+                title: '选择广告位置',
+                content: $('#ad_space_select'),
+                maxmin: true,
+                shade: 0,
+                area: ['38%', '50%'],
+                offset: ['15%', '20%'],
+                btn: ['确定', '取消'],
+                btnAlign: 'c',
+                success: (layero, index) => {
+                    $.get('../manage/configAdSpace/selectAllSpace', {}, (data) => {
+                        let spaceOptionArr = [];
+                        data.forEach(function (val, index, arr) {
+                            let context = {name: val.ddId + '-' + val.ddName, value: val.ddId, selected: false};
+                            spaceOptionArr.push(context);
+                        });
+                        spaceSelect.update({
+                            data: spaceOptionArr,
+                            autoRow: true,
+                        });
+                    });
+                }, yes: (index, layero) => {
+                    form.on('submit(ad_space_confirm)', function (data) {
+                        if (currentSpace) {
+                            // 新增div内容
+                            let spaceHTMLArray = [];
+                            spaceHTMLArray.push('<fieldset class="layui-elem-field" id="space_field_' + positionId + '_' + currentSpace.value + '"><legend>');
+                            spaceHTMLArray.push('<span id="space_span_' + positionId + '_' + currentSpace.value + '" class="space_name_span" style="font-size: 16px;">' + currentSpace.spaceName + '</span>');
+                            spaceHTMLArray.push('<button type="button" class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteSpace(' + positionId + ', ' + currentSpace.value + ');">删除广告位<i class="layui-icon">&#xe640;</i></button></legend>');
+                            spaceHTMLArray.push('<input id="space_input_' + positionId + '_' + currentSpace.value + '" class="space_input" name="space_' + positionId + '_' + currentSpace.value + '" value="' + currentSpace.value + '" hidden>');
+                            spaceHTMLArray.push('<div class="layui-form-item "><label class="layui-form-label">广告内容</label><div class="layui-input-inline">');
+                            spaceHTMLArray.push('<textarea class="layui-textarea"  rows="1" id="content_' + positionId + '_' + currentSpace.value + '" name="content_' + positionId + '_' + currentSpace.value + '" onclick="selectContents(' + positionId + ', ' + currentSpace.value + ')" placeholder="点击选择广告内容" readonly></textarea>');
+                            spaceHTMLArray.push('</div></div></fieldset></fieldset>');
+                            $("#position_fieldset_" + positionId).append(spaceHTMLArray.join(' '));
+                        }
+                        layer.close(index);
+                    });
+                    $('#ad_space_confirm').trigger('click');
+                },
+                end: () => {
+                    $('#ad_space_select').removeClass('layui-hide').addClass('layui-show');
+                    return false;
+                }
+            });
+        });
+    }
+
+    /**
+     * 删除广告位
+     */
+    function deleteSpace(positionId, spaceId) {
+        layui.use(['table', 'form',], () => {
+            const $ = layui.$, table = layui.table, form = layui.form;
+            const positionName = $('#position_span_' + positionId).text();
+            const spaceName = $('#space_span_' + positionId + '_' + spaceId).text();
+            layer.confirm('确认删除广告位【' + positionName + ' -> ' + spaceName + '】吗？', {
+                btn: ['确定', '取消'],
+                title: "广告位删除"
+            }, () => {
+                $('#space_field_' + positionId + '_' + spaceId).remove();
+                layer.msg('广告位【' + positionName + ' -> ' + spaceName + '】删除成功！', {icon: 1});
+            });
+        });
+    }
+
+    /**
+     * 选择广告位置
+     * @param positionId 广告位置ID
+     * @param spaceId 广告位ID
+     */
+    function selectContents(positionId, spaceId) {
+        layui.use(['table', 'form', 'layer', 'tree'], () => {
+            const $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer, tree = layui.tree;
+            // 展示策略选择弹出框
+            $('#ad_content_select').removeClass('layui-hide').addClass('layui-show');
+            layui.layer.open({
+                type: 1,
+                title: '选择广告内容 -> 广告内容的选择顺序即是默认展示顺序',
+                content: $('#ad_content_select'),
+                maxmin: true,
+                shade: 0,
+                area: ['38%', '70%'],
+                offset: ['15%', '20%'],
+                btn: ['确定', '取消'],
+                btnAlign: 'c',
+                success: (layero, index) => {
+                    // 处理广告内容
+                    const currentContentValue = $('#content_' + positionId + '_' + spaceId).text();
+                    let currentContent = [];
+                    if (currentContentValue) {
+                        const currentContentArray = currentContentValue.split(',');
+                        currentContentArray.forEach(function (val, index, arr) {
+                            currentContent.push(Number.parseInt(val.trim().split('-')[0]));
+                        });
+                    }
+
+                    $.get('../manage/configAdSpace/selectTypeContentBySpaceId', {"spaceId": spaceId}, (data) => {
+                        let spaceOptionArr = [];
+                        data.forEach(function (val, index, arr) {
+                            let context = {
+                                name: val.ddId + '-' + val.ddTargetAppName,
+                                value: val.ddId,
+                                selected: currentContent.indexOf(val.ddId) > -1
+                            };
+                            spaceOptionArr.push(context);
+                        });
+                        contentSelect.update({
+                            data: spaceOptionArr,
+                            autoRow: true,
+                        });
+                    });
+                }, yes: (index, layero) => {
+                    form.on('submit(ad_content_confirm)', function (data) {
+                        $('#content_' + positionId + '_' + spaceId).text(currentContent);
+                        layer.close(index);
+                    });
+                    $('#ad_content_confirm').trigger('click');
+                },
+                end: () => {
+                    $('#ad_content_select').removeClass('layui-hide').addClass('layui-show');
+                    return false;
+                }
+            });
+        });
+    }
+</script>
+
+<!-- 广告组合配置表单元素 -->
+<form id="form_table" class="layui-form layui-hide" lay-filter="form_table"
+      style="padding: 20px 0 0 0;width: 600px;height: 700px;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">ID</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddId" name="ddId" class="layui-input" autocomplete="off" disabled
+                   placeholder="保存成功后自动生成">
+        </div>
+    </div>
+    <div class="layui-form-item ">
+        <label class="layui-form-label">名称</label>
+        <div class="layui-input-inline">
+            <input type="text" id="ddName" name="ddName" class="layui-input" autocomplete="off"
+                   lay-verify="required">
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide" style="text-align:center;">
+        <input type="button" lay-submit lay-filter="front-submit" id="front-submit" value="确认"
+               style="text-align:center;">
+    </div>
+</form>
+
+<!-- 广告策略选择 -->
+<div id="ad_strategy_select" class="layui-form layui-hide" lay-filter="ad_strategy_select"
+     style="padding: 20px 0 0 0;width: 600px;height: 400px;">
+    <div class="layui-form-item ">
+        <label class="layui-form-label">策略类型</label>
+        <div class="layui-input-block">
+            <div class="layui-input-inline" id="adStrategy" name="adStrategy" lay-filter="adStrategy"
+                 autocomplete="off"></div>
+        </div>
+    </div>
+    <div class="layui-form-item layui-hide" style="text-align:center;">
+        <input type="button" lay-submit lay-filter="ad_strategy_confirm" id="ad_strategy_confirm" value="确认"
+               style="text-align:center;">
+    </div>
+</div>
+
+<!-- 广告位置选择 -->
+<div id="ad_position_select" class="layui-form layui-hide" lay-filter="ad_position_select"
+     style="padding: 20px 0 0 0;width: 600px;height: 200px;">
+    <div class="layui-form-item ">
+        <label class="layui-form-label">广告位置</label>
+        <div class="layui-input-inline" id="adPosition" name="adPosition" lay-filter="adPosition"
+             autocomplete="off"></div>
+    </div>
+    <div class="layui-form-item layui-hide" style="text-align:center;">
+        <input type="button" lay-submit lay-filter="ad_position_confirm" id="ad_position_confirm" value="确认"
+               style="text-align:center;">
+    </div>
+</div>
+
+<!-- 广告位选择 -->
+<div id="ad_space_select" class="layui-form layui-hide" lay-filter="ad_space_select"
+     style="padding: 20px 0 0 0;width: 600px;height: 400px;">
+    <div class="layui-form-item ">
+        <label class="layui-form-label">广告位</label>
+        <div class="layui-input-inline" id="adSpace" name="adSpace" lay-filter="adSpace"
+             autocomplete="off"></div>
+    </div>
+    <div class="layui-form-item layui-hide" style="text-align:center;">
+        <input type="button" lay-submit lay-filter="ad_space_confirm" id="ad_space_confirm" value="确认"
+               style="text-align:center;">
+    </div>
+</div>
+
+<!-- 广告内容选择 -->
+<div id="ad_content_select" class="layui-form layui-hide" lay-filter="ad_content_select"
+     style="padding: 20px 0 0 0;width: 600px;height: 400px;">
+    <div class="layui-form-item ">
+        <label class="layui-form-label">广告内容</label>
+        <div class="layui-input-inline" id="adContents" name="adContents" lay-filter="adContents"
+             autocomplete="off"></div>
+    </div>
+    <div class="layui-form-item layui-hide" style="text-align:center;">
+        <input type="button" lay-submit lay-filter="ad_content_confirm" id="ad_content_confirm" value="确认"
+               style="text-align:center;">
+    </div>
+</div>
+
+</body>
+</html>
