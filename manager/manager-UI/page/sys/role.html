@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>系统角色管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-xs12 layui-col-md6">
+                    <!-- 查询表单 -->
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">角色名称</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="roleName" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button type="submit" class="layui-btn layui-btn-primary" lay-submit
+                                    id="data-search-btn" lay-filter="data-search-btn"><i class="layui-icon"></i> 搜
+                                    索</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Table表头 -->
+                    <script type="text/html" id="crudTableBar">
+                        <div class="layui-btn-container">
+                            <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"><i class="layui-icon"></i> 新增 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="layui-icon"></i> 批量删除 </button>
+                        </div>
+                    </script>
+
+                    <!-- Table -->
+                    <table class="layui-hide" id="crudTableId" lay-filter="currentTableFilter"></table>
+
+                    <!-- 行内按钮 -->
+                    <script type="text/html" id="currentTableBar">
+                        <a class="layui-btn layui-btn-primary layui-btn-xs data-count-edit" lay-event="configMenu"><i class="layui-icon"></i>菜单配置</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete"><i class="layui-icon"></i>删除</a>
+                    </script>
+
+                    <!-- 行内表单 -->
+                    <script type="text/html" id="switchStatus">
+                        <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                            {{ d.status ? 'checked' : '' }}>
+                    </script>
+                </div>
+                <div class="layui-col-xs12 layui-col-md6">
+                    <div id="echarts-map" style="background-color:#ffffff;min-height:300px;padding: 10px">
+                        <h1>角色菜单树位置，待开发</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
+    <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script>
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置
+        const currentPage = {
+            module: window.module.system,
+            page: 'sys/role'
+        }
+
+        // 表单数据查询渲染
+        layui.use(['form', 'table'], function () {
+            var $ = layui.jquery, form = layui.form, table = layui.table;
+
+            table.render({
+                elem: '#crudTableId',
+                url: currentPage.module.server + currentPage.page + '/getPage',
+                toolbar: '#crudTableBar',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    { type: "checkbox", width: 50 },
+                    { field: 'id', width: 80, title: 'ID', sort: true },
+                    { field: 'roleName', width: 200, title: '角色名称', edit: 'text' },
+                    { field: 'status', width: 160, title: '是否有效', align: "center", templet: '#switchStatus' },
+                    { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true },
+                    { title: '操作', minWidth: 120, toolbar: '#currentTableBar', align: "center" }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-20'
+            });
+
+            // 行内编辑监听
+            table.on('edit(currentTableFilter)', (obj) => {
+                $.ajax({
+                    url: currentPage.module.server + currentPage.page,
+                    data: JSON.stringify({ id: obj.data.id, roleName: obj.data.roleName }),
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                    type: 'PUT',
+                    dataType: "json",
+                    async: false,
+                    success: function (result) {
+                        console.log(result);
+                        layer.msg(result.msg, { icon: result.code });
+                        if (result.code === 1) {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));
+                        }
+                    }
+                });
+            });
+
+            // 有效性状态切换
+            form.on('switch(switchStatus)', function (obj) {
+                console.log(this.value + ' ' + this.name + '：' + obj.elem.checked, JSON.stringify(obj.othis));
+                $.ajax({
+                    url: currentPage.module.server + currentPage.page,
+                    data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                    type: 'PUT',
+                    dataType: "json",
+                    async: false,
+                    success: function (result) {
+                        console.log(JSON.stringify(result));
+                        layer.msg(result.msg, { icon: result.code, time: 2000 });
+                    }
+                });
+            });
+        });
+
+        /**
+         * 行内按钮其它操作
+         */
+        function otherToolEvent(obj) {
+            if (obj.event === 'configMenu') {
+                console.log(obj.data);
+            }
+        }
+    </script>
+
+</body>
+
+</html>

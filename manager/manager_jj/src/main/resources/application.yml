@@ -1,0 +1,33 @@
+server:
+  port: 8099
+  servlet:
+    context-path: /manager_jj
+#  devtools
+debug: true
+spring:
+  devtools:
+    restart:
+      enabled: false
+  datasource:
+    dynamic:
+      primary: jj
+      datasource:
+        jj:
+          url: jdbc:mysql://106.14.201.174:3306/persie_value?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true&zeroDateTimeBehavior=convertToNull
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: chufan
+          password: chufan123
+        fc:
+          url: jdbc:mysql://106.14.201.174:3306/persie_value?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true&zeroDateTimeBehavior=convertToNull
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: chufan
+          password: chufan123
+mybatis:
+  mapper-locations: classpath:mybatis-mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+logging:
+  config: classpath:logback-spring.xml

@@ -1,0 +1,89 @@
+package com.cc.manager.modules.jj.controller;
+
+
+import com.alibaba.fastjson.JSONArray;
+import com.cc.manager.common.mvc.BaseCrudController;
+import com.cc.manager.common.result.CrudObjectResult;
+import com.cc.manager.common.result.CrudPageParam;
+import com.cc.manager.common.result.CrudPageResult;
+import com.cc.manager.common.result.PostResult;
+import com.cc.manager.common.utils.ExcelUtils;
+import com.cc.manager.modules.jj.entity.RoundRecord;
+import com.cc.manager.modules.jj.service.RoundRecordMatchService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+/**
+ *
+ * @author cf
+ * @since 2020-05-08
+ */
+@CrossOrigin
+@RestController
+@RequestMapping("/jj/roundRecordMatch")
+public class RoundRecordMatchController implements BaseCrudController {
+
+    private RoundRecordMatchService roundRecordMatchService;
+    @Override
+    @GetMapping(value = "/id/{id}")
+    public CrudObjectResult getObjectById(@PathVariable String id) {
+        return this.roundRecordMatchService.getObjectById(id);
+    }
+
+    @Override
+    @GetMapping(value = "/getObject/{getObjectParam}")
+    public CrudObjectResult getObject(@PathVariable String getObjectParam) {
+        return this.roundRecordMatchService.getObject(getObjectParam);
+    }
+
+    @Override
+    @GetMapping(value = "/getPage")
+    public CrudPageResult getPage(CrudPageParam crudPageParam) {
+        return this.roundRecordMatchService.getPage(crudPageParam);
+    }
+    /**
+     * 导出Excel结果
+     *
+     * @param roundRecord
+     * @return
+     */
+    @GetMapping(value = "/export")
+    public void getRankingResult(RoundRecord roundRecord, HttpServletResponse response) {
+        roundRecordMatchService.exportResult(roundRecord,response);
+    }
+    @Override
+    @PostMapping
+    public PostResult post(@RequestBody String requestParam) {
+        return null;
+    }
+
+    @Override
+    @PutMapping
+    public PostResult put(@RequestBody String requestParam) {
+        return null;
+    }
+
+    @Override
+    @DeleteMapping
+    public PostResult delete(@RequestBody String requestParam) {
+        return null;
+    }
+
+    @Override
+    public JSONArray getSelectArray(String requestParam) {
+        return null;
+    }
+
+    @Autowired
+    public void setRoundRecordMatchService(RoundRecordMatchService roundRecordMatchService) {
+        this.roundRecordMatchService = roundRecordMatchService;
+    }
+
+}
+

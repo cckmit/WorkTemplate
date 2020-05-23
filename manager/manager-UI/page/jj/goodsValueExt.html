@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>全局配置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 查询表单 -->
+            <form class="layui-form layui-form-pane" action="" id="data-search-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">计费点金额</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" name="money">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-inline">
+                            <select name="type">
+                                <option value=""> -</option>
+                                <option value="coin">金币</option>
+                                <option value="recharge">提现</option>
+                                <option value="head">头像框</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Table表头 -->
+            <script type="text/html" id="crudTableBar">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
+                </div>
+            </script>
+
+            <!-- Table -->
+            <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
+
+            <!-- 行内按钮 -->
+            <script type="text/html" id="crudRowBar">
+                <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+                <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
+                
+            </script>
+
+            <!-- 行内表单 -->
+            <script type="text/html" id="switchStatus">
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                    {{ d.status ? 'checked' : '' }}>
+            </script>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
+        <div class="layui-form-item  layui-hide">
+            <label class="layui-form-label required">计费点ID</label>
+            <div class="layui-input-block ">
+                <input type="text" id="id" name="id" autocomplete="off" class="layui-input ">
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label required">计费点金额</label>
+            <div class="layui-input-block">
+                <input type="text" id="ddPrice" name="ddPrice" lay-verify="required" autocomplete="off"
+                    class="layui-input ">
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label required">购买类型</label>
+            <div class="layui-input-block">
+                <select class="layui-select" id="ddGoodsType" name="ddGoodsType" lay-verify="required"
+                    lay-filter="ddGoodsType">
+                    <option value="coin">金币</option>
+                    <option value="head">头像框</option>
+                    <option value="recharge">提现</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item " id="coin">
+            <label class="layui-form-label required">购买数量</label>
+            <div class="layui-input-block">
+                <input type="number" name="coinNumber" autocomplete="off" class="layui-input " placeholder="(金币)">
+                <tip style="color: red;">(金币)</tip>
+            </div>
+
+        </div>
+        <div class="layui-form-item layui-hide" id="head">
+            <label class="layui-form-label required">头像框编号</label>
+            <div class="layui-input-block">
+                <input type="number" name="headNumber" autocomplete="off" class="layui-input " placeholder="(号头像框)">
+                <tip style="color: red;">(号头像框)</tip>
+            </div>
+
+        </div>
+        <div class="layui-form-item layui-hide " id="cash">
+            <label class="layui-form-label required">提现金额</label>
+            <div class="layui-input-block">
+                <input type="number" name="cashNumber" autocomplete="off" class="layui-input " placeholder="(元)">
+                <tip style="color: red;">(元)</tip>
+            </div>
+
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label required">支持最低版本</label>
+            <div class="layui-input-block">
+                <input type="text" name="ddMinVer" lay-verify="required" autocomplete="off" class="layui-input ">
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label required">是否支持IOS</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="ddIOS" lay-skin="switch" lay-text="开启|关闭" value="1">
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label required">状态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="ddState" lay-skin="switch" lay-text="开启|关闭" value="1">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
+    <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script>
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置
+        const currentPage = {
+            module: window.module.jj,
+            page: 'jj/goodsValueExt'
+        }
+
+        // 表单数据查询渲染
+        layui.use(['form', 'table', 'layer'], function () {
+            $ = layui.jquery, form = layui.form, layer = layui.layer, table = layui.table;
+            table.render({
+                elem: '#crudTableId',
+                url: currentPage.module.server + currentPage.page + '/getPage',
+                toolbar: '#crudTableBar',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    { type: 'checkbox', fixed: 'left' },
+                    { type: 'numbers', width: 60, title: '序号' },
+                    { field: 'id', width: 100, title: '计费点ID', sort: true, align: 'center' },
+                    { field: 'costDesc', width: 140, title: '计费点描述', sort: true },
+                    { field: 'ddCostType', width: 140, title: '计费点金额', sort: true },
+                    {
+                        field: 'ddGoodsType', width: 120, title: '类型', sort: true,
+                        templet: (d) => {
+                            if (d.ddGoodsType === "recharge") {
+                                return '提现';
+                            } else if (d.ddGoodsType === "coin") {
+                                return '金币';
+                            } else if (d.ddGoodsType === "head") {
+                                return '头像框';
+                            }
+                        }
+                    },
+                    { field: 'gainDesc', width: 160, title: '获得道具', sort: true },
+                    { field: 'ddMinVer', width: 140, title: '支持最低版本', sort: true },
+                    {
+                        field: 'ddIOS', width: 140, title: '是否支持IOS', sort: true,
+                        templet: (d) => {
+                            if (d.ddIOS === true) {
+                                return '是';
+                            } else {
+                                return "否";
+                            }
+                        }
+                    },
+                    {
+                        field: 'ddState', width: 100, title: '状态', sort: true,
+                        templet: (d) => {
+                            if (d.ddState === true) {
+                                return '开启';
+                            } else {
+                                return "关闭";
+                            }
+                        }
+                    },
+                    { field: 'insertTime', width: 180, title: '创建时间', sort: true },
+                    { field: 'operator', title: '操作', minWidth: 180, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-80'
+            });
+            form.on('select(ddGoodsType)', function (data) {
+                console.log("data:" + data.value)
+                if (data.value === "coin") {
+                    $("#coin").removeClass('layui-hide');
+                    $("#head").addClass("layui-hide");
+                    $("#cash").addClass("layui-hide");
+
+                } else if (data.value === "head") {
+                    $("#coin").addClass("layui-hide");
+                    $('#head').removeClass('layui-hide');
+                    $("#cash").addClass("layui-hide");
+                } else if (data.value === "recharge") {
+                    $("#coin").addClass("layui-hide");
+                    $("#head").addClass("layui-hide");
+                    $("#cash").removeClass('layui-hide');
+                }
+            });
+
+        });
+
+    </script>
+
+</body>
+
+</html>

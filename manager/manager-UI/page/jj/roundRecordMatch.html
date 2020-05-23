@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>小程序比赛结果查询</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 查询表单 -->
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">结束时间</label>
+                        <div class="layui-input-inline">
+                            <input id="times" name="times" type="text" class="layui-input" placeholder=" - ">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">产品名称</label>
+                        <div class="layui-input-inline">
+                            <select id="appIdSelect" name="id" lay-search=""> </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">游戏名称</label>
+                        <div class="layui-input-inline">
+                            <select id="gameCodeSelect" name="gameName" lay-search=""></select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">赛制名称</label>
+                        <div class="layui-input-inline">
+                            <select id="roundCodeSelect" name="roundName" lay-search=""></select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    </div>
+
+                </div>
+
+            </form>
+
+            <!-- Table表头 -->
+            <script type="text/html" id="crudTableBar">
+                 <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm" lay-event="exportResult"><i class="layui-icon">&#xe60a;</i> 比赛结果导出 </button>
+                 </div>
+            </script>
+
+            <!-- Table -->
+            <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
+
+            <!-- 行内按钮 -->
+            <script type="text/html" id="crudRowBar">
+                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+                 <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
+            </script>
+
+            <!-- 行内表单 -->
+            <script type="text/html" id="switchStatus">
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                    {{ d.status ? 'checked' : '' }}>
+            </script>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
+    <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-form-verify.js" charset="utf-8"></script>
+    <script>
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置
+        const currentPage = {
+            module: window.module.jj,
+            page: 'jj/roundRecordMatch'
+        }
+        // 渲染全部动态查询框
+        function renderAllSelect(level) {
+            renderNormalSelect('appIdSelect', 'jj', 'wxConfig', level);
+            renderNormalSelect('gameCodeSelect', 'jj', 'games', level);
+            renderNormalSelect('roundCodeSelect', 'jj', 'roundExt', level);
+        }
+        // 表单数据查询渲染
+        layui.use(['form', 'table', 'layer', 'laydate'], function () {
+            const $ = layui.jquery, form = layui.form, layer = layui.layer, laydate = layui.laydate, table = layui.table;
+            table.render({
+                elem: '#crudTableId',
+                url: currentPage.module.server + currentPage.page + '/getPage',
+                toolbar: '#crudTableBar',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    { type: 'checkbox', fixed: 'left' },
+                    { field: 'appName', width: 180, title: '产品名称', sort: true },
+                    { field: 'gamesName', width: 180, title: '游戏名称', sort: true },
+                    { field: 'roundName', width: 180, title: '赛制名称', sort: true },
+                    { field: 'roundLength', width: 180, title: '赛制时长', sort: true },
+                    { field: 'ddStart', width: 300, title: '比赛开始时间', sort: true },
+                    { field: 'ddSubmit', width: 300, title: '比赛结束时间', sort: true },
+                    { field: 'ddResult', width: 160, title: '参赛人数', sort: true }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-120'
+            });
+            laydate.render({
+                elem: '#times',
+                range: true
+            });
+
+        });
+
+        function otherToolbarEvent(obj) {
+            if ('exportResult' === obj.event) {
+                const data = table.checkStatus('crudTableId').data, dataLength = data.length;
+                if (dataLength === 0) {
+                    layer.msg('导出，请至少选择一行！', { icon: 0, time: 2000 });
+                } else if (dataLength > 1) {
+                    layer.msg('请选择一场比赛结果进行导出！', { icon: 0, time: 2000 });
+                } else {
+                    let submitDatas = JSON.stringify(data);
+                    let arry = submitDatas.substr(1, submitDatas.length - 2);
+                    console.log("jasonarry :" + arry)
+                    let jsonArry = JSON.parse(arry);
+                    layer.confirm('确定导出结果吗', function (index) {
+                        window.location.href = currentPage.module.server + currentPage.page + '/exportResult' + "?ddCode=" + jsonArry.ddCode + "&ddGroup=" + jsonArry.ddGroup
+                            + "&ddIndex=" + jsonArry.ddIndex + "&ddRound=" + jsonArry.ddRound + "&roundName=" + jsonArry.roundName
+                            + "&roundLength=" + jsonArry.roundLength + "&ddResult=" + jsonArry.ddResult + "&ddSubmit=" + jsonArry.ddSubmit
+                            + "&gamesName=" + jsonArry.gamesName;
+                        layer.close(index);
+                    })
+                }
+            }
+            return false;
+        }
+    </script>
+
+</body>
+
+</html>

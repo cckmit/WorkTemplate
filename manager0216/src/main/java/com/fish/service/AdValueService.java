@@ -101,17 +101,17 @@ public class AdValueService implements BaseService<AdValue> {
                 adValue.setAppId(appId);
                 adValue.setAppPlatform(appPlatform);
                 if (StringUtils.isNotBlank(adPosition)) {
-                    adValue.setAdPositionId(Integer.valueOf(adPosition));
+                    adValue.setAdPositionId(Integer.parseInt(adPosition));
                 } else {
                     adValue.setAdPositionId(0);
                 }
                 if (StringUtils.isNotBlank(adSpace)) {
-                    adValue.setAdSpaceId(Integer.valueOf(adSpace));
+                    adValue.setAdSpaceId(Integer.parseInt(adSpace));
                 } else {
                     adValue.setAdSpaceId(0);
                 }
                 if (StringUtils.isNotBlank(adContent)) {
-                    adValue.setAdContentId(Integer.valueOf(adContent));
+                    adValue.setAdContentId(Integer.parseInt(adContent));
                 } else {
                     adValue.setAdContentId(0);
                 }
@@ -131,7 +131,15 @@ public class AdValueService implements BaseService<AdValue> {
                         }
                         break;
                     case "ddTargetAppName":
-                        //adValues = selectTargetAppNameData(list, parameterObject);
+                        String targetAppId = parameterObject.getString("ddTargetAppId");
+                        if (StringUtils.isNotBlank(targetAppId)) {
+                            List<Integer> contentIds = configAdContentService.adContentMapper.selectContentIdByDdTargetAppId(targetAppId);
+                            if (contentIds.size() > 0) {
+                                adValue.setContentIds(StringUtils.join(contentIds.toArray(), ","));
+                            }
+                        }
+                        adValues = this.adValueMapper.selectAdData(beginDate, endDate, adValue);
+                        adValues = dealTargetAppName(adValues,parameterObject);
                         break;
                     case "adPosition":
                         adValues = this.adValueMapper.selectAdData(beginDate, endDate, adValue);
@@ -276,25 +284,314 @@ public class AdValueService implements BaseService<AdValue> {
                             } else {
                                 value.setContentName("微信");
                             }
-
                         }
                         break;
                     default:
                         break;
                 }
-
             } else {
-                // adValues = selectTargetAppNameData(list, null);
+                adValues = this.adValueMapper.selectAdData(beginDate, endDate, adValue);
+                dealTargetAppName(adValues,parameterObject);
             }
         } else {
             //默认进入
-            // adValues = selectTargetAppNameData(list, null);
+            adValue.setGroupByType("ddTargetAppName");
+            adValue.setQueryDetail("0");
+            adValues = this.adValueMapper.selectAdData(beginDate, endDate, adValue);
+            dealTargetAppName(adValues,null);
         }
 
         //数据汇总
         //collectData(adValues);
 
         return adValues;
+    }
+
+    private List<AdValue>  dealTargetAppName(List<AdValue> adValues, JSONObject parameterObject) {
+        ConcurrentHashMap<String, ConfigAdType> configAdTypeMap = configAdTypeService.getAll(ConfigAdType.class);
+        Map<String, AdValue> map = new HashMap<String, AdValue>(16);
+        for (AdValue value : adValues) {
+            //获取广告内容，按每天将推广App名称一致数据求和
+            AdValue adValue = new AdValue();
+            ConfigAdContent configAdContent = configAdContentMap.get(String.valueOf(value.getAdContentId()));
+            if (configAdContent != null) {
+                String ddTargetAppId = configAdContent.getDdTargetAppId();
+                value.setDdTargetAppId(ddTargetAppId);
+                if (!"1".equals(parameterObject.getString("queryDetail"))){
+                    adValue = map.get(ddTargetAppId + "-" + value.getHourNum());
+                }else {
+                    adValue = map.get(value.getAdContentId() + "-" + value.getHourNum());
+                }
+                if (adValue != null) {
+                    adValue.setDdTargetAppId(ddTargetAppId);
+                    adValue.setDdTargetAppName(configAdContent.getDdTargetAppName());
+                    adValue.setShowNum(adValue.getShowNum() + value.getShowNum());
+                    adValue.setClickNum(adValue.getClickNum() + value.getClickNum());
+                    adValue.setPromoteShowNum(adValue.getPromoteShowNum() + value.getPromoteShowNum());
+                    adValue.setPromoteClickNum(adValue.getPromoteClickNum() + value.getPromoteClickNum());
+                    adValue.setTargetShowNum(adValue.getTargetShowNum() + value.getTargetShowNum());
+                } else {
+                    //此处再次判断条件为了查询详情的时候有错误数据进入
+                    if (parameterObject != null) {
+                        //将搜索条件赋值到返回数据属性为了查询详细信息使用
+                        String appId = parameterObject.getString("appId");
+                        if (StringUtils.isNotBlank(appId)) {
+                            value.setAppId(appId);
+                        } else {
+                            value.setAppId("");
+                        }
+                        String adPosition = parameterObject.getString("adPosition");
+                        if (StringUtils.isNotBlank(adPosition)) {
+                            value.setAdPositionId(Integer.parseInt(adPosition));
+                        } else {
+                            value.setAdPositionId(0);
+                        }
+                        String adSpace = parameterObject.getString("adSpace");
+                        if (StringUtils.isNotBlank(adSpace)) {
+                            value.setAdSpaceId(Integer.parseInt(adSpace));
+                        } else {
+                            value.setAdSpaceId(0);
+                        }
+                        String adContent = parameterObject.getString("adContent");
+                        if (StringUtils.isNotBlank(adContent)) {
+                            value.setAdContentId(Integer.parseInt(adContent));
+                        }
+                        String targetAppId = parameterObject.getString("ddTargetAppId");
+                        if (StringUtils.isNotBlank(targetAppId)) {
+                            List<Integer> contentIds = configAdContentService.adContentMapper.selectContentIdByDdTargetAppId(targetAppId);
+                            if (contentIds.size() > 0) {
+                                value.setContentIds(StringUtils.join(contentIds.toArray(), ","));
+                            }
+                        }
+                    }else{
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+                        int defaultDate = Integer.parseInt(dateFormat.format(new Date()));
+                        value.setHourNum(defaultDate);
+                        value.setAdPositionId(0);
+                        value.setAdSpaceId(0);
+                    }
+                    value.setDdTargetAppId(ddTargetAppId);
+                    value.setDdTargetAppName(configAdContent.getDdTargetAppName());
+                    value.setGroupByType("ddTargetAppName");
+                    value.setQueryDetail(parameterObject.getString("queryDetail"));
+                    if (value.getAdContentId() > 0) {
+                        if (configAdContent != null) {
+                            value.setAdTypeName(configAdTypeMap.get(String.valueOf(configAdContent.getDdAdType())).getDdName());
+                            value.setContentName(value.getAdContentId() + "-" + configAdContent.getDdTargetAppName());
+                            value.setDdTargetAppId(configAdContent.getDdTargetAppId());
+                            value.setDdTargetAppName(configAdContent.getDdTargetAppName());
+                        } else {
+                            value.setContentName(value.getAdContentId() + " - 未匹配");
+                        }
+                    }
+                    if (!"1".equals(parameterObject.getString("queryDetail"))){
+                       map.put(ddTargetAppId + "-" + value.getHourNum(),value);
+                    }else {
+                         map.put(value.getAdContentId() + "-" + value.getHourNum(),value);
+                    }
+                }
+            }
+        }
+        return  new ArrayList<>(map.values());
+    }
+
+    private List<AdValue> selectTargetAppNameDatas(int beginDate, int endDate, AdValue adValue, JSONObject parameterObject) {
+        List<AdValue> list = this.adValueMapper.selectAll(beginDate, endDate, adValue);
+        //map用于过滤相同key进行同key次数求和求和
+        Map<String, AdValue> map = new HashMap<String, AdValue>(16);
+        if (!"1".equals(parameterObject.getString("queryDetail"))) {
+            for (AdValue value : list) {
+                //排除不符合搜索条件数据
+                if (parameterObject != null) {
+                    String queryDetail = parameterObject.getString("queryDetail");
+
+                    String appId = parameterObject.getString("appId");
+                    if (StringUtils.isNotBlank(appId)) {
+                        if (!appId.equals(value.getAppId())) {
+                            continue;
+                        }
+                    }
+//                String appPlatform = parameterObject.getString("appPlatform");
+//                if (StringUtils.isNotBlank(appPlatform)) {
+//                    if(!appPlatform.equals(value.getAppPlatform())){
+//                        continue;
+//                    }
+//                }查询平台下个版本补全
+                    String adPosition = parameterObject.getString("adPosition");
+                    if (StringUtils.isNotBlank(adPosition)) {
+                        if (!adPosition.equals(String.valueOf(value.getAdPositionId()))) {
+                            continue;
+                        }
+                    }
+                    String adSpace = parameterObject.getString("adSpace");
+                    if (StringUtils.isNotBlank(adSpace)) {
+                        if (!adSpace.equals(String.valueOf(value.getAdSpaceId()))) {
+                            continue;
+                        }
+                    }
+                    String adContent = parameterObject.getString("adContent");
+                    if (StringUtils.isNotBlank(adContent)) {
+                        if (!adContent.equals(String.valueOf(value.getAdContentId()))) {
+                            continue;
+                        }
+                    }
+                    String targetAppId = parameterObject.getString("ddTargetAppId");
+                    if (StringUtils.isNotBlank(targetAppId)) {
+                        ConfigAdContent configAdContent = configAdContentMap.get(String.valueOf(value.getAdContentId()));
+                        if (configAdContent != null) {
+                            if (!targetAppId.equals(configAdContent.getDdTargetAppId())) {
+                                continue;
+                            }
+                        }
+                    }
+                }
+                //获取广告内容，按每天将推广App名称一致数据求和
+                ConfigAdContent configAdContent = configAdContentMap.get(String.valueOf(value.getAdContentId()));
+                if (configAdContent != null) {
+                    String ddTargetAppId = configAdContent.getDdTargetAppId();
+                    value.setDdTargetAppId(ddTargetAppId);
+                    AdValue adValueData = map.get(ddTargetAppId + "-" + value.getHourNum());
+                    if (adValueData != null) {
+                        adValueData.setDdTargetAppId(ddTargetAppId);
+                        adValueData.setDdTargetAppName(configAdContent.getDdTargetAppName());
+                        adValueData.setShowNum(adValueData.getShowNum() + adValueData.getShowNum());
+                        adValueData.setClickNum(adValueData.getClickNum() + adValueData.getClickNum());
+                        adValueData.setPromoteShowNum(adValueData.getPromoteShowNum() + adValueData.getPromoteShowNum());
+                        adValueData.setPromoteClickNum(adValueData.getPromoteClickNum() + adValueData.getPromoteClickNum());
+                        adValueData.setTargetShowNum(adValueData.getTargetShowNum() + adValueData.getTargetShowNum());
+                    } else {
+                        //此处再次判断条件为了查询详情的时候有错误数据进入
+                        if (parameterObject != null) {
+                            //将搜索条件赋值到返回数据属性为了查询详细信息使用
+                            String appId = parameterObject.getString("appId");
+                            if (StringUtils.isNotBlank(appId)) {
+                                value.setAppId(appId);
+                            } else {
+                                value.setAppId("");
+                            }
+                            String adPosition = parameterObject.getString("adPosition");
+                            if (StringUtils.isNotBlank(adPosition)) {
+                                value.setAdPositionId(Integer.parseInt(adPosition));
+                            } else {
+                                value.setAdPositionId(0);
+                            }
+                            String adSpace = parameterObject.getString("adSpace");
+                            if (StringUtils.isNotBlank(adSpace)) {
+                                value.setAdSpaceId(Integer.parseInt(adSpace));
+                            } else {
+                                value.setAdSpaceId(0);
+                            }
+                            String adContent = parameterObject.getString("adContent");
+                            if (StringUtils.isNotBlank(adContent)) {
+                                value.setAdContentId(Integer.parseInt(adContent));
+                            } else {
+                                value.setAdContentId(0);
+                            }
+                            String targetAppId = parameterObject.getString("ddTargetAppId");
+                            if (StringUtils.isNotBlank(targetAppId)) {
+                                List<Integer> contentIds = configAdContentService.adContentMapper.selectContentIdByDdTargetAppId(targetAppId);
+                                if (contentIds.size() > 0) {
+                                    value.setContentIds(StringUtils.join(contentIds.toArray(), ","));
+                                }
+                            }
+                        } else {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+                            int defaultDate = Integer.parseInt(dateFormat.format(new Date()));
+                            value.setHourNum(defaultDate);
+                            value.setAdPositionId(0);
+                            value.setAdSpaceId(0);
+                            value.setAdContentId(0);
+                        }
+                        value.setDdTargetAppId(ddTargetAppId);
+                        value.setDdTargetAppName(configAdContent.getDdTargetAppName());
+                        value.setGroupByType("ddTargetAppName");
+                        value.setQueryDetail("0");
+                        map.put(ddTargetAppId + "-" + value.getHourNum(), value);
+                    }
+                }
+            }
+            return new ArrayList<>(map.values());
+        }else {
+            ConcurrentHashMap<String, ConfigAdType> configAdTypeMap = configAdTypeService.getAll(ConfigAdType.class);
+            AdValue selectAdValue = new AdValue();
+            String groupByType = parameterObject.getString("groupByType");
+            String appId = parameterObject.getString("appId");
+            String adPositionId = parameterObject.getString("adPosition");
+            String adSpace = parameterObject.getString("adSpace");
+            String adContent = parameterObject.getString("adContent");
+            String targetAppId = parameterObject.getString("ddTargetAppId");
+            String contentId = parameterObject.getString("contentIds");
+            selectAdValue.setAppId(appId);
+            selectAdValue.setAdPositionId(Integer.parseInt(adPositionId));
+            selectAdValue.setAdSpaceId(Integer.parseInt(adSpace));
+            selectAdValue.setAdContentId(Integer.parseInt(adContent));
+            selectAdValue.setGroupByType(groupByType);
+            if (StringUtils.isNotBlank(targetAppId)) {
+                List<Integer> contentIds = configAdContentService.adContentMapper.selectContentIdByDdTargetAppId(targetAppId);
+                if (contentIds.size() > 0) {
+                    selectAdValue.setContentIds(StringUtils.join(contentIds.toArray(), ","));
+                }
+            }
+            if (StringUtils.isNotBlank(contentId) && !"null".equals(contentId)) {
+                selectAdValue.setContentIds(contentId);
+            }
+            List<AdValue> listDetail = this.adValueMapper.queryDetail(beginDate, endDate, selectAdValue);
+            try {
+                for (AdValue value : listDetail) {
+                    value.setGroupByType(selectAdValue.getGroupByType());
+                    value.setQueryDetail("1");
+                    if (value.getAppId() != null) {
+                        WxConfig wxConfig = wxConfigMap.get(value.getAppId());
+                        if (wxConfig != null) {
+                            value.setAppName(wxConfig.getProductName());
+                            value.setAppPlatform(wxConfig.getDdAppPlatform());
+                        }
+                    }
+                    ConfigAdPosition configAdPosition = configAdPosMap.get(String.valueOf(value.getAdPositionId()));
+                    if (configAdPosition != null) {
+                        value.setPositionName(value.getAdPositionId() + "-" + configAdPosition.getDdName());
+                    } else {
+                        value.setPositionName(value.getAdPositionId() + " - 未匹配");
+                    }
+                    if (value.getAdSpaceId() > 0) {
+                        ConfigAdSpace configAdSpace = configAdSpaceMap.get(String.valueOf(value.getAdSpaceId()));
+                        if (configAdSpace != null) {
+                            value.setSpaceName(value.getAdSpaceId() + "-" + configAdSpace.getDdName());
+                            value.setAdTypeName(configAdTypeMap.get(String.valueOf(configAdSpace.getDdAdType())).getDdName());
+                        } else {
+                            value.setSpaceName(value.getAdSpaceId() + " - 未匹配");
+                        }
+                        ConfigAdContent configAdContent = configAdContentMap.get(String.valueOf(value.getAdContentId()));
+                        if (configAdContent != null) {
+                            value.setContentName(value.getAdContentId() + "-" + configAdContent.getDdTargetAppName());
+                            value.setAdTypeName(configAdTypeMap.get(String.valueOf(configAdContent.getDdAdType())).getDdName());
+                            value.setDdTargetAppId(configAdContent.getDdTargetAppId());
+                            value.setDdTargetAppName(configAdContent.getDdTargetAppName());
+                        } else {
+                            value.setContentName(value.getAdContentId() + " - 未匹配");
+                        }
+                    } else {
+                        value.setSpaceName("微信");
+                    }
+                    if (value.getAdContentId() > 0) {
+                        ConfigAdContent configAdContent = configAdContentMap.get(String.valueOf(value.getAdContentId()));
+                        if (configAdContent != null) {
+                            value.setAdTypeName(configAdTypeMap.get(String.valueOf(configAdContent.getDdAdType())).getDdName());
+                            value.setContentName(value.getAdContentId() + "-" + configAdContent.getDdTargetAppName());
+                            value.setDdTargetAppId(configAdContent.getDdTargetAppId());
+                            value.setDdTargetAppName(configAdContent.getDdTargetAppName());
+                        } else {
+                            value.setContentName(value.getAdContentId() + " - 未匹配");
+                        }
+                    } else {
+                        value.setContentName("微信");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return listDetail;
+        }
     }
 
     /**

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>自营广告数据</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 查询表单 -->
+            <form class="layui-form layui-form-pane" action="" id="query-data-form" lay-filter="query-data-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="timeRange" name="timeRange" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">汇总方式</label>
+                        <div class="layui-input-inline">
+                            <select id="timeGroupType" name="timeGroupType" lay-verify="required" lay-search="">
+                                <option value="8">按日</option>
+                                <option value="10">按小时</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">运营产品</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="productAppId" name="productAppId" autocomplete="off"
+                                class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">推广产品</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="targetAppId" name="targetAppId" autocomplete="off"
+                                class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">广告位置</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="adPositionId" name="adPositionId" autocomplete="off"
+                                class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">广告位</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="adSpaceId" name="adSpaceId" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">分组方式</label>
+                        <div class="layui-input-inline">
+                            <select id="groupType" name="groupType" lay-verify="required" lay-search="">
+                                <option value="TARGET_APP">推广产品</option>
+                                <option value="PRODUCT_APP">运营产品</option>
+                                <option value="AD_POSITION">广告位置</option>
+                                <option value="AD_SPACE">广告位</option>
+                                <option value="AD_CONTENT">广告内容</option>
+                                <option value="TARGET_APP_POSITION">推广产品+位置</option>
+                                <option value="POSITION_CONTENT">位置+内容</option>
+                                <option value="TARGET_APP_POSITION_CONTENT">推广产品+位置+内容</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-primary" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                    </div>
+                </div>
+            </form>
+            <!-- Table表头，统计模块不需要表头操作 -->
+            <script type="text/html" id="statsTableBar">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="return"><i class="layui-icon layui-icon-return"></i> 返回 </button>
+                </div>
+            </script>
+            <!-- Table -->
+            <table class="layui-hide" id="statsTableId" lay-filter="statsTableFilter"></table>
+            <!-- 行内按钮 -->
+            <script type="text/html" id="statsRowBar">
+                <a class="layui-btn layui-btn-primary layui-btn-xs data-count-edit" lay-event="detail"><i class="layui-icon fa-table"></i>详情</a>
+            </script>
+        </div>
+    </div>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
+    <script src="../../js/lay-util.js" charset="utf-8"></script>
+    <script src="../../js/lay-stats.js" charset="utf-8"></script>
+    <script>
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置module
+        const currentPage = {
+            module: window.module.jj,
+            page: 'jj/adValue'
+        }
+
+        // 全部需要展示的列属性，必须定义
+        const allCols = {
+            timeValue: { field: 'timeValue', width: 100, title: '时间', align: "center", sort: true },
+            productAppName: { field: 'productAppName', width: 200, title: '运营App' },
+            targetAppName: { field: 'targetAppName', width: 180, title: '推广App' },
+            adPositionName: { field: 'adPositionName', width: 180, title: '广告位置' },
+            adSpaceName: { field: 'adSpaceName', width: 180, title: '广告位' },
+            adContentName: { field: 'adContentName', width: 180, title: '广告内容' },
+            showNum: { field: 'showNum', width: 160, title: '展示次数', align: "right", sort: true, totalRow: true },
+            clickNum: { field: 'clickNum', width: 160, title: '点击次数', align: "right", sort: true, totalRow: true },
+            clickRate: { field: 'clickRate', width: 160, title: '点击率', align: "right", sort: true, totalRow: true },
+            promoteShowNum: { field: 'promoteShowNum', width: 160, title: '中转app展示次数', align: "right", sort: true, totalRow: true },
+            promoteClickNum: { field: 'promoteClickNum', width: 160, title: '中转app点击次数', align: "right", sort: true, totalRow: true },
+            promoteClickRate: { field: 'promoteClickRate', width: 160, title: '中转点击率', align: "right", sort: true, totalRow: true },
+            targetShowNum: { field: 'targetShowNum', width: 160, title: '目标app展示次数', align: "right", sort: true, totalRow: true },
+            detail: { title: '详情', minWidth: 100, toolbar: '#statsRowBar', align: "center", fixed: 'right' }
+        }
+
+
+        /**
+         * 构建查询表单对象
+         */
+        function buildQueryFormObject(data) {
+            console.log('data -> ', data, data.timeValue);
+            let formObject = {};
+            // 拼接查询时间，格式位yyyy-MM-dd，长度为10
+            const queryDate = data.timeValue.substring(0, 10);
+            const timeRange = queryDate + ' ~ ' + queryDate;
+            formObject.timeRange = timeRange;
+            formObject.productAppId = data.productAppId;
+            formObject.targetAppId = data.targetAppId;
+            formObject.adPositionId = data.adPositionId;
+            formObject.adSpaceId = data.adSpaceId;
+            formObject.groupType = data.detailGroupBy;
+            return formObject;
+        }
+
+        layui.use(['form', 'table', 'laydate'], () => {
+            const $ = layui.jquery, form = layui.form, table = layui.table, laydate = layui.laydate;
+
+            // 日期范围选择框渲染
+            laydate.render({
+                elem: '#timeRange',
+                format: 'yyyy-MM-dd',
+                range: '~'
+            });
+
+            /**
+             * 自定义表格属性
+             */
+            function rebuildTableOption() {
+                tableOption.height = 'full-520';
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

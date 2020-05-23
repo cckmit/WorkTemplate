@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>系统用户管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 查询表单 -->
+            <form class="layui-form layui-form-pane" action="">
+            </form>
+
+            <!-- Table表头 -->
+            <script type="text/html" id="crudTableBar">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
+                </div>
+            </script>
+
+            <!-- Table -->
+            <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
+
+            <!-- 行内按钮 -->
+            <script type="text/html" id="crudRowBar">
+                <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+                <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
+            </script>
+
+            <!-- 行内表单 -->
+            <script type="text/html" id="switchStatus">
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                    {{ d.status ? 'checked' : '' }}>
+            </script>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" placeholder="新增成功自动生成" value="" class="layui-input" autocomplete="off"
+                    readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" lay-verify="required" lay-reqtext="名称不能为空" placeholder=" 请输入名称" value=""
+                    class="layui-input" autocomplete="off">
+                <tip>广告类型名称</tip>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
+    <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script>
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置
+        const currentPage = {
+            module: window.module.jj,
+            page: 'jj/configAdType'
+        }
+
+        // 表单数据查询渲染
+        layui.use(['form', 'table', 'layer'], function () {
+            $ = layui.jquery, form = layui.form, layer = layui.layer, table = layui.table;
+            table.render({
+                elem: '#crudTableId',
+                url: currentPage.module.server + currentPage.page + '/getPage',
+                toolbar: '#crudTableBar',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    { type: "checkbox", width: 50, align: "center" },
+                    { field: 'id', width: 60, title: 'ID', align: "center", sort: true },
+                    { field: 'name', width: 300, title: '名称' },
+                    { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true },
+                    { title: '操作', minWidth: 180, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-40'
+            });
+        });
+    </script>
+
+</body>
+
+</html>

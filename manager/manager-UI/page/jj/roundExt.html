@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>游戏赛制配置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 查询表单 -->
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">配置时间</label>
+                        <div class="layui-input-inline">
+                            <input class="layui-input" id="times" name="times" placeholder=" - " type="text">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">赛制名称</label>
+                        <div class="layui-input-inline">
+                            <select id="roundCodeSelect" name="roundName" lay-search=""> </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Table表头 -->
+            <script type="text/html" id="crudTableBar">
+               <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
+                </div>
+            </script>
+
+            <!-- Table -->
+            <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
+
+            <!-- 行内按钮 -->
+            <script type="text/html" id="crudRowBar">
+                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+       <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
+       
+            </script>
+
+            <!-- 行内表单 -->
+            <script type="text/html" id="switchStatus">
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                    {{ d.status ? 'checked' : '' }}>
+            </script>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
+        <div class="layui-form-item ">
+            <label class="layui-form-label">赛场编号</label>
+            <div class="layui-input-block">
+                <input name="id" type="text" autocomplete="off" class="layui-input layui-disabled" disabled>
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label">赛制名称</label>
+            <div class="layui-input-block">
+                <input name="ddName" type="text" autocomplete="off" class="layui-input" lay-verify="required">
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label">优先级</label>
+            <div class="layui-input-block">
+                <select name="ddPriority">
+                    <option value=1>高</option>
+                    <option value=2>中</option>
+                    <option value=3>低</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label">原时长</label>
+            <div class="layui-input-block">
+                <input name="tip" type="text" autocomplete="off" class="layui-input layui-disabled" disabled>
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label">赛制时长</label>
+            <div class="layui-input-block">
+                <input name="roundLength" type="text" autocomplete="off" class="layui-input" placeholder="请按照格式输入">
+                <tip style="color: red;">格式:1s,1m,1h,1d</tip>
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label">赛制类型</label>
+            <div class="layui-input-block">
+                <select class="layui-select" name="ddGroup">
+                    <option value=1>小程序</option>
+                    <option value=0>小游戏</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">赛场奖励</label>
+            <div class="layui-input-block">
+                <textarea name="ddReward" required lay-verify="ddReward" placeholder="请按照格式输入"
+                    class="layui-textarea"></textarea>
+                <tip style="color: red;">格式:["名次#名次#类型#数值"]</tip>
+                <tip style="color: red;">例子:["1#1#rmb#30","2#2#rmb#10"]</tip>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
+    <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-form-verify.js" charset="utf-8"></script>
+    <script>
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置
+        const currentPage = {
+            module: window.module.jj,
+            page: 'jj/roundExt'
+        }
+        // 渲染全部动态查询框
+        function renderAllSelect(level) {
+            renderNormalSelect('roundCodeSelect', 'jj', 'roundExt', level);
+        }
+        // 表单数据查询渲染
+        layui.use(['form', 'table', 'layer', 'laydate'], function () {
+            const $ = layui.jquery, form = layui.form, layer = layui.layer, laydate = layui.laydate, table = layui.table;
+            table.render({
+                elem: '#crudTableId',
+                url: currentPage.module.server + currentPage.page + '/getPage',
+                toolbar: '#crudTableBar',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    { type: 'checkbox', fixed: 'left' },
+                    { field: 'insertTime', width: 160, title: '配置时间', align: "center", sort: true },
+                    { field: 'id', width: 120, title: '赛制编号', sort: true },
+                    { field: 'ddName', width: 120, title: '赛制名称', sort: true },
+                    {
+                        field: 'ddPriority', width: 120, title: '优先级', sort: true,
+                        templet: (d) => {
+                            if (d.ddPriority === 1) {
+                                return "高";
+                            } else if (d.ddPriority === 2) {
+                                return "中";
+                            } else if (d.ddPriority === 3) {
+                                return "低";
+                            } else {
+                                return "关闭";
+                            }
+                        }
+                    },
+                    { field: 'tip', width: 120, title: '赛制时长', sort: true },
+                    {
+                        field: 'ddGroup', width: 120, title: '赛制类型', sort: true,
+                        templet: (d) => {
+                            if (d.ddGroup === 1) {
+                                return "小程序";
+                            } else {
+                                return "小游戏";
+                            }
+                        }
+                    },
+                    { field: 'ddReward', width: 660, title: '赛场奖励', sort: true },
+                    { field: 'operator', title: '操作', minWidth: 180, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-100'
+            });
+
+            // 日期范围选择框渲染
+            laydate.render({
+                elem: '#times',
+                format: 'yyyy-MM-dd',
+                range: '~'
+            });
+
+            //JSON格式检测
+            form.verify({
+                ddReward: (value, item) => {
+                    return formVerify(value, item, 'json');
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
