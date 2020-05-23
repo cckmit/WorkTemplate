@@ -12,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 广告合集配置
+ * 产品合集配置
+ *
  * @author cf
  * @since 2020-05-09
  */
-
 @CrossOrigin
 @RestController
 @RequestMapping("/jj/configProgram")

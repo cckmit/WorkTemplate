@@ -88,6 +88,7 @@ public class WxConfig implements BaseCrudEntity<WxConfig> {
 
     @TableField(exist = false)
     private String jumpDirect;
+
     @Override
     public String getCacheKey() {
         return this.id;

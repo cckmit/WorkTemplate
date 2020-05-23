@@ -24,7 +24,7 @@ public class RoundExt implements BaseCrudEntity<RoundExt> {
      * 赛场编号
      */
     @TableId("ddCode")
-    private String ddCode;
+    private String id;
 
     /**
      * 赛制类型，0-小程序，1-小游戏
@@ -85,15 +85,20 @@ public class RoundExt implements BaseCrudEntity<RoundExt> {
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @TableField(value = "insertTime", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime insertTime;
+    /**
+     * 展示字段-输入参数赛制时长
+     */
+    @TableField(exist = false)
+    private String roundLength;
 
     @Override
     public String getCacheKey() {
-        return this.ddCode;
+        return this.id;
     }
 
     @Override
     public String getCacheValue() {
-        return this.ddCode + "-" + this.ddName;
+        return this.id + "-" + this.ddName;
     }
 
 }

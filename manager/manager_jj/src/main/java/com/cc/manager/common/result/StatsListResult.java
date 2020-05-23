@@ -25,6 +25,10 @@ public class StatsListResult implements Serializable {
      */
     private String msg = "查询成功！";
     /**
+     * 数据总量
+     */
+    private long count;
+    /**
      * 查询结果
      */
     private JSONArray data;

@@ -8,11 +8,11 @@ import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.service.SupplementOrderService;
-import com.cc.manager.modules.jj.service.WxConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * 手动补单
  *
  * @author cf
  * @since 2020-05-09

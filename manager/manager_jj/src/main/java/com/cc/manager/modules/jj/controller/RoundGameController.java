@@ -7,26 +7,25 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.common.utils.ReduceJsonUtil;
-import com.cc.manager.config.BaseConfig;
-import com.cc.manager.modules.jj.config.JjConfig;
 import com.cc.manager.modules.jj.service.RoundGameService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * 小游戏赛制
  *
  * @author cf
  * @since 2020-05-08
  */
-
 @CrossOrigin
 @RestController
 @RequestMapping("/jj/roundGame")
 public class RoundGameController implements BaseCrudController {
 
     private RoundGameService roundGameService;
-    private JjConfig jjConfig;
+
+    private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
@@ -49,31 +48,31 @@ public class RoundGameController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        PostResult post = this.roundGameService.post(requestParam);
-        if (post.getCode() == 1) {
-            ReduceJsonUtil.flushTable("round_game", this.jjConfig.getFlushCache());
+        PostResult postResult = this.roundGameService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("round_game");
         }
-        return post;
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        PostResult put = this.roundGameService.put(requestParam);
-        if (put.getCode() == 1) {
-            ReduceJsonUtil.flushTable("round_game", this.jjConfig.getFlushCache());
+        PostResult putResult = this.roundGameService.put(requestParam);
+        if (putResult.getCode() == 1) {
+            putResult = this.persieServerUtils.refreshTable("round_game");
         }
-        return put;
+        return putResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        PostResult delete = this.roundGameService.delete(requestParam);
-        if (delete.getCode() == 1) {
-            ReduceJsonUtil.flushTable("round_game", this.jjConfig.getFlushCache());
+        PostResult deleteResult = this.roundGameService.delete(requestParam);
+        if (deleteResult.getCode() == 1) {
+            deleteResult = this.persieServerUtils.refreshTable("round_game");
         }
-        return this.roundGameService.delete(requestParam);
+        return deleteResult;
     }
 
     @Override
@@ -84,6 +83,11 @@ public class RoundGameController implements BaseCrudController {
     @Autowired
     public void setRoundExtService(RoundGameService roundGameService) {
         this.roundGameService = roundGameService;
+    }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
     }
 
 }

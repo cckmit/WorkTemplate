@@ -1,7 +1,9 @@
 package com.cc.manager.modules.jj.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
 
@@ -17,19 +19,16 @@ import java.time.LocalDateTime;
 @TableName(schema = "persie", value = "config_ad_app")
 public class ConfigAdApp implements BaseCrudEntity<ConfigAdApp> {
 
-    @TableId(value = "ddId", type = IdType.AUTO)
-    private int id;
-
-    @TableField(value = "ddAppId", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
+    @TableField(value = "ddAppId")
     private String appId;
 
-    @TableField(value = "ddMinVersion", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
+    @TableField(value = "ddMinVersion")
     private String minVersion;
 
-    @TableField(value = "ddCombinationId", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
+    @TableField(value = "ddCombinationId")
     private int combinationId;
 
-    @TableField(value = "ddAllowedShow", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
+    @TableField(value = "ddAllowedShow")
     private boolean allowedShow;
 
     @TableField(value = "ddWxBannerUnit")
@@ -72,18 +71,22 @@ public class ConfigAdApp implements BaseCrudEntity<ConfigAdApp> {
     /**
      * App名称
      */
-    private transient String appName;
+    @TableField(exist = false)
+    private String appName;
     /**
      * 广告组合名称
      */
-    private transient String combinationName;
+    @TableField(exist = false)
+    private String combinationName;
     /**
      * 微信Banner广告策略
      */
-    private transient String wxBannerStrategyName;
+    @TableField(exist = false)
+    private String wxBannerStrategyName;
     /**
      * 微信插屏广告策略
      */
-    private transient String wxIntStrategyName;
+    @TableField(exist = false)
+    private String wxIntStrategyName;
 
 }

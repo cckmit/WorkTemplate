@@ -7,29 +7,26 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.common.utils.ExcelUtils;
 import com.cc.manager.modules.jj.entity.RoundRecord;
-import com.cc.manager.modules.jj.service.RoundReceiveService;
 import com.cc.manager.modules.jj.service.RoundRecordGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 /**
+ * 小游戏比赛结果
  *
  * @author cf
  * @since 2020-05-08
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/roundRecordGame")
+@RequestMapping("/jj/roundRecordGame")
 public class RoundRecordGameController implements BaseCrudController {
+
     private RoundRecordGameService roundRecordGameService;
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
@@ -47,16 +44,17 @@ public class RoundRecordGameController implements BaseCrudController {
     public CrudPageResult getPage(CrudPageParam crudPageParam) {
         return this.roundRecordGameService.getPage(crudPageParam);
     }
+
     /**
-     * 导出Excel结果
+     * 导出Excel游戏结果
      *
-     * @param roundRecord
-     * @return
+     * @param roundRecord roundRecord
      */
-    @GetMapping(value = "/export")
-    public void getRankingResult(RoundRecord roundRecord, HttpServletResponse response) {
-        roundRecordGameService.exportResult(roundRecord,response);
+    @GetMapping(value = "/exportResult")
+    public void getGameRankingResult(RoundRecord roundRecord, HttpServletResponse response) {
+        roundRecordGameService.exportResult(roundRecord, response);
     }
+
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
@@ -85,5 +83,6 @@ public class RoundRecordGameController implements BaseCrudController {
     public void setRoundRecordGameService(RoundRecordGameService roundRecordGameService) {
         this.roundRecordGameService = roundRecordGameService;
     }
+
 }
 

@@ -61,7 +61,7 @@ public class ConfigAdStrategyController implements BaseCrudController {
     @Override
     @GetMapping(value = "/getSelectArray/{requestParam}")
     public JSONArray getSelectArray(@PathVariable String requestParam) {
-        return this.configAdStrategyService.getSelectArray(ConfigAdStrategy.class,null);
+        return this.configAdStrategyService.getSelectArray(ConfigAdStrategy.class, null);
     }
 
     @Autowired

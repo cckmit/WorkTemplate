@@ -1,22 +1,16 @@
 package com.cc.manager.modules.jj.entity;
 
-import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.baomidou.mybatisplus.annotation.*;
 import com.cc.manager.common.mvc.BaseCrudEntity;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author cf
@@ -26,13 +20,13 @@ import lombok.experimental.Accessors;
 @TableName(schema = "persie", value = "goods_value_ext")
 public class GoodsValueExt implements BaseCrudEntity<GoodsValueExt> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 全局编号
      */
     @TableId(value = "ddId", type = IdType.AUTO)
-    private Integer ddId;
+    private Integer id;
 
     /**
      * 全局状态
@@ -103,44 +97,45 @@ public class GoodsValueExt implements BaseCrudEntity<GoodsValueExt> {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    @TableField("insertTime")
+    @JSONField(format = "yyyy-MM-dd HH:mm")
+    @TableField(value = "insertTime", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime insertTime;
 
     /**
      * 展示数据-金币数量
      */
     @TableField(exist = false)
-    private  String coinNumber;
+    private String coinNumber;
 
     /**
      * 展示数据-头像框号码
      */
     @TableField(exist = false)
-    private  String headNumber;
+    private String headNumber;
     /**
      * 展示数据-提现金额
      */
     @TableField(exist = false)
-    private  String cashNumber;
+    private String cashNumber;
     /**
      * 展示数据-计费点描述
      */
     @TableField(exist = false)
-    private  String costDesc;
+    private String costDesc;
     /**
      * 展示数据-提现描述
      */
     @TableField(exist = false)
-    private  String gainDesc;
+    private String gainDesc;
 
     @Override
     public String getCacheKey() {
-        return this.ddId.toString();
+        return this.id.toString();
     }
 
     @Override
     public String getCacheValue() {
-        return this.ddId + "-" + this.ddDesc;
+        return this.id + "-" + this.ddDesc;
     }
+
 }

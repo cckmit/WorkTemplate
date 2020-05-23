@@ -1,28 +1,25 @@
 package com.cc.manager.modules.fc.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
- * <p>
- * 
- * </p>
- *
  * @author cf
  * @since 2020-05-14
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-public class WxDailyVisitTrend implements Serializable {
+@TableName(schema = "persie_value", value = "wx_daily_visit_trend")
+public class WxDailyVisitTrend implements BaseCrudEntity<WxDailyVisitTrend> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * id

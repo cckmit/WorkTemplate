@@ -2,7 +2,6 @@ package com.cc.manager.common.result;
 
 import com.alibaba.fastjson.JSONArray;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.ArrayList;

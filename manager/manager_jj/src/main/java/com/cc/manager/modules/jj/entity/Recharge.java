@@ -2,22 +2,19 @@ package com.cc.manager.modules.jj.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- *
  * @author cf
  * @since 2020-05-09
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
+@TableName(schema = "persie_deamon", value = "recharge")
 public class Recharge implements BaseCrudEntity<Recharge> {
 
     private static final long serialVersionUID = 1L;
@@ -81,6 +78,17 @@ public class Recharge implements BaseCrudEntity<Recharge> {
      */
     @TableField("ddTimes")
     private LocalDateTime ddTimes;
+
+    /*** 已提现金额*/
+    private BigDecimal rmbOut;
+    /*** 剩余金额*/
+    private Integer remainAmount;
+    /*** 产品名称*/
+    private String productName;
+    private Integer programType;
+
+    /*** 玩家昵称*/
+    private String userName;
 
 
 }

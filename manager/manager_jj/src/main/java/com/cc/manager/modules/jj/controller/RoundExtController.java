@@ -7,15 +7,15 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.common.utils.ReduceJsonUtil;
-import com.cc.manager.config.BaseConfig;
 import com.cc.manager.modules.jj.config.JjConfig;
+import com.cc.manager.modules.jj.entity.RoundExt;
 import com.cc.manager.modules.jj.service.RoundExtService;
-import com.cc.manager.modules.jj.service.WxConfigService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * 游戏赛制配置
  *
  * @author cf
  * @since 2020-05-11
@@ -27,6 +27,8 @@ public class RoundExtController implements BaseCrudController {
 
     private RoundExtService roundExtService;
     private JjConfig jjConfig;
+    private PersieServerUtils persieServerUtils;
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
@@ -48,41 +50,52 @@ public class RoundExtController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        PostResult post = this.roundExtService.post(requestParam);
-        if(post.getCode() == 1){
-            ReduceJsonUtil.flushTable("round_ext", this.jjConfig.getFlushCache());
+        PostResult postResult = this.roundExtService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("round_ext");
         }
-        return post;
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        PostResult put = this.roundExtService.put(requestParam);
-        if(put.getCode() == 1){
-            ReduceJsonUtil.flushTable("round_ext", this.jjConfig.getFlushCache());
+        PostResult putResult = this.roundExtService.put(requestParam);
+        if (putResult.getCode() == 1) {
+            putResult = this.persieServerUtils.refreshTable("round_ext");
         }
-        return put;
+        return putResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        PostResult delete = this.roundExtService.delete(requestParam);
-        if(delete.getCode() == 1){
-            ReduceJsonUtil.flushTable("round_ext", this.jjConfig.getFlushCache());
+        PostResult deleteResult = this.roundExtService.delete(requestParam);
+        if (deleteResult.getCode() == 1) {
+            deleteResult = this.persieServerUtils.refreshTable("round_ext");
         }
-        return this.roundExtService.delete(requestParam);
+        return deleteResult;
     }
 
     @Override
-    public JSONArray getSelectArray(String requestParam) {
-        return null;
+    @GetMapping("/getSelectArray/{requestParam}")
+    public JSONArray getSelectArray(@PathVariable String requestParam) {
+        return this.roundExtService.getSelectArray(RoundExt.class, requestParam);
     }
 
     @Autowired
     public void setRoundExtService(RoundExtService roundExtService) {
         this.roundExtService = roundExtService;
+    }
+
+    @Autowired
+    public void setJjConfig(JjConfig jjConfig) {
+        this.jjConfig = jjConfig;
+    }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
     }
 }
 

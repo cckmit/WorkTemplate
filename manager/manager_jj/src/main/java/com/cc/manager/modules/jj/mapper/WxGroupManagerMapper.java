@@ -1,12 +1,12 @@
 package com.cc.manager.modules.jj.mapper;
 
-import com.cc.manager.modules.jj.entity.WxGroupManager;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cc.manager.modules.jj.entity.WxGroupManager;
 import org.apache.ibatis.annotations.Select;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author cf
@@ -16,6 +16,7 @@ public interface WxGroupManagerMapper extends BaseMapper<WxGroupManager> {
 
     /**
      * 查询群二维码和客服二维码
+     *
      * @param ddId ddId
      * @return WxGroupManager
      */

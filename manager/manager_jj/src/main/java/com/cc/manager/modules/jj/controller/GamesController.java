@@ -2,36 +2,32 @@ package com.cc.manager.modules.jj.controller;
 
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
 import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.common.utils.ReduceJsonUtil;
-import com.cc.manager.config.BaseConfig;
-import com.cc.manager.modules.jj.config.JjConfig;
+import com.cc.manager.modules.jj.entity.Games;
 import com.cc.manager.modules.jj.service.GamesService;
 import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>
- * 前端控制器
- * </p>
+ * 游戏列表
  *
  * @author cf
  * @since 2020-05-08
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/jj/games")
+@RequestMapping("/jj/games")
 public class GamesController implements BaseCrudController {
 
     private GamesService gamesService;
-    private JjConfig jjConfig;
+
     private PersieServerUtils persieServerUtils;
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
@@ -53,13 +49,21 @@ public class GamesController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        return this.gamesService.post(requestParam);
+        PostResult postResult = this.gamesService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("games");
+        }
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        return this.gamesService.put(requestParam);
+        PostResult putResult = this.gamesService.put(requestParam);
+        if (putResult.getCode() == 1) {
+            putResult = this.persieServerUtils.refreshTable("games");
+        }
+        return putResult;
     }
 
     @Override
@@ -69,38 +73,33 @@ public class GamesController implements BaseCrudController {
     }
 
     @Override
-    public JSONArray getSelectArray(String requestParam) {
-        return null;
+    @GetMapping("/getSelectArray/{requestParam}")
+    public JSONArray getSelectArray(@PathVariable String requestParam) {
+        return this.gamesService.getSelectArray(Games.class, requestParam);
     }
+
     /**
-     * 刷新资源图
+     * 刷新游戏配置资源
      *
      * @param parameter parameter
      * @return PostResult
      */
-    @ResponseBody
-    @PostMapping(value = "/games/flushGames")
-    public PostResult getGamesResources(@RequestBody JSONObject parameter) {
-        PostResult postResult = new PostResult();
-        int i = gamesService.flushGamesResources(parameter);
-        if (i != 0) {
-            //刷新业务表结构
+    @CrossOrigin
+    @PostMapping(value = "/refreshResource")
+    public PostResult getGamesResources(@RequestBody JSONArray parameter) {
+        PostResult postResult = gamesService.flushGamesResources(parameter);
+        //刷新业务表结构
+        if (postResult.getCode() == 1) {
             postResult = this.persieServerUtils.refreshTable("games");
-        } else {
-            postResult.setCode(2);
-            postResult.setMsg("操作失败，请联系管理员");
-            return postResult;
         }
         return postResult;
     }
+
     @Autowired
     public void setGamesService(GamesService gamesService) {
         this.gamesService = gamesService;
     }
-    @Autowired
-    public void setJjConfig(JjConfig jjConfig) {
-        this.jjConfig = jjConfig;
-    }
+
     @Autowired
     public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
         this.persieServerUtils = persieServerUtils;

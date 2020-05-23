@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.config.BaseConfig;
 import com.cc.manager.modules.jj.config.JjConfig;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.WxConfigMapper;
@@ -27,8 +26,36 @@ import java.util.List;
 @DS("jj")
 public class WxConfigAddSpaceService extends BaseCrudService<WxConfig, WxConfigMapper> {
 
-
     private JjConfig jjConfig;
+
+    /**
+     * 拼接链接地址
+     *
+     * @param icon    图标名称
+     * @param suffers 拼接数列
+     * @return url
+     */
+    private static String concatUrl(String resultUrl, String icon, String... suffers) {
+        if (icon != null) {
+            if (suffers != null) {
+                for (String suffer : suffers) {
+                    resultUrl = resultUrl.concat(suffer).concat("/");
+                }
+            }
+            return resultUrl.concat(icon);
+        }
+        return null;
+    }
+
+    @Override
+    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<WxConfig> queryWrapper) {
+        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String appId = queryObject.getString("id");
+            queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
+        }
+    }
+
     /**
      * 重构分页查询结果，比如进行汇总复制计算等操作
      *
@@ -60,7 +87,7 @@ public class WxConfigAddSpaceService extends BaseCrudService<WxConfig, WxConfigM
                             }
                             String icon = concatUrl(resPath, object.getString("icon"), config.getId(), "skip");
                             if (StringUtils.isNotBlank(icon)) {
-                                Field field = WxConfig.class.getDeclaredField("list" + i );
+                                Field field = WxConfig.class.getDeclaredField("list" + i);
                                 if (field != null) {
                                     field.setAccessible(true);
                                     field.set(config, icon);
@@ -84,7 +111,7 @@ public class WxConfigAddSpaceService extends BaseCrudService<WxConfig, WxConfigM
                             }
                             String url = concatUrl(resPath, object.getString("url"), config.getId(), "skip");
                             if (url != null) {
-                                Field field = WxConfig.class.getDeclaredField("banner" + i );
+                                Field field = WxConfig.class.getDeclaredField("banner" + i);
                                 if (field != null) {
                                     field.setAccessible(true);
                                     field.set(config, url);
@@ -100,42 +127,13 @@ public class WxConfigAddSpaceService extends BaseCrudService<WxConfig, WxConfigM
     }
 
     @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<WxConfig> queryWrapper) {
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            JSONObject queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-            if (queryData != null) {
-                String appId = queryData.getString("id");
-                    queryWrapper.eq(StringUtils.isNotBlank(appId),"ddAppId", appId);
-            }
-        }
-
-    }
-
-    @Override
     protected boolean delete(String requestParam, UpdateWrapper<WxConfig> deleteWrapper) {
         return false;
     }
 
-    /**
-     * 拼接链接地址
-     *
-     * @param icon    图标名称
-     * @param suffers 拼接数列
-     * @return url
-     */
-    public static String concatUrl(String resultUrl, String icon, String... suffers) {
-        if (icon != null) {
-            if (suffers != null) {
-                for (String suffer : suffers) {
-                    resultUrl = resultUrl.concat(suffer).concat("/");
-                }
-            }
-            return resultUrl.concat(icon);
-        }
-        return null;
-    }
     @Autowired
     public void setJjConfig(JjConfig jjConfig) {
         this.jjConfig = jjConfig;
     }
+
 }

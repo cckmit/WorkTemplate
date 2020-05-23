@@ -12,10 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
- * <p>
- * 服务实现类
- * </p>
- *
  * @author cf
  * @since 2020-05-09
  */
@@ -25,26 +21,17 @@ public class WxGroupHistoryService extends BaseCrudService<WxGroupHistory, WxGro
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<WxGroupHistory> queryWrapper) {
-
-        // 前端提交的条件
-        JSONObject queryData = null;
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String times = queryData.getString("times");
-            String wxGroupName = queryData.getString("wxGroupName");
-            String wxGroupManager = queryData.getString("wxGroupManager");
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String times = queryObject.getString("times");
+            String wxGroupName = queryObject.getString("wxGroupName");
+            String wxGroupManager = queryObject.getString("wxGroupManager");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
                 queryWrapper.between("DATE(updateTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
             }
-            if (StringUtils.isNotBlank(times)) {
-                queryWrapper.like("wxGroupName", wxGroupName);
-            }
-            if (StringUtils.isNotBlank(times)) {
-                queryWrapper.like("wxGroupManager", wxGroupManager);
-            }
+            queryWrapper.like(StringUtils.isNotBlank(wxGroupName), "wxGroupName", wxGroupName);
+            queryWrapper.like(StringUtils.isNotBlank(wxGroupManager), "wxGroupManager", wxGroupManager);
         }
     }
 

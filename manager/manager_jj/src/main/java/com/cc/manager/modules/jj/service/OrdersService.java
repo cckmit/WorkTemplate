@@ -1,22 +1,16 @@
 package com.cc.manager.modules.jj.service;
 
 import cn.hutool.http.HttpUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cc.manager.common.mvc.BaseCrudService;
-import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.result.CrudPageResult;
+import com.cc.manager.common.mvc.BaseStatsService;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.common.utils.CmTool;
 import com.cc.manager.common.utils.SignatureAlgorithm;
 import com.cc.manager.common.utils.XMLHandler;
 import com.cc.manager.common.utils.log4j.Log4j;
-import com.cc.manager.config.BaseConfig;
 import com.cc.manager.modules.jj.config.JjConfig;
 import com.cc.manager.modules.jj.entity.GoodsValueExt;
 import com.cc.manager.modules.jj.entity.Orders;
@@ -24,25 +18,23 @@ import com.cc.manager.modules.jj.entity.UserInfo;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.OrdersMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.cc.manager.common.utils.CmTool.createNonceStr;
 
 /**
- * <p>
- * 服务实现类
- * </p>
- *
  * @author cf
  * @since 2020-05-13
  */
 @Service
 @DS("jj")
-public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
+public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
+
     // 签名类型
     private static final String SIGN_TYPE = "MD5";
     private JjConfig jjConfig;
@@ -52,56 +44,47 @@ public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
 
     private OrdersMapper ordersMapper;
 
+    /**
+     * 检测是否匹配
+     *
+     * @param map 内容
+     * @param key 查询参数
+     * @return 是否匹配
+     */
+    private static boolean existResult(Map<String, String> map, String key) {
+        String resultCode = map.get(key);
+        return "success".equalsIgnoreCase(resultCode);
+    }
+
     @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<Orders> queryWrapper) {
-        // 前端提交的条件
-        JSONObject queryData = null;
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String times = queryData.getString("times");
-            String tradeNumber = queryData.getString("tradeNumber");
-            String uid = queryData.getString("uid");
-            String userName = queryData.getString("userName");
-            String openID = queryData.getString("openID");
-            String payState = queryData.getString("payState");
+    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Orders> queryWrapper, StatsListResult statsListResult) {
+
+            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
+        if(queryObject !=null) {
+            String times = queryObject.getString("times");
+            String tradeNumber = queryObject.getString("tradeNumber");
+            String uid = queryObject.getString("uid");
+            String userName = queryObject.getString("userName");
+            String openID = queryObject.getString("openID");
+            String payState = queryObject.getString("payState");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
                 queryWrapper.between("DATE(ddTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
             }
-            if (StringUtils.isNotBlank(tradeNumber)) {
-                queryWrapper.like("ddId", tradeNumber);
-            }
-            if (StringUtils.isNotBlank(uid)) {
-                queryWrapper.like("ddUid", uid);
-            }
-            if (StringUtils.isNotBlank(openID)) {
-                queryWrapper.like("ddOId", openID);
-            }
-            if (StringUtils.isNotBlank(payState)) {
-                queryWrapper.eq("DATE(ddState)", payState);
-            }
+            queryWrapper.like(StringUtils.isNotBlank(tradeNumber), "ddId", tradeNumber);
+            queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
+            queryWrapper.like(StringUtils.isNotBlank(openID), "ddOId", openID);
+            queryWrapper.eq(StringUtils.isNotBlank(payState), "DATE(ddState)", payState);
         }
     }
 
-    /**
-     * 重构分页查询结果，比如进行汇总复制计算等操作
-     *
-     * @param crudPageParam 查询参数
-     * @param entityList    查询数据对象列表
-     */
     @Override
-    protected void rebuildSelectedList(CrudPageParam crudPageParam, List<Orders> entityList) {
-        // 前端提交的条件
-        JSONObject queryData = null;
-        String userName = null;
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
+    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<Orders> entityList, StatsListResult statsListResult) {
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
+            String userName = queryObject.getString("userName");
         }
-        if (queryData != null) {
-             userName = queryData.getString("userName");
-        }
+
         for (Orders order : entityList) {
             String ddAppId = order.getDdAppId();
             WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, ddAppId);
@@ -119,8 +102,9 @@ public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
                     order.setOriginName(originName);
                 }
             }
-            UserInfo userInfo = this.userInfoService.getCacheEntity(UserInfo.class, order.getDdUid());
-
+            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+            userInfoQueryWrapper.eq("ddUid", order.getDdUid());
+            UserInfo userInfo = this.userInfoService.getOne(userInfoQueryWrapper);
             if (userInfo != null) {
                 order.setUserName(userInfo.getDdName());
             }
@@ -134,26 +118,7 @@ public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
             }
 
         }
-    /*    if(userName !=null){
-            String finalUserName = userName;
-            entityList.removeIf(entity->{return removeEntity(entity, finalUserName);});
-        }*/
-        //entityList.removeIf(entity->!this.userInfoService.getCacheEntity(UserInfo.class, entity.getDdUid()).getDdName().contains(userName));
-    }
-
-    private boolean removeEntity(Orders entity, String userName) {
-      return   !this.userInfoService.getCacheEntity(UserInfo.class, entity.getDdUid()).getDdName().contains(userName);
-    }
-
-    @Override
-    protected boolean delete(String requestParam, UpdateWrapper<Orders> deleteWrapper) {
-        return false;
-    }
-
-
-    @Override
-    protected void updateInsertEntity(String requestParam, Orders entity) {
-
+        return null;
     }
 
     @Autowired
@@ -181,7 +146,6 @@ public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
         this.jjConfig = jjConfig;
     }
 
-
     /**
      * 补发订单
      *
@@ -192,7 +156,7 @@ public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
      */
     public int supplementOrders(String appId, String uid, String orderId) {
         //查询订单产品信息
-        Orders order = ordersMapper.selectByPrimaryKey(orderId);
+        Orders order = this.getById(orderId);
         WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, appId);
         String ddMchId = wxConfig.getDdMchId();
         Map<String, String> stringStringMap = searchPayOrder(appId, ddMchId, orderId);
@@ -200,7 +164,7 @@ public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
         LOGGER.info("补单状态status :" + status + "-appId :" + appId + "-orderId :" + orderId);
         if (status) {
             order.setDdTrans(null);
-            ordersMapper.updateByPrimaryKey(order);
+            this.mapper.updateByPrimaryKey(order);
             String supplementUrl = this.jjConfig.getSupplementUrl();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("version", "2.2.2");
@@ -212,7 +176,7 @@ public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
             JSONObject jsonResult = JSONObject.parseObject(result);
             //订单状态
             if ("success".equals(jsonResult.getString("result"))) {
-                String ddOrder = stringStringMap.get("transaction_id");
+                String ddOrder = stringStringMap != null ? stringStringMap.get("transaction_id") : null;
                 order.setDdState(1);
                 order.setDdOrder(ddOrder);
                 ordersMapper.updateByPrimaryKeySelective(order);
@@ -228,10 +192,9 @@ public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
      * @param orderId 订单号
      */
     private Map<String, String> searchPayOrder(String ddAppId, String ddMchId, String orderId) {
-
         // 查询订单在数据库中是否存在
         // 封装查询订单参数
-        Map<String, String> searchOrderMap = new HashMap<>();
+        Map<String, String> searchOrderMap = new HashMap<>(16);
         searchOrderMap.put("appid", ddAppId);
         searchOrderMap.put("mch_id", ddMchId);
         searchOrderMap.put("out_trade_no", orderId);
@@ -259,18 +222,6 @@ public class OrdersService extends BaseCrudService<Orders, OrdersMapper> {
      */
     private boolean orderIsSuccess(Map<String, String> orderMap) {
         return existResult(orderMap, "result_code") && existResult(orderMap, "return_code") && existResult(orderMap, "trade_state");
-    }
-
-    /**
-     * 检测是否匹配
-     *
-     * @param map 内容
-     * @param key 查询参数
-     * @return 是否匹配
-     */
-    private static boolean existResult(Map<String, String> map, String key) {
-        String resultCode = map.get(key);
-        return "success".equalsIgnoreCase(resultCode);
     }
 
 }

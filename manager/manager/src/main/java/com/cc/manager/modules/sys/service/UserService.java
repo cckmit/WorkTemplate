@@ -74,7 +74,7 @@ public class UserService extends BaseCrudService<User, UserMapper> {
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<User> deleteWrapper) {
         if (StringUtils.isNotBlank(requestParam)) {
-            List<String> idList = Lists.newArrayList(StringUtils.split(requestParam,","));
+            List<String> idList = Lists.newArrayList(StringUtils.split(requestParam, ","));
             // 删除时移除管理员账号ID
             idList.remove("1");
             return this.removeByIds(idList);

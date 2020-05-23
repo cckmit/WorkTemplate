@@ -239,7 +239,6 @@ public class AdValueService extends BaseStatsService<AdValue, AdValueMapper> {
         JSONObject queryObject = statsListParam.getQueryObject();
         Map<String, AdValue> adValueMap = Maps.newHashMap();
         AdValue totalAdValue = new AdValue();
-
         for (AdValue adValue : entityList) {
             // 将yyyyMMdd(HH)格式的时间处理成yyyy-MM-dd( HH)格式
             String timeValue = StringUtils.substring(adValue.getTimeValue(), 0, 4) + "-" + StringUtils.substring(adValue.getTimeValue(), 4, 6) + "-" + StringUtils.substring(adValue.getTimeValue(), 6, 8);

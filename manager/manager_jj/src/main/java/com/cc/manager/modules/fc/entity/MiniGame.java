@@ -1,31 +1,25 @@
 package com.cc.manager.modules.fc.entity;
 
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
 
 /**
- * <p>
- * 
- * </p>
- *
  * @author cf
  * @since 2020-05-13
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName(schema = "minigameback", value = "mini_game")
-public class MiniGame  implements BaseCrudEntity<MiniGame> {
+public class MiniGame implements BaseCrudEntity<MiniGame> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 主键id
@@ -220,4 +214,5 @@ public class MiniGame  implements BaseCrudEntity<MiniGame> {
     public String getCacheValue() {
         return this.gameAppid + "-" + this.gameName;
     }
+
 }

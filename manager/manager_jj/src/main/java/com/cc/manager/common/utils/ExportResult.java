@@ -1,12 +1,9 @@
 package com.cc.manager.common.utils;
 
 /**
- *
  * @author cf
- *
  */
-public class ExportResult
-{
+public class ExportResult {
 
     @Comments(name = "赛制名称")
     private String roundName;
@@ -36,93 +33,75 @@ public class ExportResult
     private String matchdate;
 
 
-    public String getMatchdate()
-    {
+    public String getMatchdate() {
         return matchdate;
     }
 
-    public void setMatchdate(String matchdate)
-    {
+    public void setMatchdate(String matchdate) {
         this.matchdate = matchdate;
     }
 
-    public String getRoundName()
-    {
+    public String getRoundName() {
         return roundName;
     }
 
-    public void setRoundName(String roundName)
-    {
+    public void setRoundName(String roundName) {
         this.roundName = roundName;
     }
 
-    public String getRoundLength()
-    {
+    public String getRoundLength() {
         return roundLength;
     }
 
-    public void setRoundLength(String roundLength)
-    {
+    public void setRoundLength(String roundLength) {
         this.roundLength = roundLength;
     }
 
-    public Integer getIndex()
-    {
+    public Integer getIndex() {
         return index;
     }
 
-    public void setIndex(Integer index)
-    {
+    public void setIndex(Integer index) {
         this.index = index;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getUid()
-    {
+    public String getUid() {
         return uid;
     }
 
-    public void setUid(String uid)
-    {
+    public void setUid(String uid) {
         this.uid = uid;
     }
 
-    public Integer getValue()
-    {
+    public Integer getValue() {
         return value;
     }
 
-    public void setValue(Integer value)
-    {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
-    public String getType()
-    {
+    public String getType() {
         return type;
     }
 
-    public void setType(String type)
-    {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public Integer getMark()
-    {
+    public Integer getMark() {
         return mark;
     }
 
-    public void setMark(Integer mark)
-    {
+    public void setMark(Integer mark) {
         this.mark = mark;
     }
 }

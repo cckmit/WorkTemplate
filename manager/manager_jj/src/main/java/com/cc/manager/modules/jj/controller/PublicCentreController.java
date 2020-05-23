@@ -2,6 +2,7 @@ package com.cc.manager.modules.jj.controller;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
 import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
@@ -12,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>
- * 前端控制器
- * </p>
+ * 公众号中心配置
  *
  * @author cf
  * @since 2020-05-13
@@ -47,16 +46,24 @@ public class PublicCentreController implements BaseCrudController {
 
     /**
      * 修改完毕公众号中心内容提交JSON文件到客户端
-     *
-     * @return
      */
-    @ResponseBody
     @GetMapping(value = "/public/submitJson")
     public PostResult submitPublicCentre() {
         PostResult result = new PostResult();
         publicCentreService.selectAllForJson();
         return result;
 
+    }
+
+    /**
+     * 页面表格直接更新展示顺序
+     *
+     * @param jsonObject jsonObject
+     * @return PostResult
+     */
+    @PostMapping(value = "/updateShowId")
+    public PostResult updateShowId(@RequestBody JSONObject jsonObject) {
+        return this.publicCentreService.updateShowId(jsonObject);
     }
 
     @Override
@@ -86,5 +93,6 @@ public class PublicCentreController implements BaseCrudController {
     public void setOrdersService(PublicCentreService publicCentreService) {
         this.publicCentreService = publicCentreService;
     }
+
 }
 

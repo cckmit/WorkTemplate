@@ -4,8 +4,6 @@ import com.alibaba.fastjson.JSONArray;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 分页查询结果

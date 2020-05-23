@@ -10,8 +10,7 @@ package com.cc.manager.common.utils;
  * windows的字节序为低字节开头 linux,unix的字节序为高字节开头 java则无论平台变化，都是高字节开头
  */
 
-public class CmTransfer
-{
+public class CmTransfer {
     /**
      * 将 int 转为低字节在前，高字节在后的 byte 数组
      *
@@ -19,8 +18,7 @@ public class CmTransfer
      *            int
      * @return byte[]
      */
-    public static byte[] toLH(int n)
-    {
+    public static byte[] toLH(int n) {
         byte[] b = new byte[4];
         b[0] = (byte) (n & 0xff);
         b[1] = (byte) (n >> 8 & 0xff);
@@ -36,8 +34,7 @@ public class CmTransfer
      *            short
      * @return byte[]
      */
-    public static byte[] toLHShort(short n)
-    {
+    public static byte[] toLHShort(short n) {
         byte[] b = new byte[2];
         b[0] = (byte) (n & 0xff);
         b[1] = (byte) (n >> 8 & 0xff);
@@ -51,16 +48,13 @@ public class CmTransfer
      * @param index
      * @return
      */
-    public static String lBytesToString(byte[] b, int index, int length)
-    {
+    public static String lBytesToString(byte[] b, int index, int length) {
         StringBuilder sb = new StringBuilder();
         int finish = index + length;
 
-        for (int i = index; i < finish; i++)
-        {
+        for (int i = index; i < finish; i++) {
             char c = (char) b[i];
-            if (0 == c)
-            {
+            if (0 == c) {
                 break;
             }
             sb.append(c);
@@ -72,8 +66,7 @@ public class CmTransfer
     /**
      * 将低字节数组转换为字节数组
      */
-    public static byte[] lBytesToBytes(byte[] b, int index, int length)
-    {
+    public static byte[] lBytesToBytes(byte[] b, int index, int length) {
         byte[] target = new byte[length];
 
         System.arraycopy(b, index, target, 0, length);
@@ -88,46 +81,37 @@ public class CmTransfer
      *            byte[]
      * @return int
      */
-    public static int lBytesToInt(byte[] b, int index)
-    {
+    public static int lBytesToInt(byte[] b, int index) {
         int s = 0;
         byte v0 = b[index];
         byte v1 = b[index + 1];
         byte v2 = b[index + 2];
         byte v3 = b[index + 3];
 
-        if (v3 >= 0)
-        {
+        if (v3 >= 0) {
             s = s + v3;
-        } else
-        {
+        } else {
             s = s + 256 + v3;
         }
         s = s << 8;
 
-        if (v2 >= 0)
-        {
+        if (v2 >= 0) {
             s = s + v2;
-        } else
-        {
+        } else {
             s = s + 256 + v2;
         }
         s = s << 8;
 
-        if (v1 >= 0)
-        {
+        if (v1 >= 0) {
             s = s + v1;
-        } else
-        {
+        } else {
             s = s + 256 + v1;
         }
         s = s << 8;
 
-        if (v0 >= 0)
-        {
+        if (v0 >= 0) {
             s = s + v0;
-        } else
-        {
+        } else {
             s = s + 256 + v0;
         }
 
@@ -141,26 +125,21 @@ public class CmTransfer
      *            byte[]
      * @return short
      */
-    public static short lBytesToShort(byte[] b, int index)
-    {
+    public static short lBytesToShort(byte[] b, int index) {
         int s = 0;
         byte v0 = b[index];
         byte v1 = b[index + 1];
 
-        if (v1 >= 0)
-        {
+        if (v1 >= 0) {
             s = s + v1;
-        } else
-        {
+        } else {
             s = s + 256 + v1;
         }
         s = s << 8;
 
-        if (v0 >= 0)
-        {
+        if (v0 >= 0) {
             s = s + v0;
-        } else
-        {
+        } else {
             s = s + 256 + v0;
         }
 

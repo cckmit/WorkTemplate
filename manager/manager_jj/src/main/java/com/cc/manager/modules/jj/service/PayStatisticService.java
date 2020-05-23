@@ -9,9 +9,12 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cc.manager.common.mvc.BaseCrudService;
+import com.cc.manager.common.mvc.BaseStatsController;
+import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
-import com.cc.manager.modules.jj.entity.GoodsValueExt;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.jj.entity.Orders;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.OrdersMapper;
@@ -21,112 +24,93 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
 
 /**
- * <p>
- * 服务实现类
- * </p>
- *
  * @author cf
  * @since 2020-05-13
  */
 @Service
 @DS("jj")
-public class PayStatisticService extends BaseCrudService<Orders, OrdersMapper> {
+public class PayStatisticService extends BaseStatsService<Orders, OrdersMapper> {
+
     private WxConfigService wxConfigService;
     private GoodsValueExtService goodsValueExtService;
     private OrdersMapper ordersMapper;
-    @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<Orders> queryWrapper) {
-        // 前端提交的条件
-        JSONObject queryData = null;
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
 
-        }
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param crudPageParam 分页请求参数
-     */
     @Override
-    public CrudPageResult getPage(CrudPageParam crudPageParam) {
-        String start ="2020-03-24";
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        String start = "2020-03-24";
         String end = "2020-03-24";
         //  String end = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        // 前端提交的条件
-        JSONObject queryData = null;
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String times = queryData.getString("times");
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
+            String times = queryObject.getString("times");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
                 start = timeRangeArray[0].trim();
                 end = timeRangeArray[1].trim();
             }
         }
-        CrudPageResult pageResult = new CrudPageResult();
+        StatsListResult statsListResult = new StatsListResult();
+        // 判断请求参数是否为空
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
+        }
+        if (Objects.isNull(statsListParam.getQueryObject())) {
+            statsListParam.setQueryObject(new JSONObject());
+        }
         try {
-            Page<Orders> page = new Page<>(crudPageParam.getPage(), crudPageParam.getLimit());
+            // 初始化查询wrapper
             QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
-            // 更新查询排序条件
-            if (StringUtils.isNotBlank(crudPageParam.getOrderBy())) {
-                JSONObject orderByObject = JSONObject.parseObject(crudPageParam.getOrderBy());
-                orderByObject.forEach((orderByColumn, orderByType) -> {
-                    String typeStr = orderByType.toString();
-                    if ("ASC".equalsIgnoreCase(typeStr)) {
-                        queryWrapper.orderBy(true, true, orderByColumn);
-                    } else if ("DESC".equalsIgnoreCase(typeStr)) {
-                        queryWrapper.orderBy(true, false, orderByColumn);
-                    }
-                });
-            }
-            //this.updateGetPageWrapper(crudPageParam, queryWrapper);
+
             List<Orders> entityList = ordersMapper.queryBuyStatistic(start, end);
             if (Objects.nonNull(entityList)) {
-                this.rebuildSelectedList(crudPageParam, entityList);
-                pageResult.setCount(entityList.size());
-                pageResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
+                JSONObject totalRow = this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
+                statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
+                statsListResult.setTotalRow(totalRow);
+                statsListResult.setCount(entityList.size());
             }
         } catch (Exception e) {
-            pageResult.setCode(1);
-            pageResult.setMsg("查询结果异常，请联系开发人员！");
+            statsListResult.setCode(1);
+            statsListResult.setMsg("查询结果异常，请联系开发人员！");
             LOGGER.error(ExceptionUtils.getStackTrace(e));
         }
-        return pageResult;
+        return statsListResult;
+    }
+    @Override
+    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Orders> queryWrapper, StatsListResult statsListResult) {
+
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
+            String times = queryObject.getString("times");
+            if (StringUtils.isNotBlank(times)) {
+                String[] timeRangeArray = StringUtils.split(times, "~");
+                queryWrapper.between("DATE(ddTrans)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
+            }
+            String appId = queryObject.getString("id");
+            queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
+            String productType = queryObject.getString("productType");
+            queryWrapper.eq(StringUtils.isNotBlank(productType), "ddRound", productType);
+        }
     }
 
-    /**
-     * 重构分页查询结果，比如进行汇总复制计算等操作
-     *
-     * @param crudPageParam 查询参数
-     * @param entityList    查询数据对象列表
-     */
     @Override
-    protected void rebuildSelectedList(CrudPageParam crudPageParam, List<Orders> entityList) {
-        List<Orders> newEntityList =new ArrayList<>();
+    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<Orders> entityList, StatsListResult statsListResult) {
+        List<Orders> newEntityList = new ArrayList<>();
         JSONObject queryData = null;
         String productNameSelect = null;
         String productTypeSelect = null;
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            queryData = JSONObject.parseObject(statsListParam.getQueryData());
         }
         if (queryData != null) {
-             productNameSelect = queryData.getString("productName");
-             productTypeSelect = queryData.getString("productType");
+            productNameSelect = queryData.getString("productName");
+            productTypeSelect = queryData.getString("productType");
         }
         for (Orders order : entityList) {
             WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, order.getDdAppId());
@@ -135,33 +119,23 @@ public class PayStatisticService extends BaseCrudService<Orders, OrdersMapper> {
             Integer programType = wxConfig.getProgramType();
             order.setProductName(productName);
             order.setProductType(programType);
-           if(StringUtils.isNotBlank(productNameSelect)){
-               if(!productNameSelect.equals(order.getProductName())){
-                   continue;
-               }
-           }
-            if(StringUtils.isNotBlank(productTypeSelect)){
-                if(!productTypeSelect.equals(order.getProductType().toString())){
+            if (StringUtils.isNotBlank(productNameSelect)) {
+                if (!productNameSelect.equals(order.getProductName())) {
+                    continue;
+                }
+            }
+            if (StringUtils.isNotBlank(productTypeSelect)) {
+                if (!productTypeSelect.equals(order.getProductType().toString())) {
                     continue;
                 }
             }
 
-            order.setPayUp(order.getDdPrice().divide(new BigDecimal(order.getPayUsers()),2,ROUND_HALF_UP).toString());
+            order.setPayUp(order.getDdPrice().divide(new BigDecimal(order.getPayUsers()), 2, ROUND_HALF_UP).toString());
             newEntityList.add(order);
         }
         entityList.clear();
         entityList.addAll(newEntityList);
-    }
-
-    @Override
-    protected boolean delete(String requestParam, UpdateWrapper<Orders> deleteWrapper) {
-        return false;
-    }
-
-
-    @Override
-    protected void updateInsertEntity(String requestParam, Orders entity) {
-
+        return null;
     }
 
     @Autowired
@@ -173,6 +147,7 @@ public class PayStatisticService extends BaseCrudService<Orders, OrdersMapper> {
     public void setGoodsValueExtService(GoodsValueExtService goodsValueExtService) {
         this.goodsValueExtService = goodsValueExtService;
     }
+
     @Autowired
     public void setOrdersMapper(OrdersMapper ordersMapper) {
         this.ordersMapper = ordersMapper;

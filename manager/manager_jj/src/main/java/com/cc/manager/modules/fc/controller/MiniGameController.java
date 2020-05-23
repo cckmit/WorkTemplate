@@ -8,15 +8,10 @@ import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.fc.service.MiniGameService;
-import com.cc.manager.modules.fc.service.MinitjWxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>
- *  前端控制器
- * </p>
- *
  * @author cf
  * @since 2020-05-13
  */
@@ -26,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/miniGame")
 public class MiniGameController implements BaseCrudController {
     private MiniGameService miniGameService;
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
@@ -66,6 +62,7 @@ public class MiniGameController implements BaseCrudController {
     public JSONArray getSelectArray(String requestParam) {
         return null;
     }
+
     @Autowired
     public void setMiniGameService(MiniGameService miniGameService) {
         this.miniGameService = miniGameService;

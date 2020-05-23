@@ -1,5 +1,6 @@
 package com.cc.manager.modules.jj.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -9,6 +10,7 @@ import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.modules.jj.entity.AppConfig;
 import com.cc.manager.modules.jj.entity.GameSet;
 import com.cc.manager.modules.jj.mapper.AppConfigMapper;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,13 +30,11 @@ public class AppConfigService extends BaseCrudService<AppConfig, AppConfigMapper
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<AppConfig> queryWrapper) {
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            JSONObject queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-            if (queryData != null) {
-                String appId = queryData.getString("id");
-                String appPlatform = queryData.getString("appPlatform");
-                queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
-                queryWrapper.eq(StringUtils.isNotBlank(appPlatform), "ddAppPlatform", appPlatform);
-            }
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String appId = queryObject.getString("id");
+            queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
+            String appPlatform = queryObject.getString("appPlatform");
+            queryWrapper.eq(StringUtils.isNotBlank(appPlatform), "ddAppPlatform", appPlatform);
         }
     }
 
@@ -58,7 +58,16 @@ public class AppConfigService extends BaseCrudService<AppConfig, AppConfigMapper
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<AppConfig> deleteWrapper) {
+        if (StringUtils.isNotBlank(requestParam)) {
+            String list = StrUtil.sub(requestParam, 1, -1);
+            List<String> idList = Lists.newArrayList(StringUtils.split(list, ","));
+            return this.removeByIds(idList);
+        }
         return false;
+    }
+
+    protected boolean delete(List<String> requestParam) {
+        return this.removeByIds(requestParam);
     }
 
     @Override
@@ -69,4 +78,5 @@ public class AppConfigService extends BaseCrudService<AppConfig, AppConfigMapper
     public void setGameSetService(GameSetService gameSetService) {
         this.gameSetService = gameSetService;
     }
+
 }

@@ -27,6 +27,12 @@ public class AdValueController implements BaseStatsController {
         return this.adValueService.getList(statsListParam);
     }
 
+    @Override
+    @GetMapping(value = "/getPage")
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        return null;
+    }
+
     @Autowired
     public void setAdValueService(AdValueService adValueService) {
         this.adValueService = adValueService;

@@ -2,19 +2,19 @@ package com.cc.manager.modules.jj.controller;
 
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
 import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.service.WxGroupManagerService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>
- * 前端控制器
- * </p>
+ * 微信群管理
  *
  * @author cf
  * @since 2020-05-09
@@ -23,7 +23,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/jj/wxGroupManager")
 public class WxGroupManagerController implements BaseCrudController {
+
     private WxGroupManagerService wxGroupManagerService;
+
+    private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
@@ -46,7 +49,11 @@ public class WxGroupManagerController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        return this.wxGroupManagerService.post(requestParam);
+        PostResult postResult = this.wxGroupManagerService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_confirm");
+        }
+        return postResult;
     }
 
     @Override
@@ -61,6 +68,21 @@ public class WxGroupManagerController implements BaseCrudController {
         return this.wxGroupManagerService.delete(requestParam);
     }
 
+    /**
+     * 页面开关更新开关状态
+     *
+     * @param jsonObject jsonObject
+     * @return PostResult
+     */
+    @PutMapping(value = "/switchStatus")
+    public PostResult updateShowId(@RequestBody JSONObject jsonObject) {
+        PostResult postResult = this.wxGroupManagerService.switchStatus(jsonObject);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_confirm");
+        }
+        return postResult;
+    }
+
     @Override
     public JSONArray getSelectArray(String requestParam) {
         return null;
@@ -70,5 +92,11 @@ public class WxGroupManagerController implements BaseCrudController {
     public void setWxGroupManagerService(WxGroupManagerService wxGroupManagerService) {
         this.wxGroupManagerService = wxGroupManagerService;
     }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
+    }
+
 }
 

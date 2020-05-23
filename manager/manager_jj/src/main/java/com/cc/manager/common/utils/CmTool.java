@@ -26,8 +26,7 @@ import java.util.*;
 /**
  * @author Vinnes
  */
-public class CmTool
-{
+public class CmTool {
 
     //
     // 十六进制字符串模板
@@ -42,8 +41,7 @@ public class CmTool
      * @param path 路径信息
      * @return 上一次编辑时间
      */
-    public static long getFileDate(String path)
-    {
+    public static long getFileDate(String path) {
         File file = new File(path);
 
         return file.lastModified();
@@ -55,8 +53,7 @@ public class CmTool
      * @param path 路径信息
      * @return 是否存在
      */
-    public static boolean checkFileExist(String path)
-    {
+    public static boolean checkFileExist(String path) {
         File file = new File(path);
 
         return file.exists();
@@ -68,12 +65,10 @@ public class CmTool
      * @param hexString 二进制信息
      * @return 得到的字符串信息
      */
-    public static String getStringFromHex(String hexString) throws UnsupportedEncodingException
-    {
+    public static String getStringFromHex(String hexString) throws UnsupportedEncodingException {
         byte[] bytes = new byte[hexString.length() / 2];
 
-        for (int i = 0, j = 0; i < hexString.length(); i += 2, j++)
-        {
+        for (int i = 0, j = 0; i < hexString.length(); i += 2, j++) {
             String value = "0x" + hexString.substring(i, i + 2);
 
             bytes[j] = Integer.decode(value).byteValue();
@@ -88,28 +83,23 @@ public class CmTool
      * @param content 源字串信息
      * @return 得到的二进制流的文本描述
      */
-    public static String getStringToHex(String content)
-    {
+    public static String getStringToHex(String content) {
         StringBuilder sb = new StringBuilder();
-        try
-        {
+        try {
             byte[] bytes = content.getBytes("gb2312");
 
             String temp = null;
 
-            for (int i = 0; i < bytes.length; i++)
-            {
+            for (int i = 0; i < bytes.length; i++) {
                 temp = Integer.toHexString(bytes[i] & 0xff);
-                if (temp.length() == 1)
-                {
+                if (temp.length() == 1) {
                     sb.append("0");
                 }
                 sb.append(temp);
             }
 
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             LOG.error(Log4j.getExceptionInfo(e));
         }
         return sb.toString();
@@ -120,8 +110,7 @@ public class CmTool
      *
      * @return
      */
-    public static long getMillisecondTime()
-    {
+    public static long getMillisecondTime() {
         Date date = new Date();
         return date.getTime();
     }
@@ -129,15 +118,12 @@ public class CmTool
     /**
      * 获取选项索引信息
      */
-    public static int getOptionIndex(String text)
-    {
-        if (null == text)
-        {
+    public static int getOptionIndex(String text) {
+        if (null == text) {
             return 0;
         }
         int index = text.indexOf(" - ");
-        if (index > 0)
-        {
+        if (index > 0) {
             text = text.substring(0, index);
             text = CmTool.trimExt(text);
             return CmTool.parseInt(text, 0);
@@ -151,8 +137,7 @@ public class CmTool
      *
      * @return 得到的第几月份
      */
-    public static int getCurrentMonth()
-    {
+    public static int getCurrentMonth() {
         Date date = new Date(System.currentTimeMillis());
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -164,8 +149,7 @@ public class CmTool
      *
      * @return 得到的天数
      */
-    public static int getCurrentMonthDays()
-    {
+    public static int getCurrentMonthDays() {
         Date date = new Date(System.currentTimeMillis());
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -177,8 +161,7 @@ public class CmTool
      *
      * @return 得到的第几小时
      */
-    public static int getCurrentDayHour()
-    {
+    public static int getCurrentDayHour() {
         Date date = new Date(System.currentTimeMillis());
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -190,8 +173,7 @@ public class CmTool
      *
      * @return 得到的第几分钟
      */
-    public static int getCurrentHourMinute()
-    {
+    public static int getCurrentHourMinute() {
         Date date = new Date(System.currentTimeMillis());
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -203,35 +185,28 @@ public class CmTool
      *
      * @return 得到的星期几
      */
-    public static int getCurrentDateWeek()
-    {
+    public static int getCurrentDateWeek() {
         Date date = new Date(System.currentTimeMillis());
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
         int value = cal.get(Calendar.DAY_OF_WEEK);
-        if (Calendar.SUNDAY == value)
-        {
+        if (Calendar.SUNDAY == value) {
             return 6;
         }
-        if (Calendar.SATURDAY == value)
-        {
+        if (Calendar.SATURDAY == value) {
             return 5;
         }
-        if (Calendar.FRIDAY == value)
-        {
+        if (Calendar.FRIDAY == value) {
             return 4;
         }
-        if (Calendar.THURSDAY == value)
-        {
+        if (Calendar.THURSDAY == value) {
             return 3;
         }
-        if (Calendar.WEDNESDAY == value)
-        {
+        if (Calendar.WEDNESDAY == value) {
             return 2;
         }
-        if (Calendar.TUESDAY == value)
-        {
+        if (Calendar.TUESDAY == value) {
             return 1;
         }
         return 0;
@@ -242,8 +217,7 @@ public class CmTool
      *
      * @return 得到的时间值
      */
-    public static long getCurrentDateValue()
-    {
+    public static long getCurrentDateValue() {
         SimpleDateFormat sm = new SimpleDateFormat("yyMMddHHmmss");
         Date date = new Date(System.currentTimeMillis());
         String temp = sm.format(date);
@@ -256,8 +230,7 @@ public class CmTool
      *
      * @return 得到的时间值
      */
-    public static long getCurrentDateValueDetail()
-    {
+    public static long getCurrentDateValueDetail() {
         SimpleDateFormat sm = new SimpleDateFormat("yyyyMMddHHmmss");
         Date date = new Date(System.currentTimeMillis());
         String temp = sm.format(date);
@@ -270,8 +243,7 @@ public class CmTool
      *
      * @return 得到的时间值
      */
-    public static int getCurrentDateValueHHmmss()
-    {
+    public static int getCurrentDateValueHHmmss() {
         SimpleDateFormat sm = new SimpleDateFormat("HHmmss");
         Date date = new Date(System.currentTimeMillis());
         String temp = sm.format(date);
@@ -282,14 +254,12 @@ public class CmTool
     /**
      * 获取一份随机单号的方法
      */
-    public static String getOnceRandomOrderNo()
-    {
+    public static String getOnceRandomOrderNo() {
         StringBuilder sb = new StringBuilder();
         int currentDateValue = (int) getCurrentDateValue();
         Random random = new Random();
 
-        for (int i = 0; i < 16; i++)
-        {
+        for (int i = 0; i < 16; i++) {
             int value = Math.abs((random.nextInt() + currentDateValue) % 10);
             sb.append(value);
         }
@@ -303,8 +273,7 @@ public class CmTool
      * @param date
      * @return long
      */
-    public static long dateToLong(Date date)
-    {
+    public static long dateToLong(Date date) {
         SimpleDateFormat sm = new SimpleDateFormat("yyMMddHHmmss");
         String temp = sm.format(date);
 
@@ -316,8 +285,7 @@ public class CmTool
      *
      * @return 得到的时间值
      */
-    public static int getCurrentDataValueSummary()
-    {
+    public static int getCurrentDataValueSummary() {
         SimpleDateFormat sm = new SimpleDateFormat("yyyyMMddHH");
         Date date = new Date(System.currentTimeMillis());
         String temp = sm.format(date);
@@ -330,8 +298,7 @@ public class CmTool
      *
      * @return 得到的时间值
      */
-    public static int getCurrentDataValueRough()
-    {
+    public static int getCurrentDataValueRough() {
         SimpleDateFormat sm = new SimpleDateFormat("yyyyMMdd");
         Date date = new Date(System.currentTimeMillis());
         String temp = sm.format(date);
@@ -344,10 +311,8 @@ public class CmTool
      *
      * @return
      */
-    public static long getDateCompute(long longDate, long diff)
-    {
-        try
-        {
+    public static long getDateCompute(long longDate, long diff) {
+        try {
             SimpleDateFormat sm = new SimpleDateFormat("yyyyMMddHHmmss");
             String dateStr = String.valueOf(longDate);
             Date date = sm.parse(dateStr);
@@ -356,8 +321,7 @@ public class CmTool
             String temp = sm.format(date);
 
             return Long.parseLong(temp);
-        } catch (ParseException e)
-        {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
@@ -370,16 +334,13 @@ public class CmTool
      * @param path    路径信息
      * @param content 内容信息
      */
-    public static void writeFileString(String path, String content)
-    {
-        try
-        {
+    public static void writeFileString(String path, String content) {
+        try {
             File file = new File(path);
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(content.getBytes());
             fos.close();
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -390,13 +351,10 @@ public class CmTool
      * @param path 路径信息
      * @return 得到的文本信息
      */
-    public static String readFileString(String path)
-    {
-        try
-        {
+    public static String readFileString(String path) {
+        try {
             File file = new File(path);
-            if (!file.exists())
-            {
+            if (!file.exists()) {
                 return null;
             }
             FileInputStream fis = new FileInputStream(file);
@@ -407,8 +365,7 @@ public class CmTool
             fis.close();
 
             return new String(bytes, "GBK");
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -418,16 +375,14 @@ public class CmTool
     /**
      * 解析客户端提交过来数据
      */
-    public static byte[] parseServletInputStream(HttpServletRequest request) throws Exception
-    {
+    public static byte[] parseServletInputStream(HttpServletRequest request) throws Exception {
         ServletInputStream inStream = request.getInputStream();
         int size = request.getContentLength();
         byte[] bytes = new byte[size];
         int count = 0;
         int offset = 0;
 
-        while (count >= 0)
-        {
+        while (count >= 0) {
             count = inStream.read(bytes, offset, 4096);
             offset += count;
         }
@@ -438,8 +393,7 @@ public class CmTool
     /**
      * 编码并返回下发的数据
      */
-    public static void encodeServletOutputStream(HttpServletResponse responseObject, JSONObject responsePackage) throws Exception
-    {
+    public static void encodeServletOutputStream(HttpServletResponse responseObject, JSONObject responsePackage) throws Exception {
         byte[] bytes = responsePackage.toJSONString().getBytes(StandardCharsets.UTF_8);
 
         ServletOutputStream out = responseObject.getOutputStream();
@@ -453,24 +407,19 @@ public class CmTool
      * @param text 字符串文本信息
      * @return 去皮后的字符串
      */
-    public static String trimExt(String text)
-    {
+    public static String trimExt(String text) {
         StringBuilder sb = new StringBuilder(text);
-        for (int i = 0; i < sb.length(); i++)
-        {
+        for (int i = 0; i < sb.length(); i++) {
             char c = sb.charAt(i);
-            if (c == '\n' || c == '\r')
-            {
+            if (c == '\n' || c == '\r') {
                 sb.setCharAt(i, ' ');
                 continue;
             }
             break;
         }
-        for (int i = sb.length() - 1; i >= 0; i--)
-        {
+        for (int i = sb.length() - 1; i >= 0; i--) {
             char c = sb.charAt(i);
-            if (c == '\n' || c == '\r')
-            {
+            if (c == '\n' || c == '\r') {
                 sb.setCharAt(i, ' ');
                 continue;
             }
@@ -483,18 +432,14 @@ public class CmTool
     /**
      * 转换字符串到整型数组参数
      */
-    public static int[] parseInts(String content, String tag)
-    {
+    public static int[] parseInts(String content, String tag) {
         String[] contents = CmTool.cut(content, tag);
         int[] values = new int[contents.length];
 
-        for (int i = contents.length - 1; i >= 0; i--)
-        {
-            try
-            {
+        for (int i = contents.length - 1; i >= 0; i--) {
+            try {
                 values[i] = Integer.parseInt(contents[i]);
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 return null;
             }
         }
@@ -508,11 +453,9 @@ public class CmTool
      * @param content 字符串内容信息
      * @return 得到的解析结果
      */
-    public static Vector<String> parseListString(String content)
-    {
+    public static Vector<String> parseListString(String content) {
         Vector<String> list = new Vector<String>();
-        if (null == content)
-        {
+        if (null == content) {
             return list;
         }
         int start = 0, end;
@@ -520,24 +463,20 @@ public class CmTool
         boolean finishLoop = false;
 
         end = content.indexOf("\n");
-        while (start >= 0)
-        {
-            if (end < 0)
-            {
+        while (start >= 0) {
+            if (end < 0) {
                 finishLoop = true;
                 end = content.length();
             }
             tile = content.substring(start, end);
             tile = trimExt(tile);
-            if (tile.length() > 0)
-            {
+            if (tile.length() > 0) {
                 list.addElement(tile);
             }
 
             start = end + 1;
             end = content.indexOf("\n", start);
-            if (finishLoop)
-            {
+            if (finishLoop) {
                 break;
             }
         }
@@ -551,11 +490,9 @@ public class CmTool
      * @param content 字符串内容信息
      * @return 得到的解析结果
      */
-    public static HashMap<String, String> parseConfigString(String content)
-    {
+    public static HashMap<String, String> parseConfigString(String content) {
         HashMap<String, String> map = new HashMap<String, String>();
-        if (null == content)
-        {
+        if (null == content) {
             return map;
         }
         int start = 0, end, index;
@@ -565,19 +502,15 @@ public class CmTool
         boolean finishLoop = false;
 
         end = content.indexOf("\n");
-        while (start >= 0)
-        {
-            if (end < 0)
-            {
+        while (start >= 0) {
+            if (end < 0) {
                 finishLoop = true;
                 end = content.length();
             }
             tile = content.substring(start, end);
-            if (!tile.startsWith("//"))
-            {
+            if (!tile.startsWith("//")) {
                 index = tile.indexOf("=");
-                if (index > 0)
-                {
+                if (index > 0) {
                     key = tile.substring(0, index);
                     value = tile.substring(index + 1, tile.length());
                     value = trimExt(value);
@@ -587,8 +520,7 @@ public class CmTool
 
             start = end + 1;
             end = content.indexOf("\n", start);
-            if (finishLoop)
-            {
+            if (finishLoop) {
                 break;
             }
         }
@@ -602,19 +534,15 @@ public class CmTool
      * @param request
      * @return
      */
-    public static String getIP(HttpServletRequest request)
-    {
+    public static String getIP(HttpServletRequest request) {
         String ipaddr = request.getHeader("x-forwarded-for");
-        if (ipaddr == null || ipaddr.equals("unknown"))
-        {
+        if (ipaddr == null || ipaddr.equals("unknown")) {
             ipaddr = request.getHeader("Proxy-Client-IP");
         }
-        if (ipaddr == null || ipaddr.equals("unknown"))
-        {
+        if (ipaddr == null || ipaddr.equals("unknown")) {
             ipaddr = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (ipaddr == null || ipaddr.equals("unknown"))
-        {
+        if (ipaddr == null || ipaddr.equals("unknown")) {
             ipaddr = request.getRemoteAddr();
         }
         return ipaddr;
@@ -626,11 +554,9 @@ public class CmTool
      * @param urlParam 链接参数
      * @return 返回值信息
      */
-    public static String makeHttpConnect(String urlParam)
-    {
+    public static String makeHttpConnect(String urlParam) {
         String serviceUrl = urlParam;
-        try
-        {
+        try {
             URL url = new URL(serviceUrl);
             HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
             httpConn.setDoOutput(true);
@@ -641,14 +567,12 @@ public class CmTool
             httpConn.setRequestMethod("GET");
 
             int responseCode = httpConn.getResponseCode();
-            if (HttpURLConnection.HTTP_OK == responseCode)
-            {
+            if (HttpURLConnection.HTTP_OK == responseCode) {
                 byte[] readBytes = new byte[2 * 1024];
                 int readed = 0;
                 InputStream inStream = httpConn.getInputStream();
                 ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-                while ((readed = inStream.read(readBytes)) != -1)
-                {
+                while ((readed = inStream.read(readBytes)) != -1) {
                     byteStream.write(readBytes, 0, readed);
                 }
 
@@ -657,8 +581,7 @@ public class CmTool
 
                 return byteStream.toString("UTF-8");
             }
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -668,8 +591,7 @@ public class CmTool
     /**
      * 获取网络传输的 ascii 字符串字节流
      */
-    public static byte[] getNetworkAsciiBytes(String info)
-    {
+    public static byte[] getNetworkAsciiBytes(String info) {
         byte[] bytes = info.getBytes();
         byte[] lengths = CmTransfer.toLH(bytes.length);
         byte[] result = new byte[bytes.length + 4];
@@ -683,8 +605,7 @@ public class CmTool
     /**
      * 获取网络传输的 unicode 字符串字节流
      */
-    public static byte[] getNetworkUnicodeBytes(String info)
-    {
+    public static byte[] getNetworkUnicodeBytes(String info) {
         byte[] bytes = getSimpleUnicodeBytes(info);
         byte[] lengths = CmTransfer.toLH(bytes.length);
         byte[] result = new byte[bytes.length + 4];
@@ -698,8 +619,7 @@ public class CmTool
     /**
      * 获取简洁的 unicode 字符串字节流
      */
-    public static byte[] getSimpleUnicodeBytes(String info)
-    {
+    public static byte[] getSimpleUnicodeBytes(String info) {
         byte[] bytes = decodeUnicodeString(info);
         byte[] result = new byte[bytes.length];
 
@@ -712,13 +632,10 @@ public class CmTool
      * 服务器转码字符
      */
 
-    public static byte[] decodeUnicodeString(String info)
-    {
-        try
-        {
+    public static byte[] decodeUnicodeString(String info) {
+        try {
             return info.getBytes("Unicode");
-        } catch (UnsupportedEncodingException e)
-        {
+        } catch (UnsupportedEncodingException e) {
             return info.getBytes();
         }
     }
@@ -729,17 +646,13 @@ public class CmTool
      * @param bytes
      * @return
      */
-    public static String decodeUnicodeBytes(byte[] bytes)
-    {
-        try
-        {
-            if (null == bytes)
-            {
+    public static String decodeUnicodeBytes(byte[] bytes) {
+        try {
+            if (null == bytes) {
                 return null;
             }
             return new String(bytes, "Unicode");
-        } catch (UnsupportedEncodingException e)
-        {
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
@@ -752,8 +665,7 @@ public class CmTool
      * @param e
      * @return
      */
-    public static String getStackTrace(Exception e)
-    {
+    public static String getStackTrace(Exception e) {
         ByteArrayOutputStream buf = new ByteArrayOutputStream();
         e.printStackTrace(new PrintWriter(buf, true));
 
@@ -763,8 +675,7 @@ public class CmTool
     /**
      * 获取一个数据输入流
      */
-    public static ByteArrayInputStream getRsDataInputStream(Object data, boolean compress) throws Exception
-    {
+    public static ByteArrayInputStream getRsDataInputStream(Object data, boolean compress) throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
         oos.writeObject(data);
@@ -772,8 +683,7 @@ public class CmTool
         bos.close();
 
         byte[] bytes = bos.toByteArray();
-        if (compress)
-        {
+        if (compress) {
             bytes = CmZip.compress(bytes);
         }
 
@@ -783,18 +693,15 @@ public class CmTool
     /**
      * 获取一个数据输出字节
      */
-    public static Object getRsDataOutputBytes(ResultSet rs, String name, boolean compress) throws Exception
-    {
+    public static Object getRsDataOutputBytes(ResultSet rs, String name, boolean compress) throws Exception {
         InputStream ins = rs.getBinaryStream(name);
-        if (null == ins)
-        {
+        if (null == ins) {
             return null;
         }
 
         byte[] bytes = new byte[ins.available()];
         ins.read(bytes);
-        if (compress)
-        {
+        if (compress) {
             bytes = CmZip.decompress(bytes);
         }
 
@@ -810,13 +717,10 @@ public class CmTool
     /**
      * 转换一个整型的方法
      */
-    public static int parseInt(String content, int exceptionValue)
-    {
-        try
-        {
+    public static int parseInt(String content, int exceptionValue) {
+        try {
             return Integer.parseInt(content);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -826,25 +730,20 @@ public class CmTool
     /**
      * 自实现字符串切割方法，速度稍快
      */
-    public static String[] cut(String source, String tag)
-    {
+    public static String[] cut(String source, String tag) {
         ArrayList<String> lists = new ArrayList<String>();
         int start, end;
 
         start = 0;
         end = source.indexOf(tag);
-        if (end < 0)
-        {
+        if (end < 0) {
             lists.add(source);
-        } else
-        {
-            do
-            {
+        } else {
+            do {
                 lists.add(source.substring(start, end));
                 start = end + 1;
                 end = source.indexOf(tag, start);
-                if (end < 0)
-                {
+                if (end < 0) {
                     lists.add(source.substring(start, source.length()));
                     break;
                 }
@@ -861,10 +760,8 @@ public class CmTool
      * @param key   关键字信息
      * @param value 要替换的内容
      */
-    public static void replaceForWord(StringBuilder sb, String key, String value)
-    {
-        if (null == value)
-        {
+    public static void replaceForWord(StringBuilder sb, String key, String value) {
+        if (null == value) {
             return;
         }
         int start = 0;
@@ -872,8 +769,7 @@ public class CmTool
 
         length = key.length();
         start = sb.indexOf(key);
-        while (start >= 0)
-        {
+        while (start >= 0) {
             end = start + length;
 
             sb.replace(start, end, value);
@@ -889,10 +785,8 @@ public class CmTool
      * @param time2      新时间
      * @return 时间差 秒
      */
-    public static int getTimeDeltaSecs(String dateFormat, long time1, long time2)
-    {
-        try
-        {
+    public static int getTimeDeltaSecs(String dateFormat, long time1, long time2) {
+        try {
             SimpleDateFormat sm = new SimpleDateFormat(dateFormat);
             String dateStr = String.valueOf(time1);
             Date date1 = sm.parse(dateStr);
@@ -901,8 +795,7 @@ public class CmTool
 
             int diff = (int) ((date2.getTime() - date1.getTime()) / 1000);
             return diff;
-        } catch (ParseException e)
-        {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
@@ -917,10 +810,8 @@ public class CmTool
      * @param time2
      * @return
      */
-    public static int daysBetween(String dateFormat, long time1, long time2)
-    {
-        try
-        {
+    public static int daysBetween(String dateFormat, long time1, long time2) {
+        try {
             SimpleDateFormat sm = new SimpleDateFormat(dateFormat);
             String dateStr = String.valueOf(time1);
             Date date1 = sm.parse(dateStr);
@@ -935,8 +826,7 @@ public class CmTool
             long between_days = (mills2 - mills1) / (1000 * 3600 * 24);
 
             return Integer.parseInt(String.valueOf(between_days));
-        } catch (ParseException e)
-        {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
@@ -946,14 +836,11 @@ public class CmTool
     /**
      * 获取一个序列数据字符串
      */
-    public static String gainStringByInts(int[] values)
-    {
+    public static String gainStringByInts(int[] values) {
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < values.length; i++)
-        {
-            if (0 != i)
-            {
+        for (int i = 0; i < values.length; i++) {
+            if (0 != i) {
                 sb.append("#");
             }
 
@@ -966,12 +853,10 @@ public class CmTool
     /**
      * 随机一个字符串
      */
-    public static String createNonceStr()
-    {
+    public static String createNonceStr() {
         char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         StringBuffer buffer = new StringBuffer();
-        for (int i = 0; i < 16; i++)
-        {
+        for (int i = 0; i < 16; i++) {
             int index = new Random().nextInt(hexDigits.length);
             buffer.append(hexDigits[index]);
         }
@@ -984,8 +869,7 @@ public class CmTool
      * @param b
      * @return
      */
-    private static String byteToHexString(byte b)
-    {
+    private static String byteToHexString(byte b) {
         int n = b;
         if (n < 0)
             n += 256;
@@ -1000,8 +884,7 @@ public class CmTool
      * @param b
      * @return
      */
-    private static String byteArrayToHexString(byte b[])
-    {
+    private static String byteArrayToHexString(byte b[]) {
         StringBuffer resultSb = new StringBuffer();
         for (int i = 0; i < b.length; i++)
             resultSb.append(byteToHexString(b[i]));
@@ -1015,14 +898,11 @@ public class CmTool
      * @param sign
      * @return
      */
-    public static String getMD5Encode(String sign)
-    {
-        try
-        {
+    public static String getMD5Encode(String sign) {
+        try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             return byteArrayToHexString(md.digest(sign.getBytes(StandardCharsets.UTF_8)));
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             LOG.error(Log4j.getExceptionInfo(e));
         }
 
@@ -1036,17 +916,14 @@ public class CmTool
      * @param password
      * @return
      */
-    private static KeyManager[] createKeyMager(String p12, String password)
-    {
-        try
-        {
+    private static KeyManager[] createKeyMager(String p12, String password) {
+        try {
             KeyStore ks = KeyStore.getInstance("PKCS12");
             ks.load(new FileInputStream(p12), password.toCharArray());
             KeyManagerFactory trustManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(ks, password.toCharArray());
             return trustManagerFactory.getKeyManagers();
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -1059,10 +936,8 @@ public class CmTool
      * @return
      * @throws Exception
      */
-    public static String sendHttps(String xml, String interface_url, String p12, String password) throws Exception
-    {
-        try
-        {
+    public static String sendHttps(String xml, String interface_url, String p12, String password) throws Exception {
+        try {
             URL url = new URL(interface_url);
             TrustManager[] trust = new TrustManager[]{new EmptyX509TrustManager()};
             KeyManager[] tm = createKeyMager(p12, password);
@@ -1088,12 +963,10 @@ public class CmTool
             outputStream.close();
             InputStream ins = httpsConn.getInputStream();
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            do
-            {
+            do {
                 byte[] temp = new byte[1024];
                 int bufferLength = ins.read(temp);
-                if (bufferLength < 0)
-                {
+                if (bufferLength < 0) {
                     break;
                 }
                 bos.write(temp, 0, bufferLength);
@@ -1104,8 +977,7 @@ public class CmTool
 
             byte[] getXml = bos.toByteArray();
             return new String(getXml, "utf-8");
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             throw e;
         }
     }
@@ -1116,29 +988,25 @@ public class CmTool
      * @param obj 对象
      * @return json
      */
-    public static String getJSONByFastJSON(Object obj)
-    {
+    public static String getJSONByFastJSON(Object obj) {
         return JSON.toJSONStringWithDateFormat(obj, "yyyy-MM-dd HH:mm");
     }
 
     /**
      * 解析JSON通过fastjson
      */
-    public static <T> T parseJSONByFastJSON(String c, Class<T> clazz)
-    {
+    public static <T> T parseJSONByFastJSON(String c, Class<T> clazz) {
         return JSON.parseObject(c, clazz);
     }
 
-    public static <T> T parseJSONByFastJSON(String c, Type clazz)
-    {
+    public static <T> T parseJSONByFastJSON(String c, Type clazz) {
         return JSON.parseObject(c, clazz);
     }
 
     /**
      * 将json转换字符串
      */
-    public static String convertJsonToStr(String json)
-    {
+    public static String convertJsonToStr(String json) {
         return json.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 

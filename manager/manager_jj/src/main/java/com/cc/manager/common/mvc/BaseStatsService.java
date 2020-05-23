@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
@@ -35,6 +37,36 @@ public abstract class BaseStatsService<E extends BaseStatsEntity<E>, M extends B
      * 持久层对象
      */
     protected M mapper;
+
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        StatsListResult statsListResult = new StatsListResult();
+        // 判断请求参数是否为空
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
+        }
+        if (Objects.isNull(statsListParam.getQueryObject())) {
+            statsListParam.setQueryObject(new JSONObject());
+        }
+        try {
+            // 初始化查询wrapper
+            QueryWrapper<E> queryWrapper = new QueryWrapper<>();
+            this.updateGetListWrapper(statsListParam, queryWrapper, statsListResult);
+            Page<E> page = new Page<>(statsListParam.getPage(), statsListParam.getLimit());
+            IPage<E> entityPages = this.page(page, queryWrapper);
+            if (Objects.nonNull(entityPages)) {
+                List<E> entityList = entityPages.getRecords();
+                JSONObject totalRow = this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
+                statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
+                statsListResult.setTotalRow(totalRow);
+                statsListResult.setCount(entityPages.getTotal());
+            }
+        } catch (Exception e) {
+            statsListResult.setCode(1);
+            statsListResult.setMsg("查询结果异常，请联系开发人员！");
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+        }
+        return statsListResult;
+    }
 
     /**
      * 统计数据不分页查询

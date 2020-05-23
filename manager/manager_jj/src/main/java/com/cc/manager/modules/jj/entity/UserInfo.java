@@ -1,23 +1,25 @@
 package com.cc.manager.modules.jj.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
+import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 /**
- * <p>
- *
- * </p>
+
  *
  * @author cf
  * @since 2020-05-09
  */
 @Data
 @TableName(schema = "persie", value = "user_info")
-public class UserInfo implements BaseCrudEntity<UserInfo> {
+public class UserInfo extends BaseStatsEntity<UserInfo> {
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
@@ -162,18 +164,22 @@ public class UserInfo implements BaseCrudEntity<UserInfo> {
     private String productName;
     @TableField(exist = false)
 
-    private Integer  ddCoinCount;
+    private Integer ddCoinCount;
     @TableField(exist = false)
-    private Double  ddMoney;
+    private Double ddMoney;
     @TableField(exist = false)
-    private Integer  cashOut = 0;
-    @Override
-    public String getCacheKey() {
-        return this.ddUid;
-    }
+    private Integer cashOut = 0;
 
-    @Override
-    public String getCacheValue() {
-        return this.ddUid + "-" + this.ddName;
-    }
+    @TableField(exist = false)
+    private boolean haveDetail = false;
+
+//    @Override
+//    public String getCacheKey() {
+//        return this.ddUid;
+//    }
+//
+//    @Override
+//    public String getCacheValue() {
+//        return this.ddUid + "-" + this.ddName;
+//    }
 }

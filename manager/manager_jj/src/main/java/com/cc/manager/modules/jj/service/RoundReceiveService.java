@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.modules.jj.entity.*;
-import com.cc.manager.modules.jj.mapper.RoundGameMapper;
-import com.cc.manager.modules.jj.mapper.RoundMatchMapper;
 import com.cc.manager.modules.jj.mapper.RoundReceiveMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +20,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * <p>
- * 服务实现类
- * </p>
- *
  * @author cf
  * @since 2020-05-12
  */
@@ -36,31 +30,30 @@ public class RoundReceiveService extends BaseCrudService<RoundReceive, RoundRece
     private GamesService gamesService;
     private UserInfoService userInfoService;
     private RoundExtService roundExtService;
-    private RoundMatchMapper roundMatchMapper;
-    private RoundGameMapper roundGameMapper;
+
+    private RoundMatchService roundMatchService;
+    private RoundGameService roundGameService;
+
     private Map<String, JSONObject> roundInfoMap = new ConcurrentHashMap<>();
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<RoundReceive> queryWrapper) {
-        // 前端提交的条件
-        JSONObject queryData = null;
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String times = queryData.getString("times");
-            String ddGroup = queryData.getString("ddGroup");
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String times = queryObject.getString("times");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
-                queryWrapper.between("DATE(create_time)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
+                queryWrapper.between("DATE(ddTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
             }
-            if (StringUtils.isNotBlank(ddGroup)) {
-                queryWrapper.eq("ddGroup", ddGroup);
-            }
+            String gameName = queryObject.getString("gameName");
+            queryWrapper.eq(StringUtils.isNotBlank(gameName), "ddGame", gameName);
+            String roundName = queryObject.getString("roundName");
+            queryWrapper.eq(StringUtils.isNotBlank(roundName), "ddRound", roundName);
+
         } else {
             String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
             String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-            queryWrapper.between("DATE(ddtime)", "2020-01-09", "2020-01-09");
+            queryWrapper.between("DATE(ddTime)", beginTime, endTime);
         }
     }
 
@@ -77,18 +70,18 @@ public class RoundReceiveService extends BaseCrudService<RoundReceive, RoundRece
             queryData = JSONObject.parseObject(crudPageParam.getQueryData());
         }
         for (RoundReceive roundReceive : entityList) {
-
             String ddUid = roundReceive.getDdUid();
             String ddType = roundReceive.getDdType();
             if ("rmb".equals(ddType)) {
                 roundReceive.setDdTotal(roundReceive.getDdTotal() / 100);
             }
-            UserInfo userInfo = this.userInfoService.getCacheEntity(UserInfo.class, ddUid);
+           //UserInfo userInfo = this.userInfoService.getCacheEntity(UserInfo.class, ddUid);
+            UserInfo userInfo = this.userInfoService.getById(ddUid);
             roundReceive.setUserName(userInfo.getDdName());
             if (queryData != null) {
                 String userName = queryData.getString("userName");
                 if (StringUtils.isNotBlank(userName)) {
-                    if(!userInfo.getDdName().contains(userName)){
+                    if (!userInfo.getDdName().contains(userName)) {
                         continue;
                     }
                 }
@@ -125,22 +118,21 @@ public class RoundReceiveService extends BaseCrudService<RoundReceive, RoundRece
      * @param ddmCode 赛制编号
      * @return 赛制信息
      */
-    public JSONObject getRoundInfo(boolean isGroup, int ddmCode) {
+    private JSONObject getRoundInfo(boolean isGroup, int ddmCode) {
         String key = MessageFormat.format("match-{0}-g{1}", isGroup, ddmCode);
         if (roundInfoMap.containsKey(key)) {
             return roundInfoMap.get(key);
         }
-        //System.out.println("赛场信息" + key);
         JSONObject data = new JSONObject();
         String ddRound = null;
         if (isGroup) {
-            RoundMatch roundGroup = roundMatchMapper.selectByPrimaryKey(ddmCode);
+            RoundMatch roundGroup = this.roundMatchService.getById(ddmCode);
             if (roundGroup != null) {
                 data.put("name", roundGroup.getDdName());
                 ddRound = roundGroup.getDdRound();
             }
         } else {
-            RoundGame roundGame = roundGameMapper.selectByPrimaryKey(ddmCode);
+            RoundGame roundGame = this.roundGameService.getById(ddmCode);
             if (roundGame != null) {
                 data.put("name", roundGame.getDdName());
                 ddRound = roundGame.getDdRound();
@@ -150,7 +142,7 @@ public class RoundReceiveService extends BaseCrudService<RoundReceive, RoundRece
             RoundExt roundExt = this.roundExtService.getCacheEntity(RoundExt.class, ddRound);
             if (roundExt != null) {
                 data.put("time", roundExt.getTip());
-                data.put("code", roundExt.getDdCode());
+                data.put("code", roundExt.getId());
             }
         }
         roundInfoMap.put(key, data);
@@ -173,18 +165,18 @@ public class RoundReceiveService extends BaseCrudService<RoundReceive, RoundRece
     }
 
     @Autowired
-    public void setRoundMatchMapper(RoundMatchMapper roundMatchMapper) {
-        this.roundMatchMapper = roundMatchMapper;
+    public void setRoundMatchService(RoundMatchService roundMatchService) {
+        this.roundMatchService = roundMatchService;
     }
 
     @Autowired
-    public void setRoundGameMapper(RoundGameMapper roundGameMapper) {
-        this.roundGameMapper = roundGameMapper;
+    public void setRoundGameService(RoundGameService roundGameService) {
+        this.roundGameService = roundGameService;
     }
-
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<RoundReceive> deleteWrapper) {
         return false;
     }
+
 }

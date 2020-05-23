@@ -1,11 +1,11 @@
 package com.cc.manager.modules.jj.mapper;
 
-import com.cc.manager.modules.jj.entity.SupplementOrder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cc.manager.modules.jj.entity.SupplementOrder;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author cf

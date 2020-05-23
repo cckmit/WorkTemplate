@@ -22,4 +22,15 @@ public interface BaseStatsController {
      */
     StatsListResult getList(StatsListParam statsListParam);
 
+
+    /**
+     * 分页查询
+     * 方法注解：@GetMapping(value = "/getList/{queryData}")
+     * 参数注解：@PathVariable
+     *
+     * @param statsListParam 数据查询参数
+     * @return 数据查询结果
+     */
+    StatsListResult getPage(StatsListParam statsListParam);
+
 }

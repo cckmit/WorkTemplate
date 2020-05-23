@@ -19,13 +19,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 /**
- *
  * @author cf
- *
  */
-public class ExcelUtils
-{
+public class ExcelUtils {
 
     private static Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
 
@@ -36,17 +34,14 @@ public class ExcelUtils
      * @param fileNamePrefix 文件名不含后缀
      * @return Excel实体
      */
-    public static Workbook writeExcel(List<?> list, String fileNamePrefix)
-    {
+    public static Workbook writeExcel(List<?> list, String fileNamePrefix) {
         if (CollectionUtils.isEmpty(list) || StringUtils.isBlank(fileNamePrefix))
             return null;
         Class clazz = null;
         Iterator<?> iterator = list.iterator();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Object obj = iterator.next();
-            if (obj != null)
-            {
+            if (obj != null) {
                 clazz = obj.getClass();
                 break;
             } else
@@ -60,17 +55,13 @@ public class ExcelUtils
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(fileNamePrefix);
-        for (int i = 0; i < list.size(); i++)
-        {
+        for (int i = 0; i < list.size(); i++) {
             Object obj = list.get(i);
-            try
-            {
-                if (i == 0)
-                {
+            try {
+                if (i == 0) {
                     Row row0 = sheet.createRow(0);
                     Row row1 = sheet.createRow(1);
-                    for (int j = 0; j < fields.size(); j++)
-                    {
+                    for (int j = 0; j < fields.size(); j++) {
                         sheet.setColumnWidth(j, 6000);
 
                         Field field = fields.get(j);
@@ -80,19 +71,16 @@ public class ExcelUtils
                         row0.createCell(j).setCellValue(commentsName);
                         row1.createCell(j).setCellValue(field.get(obj) == null ? "" : field.get(obj).toString());
                     }
-                } else
-                {
+                } else {
                     Row row = sheet.createRow(i + 1);
-                    for (int j = 0; j < fields.size(); j++)
-                    {
+                    for (int j = 0; j < fields.size(); j++) {
                         Field field = fields.get(j);
                         field.setAccessible(true);
 
                         row.createCell(j).setCellValue(field.get(obj) == null ? "" : field.get(obj).toString());
                     }
                 }
-            } catch (IllegalAccessException e)
-            {
+            } catch (IllegalAccessException e) {
                 logger.error("ExcelUtils 生成Workbook失败", e);
             }
         }
@@ -106,27 +94,22 @@ public class ExcelUtils
      * @param fileNamePrefix Excel文件名前缀（不含.xls）
      * @param response       返回对象
      */
-    public static void writeExcel(List<?> list, String fileNamePrefix, HttpServletResponse response)
-    {
+    public static void writeExcel(List<?> list, String fileNamePrefix, HttpServletResponse response) {
         if (response == null) return;
         Workbook workbook = writeExcel(list, fileNamePrefix);
-        try
-        {
+        try {
             response.setHeader("content-disposition",
                     "attachment;" + "filename=" + URLEncoder.encode(fileNamePrefix + ".xlsx", "UTF-8"));
 
-            if (workbook != null)
-            {
+            if (workbook != null) {
                 workbook.write(response.getOutputStream());
             }
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("ExcelUtils 导出集合数据失败", e);
         }
     }
 
-    private static String getCommentsName(Field field)
-    {
+    private static String getCommentsName(Field field) {
         return field.isAnnotationPresent(Comments.class) ? (String) AnnotationUtils.getValue(field.getAnnotation(Comments.class), "name") : "";
     }
 

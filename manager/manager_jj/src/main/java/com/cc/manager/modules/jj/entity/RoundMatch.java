@@ -2,20 +2,12 @@ package com.cc.manager.modules.jj.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
-
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
- * <p>
- * 
- * </p>
- *
  * @author cf
  * @since 2020-05-08
  */
@@ -23,13 +15,13 @@ import lombok.experimental.Accessors;
 @TableName(schema = "persie_deamon", value = "round_match")
 public class RoundMatch implements BaseCrudEntity<RoundMatch> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 比赛编号
      */
     @TableId(value = "ddCode", type = IdType.AUTO)
-    private Integer ddCode;
+    private Integer id;
 
     /**
      * 比赛名称
@@ -99,53 +91,53 @@ public class RoundMatch implements BaseCrudEntity<RoundMatch> {
      * 展示数据-产品名称
      */
     @TableField(exist = false)
-    private  String appName;
+    private String appName;
     /**
      * 展示数据-游戏名称
      */
     @TableField(exist = false)
-    private  String gameName;
+    private String gameName;
 
     /**
      * 展示数据-赛制名称
      */
     @TableField(exist = false)
-    private  String roundName;
+    private String roundName;
     /**
      * 展示数据-赛制时长
      */
     @TableField(exist = false)
-    private  String roundLength;
+    private String roundLength;
     /**
      * 展示数据-奖励说明
      */
     @TableField(exist = false)
-    private  String ddReward;
+    private String ddReward;
 
     /**
      * 展示数据-资源图
      */
     @TableField(exist = false)
-    private  String jumpDirect;
+    private String jumpDirect;
     /**
      * 展示数据-现金赛图片0
      */
     @TableField(exist = false)
-    private  String gamePicture0;
+    private String gamePicture0;
 
     /**
      * 展示数据-现金赛图片1
      */
     @TableField(exist = false)
-    private  String gamePicture1;
+    private String gamePicture1;
 
     @Override
     public String getCacheKey() {
-        return this.ddCode.toString();
+        return this.id.toString();
     }
 
     @Override
     public String getCacheValue() {
-        return this.ddCode + "-" + this.ddName;
+        return this.id + "-" + this.ddName;
     }
 }

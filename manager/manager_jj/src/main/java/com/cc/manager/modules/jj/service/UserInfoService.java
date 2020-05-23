@@ -3,11 +3,13 @@ package com.cc.manager.modules.jj.service;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.cc.manager.common.mvc.BaseCrudService;
-import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.config.BaseConfig;
-import com.cc.manager.modules.jj.entity.*;
+import com.cc.manager.common.mvc.BaseStatsService;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
+import com.cc.manager.modules.jj.entity.Recharge;
+import com.cc.manager.modules.jj.entity.UserInfo;
+import com.cc.manager.modules.jj.entity.UserValue;
+import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.RechargeMapper;
 import com.cc.manager.modules.jj.mapper.UserInfoMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -25,50 +27,35 @@ import java.util.Map;
  */
 @Service
 @DS("jj")
-public class UserInfoService extends BaseCrudService<UserInfo, UserInfoMapper> {
+public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> {
 
-    private  RechargeMapper rechargeMapper;
+    private RechargeMapper rechargeMapper;
     private UserValueService userValueService;
     private WxConfigService wxConfigService;
+
     @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<UserInfo> queryWrapper) {
-        // 前端提交的条件
-        JSONObject queryData = null;
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String times = queryData.getString("registerTime");
-            String ddName = queryData.getString("ddName");
-            String uid = queryData.getString("uid");
-            String ddAppId = queryData.getString("ddAppId");
-            String ddOid = queryData.getString("ddOid");
+    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<UserInfo> queryWrapper, StatsListResult statsListResult) {
+        JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
+        if(queryObject !=null){
+            String times = queryObject.getString("registerTime");
+            String ddName = queryObject.getString("ddName");
+            String uid = queryObject.getString("uid");
+            String ddAppId = queryObject.getString("ddAppId");
+            String ddOid = queryObject.getString("ddOid");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
-                queryWrapper.between("DATE(buy_date)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
+                queryWrapper.between("DATE(ddRegisterTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
             }
-            if (StringUtils.isNotBlank(ddName)) {
-                queryWrapper.like("ddName", ddName);
-            }
-            if (StringUtils.isNotBlank(uid)) {
-                queryWrapper.like("ddUid", uid);
-            }
-            if (StringUtils.isNotBlank(ddAppId)) {
-                queryWrapper.like("ddAppId", ddAppId);
-            }
-            if (StringUtils.isNotBlank(ddOid)) {
-                queryWrapper.like("ddOId", ddAppId);
-            }
+            queryWrapper.like(StringUtils.isNotBlank(ddName), "ddName", ddName);
+            queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
+            queryWrapper.like(StringUtils.isNotBlank(ddAppId), "ddAppId", ddAppId);
+            queryWrapper.like(StringUtils.isNotBlank(ddOid), "ddOId", ddOid);
         }
+
     }
-    /**
-     * 重构分页查询结果，比如进行汇总复制计算等操作
-     *
-     * @param crudPageParam 查询参数
-     * @param entityList    查询数据对象列表
-     */
+
     @Override
-    protected void rebuildSelectedList(CrudPageParam crudPageParam, List<UserInfo> entityList) {
+    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<UserInfo> entityList, StatsListResult statsListResult) {
         //已提现金额用户的提现金额赋值
         Map<String, BigDecimal> userRechargedMap = queryUserRecharged();
         for (String userId : userRechargedMap.keySet()) {
@@ -78,12 +65,14 @@ public class UserInfoService extends BaseCrudService<UserInfo, UserInfoMapper> {
                 }
                 WxConfig cacheWxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, userInfo.getDdAppId());
                 userInfo.setProductName(cacheWxConfig.getProductName());
-                UserValue cacheUserValue = this.userValueService.getCacheEntity(UserValue.class, userInfo.getDdUid());
+                UserValue cacheUserValue = this.userValueService.getById(userInfo.getDdUid());
                 userInfo.setDdCoinCount(cacheUserValue.getDdCoinCount());
-                userInfo.setDdMoney(cacheUserValue.getDdMoney()*0.01);
+                userInfo.setDdMoney(cacheUserValue.getDdMoney() * 0.01);
             }
         }
+        return null;
     }
+
     /**
      * 已提现金额查询
      *
@@ -97,20 +86,22 @@ public class UserInfoService extends BaseCrudService<UserInfo, UserInfoMapper> {
         }
         return rechargeMap;
     }
-    @Override
-    protected boolean delete(String requestParam, UpdateWrapper<UserInfo> deleteWrapper) {
-        return false;
-    }
+
+
     @Autowired
     public void setRechargeMapper(RechargeMapper rechargeMapper) {
         this.rechargeMapper = rechargeMapper;
     }
+
     @Autowired
     public void setUserValueService(UserValueService userValueService) {
         this.userValueService = userValueService;
     }
+
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {
         this.wxConfigService = wxConfigService;
     }
+
+
 }

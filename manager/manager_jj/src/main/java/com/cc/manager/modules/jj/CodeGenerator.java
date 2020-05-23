@@ -6,13 +6,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
-import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-import com.baomidou.mybatisplus.generator.config.rules.FileType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,11 +19,6 @@ import java.util.Scanner;
  */
 public class CodeGenerator {
 
-    /**
-     * <p>
-     * 读取控制台内容
-     * </p>
-     */
     private static String scanner(String tip) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(("请输入" + tip + "："));
@@ -54,7 +45,7 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://106.14.201.174:3306/persie_value?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false");
+        dsc.setUrl("jdbc:mysql://106.14.201.174:3306/persie?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("chufan");
         dsc.setPassword("chufan123");
@@ -77,7 +68,7 @@ public class CodeGenerator {
         // 如果模板引擎是 freemarker
         //String templatePath = "/templates/mapper.xml.ftl";
         // 如果模板引擎是 velocity
-         String templatePath = "/templates/mapper.xml.vm";
+        String templatePath = "/templates/mapper.xml.vm";
 
         // 自定义输出配置
         List<FileOutConfig> focList = new ArrayList<>();

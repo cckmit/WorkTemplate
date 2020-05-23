@@ -8,20 +8,20 @@ import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.fc.service.MinitjWxService;
-import com.cc.manager.modules.jj.service.WxConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- *
  * @author cf
  * @since 2020-05-13
  */
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(value = "/wxAddData")
+@RequestMapping(value = "/minitjWx")
 public class MinitjWxController implements BaseCrudController {
+
     private MinitjWxService minitjWxService;
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
@@ -62,6 +62,7 @@ public class MinitjWxController implements BaseCrudController {
     public JSONArray getSelectArray(String requestParam) {
         return null;
     }
+
     @Autowired
     public void setMinitjWxService(MinitjWxService minitjWxService) {
         this.minitjWxService = minitjWxService;

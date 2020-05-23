@@ -1,5 +1,6 @@
 package com.cc.manager.modules.jj.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -8,6 +9,7 @@ import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.modules.jj.entity.ConfigAdSpace;
 import com.cc.manager.modules.jj.entity.ConfigAdType;
 import com.cc.manager.modules.jj.mapper.ConfigAdSpaceMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,13 @@ public class ConfigAdSpaceService extends BaseCrudService<ConfigAdSpace, ConfigA
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<ConfigAdSpace> queryWrapper) {
-
+        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String id = queryObject.getString("id");
+            queryWrapper.eq(StringUtils.isNotBlank(id), "ddId", id);
+            String adType = queryObject.getString("adType");
+            queryWrapper.eq(StringUtils.isNotBlank(adType), "ddAdType", adType);
+        }
     }
 
     @Override

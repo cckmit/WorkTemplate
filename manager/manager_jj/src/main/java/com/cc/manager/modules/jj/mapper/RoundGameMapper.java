@@ -1,14 +1,13 @@
 package com.cc.manager.modules.jj.mapper;
 
-import com.cc.manager.modules.jj.entity.RoundGame;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.cc.manager.modules.jj.entity.RoundMatch;
+import com.cc.manager.modules.jj.entity.RoundGame;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author cf

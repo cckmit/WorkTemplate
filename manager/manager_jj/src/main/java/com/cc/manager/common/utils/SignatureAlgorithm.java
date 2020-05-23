@@ -7,8 +7,7 @@ import java.util.*;
  *
  * @author Host-0222
  */
-public class SignatureAlgorithm
-{
+public class SignatureAlgorithm {
     // 密钥
     private String key;
     // 需要进行设置签名信息
@@ -16,8 +15,7 @@ public class SignatureAlgorithm
     // 生成订单签名
     private String sign;
 
-    public SignatureAlgorithm(String key, Map<String, String> signMap)
-    {
+    public SignatureAlgorithm(String key, Map<String, String> signMap) {
         this.key = key;
         this.signMap = signMap;
     }
@@ -29,19 +27,15 @@ public class SignatureAlgorithm
      * 验证调用返回或微信主动通知签名时，传送的sign参数不参与签名，将生成的签名与该sign值作校验。 ◆
      * 微信接口可能增加字段，验证签名时必须支持增加的扩展字段
      */
-    private String createSignStringA()
-    {
+    private String createSignStringA() {
         Collection<String> keyset = signMap.keySet();
         List<String> list = new ArrayList<String>(keyset);
         Collections.sort(list);
         StringBuilder builder = new StringBuilder();
-        for (String key : list)
-        {
+        for (String key : list) {
             String value = signMap.get(key);
-            if (key != null && !key.trim().isEmpty())
-            {
-                if (builder.length() > 0)
-                {
+            if (key != null && !key.trim().isEmpty()) {
+                if (builder.length() > 0) {
                     builder.append("&");
                 }
                 builder.append(key).append("=").append(value.trim());
@@ -55,8 +49,7 @@ public class SignatureAlgorithm
      * 再将得到的字符串所有字符转换为大写，得到sign值signValue。
      * key设置路径：微信商户平台(pay.weixin.qq.com)-->账户设置-->API安全-->密钥设置
      */
-    public String createSign()
-    {
+    public String createSign() {
         String stringA = createSignStringA();
         String stringSignTemp = stringA + "&key=" + key;
         return Objects.requireNonNull(CmTool.getMD5Encode(stringSignTemp)).toUpperCase();
@@ -67,12 +60,10 @@ public class SignatureAlgorithm
      *
      * @return
      */
-    public String getSignXml()
-    {
+    public String getSignXml() {
         StringBuilder builder = new StringBuilder();
         builder.append("<xml>\n");
-        for (String key : signMap.keySet())
-        {
+        for (String key : signMap.keySet()) {
             builder.append("<").append(key).append(">");
             builder.append(signMap.get(key));
             builder.append("</").append(key).append(">\n");
@@ -83,8 +74,7 @@ public class SignatureAlgorithm
         return builder.toString();
     }
 
-    public String getSign()
-    {
+    public String getSign() {
         return sign;
     }
 }

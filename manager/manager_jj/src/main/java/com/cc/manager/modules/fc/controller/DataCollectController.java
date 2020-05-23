@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- *
  * @author cf
  * @since 2020-05-13
  */
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/dataCollect")
 public class DataCollectController implements BaseCrudController {
     private MinitjWxService minitjWxService;
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
@@ -61,6 +61,7 @@ public class DataCollectController implements BaseCrudController {
     public JSONArray getSelectArray(String requestParam) {
         return null;
     }
+
     @Autowired
     public void setMinitjWxService(MinitjWxService minitjWxService) {
         this.minitjWxService = minitjWxService;

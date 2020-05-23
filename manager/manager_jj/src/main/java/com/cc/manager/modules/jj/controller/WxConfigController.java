@@ -69,6 +69,7 @@ public class WxConfigController implements BaseCrudController {
         PostResult deleteResult = this.wxConfigService.delete(requestParam);
         if (deleteResult.getCode() == 1) {
             deleteResult = this.persieServerUtils.refreshTable("wx_config");
+            this.persieServerUtils.refreshTable("app_config");
         }
         return deleteResult;
     }
@@ -80,16 +81,18 @@ public class WxConfigController implements BaseCrudController {
     }
 
     /**
-     * 获取资源图
+     * 刷新资源
      *
      * @param parameter parameter
      * @return PostResult
      */
-    @PostMapping(value = "/flushPicture")
-    public PostResult flushResource(@RequestBody JSONArray parameter) {
-        PostResult postResult = wxConfigService.flushResource(parameter);
+    @PostMapping(value = "/refreshResource")
+    public PostResult refreshResource(@RequestBody JSONArray parameter) {
+        PostResult postResult = wxConfigService.refreshResource(parameter);
         //刷新业务表结构
-        postResult = this.persieServerUtils.refreshTable("wx_config");
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("wx_config");
+        }
         return postResult;
     }
 

@@ -2,22 +2,16 @@ package com.cc.manager.modules.jj.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cc.manager.common.mvc.BaseCrudEntity;
+import lombok.Data;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.cc.manager.common.mvc.BaseCrudEntity;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
- *
  * @author cf
  * @since 2020-05-08
  */
@@ -25,7 +19,7 @@ import lombok.experimental.Accessors;
 @TableName(schema = "persie_deamon", value = "round_record")
 public class RoundRecord implements BaseCrudEntity<RoundRecord> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 赛场编号

@@ -1,11 +1,6 @@
 package com.cc.manager.config;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +19,8 @@ public class BaseFilter implements Filter {
      * 初始化的方法
      */
     @Override
-    public void init(FilterConfig filterConfig) { }
+    public void init(FilterConfig filterConfig) {
+    }
 
     /**
      * 过滤的方法
@@ -46,6 +42,7 @@ public class BaseFilter implements Filter {
      * 销毁的方法
      */
     @Override
-    public void destroy() { }
+    public void destroy() {
+    }
 
 }

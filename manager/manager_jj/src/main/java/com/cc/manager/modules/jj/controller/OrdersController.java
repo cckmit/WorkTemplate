@@ -4,18 +4,14 @@ package com.cc.manager.modules.jj.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
-import com.cc.manager.common.result.CrudObjectResult;
-import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.result.CrudPageResult;
-import com.cc.manager.common.result.PostResult;
+import com.cc.manager.common.mvc.BaseStatsController;
+import com.cc.manager.common.result.*;
 import com.cc.manager.modules.jj.service.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>
- * 前端控制器
- * </p>
+ * 充值订单查询
  *
  * @author cf
  * @since 2020-05-13
@@ -23,49 +19,25 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @RequestMapping("/jj/orders")
-public class OrdersController implements BaseCrudController {
+public class OrdersController implements BaseStatsController {
+
     private OrdersService ordersService;
-
     @Override
-    @GetMapping(value = "/id/{id}")
-    public CrudObjectResult getObjectById(@PathVariable String id) {
-        return this.ordersService.getObjectById(id);
+    public StatsListResult getList(StatsListParam statsListParam) {
+        return null;
     }
 
-    @Override
-    @GetMapping(value = "/getObject/{getObjectParam}")
-    public CrudObjectResult getObject(@PathVariable String getObjectParam) {
-        return this.ordersService.getObject(getObjectParam);
-    }
 
     @Override
     @GetMapping(value = "/getPage")
-    public CrudPageResult getPage(CrudPageParam crudPageParam) {
-        return this.ordersService.getPage(crudPageParam);
-    }
-
-    @Override
-    @PostMapping
-    public PostResult post(@RequestBody String requestParam) {
-        return this.ordersService.post(requestParam);
-    }
-
-    @Override
-    @PutMapping
-    public PostResult put(@RequestBody String requestParam) {
-        return this.ordersService.put(requestParam);
-    }
-
-    @Override
-    @DeleteMapping
-    public PostResult delete(@RequestBody String requestParam) {
-        return this.ordersService.delete(requestParam);
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        return ordersService.getPage(statsListParam);
     }
     /**
      * 补发订单
      *
-     * @param singleOrder
-     * @return
+     * @param singleOrder singleOrder
+     * @return PostResult
      */
     @ResponseBody
     @PostMapping(value = "/supplement")
@@ -87,14 +59,12 @@ public class OrdersController implements BaseCrudController {
         }
 
     }
-    @Override
-    public JSONArray getSelectArray(String requestParam) {
-        return null;
-    }
 
     @Autowired
     public void setOrdersService(OrdersService ordersService) {
         this.ordersService = ordersService;
     }
+
+
 }
 

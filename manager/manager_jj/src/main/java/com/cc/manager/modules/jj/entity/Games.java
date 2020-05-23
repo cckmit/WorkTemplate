@@ -1,15 +1,11 @@
 package com.cc.manager.modules.jj.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
  * @author cf
@@ -181,4 +177,5 @@ public class Games implements BaseCrudEntity<Games> {
     public String getCacheValue() {
         return this.ddCode + "-" + this.ddName;
     }
+
 }

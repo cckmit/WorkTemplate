@@ -1,18 +1,13 @@
 package com.cc.manager.modules.jj.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
- *
  * @author cf
  * @since 2020-05-08
  */
@@ -20,7 +15,7 @@ import lombok.experimental.Accessors;
 @TableName(schema = "persie_deamon", value = "gameset")
 public class GameSet implements BaseCrudEntity<GameSet> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
@@ -78,6 +73,9 @@ public class GameSet implements BaseCrudEntity<GameSet> {
      */
     @TableField("ddDesc512u")
     private String ddDesc512u;
+
+    @TableField(exist = false)
+    private String gameSetContent;
 
     @Override
     public String getCacheKey() {

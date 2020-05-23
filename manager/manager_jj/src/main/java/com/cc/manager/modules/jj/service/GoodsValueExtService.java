@@ -1,5 +1,6 @@
 package com.cc.manager.modules.jj.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -13,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -24,6 +23,19 @@ import java.util.List;
 @Service
 @DS("jj")
 public class GoodsValueExtService extends BaseCrudService<GoodsValueExt, GoodsValueExtMapper> {
+
+    @Override
+    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<GoodsValueExt> queryWrapper) {
+
+        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String money = queryObject.getString("money");
+            queryWrapper.eq(StringUtils.isNotBlank(money), "ddPrice", money);
+            String type = queryObject.getString("type");
+            queryWrapper.like(StringUtils.isNotBlank(type), "ddGoodsType", type);
+        }
+    }
+
     /**
      * 重构分页查询结果，比如进行汇总复制计算等操作
      *
@@ -63,25 +75,6 @@ public class GoodsValueExtService extends BaseCrudService<GoodsValueExt, GoodsVa
     }
 
     @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<GoodsValueExt> queryWrapper) {
-        // 前端提交的条件
-        JSONObject queryData = null;
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String money = queryData.getString("money");
-            String type = queryData.getString("type");
-            if (StringUtils.isNotBlank(money)) {
-                queryWrapper.like("ddPrice", money);
-            }
-            if (StringUtils.isNotBlank(type)) {
-                queryWrapper.like("ddGoodsType", type);
-            }
-        }
-    }
-
-    @Override
     protected void updateInsertEntity(String requestParam, GoodsValueExt entity) {
         dealSubmitData(entity);
     }
@@ -92,12 +85,19 @@ public class GoodsValueExtService extends BaseCrudService<GoodsValueExt, GoodsVa
         dealSubmitData(entity);
         return this.updateById(entity);
     }
+
     /**
      * 处理页面提交的计费点数据
-     * @param entity
+     *
+     * @param entity entity
      */
     private void dealSubmitData(GoodsValueExt entity) {
-        entity.setInsertTime(LocalDateTime.now());
+        if (entity.getDdState() == null) {
+            entity.setDdState(false);
+        }
+        if (entity.getDdIOS() == null) {
+            entity.setDdIOS(false);
+        }
         //解析不同商品的类型
         if ("recharge".equals(entity.getDdGoodsType()) || "coin".equals(entity.getDdGoodsType())) {
             entity.setDdCostType("rmb");
@@ -132,12 +132,15 @@ public class GoodsValueExtService extends BaseCrudService<GoodsValueExt, GoodsVa
             entity.setDdPrice(new BigDecimal(0));
         }
     }
+
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<GoodsValueExt> deleteWrapper) {
         if (StringUtils.isNotBlank(requestParam)) {
-            List<String> idList = Lists.newArrayList(StringUtils.split(requestParam,","));
+            String list = StrUtil.sub(requestParam, 1, -1);
+            List<String> idList = Lists.newArrayList(StringUtils.split(list, ","));
             return this.removeByIds(idList);
         }
         return false;
     }
+
 }

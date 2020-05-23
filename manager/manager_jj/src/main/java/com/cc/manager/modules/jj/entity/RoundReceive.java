@@ -3,7 +3,6 @@ package com.cc.manager.modules.jj.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import com.cc.manager.common.mvc.BaseCrudEntity;
-import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

@@ -23,10 +23,10 @@ public class ConfigAdTypeService extends BaseCrudService<ConfigAdType, ConfigAdT
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<ConfigAdType> queryWrapper) {
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())){
+        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
             JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
             String name = queryObject.getString("name");
-            queryWrapper.like(StringUtils.isNotBlank(name),"ddName",name);
+            queryWrapper.like(StringUtils.isNotBlank(name), "ddName", name);
         }
     }
 

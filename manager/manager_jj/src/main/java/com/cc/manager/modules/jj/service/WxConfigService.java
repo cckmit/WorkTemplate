@@ -1,5 +1,6 @@
 package com.cc.manager.modules.jj.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
@@ -9,8 +10,11 @@ import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.config.JjConfig;
+import com.cc.manager.modules.jj.entity.AppConfig;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.WxConfigMapper;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
+import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -18,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,25 +36,37 @@ import java.util.List;
 @DS("jj")
 public class WxConfigService extends BaseCrudService<WxConfig, WxConfigMapper> {
 
-    //private AppConfigService appConfigService;
+    private AppConfigService appConfigService;
+    private PersieServerUtils persieServerUtils;
     private JjConfig jjConfig;
+
+    /**
+     * 拼接链接地址
+     *
+     * @param icon    图标名称
+     * @param suffers 拼接数列
+     * @return url
+     */
+    private static String concatUrl(String resultUrl, String icon, String... suffers) {
+        if (icon != null) {
+            if (suffers != null) {
+                for (String suffer : suffers) {
+                    resultUrl = resultUrl.concat(suffer).concat("/");
+                }
+            }
+            return resultUrl.concat(icon);
+        }
+        return null;
+    }
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<WxConfig> queryWrapper) {
-        // 前端提交的条件
-        JSONObject queryData = null;
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String appId = queryData.getString("id");
-            String appPlatform = queryData.getString("appPlatform");
-            if (StringUtils.isNotBlank(appId)) {
-                queryWrapper.like("ddAppId", appId);
-            }
-            if (StringUtils.isNotBlank(appPlatform)) {
-                queryWrapper.eq("ddAppPlatform", appPlatform);
-            }
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String appId = queryObject.getString("id");
+            queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
+            String appPlatform = queryObject.getString("appPlatform");
+            queryWrapper.eq(StringUtils.isNotBlank(appPlatform), "ddAppPlatform", appPlatform);
         }
     }
 
@@ -63,56 +81,71 @@ public class WxConfigService extends BaseCrudService<WxConfig, WxConfigMapper> {
         String url = this.jjConfig.getResHost();
         for (WxConfig config : entityList) {
             String ddShareRes = config.getDdShareRes();
-                if (StringUtils.isNotBlank(ddShareRes)) {
-                    JSONArray shareLists = JSONObject.parseArray(ddShareRes);
-                    for (int i = 0; i < shareLists.size(); i++) {
-                        JSONObject shareList = shareLists.getJSONObject(i);
-                        if (shareList != null) {
-                            JSONObject jsonObject = JSONObject.parseObject(shareList.toString());
-                            String icon = concatUrl(url, jsonObject.getString("url"), config.getId(), "share");
-                            if (StringUtils.isNotBlank(icon)) {
-                                config.setJumpDirect(icon);
-                            }
+            if (StringUtils.isNotBlank(ddShareRes)) {
+                JSONArray shareLists = JSONObject.parseArray(ddShareRes);
+                for (int i = 0; i < shareLists.size(); i++) {
+                    JSONObject shareList = shareLists.getJSONObject(i);
+                    if (shareList != null) {
+                        JSONObject jsonObject = JSONObject.parseObject(shareList.toString());
+                        String icon = concatUrl(url, jsonObject.getString("url"), config.getId(), "share");
+                        if (StringUtils.isNotBlank(icon)) {
+                            config.setJumpDirect(icon);
                         }
                     }
                 }
+            }
         }
     }
-    @Override
-    protected boolean delete(String requestParam, UpdateWrapper<WxConfig> deleteWrapper) {
-        return false;
-    }
-
 
     @Override
     protected void updateInsertEntity(String requestParam, WxConfig entity) {
-/*        AppConfig appConfig = new AppConfig();
+        AppConfig appConfig = new AppConfig();
         appConfig.setId(entity.getId());
         appConfig.setDdName(entity.getProductName());
         appConfig.setDdProgram(entity.getProgramType());
         appConfig.setDdTime(LocalDateTime.now());
-        appConfigService.save(appConfig);
-        ReduceJsonUtil.flushTable("app_config", baseConfig.getFlushCache());*/
+        boolean saveResult = appConfigService.save(appConfig);
+        if (saveResult) {
+            this.persieServerUtils.refreshTable("app_config");
+        }
     }
 
     @Override
     protected boolean update(String requestParam, WxConfig entity, UpdateWrapper<WxConfig> updateWrapper) {
-/*        AppConfig appConfig = appConfigService.getById(entity.getId());
+        AppConfig appConfig = appConfigService.getById(entity.getId());
         appConfig.setDdName(entity.getProductName());
         appConfig.setDdProgram(entity.getProgramType());
         appConfig.setDdTime(LocalDateTime.now());
-        appConfigService.updateById(appConfig);*/
+        boolean updateResult = appConfigService.updateById(appConfig);
+        if (updateResult) {
+            this.persieServerUtils.refreshTable("app_config");
+        }
         return this.updateById(entity);
     }
 
+    @Override
+    protected boolean delete(String requestParam, UpdateWrapper<WxConfig> deleteWrapper) {
+        if (StringUtils.isNotBlank(requestParam)) {
+            String list = StrUtil.sub(requestParam, 1, -1);
+            List<String> idList = Lists.newArrayList(StringUtils.split(list, ","));
+            List<String> newList = new ArrayList<>();
+            for (String str : idList) {
+                String substring = str.substring(1, str.length() - 1);
+                newList.add(substring);
+            }
+            this.appConfigService.delete(newList);
+            return this.removeByIds(newList);
+        }
+        return false;
+    }
 
     /**
      * 刷新配置资源
      *
-     * @param parameter parameter
+     * @param parameter 请求参数
      * @return update
      */
-    public PostResult flushResource(JSONArray parameter) {
+    public PostResult refreshResource(JSONArray parameter) {
         PostResult postResult = new PostResult();
         //获取读取路径
         String sharePath = this.jjConfig.getReadRes();
@@ -139,29 +172,16 @@ public class WxConfigService extends BaseCrudService<WxConfig, WxConfigMapper> {
         }
         return postResult;
     }
-    /**
-     * 拼接链接地址
-     *
-     * @param icon    图标名称
-     * @param suffers 拼接数列
-     * @return url
-     */
-    public static String concatUrl(String resultUrl, String icon, String... suffers) {
-        if (icon != null) {
-            if (suffers != null) {
-                for (String suffer : suffers) {
-                    resultUrl = resultUrl.concat(suffer).concat("/");
-                }
-            }
-            return resultUrl.concat(icon);
-        }
-        return null;
-    }
 
-        /*@Autowired
+    @Autowired
     public void setAppConfigService(AppConfigService appConfigService) {
         this.appConfigService = appConfigService;
-    }*/
+    }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
+    }
 
     @Autowired
     public void setJjConfig(JjConfig jjConfig) {

@@ -1,25 +1,17 @@
 package com.cc.manager.modules.jj.entity;
 
-import java.math.BigDecimal;
-
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
- * <p>
- * 
- * </p>
- *
  * @author cf
  * @since 2020-05-08
  */
@@ -79,11 +71,12 @@ public class BuyPay implements BaseCrudEntity<BuyPay> {
 
     @Override
     public String getCacheKey() {
-        return this.buyDate+"-"+this.buyAppId;
+        return this.buyDate + "-" + this.buyAppId;
     }
 
     @Override
     public String getCacheValue() {
         return this.buyDate + "-" + this.buyAppId;
     }
+
 }

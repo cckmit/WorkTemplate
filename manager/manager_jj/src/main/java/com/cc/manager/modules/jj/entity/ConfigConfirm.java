@@ -1,27 +1,23 @@
 package com.cc.manager.modules.jj.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
- * <p>
- * 
- * </p>
- *
  * @author cf
  * @since 2020-05-09
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-public class ConfigConfirm implements Serializable {
+@TableName(schema = "persie", value = "config_confirm")
+public class ConfigConfirm implements BaseCrudEntity<ConfigConfirm> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 主键标志
@@ -32,7 +28,8 @@ public class ConfigConfirm implements Serializable {
     /**
      * 描述信息
      */
-    private String describe;
+    @TableField("ddDescribe")
+    private String ddDescribe;
 
     /**
      * 状态
@@ -55,7 +52,17 @@ public class ConfigConfirm implements Serializable {
     /**
      * 更新时间
      */
-    @TableField("updateTime")
+    @JSONField(format = "yyyy-MM-dd HH:mm")
+    @TableField(value = "updateTime")
     private LocalDateTime updateTime;
 
+    @Override
+    public String getCacheKey() {
+        return this.ddId;
+    }
+
+    @Override
+    public String getCacheValue() {
+        return this.ddId + "-" + this.ddDescribe;
+    }
 }

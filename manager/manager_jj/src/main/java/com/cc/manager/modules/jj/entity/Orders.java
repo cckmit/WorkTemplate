@@ -6,22 +6,19 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
+import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * <p>
- *
- * </p>
- *
  * @author cf
  * @since 2020-05-13
  */
 @Data
 @TableName(schema = "persie", value = "orders")
-public class Orders implements BaseCrudEntity<Orders> {
+public class Orders extends BaseStatsEntity<Orders> {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,7 +26,7 @@ public class Orders implements BaseCrudEntity<Orders> {
      * 订单号
      */
     @TableId("ddId")
-    private String ddId;
+    private String id;
 
     /**
      * 支付用户编号
@@ -135,8 +132,10 @@ public class Orders implements BaseCrudEntity<Orders> {
     @TableField(exist = false)
     private Double payMoney;
     @TableField(exist = false)
-    private Integer  payUsers;
+    private Integer payUsers;
     @TableField(exist = false)
-    private String   payUp;
+    private String payUp;
 
+    @TableField(exist = false)
+    private boolean haveDetail = false;
 }

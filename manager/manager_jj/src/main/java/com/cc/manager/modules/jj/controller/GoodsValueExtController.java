@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * 全局配置
+ *
  * @author cf
  * @since 2020-05-09
  */
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/jj/goodsValueExt")
 public class GoodsValueExtController implements BaseCrudController {
+
     private GoodsValueExtService goodsValueExtService;
 
     @Override
@@ -66,5 +69,6 @@ public class GoodsValueExtController implements BaseCrudController {
     public void setGoodsValueExtService(GoodsValueExtService goodsValueExtService) {
         this.goodsValueExtService = goodsValueExtService;
     }
+
 }
 

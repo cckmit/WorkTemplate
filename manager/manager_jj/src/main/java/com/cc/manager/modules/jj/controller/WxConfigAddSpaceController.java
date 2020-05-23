@@ -6,14 +6,13 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.service.WxConfigAddSpaceService;
-import com.cc.manager.modules.jj.service.WxConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * 广告位配置
+ *
  * @author cf
  * @since 2020-05-08
  */
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class WxConfigAddSpaceController implements BaseCrudController {
 
     private WxConfigAddSpaceService wxConfigAddSpaceService;
-    private WxConfigService wxConfigService;
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
@@ -61,18 +60,13 @@ public class WxConfigAddSpaceController implements BaseCrudController {
     }
 
     @Override
-    @GetMapping(value = "/getSelectArray/{requestParam}")
-    public JSONArray getSelectArray(@PathVariable String requestParam) {
-        return this.wxConfigService.getSelectArray(WxConfig.class, requestParam);
+    public JSONArray getSelectArray(String requestParam) {
+        return null;
     }
 
     @Autowired
     public void setWxConfigAddSpaceService(WxConfigAddSpaceService wxConfigAddSpaceService) {
         this.wxConfigAddSpaceService = wxConfigAddSpaceService;
-    }
-    @Autowired
-    public void setWxConfigService(WxConfigService wxConfigService) {
-        this.wxConfigService = wxConfigService;
     }
 
 }

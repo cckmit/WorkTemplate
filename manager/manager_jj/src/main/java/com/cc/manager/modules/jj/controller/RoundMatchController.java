@@ -7,16 +7,13 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.common.utils.ReduceJsonUtil;
-import com.cc.manager.modules.jj.config.JjConfig;
 import com.cc.manager.modules.jj.service.RoundMatchService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>
- * 前端控制器
- * </p>
+ * 小程序赛制
  *
  * @author cf
  * @since 2020-05-08
@@ -27,7 +24,8 @@ import org.springframework.web.bind.annotation.*;
 public class RoundMatchController implements BaseCrudController {
 
     private RoundMatchService roundMatchService;
-    private JjConfig jjConfig;
+
+    private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
@@ -50,31 +48,31 @@ public class RoundMatchController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        PostResult post = this.roundMatchService.post(requestParam);
-        if (post.getCode() == 1) {
-            ReduceJsonUtil.flushTable("round_match", this.jjConfig.getFlushCache());
+        PostResult postResult = this.roundMatchService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("round_match");
         }
-        return post;
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        PostResult put = this.roundMatchService.put(requestParam);
-        if (put.getCode() == 1) {
-            ReduceJsonUtil.flushTable("round_match", this.jjConfig.getFlushCache());
+        PostResult putResult = this.roundMatchService.put(requestParam);
+        if (putResult.getCode() == 1) {
+            putResult = this.persieServerUtils.refreshTable("round_match");
         }
-        return put;
+        return putResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        PostResult delete = this.roundMatchService.delete(requestParam);
-        if (delete.getCode() == 1) {
-            ReduceJsonUtil.flushTable("round_match", this.jjConfig.getFlushCache());
+        PostResult deleteResult = this.roundMatchService.delete(requestParam);
+        if (deleteResult.getCode() == 1) {
+            deleteResult = this.persieServerUtils.refreshTable("round_match");
         }
-        return this.roundMatchService.delete(requestParam);
+        return deleteResult;
     }
 
     @Override
@@ -86,5 +84,11 @@ public class RoundMatchController implements BaseCrudController {
     public void setRoundExtService(RoundMatchService roundMatchService) {
         this.roundMatchService = roundMatchService;
     }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
+    }
+
 }
 

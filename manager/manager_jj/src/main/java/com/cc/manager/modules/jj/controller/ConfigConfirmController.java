@@ -12,10 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * <p>
- *  前端控制器
- * </p>
- *
  * @author cf
  * @since 2020-05-09
  */
@@ -23,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/jj/configConfirm")
-public class ConfigConfirmController  implements BaseCrudController {
+public class ConfigConfirmController implements BaseCrudController {
     private GamesService gamesService;
 
     @Override

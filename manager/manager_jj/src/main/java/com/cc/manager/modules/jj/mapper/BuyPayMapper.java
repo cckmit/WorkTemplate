@@ -1,13 +1,9 @@
 package com.cc.manager.modules.jj.mapper;
 
-import com.cc.manager.modules.jj.entity.BuyPay;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.cc.manager.modules.jj.entity.BuyPay;
 
 /**
- * <p>
- *  Mapper 接口
- * </p>
- *
  * @author cf
  * @since 2020-05-08
  */

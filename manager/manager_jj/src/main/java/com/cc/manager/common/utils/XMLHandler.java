@@ -16,8 +16,7 @@ import java.util.Map;
  *
  * @author Host-0222
  */
-public class XMLHandler extends DefaultHandler
-{
+public class XMLHandler extends DefaultHandler {
     //
     private Map<String, String> xmlMap;
     private String key;
@@ -28,31 +27,26 @@ public class XMLHandler extends DefaultHandler
      * @param protocolXML
      * @throws Exception
      */
-    public static XMLHandler parse(String protocolXML) throws Exception
-    {
-        try
-        {
+    public static XMLHandler parse(String protocolXML) throws Exception {
+        try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             XMLHandler dh = new XMLHandler();
             saxParser.parse(new InputSource(new StringReader(protocolXML)), dh);
             return dh;
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             throw e;
         }
     }
 
-    public Map<String, String> getXmlMap()
-    {
+    public Map<String, String> getXmlMap() {
         return xmlMap;
     }
 
     /**
      * 接收文档开始的通知
      */
-    public void startDocument() throws SAXException
-    {
+    public void startDocument() throws SAXException {
         xmlMap = new HashMap<String, String>();
     }
 
@@ -65,8 +59,7 @@ public class XMLHandler extends DefaultHandler
      * @param attributes - 附加到元素的属性。如果没有属性，则它将是空的 Attributes 对象。
      */
     public void startElement(String uri, String localName, String qName,
-                             Attributes attributes)
-    {
+                             Attributes attributes) {
         key = qName;
     }
 
@@ -76,11 +69,9 @@ public class XMLHandler extends DefaultHandler
      * @param length - 从字符数组中使用的字符数。
      */
     public void characters(char[] ch, int start, int length)
-            throws SAXException
-    {
+            throws SAXException {
         String content = new String(ch, start, length);
-        if (key != null && length > 0 && !content.equals("\n"))
-        {
+        if (key != null && length > 0 && !content.equals("\n")) {
             xmlMap.put(key, content);
         }
 
@@ -89,8 +80,7 @@ public class XMLHandler extends DefaultHandler
     /**
      *
      */
-    public void endDocument() throws SAXException
-    {
+    public void endDocument() throws SAXException {
 
     }
 
@@ -100,8 +90,7 @@ public class XMLHandler extends DefaultHandler
      * @param qName     - 限定的名称（带有前缀），如果限定的名称不可用，则为空字符串。
      */
     public void endElement(String uri, String localName, String qName)
-            throws SAXException
-    {
+            throws SAXException {
         key = null;
     }
 }

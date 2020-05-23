@@ -17,5 +17,12 @@ public class StatsListParam implements Serializable {
     private String queryData;
 
     private JSONObject queryObject;
-
+    /**
+     * 当前页
+     */
+    private int page;
+    /**
+     * 每页显示条数
+     */
+    private int limit;
 }

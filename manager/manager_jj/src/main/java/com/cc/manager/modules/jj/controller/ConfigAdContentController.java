@@ -61,7 +61,12 @@ public class ConfigAdContentController implements BaseCrudController {
     @Override
     @GetMapping(value = "/getSelectArray/{requestParam}")
     public JSONArray getSelectArray(@PathVariable String requestParam) {
-        return this.configAdContentService.getSelectArray(ConfigAdContent.class,null);
+        return this.configAdContentService.getSelectArray(ConfigAdContent.class, null);
+    }
+
+    @PutMapping(value = "/uploadImageUrlByUpload")
+    public PostResult uploadImageUrlByUpload(@RequestBody String requestParam) {
+        return this.configAdContentService.uploadImageUrlByUpload(requestParam);
     }
 
     @Autowired

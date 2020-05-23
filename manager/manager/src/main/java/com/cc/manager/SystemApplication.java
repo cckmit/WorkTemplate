@@ -12,7 +12,7 @@ public class SystemApplication {
     public static void main(String[] args) {
 
 //            System.setProperty("spring.devtools.restart.enabled", "false");
-            SpringApplication.run(SystemApplication.class, args);
+        SpringApplication.run(SystemApplication.class, args);
     }
 
 }

@@ -7,12 +7,7 @@ import com.cc.manager.modules.sys.entity.User;
 import com.cc.manager.modules.sys.service.RoleService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.ExcessiveAttemptsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -77,7 +72,7 @@ public class SystemLogController {
      *
      * @return 用户信息
      */
-     @GetMapping(value = "/userInfo")
+    @GetMapping(value = "/userInfo")
     public JSONObject getUserInfo() {
         Subject subject = SecurityUtils.getSubject();
         User user = (User) subject.getPrincipal();
@@ -92,7 +87,7 @@ public class SystemLogController {
      *
      * @return 授权菜单列表
      */
-     @GetMapping(value = "/getAuthorizedMenu")
+    @GetMapping(value = "/getAuthorizedMenu")
     public JSONArray getAuthorizedMenu() {
         // 获取用户及用户权限信息
         Set<String> authorizedPages = null;
@@ -109,7 +104,7 @@ public class SystemLogController {
      *
      * @return 登出提示
      */
-     @GetMapping(value = "/logout")
+    @GetMapping(value = "/logout")
     public JSONObject logout() {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();

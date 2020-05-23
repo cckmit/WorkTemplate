@@ -7,9 +7,6 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.common.utils.ReduceJsonUtil;
-import com.cc.manager.config.BaseConfig;
-import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.service.AppConfigService;
 import com.cc.manager.modules.jj.service.WxConfigService;
 import com.cc.manager.modules.jj.utils.PersieServerUtils;
@@ -74,23 +71,23 @@ public class AppConfigController implements BaseCrudController {
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        PostResult postResult =  this.appConfigService.delete(requestParam);
-        if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("app_config");
+        PostResult deleteResult = this.appConfigService.delete(requestParam);
+        if (deleteResult.getCode() == 1) {
+            deleteResult = this.persieServerUtils.refreshTable("app_config");
         }
-        return postResult;
+        return deleteResult;
     }
 
     @Override
-    @GetMapping(value = "/getSelectArray/{requestParam}")
-    public JSONArray getSelectArray(@PathVariable String requestParam) {
-        return this.wxConfigService.getSelectArray(WxConfig.class, requestParam);
+    public JSONArray getSelectArray(String requestParam) {
+        return null;
     }
 
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {
         this.wxConfigService = wxConfigService;
     }
+
     @Autowired
     public void setAppConfigService(AppConfigService appConfigService) {
         this.appConfigService = appConfigService;

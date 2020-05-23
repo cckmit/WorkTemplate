@@ -1,81 +1,64 @@
 package com.cc.manager.modules.jj.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.utils.ExcelUtils;
-import com.cc.manager.common.utils.ExportResult;
-import com.cc.manager.config.BaseConfig;
 import com.cc.manager.modules.jj.config.JjConfig;
 import com.cc.manager.modules.jj.entity.Games;
 import com.cc.manager.modules.jj.entity.RoundExt;
-import com.cc.manager.modules.jj.entity.RoundReceive;
 import com.cc.manager.modules.jj.entity.RoundRecord;
 import com.cc.manager.modules.jj.mapper.RoundRecordMapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.text.DateFormat;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- *
  * @author cf
  * @since 2020-05-08
  */
 @Service
 @DS("jj")
-public class RoundRecordGameService  extends BaseCrudService<RoundRecord, RoundRecordMapper> {
+public class RoundRecordGameService extends BaseCrudService<RoundRecord, RoundRecordMapper> {
+
     private JjConfig jjConfig;
     private GamesService gamesService;
     private RoundExtService roundExtService;
+
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<RoundRecord> queryWrapper) {
-        queryWrapper.eq("ddGroup",0);
-        queryWrapper.gt("ddResult",0);
-        // 前端提交的条件
-        JSONObject queryData = null;
+        queryWrapper.eq("ddGroup", 0);
+        queryWrapper.gt("ddResult", 0);
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String times = queryData.getString("times");
-            String roundName = queryData.getString("roundName");
-            String gameName = queryData.getString("gameName");
-            String productName = queryData.getString("productName");
-            String ddState = queryData.getString("ddState");
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String times = queryObject.getString("times");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
                 queryWrapper.between("DATE(ddEnd)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
             }
-            if (StringUtils.isNotBlank(roundName)) {
-                queryWrapper.eq("ddName", roundName);
-            }
-            if (StringUtils.isNotBlank(ddState)) {
-                queryWrapper.eq("ddState", ddState);
-            }
-        } else {
-            String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
-            String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-            queryWrapper.between("DATE(ddEnd)", "2020-01-09", "2020-01-09");
-
+            String ddGame = queryObject.getString("gameName");
+            queryWrapper.eq(StringUtils.isNotBlank(ddGame), "ddGame", ddGame);
+            String ddRound = queryObject.getString("roundName");
+            queryWrapper.eq(StringUtils.isNotBlank(ddRound), "ddRound", ddRound);
         }
     }
+
     /**
      * 重构分页查询结果，比如进行汇总复制计算等操作
      *
@@ -95,31 +78,24 @@ public class RoundRecordGameService  extends BaseCrudService<RoundRecord, RoundR
             RoundExt roundExt = this.roundExtService.getCacheEntity(RoundExt.class, ddRound);
             if (roundExt != null) {
                 String roundName = roundExt.getDdName();
-                roundRecord.setRoundName(roundName);
+                roundRecord.setRoundName(ddRound + "-" + roundName);
                 String tip = roundExt.getTip();
                 roundRecord.setRoundLength(tip);
             }
-
         }
     }
+
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<RoundRecord> deleteWrapper) {
         return false;
     }
 
-
-    @Autowired
-    public void setGameSetService(GamesService gamesService) {
-        this.gamesService = gamesService;
-    }
-
-    @Autowired
-    public void setRoundExtService(RoundExtService roundExtService) {
-        this.roundExtService = roundExtService;
-    }
-
+    /**
+     * 导出Excel游戏结果
+     *
+     * @param roundRecord roundRecord
+     */
     public void exportResult(RoundRecord roundRecord, HttpServletResponse response) {
-        List<ExportResult> exportResults = new ArrayList<>();
         //获取赛场信息
         Integer ddCode = roundRecord.getDdCode();
         Boolean ddGroup = roundRecord.getDdGroup();
@@ -130,11 +106,7 @@ public class RoundRecordGameService  extends BaseCrudService<RoundRecord, RoundR
         String format = sdf.format(ddSubmit);
         String roundName = roundRecord.getRoundName();
         String roundLength = roundRecord.getRoundLength();
-        int group = 0;
-        int num = 0;
-        if (ddGroup) {
-            group = 1;
-        }
+        int group = ddGroup ? 1 : 0, num = 0;
         if (ddNumber != null) {
             int numbers = ddNumber;
             if (numbers <= 100) {
@@ -154,7 +126,8 @@ public class RoundRecordGameService  extends BaseCrudService<RoundRecord, RoundR
             allResult.addAll(singleResult);
         }
         //比赛结果处理
-        exportResults = allResultDeal(allResult, format, roundName, roundLength);
+        List<RoundRecordExportResult> exportResults = allResultDeal(allResult, format, roundName, roundLength);
+        List<RoundRecordExportResult> rows = CollUtil.newArrayList(exportResults);
 
         //表头参数处理
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -163,14 +136,58 @@ public class RoundRecordGameService  extends BaseCrudService<RoundRecord, RoundR
         Games games = this.gamesService.getCacheEntity(Games.class, gamesCode.toString());
         String gameName = games.getDdName();
         //导出
-        ExcelUtils.writeExcel(exportResults, gameTime + "-" + gameName + "-" + roundName, response);
+        excelWriterOut(rows, gameTime, gameName, roundName, response);
     }
 
-    private List<ExportResult> allResultDeal(JSONArray allResult, String format, String roundName, String roundLength) {
-        List<ExportResult> exportResults = new ArrayList<>();
+    /**
+     * 写出比赛结果
+     *
+     * @param rows      rows
+     * @param gameTime  gameTime
+     * @param gameName  gameName
+     * @param roundName roundName
+     * @param response  response
+     */
+    private void excelWriterOut(List<RoundRecordExportResult> rows, String gameTime, String gameName, String roundName, HttpServletResponse response) {
+        try {
+            ExcelWriter writer = ExcelUtil.getWriter(true);
+            //自定义标题别名
+            writer.addHeaderAlias("roundName", "赛制名称");
+            writer.addHeaderAlias("roundLength", "时段");
+            writer.addHeaderAlias("index", "排名");
+            writer.addHeaderAlias("name", "昵称");
+            writer.addHeaderAlias("uid", "uid");
+            writer.addHeaderAlias("value", "奖励数量");
+            writer.addHeaderAlias("type", "奖励类型");
+            writer.addHeaderAlias("mark", "得分");
+            writer.addHeaderAlias("matchdate", "比赛结束时间");
+            // 合并单元格后的标题行，使用默认标题样式
+            writer.merge(8, gameTime + "-" + gameName + "-" + roundName + "比赛结果");
+            writer.write(rows, true);
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
+            String nameDecode = new String((gameTime + "-" + gameName + "-" + roundName + ".xlsx").getBytes("gb2312"), "ISO8859-1");
+            response.setHeader("Content-Disposition", "attachment;filename=" + nameDecode);
+            ServletOutputStream out = response.getOutputStream();
+            writer.flush(out, true);
+        } catch (IOException e) {
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+        }
+    }
+
+    /**
+     * 比赛结果处理
+     *
+     * @param allResult   allResult
+     * @param format      format
+     * @param roundName   roundName
+     * @param roundLength roundLength
+     * @return List
+     */
+    private List<RoundRecordExportResult> allResultDeal(JSONArray allResult, String format, String roundName, String roundLength) {
+        List<RoundRecordExportResult> exportResults = new ArrayList<>();
         for (Object object : allResult) {
             //封装每条比赛结果
-            ExportResult exportResult = new ExportResult();
+            RoundRecordExportResult exportResult = new RoundRecordExportResult();
             JSONObject jsonObject = JSONObject.parseObject(object.toString());
             Object uid = jsonObject.get("uid");
             Object index = jsonObject.get("index");
@@ -178,21 +195,23 @@ public class RoundRecordGameService  extends BaseCrudService<RoundRecord, RoundR
             Object value = jsonObject.get("value");
             Object type = jsonObject.get("type");
             Object mark = jsonObject.get("mark");
-            int reward = Integer.parseInt(value.toString());
-            if ("rmb".equals(type.toString())) {
-                reward = reward / 100;
+            if (value != null) {
+                int reward = Integer.parseInt(value.toString());
+                if ("rmb".equals(type.toString())) {
+                    reward = reward / 100;
+                }
+                exportResult.value = reward;
             }
-            exportResult.setRoundName(roundName);
-            exportResult.setRoundLength(roundLength);
-            exportResult.setIndex(Integer.parseInt(index.toString()));
-            exportResult.setName(name.toString());
-            exportResult.setUid(uid.toString());
-            exportResult.setValue(reward);
-            exportResult.setType(type.toString());
-            exportResult.setMark(Integer.parseInt(mark.toString()));
-            exportResult.setRoundName(roundName);
-            exportResult.setRoundLength(roundLength);
-            exportResult.setMatchdate(format);
+            exportResult.roundName = roundName;
+            exportResult.roundLength = roundLength;
+            exportResult.index = Integer.parseInt(index.toString());
+            exportResult.name = name == null ? "" : name.toString();
+            exportResult.uid = uid.toString();
+            exportResult.type = type.toString();
+            exportResult.mark = Integer.parseInt(mark.toString());
+            exportResult.roundName = roundName;
+            exportResult.roundLength = roundLength;
+            exportResult.matchdate = format;
             //把所有比赛信息放入集合
             exportResults.add(exportResult);
         }
@@ -202,6 +221,16 @@ public class RoundRecordGameService  extends BaseCrudService<RoundRecord, RoundR
     @Autowired
     public void setJjConfig(JjConfig jjConfig) {
         this.jjConfig = jjConfig;
+    }
+
+    @Autowired
+    public void setGameSetService(GamesService gamesService) {
+        this.gamesService = gamesService;
+    }
+
+    @Autowired
+    public void setRoundExtService(RoundExtService roundExtService) {
+        this.roundExtService = roundExtService;
     }
 
 }

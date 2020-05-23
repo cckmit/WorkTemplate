@@ -14,7 +14,8 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 /**
- *工具类 刷表 and 压缩json内容
+ * 工具类 刷表 and 压缩json内容
+ *
  * @author cf
  * @since 2020-05-09
  */
@@ -47,6 +48,7 @@ public class ReduceJsonUtil {
         }
         return null;
     }
+
     /**
      * reduce JSON
      *

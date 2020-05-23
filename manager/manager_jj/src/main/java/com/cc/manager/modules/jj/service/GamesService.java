@@ -7,8 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.utils.XwhTool;
-import com.cc.manager.config.BaseConfig;
+import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.config.JjConfig;
 import com.cc.manager.modules.jj.entity.Games;
 import com.cc.manager.modules.jj.mapper.GamesMapper;
@@ -17,32 +16,65 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 /**
- *
  * @author cf
  * @since 2020-05-08
  */
 @Service
 @DS("jj")
 public class GamesService extends BaseCrudService<Games, GamesMapper> {
-    private GamesMapper gamesMapper;
+
     private JjConfig jjConfig;
+
+    /**
+     * 读入一个文本的方法
+     *
+     * @param path 路径信息
+     * @return 得到的文本信息
+     */
+    private static String readFileString(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            return null;
+        }
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            return readInputStream(fis);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 读取流数据
+     */
+    private static String readInputStream(InputStream in) {
+        try {
+            int length = in.available();
+            byte[] bytes = new byte[length];
+            in.read(bytes);
+            in.close();
+            return new String(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<Games> queryWrapper) {
-        // 前端提交的条件
-        JSONObject queryData = null;
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String gameId = queryData.getString("gameId");
-            String gameName = queryData.getString("gameName");
-            if (StringUtils.isNotBlank(gameId)) {
-                queryWrapper.like("ddCode", gameId);
-            }
-            if (StringUtils.isNotBlank(gameName)) {
-                queryWrapper.like("ddName", gameName);
-            }
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String gameId = queryObject.getString("gameId");
+            queryWrapper.eq(StringUtils.isNotBlank(gameId), "ddCode", gameId);
+            String gameName = queryObject.getString("gameName");
+            queryWrapper.like(StringUtils.isNotBlank(gameName), "ddName", gameName);
         }
     }
 
@@ -61,31 +93,34 @@ public class GamesService extends BaseCrudService<Games, GamesMapper> {
         return false;
     }
 
-    public int flushGamesResources(JSONObject parameter) {
-        int updateGames = 0;
-        JSONArray array = parameter.getJSONArray("gameList");
-        for (int i = 0; i < array.size(); i++) {
-            int gameCode = array.getInteger(i);
-            Games game = gamesMapper.selectByPrimaryKey(gameCode);
+    /**
+     * 刷新游戏配置资源
+     *
+     * @param parameter parameter
+     * @return PostResult
+     */
+    public PostResult flushGamesResources(JSONArray parameter) {
+        PostResult postResult = new PostResult();
+        for (int i = 0; i < parameter.size(); i++) {
+            int gameCode = parameter.getInteger(i);
+            Games game = this.getById(gameCode);
             try {
                 if (game != null) {
                     String resPath = this.jjConfig.getReadRes();
-                    String share = XwhTool.readFileString(resPath.concat("g" + gameCode).concat("/share/readme.json"));
+                    String share = readFileString(resPath.concat("g" + gameCode).concat("/share/readme.json"));
                     if (share != null) {
                         game.setDdShareRes(share);
-                        updateGames += gamesMapper.updateByPrimaryKeySelective(game);
+                        this.updateById(game);
                     }
                 }
             } catch (Exception e) {
                 LOGGER.error(ExceptionUtils.getStackTrace(e));
+                postResult.setCode(2);
             }
         }
-        return updateGames;
+        return postResult;
     }
-    @Autowired
-    public void setGamesMapper(GamesMapper gamesMapper) {
-        this.gamesMapper = gamesMapper;
-    }
+
     @Autowired
     public void setJjConfig(JjConfig jjConfig) {
         this.jjConfig = jjConfig;

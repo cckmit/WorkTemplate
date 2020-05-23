@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.manager.modules.jj.mapper.RechargeMapper">
+
+    <resultMap id="BaseResultMap" type="com.cc.manager.modules.jj.entity.Recharge">
+        <id column="ddId" property="ddId" jdbcType="VARCHAR"/>
+        <result column="ddUid" property="ddUid" jdbcType="VARCHAR"/>
+        <result column="ddAppId" property="ddAppId" jdbcType="VARCHAR"/>
+        <result column="ddRmb" property="ddRmb" jdbcType="DECIMAL"/>
+        <result column="ddTip" property="ddTip" jdbcType="VARCHAR"/>
+        <result column="ddStatus" property="ddStatus" jdbcType="INTEGER"/>
+        <result column="ddTrans" property="ddTrans" jdbcType="TIMESTAMP"/>
+        <result column="ddTimes" property="ddTimes" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ddId, ddUid, ddAppId, ddRmb, ddTip, ddStatus, ddTrans, ddTimes
+  </sql>
+
+    <select id="selectAllCharge" resultType="com.cc.manager.modules.jj.entity.Recharge">
+        SELECT a.ddCurrent*0.01 AS remainAmount,w.program_type AS programType,w.product_name AS productName,u.ddName AS
+        userName,r.* FROM
+        persie.recharge AS r LEFT JOIN persie.all_cost AS a ON r.ddUid = a.ddUid AND a.ddCostType= 'recharge' AND
+        DATE_FORMAT(a.ddTime,"%Y-%m-%d %h")
+        = DATE_FORMAT(r.ddTimes,"%Y-%m-%d %h")
+        LEFT JOIN persie.wx_config AS w ON r.ddAppId =w.ddAppId LEFT JOIN persie.user_info AS u ON r.ddUid=u.ddUid
+        <if test="start != null and end !=null  and start != '' and end !='' ">
+            where DATE(ddTimes) between '${start}' and '${end}'
+        </if>
+    </select>
+    <select id="selectAll" resultType="com.cc.manager.modules.jj.entity.Recharge">
+        SELECT
+        r.ddId as ddid,r.ddUid as ddUid, i.ddName as userName, r.ddRmb as ddRmb,r.ddAppId as ddAppId, r.ddTip as ddTip,
+        r.ddStatus as ddStatus, w.product_name as productName , w.program_type as programType, r.ddTimes as ddTimes,
+        r.ddTrans as ddTrans FROM recharge AS r LEFT JOIN user_info AS i ON r.ddUid = i.ddUid
+        LEFT JOIN wx_config AS w ON r.ddAppId = w.ddAppId WHERE ddStatus != 200
+        <if test="start != null and end !=null  and start != '' and end !='' ">
+            and DATE(ddTimes) between '${start}' and '${end}'
+        </if>
+    </select>
+    <select id="selectCashOut" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '${dduid}' AND ddTimes  &lt;= '${ddTime}'
+    </select>
+
+
+</mapper>

@@ -2,19 +2,11 @@ package com.cc.manager.modules.jj.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 /**
- * <p>
- * 
- * </p>
- *
  * @author cf
  * @since 2020-05-13
  */
@@ -22,7 +14,7 @@ import lombok.experimental.Accessors;
 @TableName(schema = "persie_deamon", value = "public_centre")
 public class PublicCentre implements BaseCrudEntity<PublicCentre> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * id

@@ -1,18 +1,13 @@
 package com.cc.manager.modules.jj.entity;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
- *
  * @author cf
  * @since 2020-05-09
  */
@@ -20,12 +15,12 @@ import lombok.experimental.Accessors;
 @TableName(schema = "persie", value = "config_program")
 public class ConfigProgram implements BaseCrudEntity<ConfigProgram> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * appId
      */
-    @TableId("ddAppId")
+    @TableField("ddAppId")
     private String ddAppId;
 
     /**

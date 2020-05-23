@@ -7,19 +7,26 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
+import com.cc.manager.modules.jj.entity.GameSet;
 import com.cc.manager.modules.jj.service.GameSetService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * 合集配置
+ *
  * @author cf
  * @since 2020-05-08
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/jj/gameSet")
+@RequestMapping("/jj/gameSet")
 public class GameSetController implements BaseCrudController {
+
     private GameSetService gameSetService;
+
+    private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
@@ -42,29 +49,48 @@ public class GameSetController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        return this.gameSetService.post(requestParam);
+        PostResult postResult = this.gameSetService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("gameset");
+        }
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        return this.gameSetService.put(requestParam);
+        PostResult putResult = this.gameSetService.put(requestParam);
+        if (putResult.getCode() == 1) {
+            putResult = this.persieServerUtils.refreshTable("gameset");
+        }
+        return putResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        return this.gameSetService.delete(requestParam);
+        PostResult deleteResult = this.gameSetService.delete(requestParam);
+        if (deleteResult.getCode() == 1) {
+            deleteResult = this.persieServerUtils.refreshTable("gameset");
+        }
+        return deleteResult;
     }
 
     @Override
-    public JSONArray getSelectArray(String requestParam) {
-        return null;
+    @GetMapping(value = "/getSelectArray/{requestParam}")
+    public JSONArray getSelectArray(@PathVariable String requestParam) {
+        return this.gameSetService.getSelectArray(GameSet.class, requestParam);
     }
 
     @Autowired
     public void setGameSetService(GameSetService gameSetService) {
         this.gameSetService = gameSetService;
     }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
+    }
+
 }
 

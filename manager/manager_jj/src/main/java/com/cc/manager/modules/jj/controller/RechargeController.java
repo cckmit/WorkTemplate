@@ -7,14 +7,11 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.modules.jj.service.GameSetService;
 import com.cc.manager.modules.jj.service.RechargeService;
-import com.cc.manager.modules.jj.service.RoundExtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- *
  * @author cf
  * @since 2020-05-09
  */
@@ -25,6 +22,7 @@ public class RechargeController implements BaseCrudController {
 
 
     private RechargeService rechargeService;
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
@@ -60,6 +58,7 @@ public class RechargeController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         return this.rechargeService.delete(requestParam);
     }
+
     @Override
     public JSONArray getSelectArray(String requestParam) {
         return null;

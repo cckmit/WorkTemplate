@@ -1,4 +1,4 @@
-package com.cc.manager.web;//package com.cc.manager.system.config;
+package com.cc.manager.web;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -21,9 +21,9 @@ public class MvcConfigurer extends WebMvcConfigurationSupport {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedHeaders()
+        registry.addMapping("/**").allowedHeaders("*")
                 // 允许使用的请求方法，以逗号隔开
-                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedMethods("PUT", "GET", "POST", "DELETE", "OPTIONS")
                 // 表示接受任意域名请求
                 .allowedOrigins("*")
                 // 表示是否允许发送Cookie。默认情况下Cookie不包括在CORS请求中。当设为true时表示服务器明确许可，Cookie可以包含在请求中一起发送给服务器。

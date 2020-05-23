@@ -7,19 +7,15 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.common.utils.ExcelUtils;
 import com.cc.manager.modules.jj.entity.RoundRecord;
 import com.cc.manager.modules.jj.service.RoundRecordMatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 /**
+ * 小程序比赛结果
  *
  * @author cf
  * @since 2020-05-08
@@ -30,6 +26,7 @@ import java.util.List;
 public class RoundRecordMatchController implements BaseCrudController {
 
     private RoundRecordMatchService roundRecordMatchService;
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
@@ -47,16 +44,17 @@ public class RoundRecordMatchController implements BaseCrudController {
     public CrudPageResult getPage(CrudPageParam crudPageParam) {
         return this.roundRecordMatchService.getPage(crudPageParam);
     }
+
     /**
-     * 导出Excel结果
+     * 导出Excel小程序结果
      *
-     * @param roundRecord
-     * @return
+     * @param roundRecord roundRecord
      */
-    @GetMapping(value = "/export")
+    @GetMapping(value = "/exportResult")
     public void getRankingResult(RoundRecord roundRecord, HttpServletResponse response) {
-        roundRecordMatchService.exportResult(roundRecord,response);
+        roundRecordMatchService.exportResult(roundRecord, response);
     }
+
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {

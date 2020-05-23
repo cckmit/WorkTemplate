@@ -3,10 +3,10 @@ package com.cc.manager.modules.sys.service;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.cc.manager.modules.sys.mapper.DataDictMapper;
 import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.GetPageParam;
 import com.cc.manager.modules.sys.entity.DataDict;
+import com.cc.manager.modules.sys.mapper.DataDictMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 

@@ -1,24 +1,17 @@
 package com.cc.manager.modules.fc.entity;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
-import com.cc.manager.modules.jj.entity.SupplementOrder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
- * <p>
- * 
- * </p>
- *
  * @author cf
  * @since 2020-05-13
  */
@@ -27,7 +20,7 @@ import lombok.experimental.Accessors;
 @TableName(schema = "minigameback", value = "minitj_wx")
 public class MinitjWx implements BaseCrudEntity<MinitjWx> {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 游戏appid
@@ -163,12 +156,19 @@ public class MinitjWx implements BaseCrudEntity<MinitjWx> {
      */
     private LocalDateTime wxUpdatetime;
 
+    /*** 产品数量 */
+    @TableField(exist = false)
+    private Integer productCount;
+    /*** 产品类型 */
     @TableField(exist = false)
     private Integer programType;
+    /*** 产品名称 */
     @TableField(exist = false)
     private String productName;
+
     @TableField(exist = false)
     private String ddAppPlatform;
+
     /*** 充值收入 */
     @TableField(exist = false)
     private BigDecimal recharge;
@@ -194,6 +194,10 @@ public class MinitjWx implements BaseCrudEntity<MinitjWx> {
     /*** 新增用户来源展示字段-- 任务栏-最近使用 */
     @TableField(exist = false)
     private Integer wxRegTaskBarRecent;
+
+    /*** 新增用户来源展示字段-- 其他 */
+    @TableField(exist = false)
+    private Integer wxRegOther;
     /*** 新增用户来源展示字段-- 其他小程序 */
     @TableField(exist = false)
     private Integer wxRegOtherSp;
@@ -237,4 +241,8 @@ public class MinitjWx implements BaseCrudEntity<MinitjWx> {
     /*** 活跃来源展示字段-- 其他小程序 */
     @TableField(exist = false)
     private Integer wxActiveOtherSp;
+
+    /*** 活跃 */
+    @TableField(exist = false)
+    private BigDecimal activeUp;
 }

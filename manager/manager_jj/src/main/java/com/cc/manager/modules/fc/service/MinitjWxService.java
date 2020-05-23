@@ -8,10 +8,9 @@ import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.modules.fc.entity.MiniGame;
 import com.cc.manager.modules.fc.entity.MinitjWx;
 import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
-import com.cc.manager.modules.jj.entity.*;
+import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.service.WxConfigService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,41 +18,34 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>
- *  服务实现类
- * </p>
- *
  * @author cf
  * @since 2020-05-13
  */
 @Service
-public class MinitjWxService extends BaseCrudService<MinitjWx, MinitjWxMapper>  {
+public class MinitjWxService extends BaseCrudService<MinitjWx, MinitjWxMapper> {
 
     private WxConfigService wxConfigService;
     private MiniGameService miniGameService;
+
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<MinitjWx> queryWrapper) {
-        // 前端提交的条件
-        JSONObject queryData = null;
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            queryData = JSONObject.parseObject(crudPageParam.getQueryData());
-        }
-        if (queryData != null) {
-            String times = queryData.getString("times");
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String times = queryObject.getString("times");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
                 queryWrapper.between("DATE(wx_date)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
             }
-        }else {
+        } else {
             String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
             String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
             queryWrapper.between("DATE(wx_date)", beginTime, endTime);
         }
     }
+
     /**
      * 重构分页查询结果，比如进行汇总复制计算等操作
      *
@@ -70,12 +62,12 @@ public class MinitjWxService extends BaseCrudService<MinitjWx, MinitjWxMapper>  
                 //fc数据赋值展示数据
                 productData.setProgramType(wxConfig.getProgramType());
                 productData.setProductName(wxConfig.getProductName());
-            }else {
+            } else {
                 MiniGame cacheEntity = this.miniGameService.getCacheEntity(MiniGame.class, productData.getWxAppid());
-                if(cacheEntity !=null){
+                if (cacheEntity != null) {
                     productData.setProgramType(0);
                     productData.setProductName(cacheEntity.getGameName());
-                }else {
+                } else {
                     productData.setProgramType(0);
                     productData.setProductName("暂未录入的产品");
                 }
@@ -104,14 +96,17 @@ public class MinitjWxService extends BaseCrudService<MinitjWx, MinitjWxMapper>  
         }
 
     }
+
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<MinitjWx> deleteWrapper) {
         return false;
     }
+
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {
         this.wxConfigService = wxConfigService;
     }
+
     @Autowired
     public void setMiniGameService(MiniGameService miniGameService) {
         this.miniGameService = miniGameService;

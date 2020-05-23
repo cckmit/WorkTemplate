@@ -3,13 +3,17 @@ package com.cc.manager.modules.jj.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.cc.manager.common.mvc.BaseCrudController;
-import com.cc.manager.common.mvc.BaseStatsController;
-import com.cc.manager.common.result.*;
+import com.cc.manager.common.result.CrudObjectResult;
+import com.cc.manager.common.result.CrudPageParam;
+import com.cc.manager.common.result.CrudPageResult;
+import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.service.RoundReceiveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * 获奖记录查询
+ *
  * @author cf
  * @since 2020-05-08
  */
