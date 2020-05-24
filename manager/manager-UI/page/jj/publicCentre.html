@@ -38,7 +38,7 @@
             <script type="text/html" id="crudRowBar">
                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
                 <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
-
+                
             </script>
 
             <!-- 行内表单 -->
@@ -234,7 +234,7 @@
                         $.ajax({
                             url: currentPage.module.server + currentPage.page + "/updateShowId",
                             data: JSON.stringify(saveData),
-                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                            contentType: "application/json; charset=utf-8",
                             type: 'post',
                             dataType: "json",
                             success: function (result) {

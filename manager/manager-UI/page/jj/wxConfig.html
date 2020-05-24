@@ -365,7 +365,7 @@
                     $.ajax({
                         url: currentPage.module.server + currentPage.page + '/refreshResource',
                         data: JSON.stringify(appIdArray),
-                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                        contentType: "application/json; charset=utf-8",
                         type: 'post',
                         dataType: "json",
                         success: function (result) {

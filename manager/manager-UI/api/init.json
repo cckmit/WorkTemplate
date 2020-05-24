@@ -4,7 +4,7 @@
     "href": "page/welcome-1.html?t=1"
   },
   "logoInfo": {
-    "title": "管理后台",
+    "title": "LAYUI MINI",
     "image": "images/logo.png",
     "href": ""
   },
@@ -98,6 +98,32 @@
           ]
         },
         {
+          "title": "主页模板",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "child": [
+            {
+              "title": "主页一",
+              "href": "page/welcome-1.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "主页二",
+              "href": "page/welcome-2.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "主页三",
+              "href": "page/welcome-3.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
+        },
+        {
           "title": "产品配置",
           "href": "",
           "icon": "fa fa-home",
@@ -185,7 +211,7 @@
           "icon": "fa fa-home",
           "target": "_self",
           "child": [
-			{
+            {
               "title": "游戏列表",
               "href": "page/jj/games.html",
               "icon": "fa fa-list-alt",
@@ -203,9 +229,60 @@
               "icon": "fa fa-list-alt",
               "target": "_self"
             }
+            
           ]
         },
-		 {
+            {
+              "title": "数据统计",
+              "href": "",
+              "icon": "fa fa-home",
+              "target": "_self",
+              "child": [
+                {
+                  "title": "游戏在线人数统计",
+                  "href": "page/jj/modle.html",
+                  "icon": "fa fa-list-alt",
+                  "target": "_self"
+                },
+                {
+                  "title": "数据汇总",
+                  "href": "",
+                  "icon": "fa fa-list-alt",
+                  "target": "_self"
+                },
+                {
+                  "title": "产品数据详情",
+                  "href": "",
+                  "icon": "fa fa-list-alt",
+                  "target": "_self"
+                },
+                {
+                  "title": "付费实时统计",
+                  "href": "page/jj/payStatistic.html",
+                  "icon": "fa fa-list-alt",
+                  "target": "_self"
+                },
+                {
+                  "title": "来源明细-新增",
+                  "href": "page/jj/fc_userNewResource.html",
+                  "icon": "fa fa-list-alt",
+                  "target": "_self"
+                },
+                {
+                  "title": "来源明细-活跃",
+                  "href": "page/jj/fc_userActiveResource.html",
+                  "icon": "fa fa-list-alt",
+                  "target": "_self"
+                },
+                {
+                  "title": "开赛与复活情况",
+                  "href": "",
+                  "icon": "fa fa-list-alt",
+                  "target": "_self"
+                }
+              ]
+            },
+        {
           "title": "广告数据",
           "href": "",
           "icon": "fa fa-home",
@@ -214,6 +291,12 @@
             {
               "title": "广告数据明细",
               "href": "page/jj/wxAddDataDetail.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "广告数据延伸",
+              "href": "page/jj/adValueWxAdUnit.html",
               "icon": "fa fa-list-alt",
               "target": "_self"
             }
@@ -225,6 +308,12 @@
           "icon": "fa fa-home",
           "target": "_self",
           "child": [
+            {
+              "title": "获奖记录查询",
+              "href": "page/jj/roundReceive.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
             {
               "title": "小程序比赛结果查询",
               "href": "page/jj/roundRecordMatch.html",
@@ -240,11 +329,55 @@
           ]
         },
         {
+          "title": "用户数据查询",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "child": [
+            {
+              "title": "用户信息查询",
+              "href": "page/jj/userInfo.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "充值订单查询",
+              "href": "page/jj/orders.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "提现记录查询",
+              "href": "page/jj/rechargeRecord.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "消耗情况查询",
+              "href": "",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            }
+          ]
+        },
+        {
           "title": "操作",
           "href": "",
           "icon": "fa fa-home",
           "target": "_self",
           "child": [
+            {
+              "title": "提现审核",
+              "href": "page/jj/rechargeAudit.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "手动补单",
+              "href": "page/jj/supplementOrder.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
             {
               "title": "买量支出",
               "href": "page/jj/buyPay.html",
@@ -261,6 +394,98 @@
               "title": "微信群管理记录",
               "href": "page/jj/wxGroupHistory.html",
               "icon": "fa fa-list-alt",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "菜单管理",
+          "href": "page/menu.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self"
+        },
+        {
+          "title": "系统设置",
+          "href": "page/setting.html",
+          "icon": "fa fa-gears",
+          "target": "_self"
+        },
+        {
+          "title": "表格示例",
+          "href": "page/table.html",
+          "icon": "fa fa-file-text",
+          "target": "_self"
+        },
+        {
+          "title": "表单示例",
+          "href": "",
+          "icon": "fa fa-calendar",
+          "target": "_self",
+          "child": [
+            {
+              "title": "普通表单",
+              "href": "page/form.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "分步表单",
+              "href": "page/form-step.html",
+              "icon": "fa fa-navicon",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "登录模板",
+          "href": "",
+          "icon": "fa fa-flag-o",
+          "target": "_self",
+          "child": [
+            {
+              "title": "登录-1",
+              "href": "page/login-1.html",
+              "icon": "fa fa-stumbleupon-circle",
+              "target": "_blank"
+            },
+            {
+              "title": "登录-2",
+              "href": "page/login-2.html",
+              "icon": "fa fa-viacoin",
+              "target": "_blank"
+            }
+          ]
+        },
+        {
+          "title": "异常页面",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "child": [
+            {
+              "title": "404页面",
+              "href": "page/404.html",
+              "icon": "fa fa-hourglass-end",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "其它界面",
+          "href": "",
+          "icon": "fa fa-snowflake-o",
+          "target": "",
+          "child": [
+            {
+              "title": "按钮示例",
+              "href": "page/button.html",
+              "icon": "fa fa-snowflake-o",
+              "target": "_self"
+            },
+            {
+              "title": "弹出层",
+              "href": "page/layer.html",
+              "icon": "fa fa-shield",
               "target": "_self"
             }
           ]

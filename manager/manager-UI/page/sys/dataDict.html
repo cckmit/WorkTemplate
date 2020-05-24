@@ -125,7 +125,7 @@
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
             module: window.module.system,
-            page: 'sys/dataDict'
+            page: 'dataDict'
         }
 
         // 表单数据查询渲染
@@ -188,7 +188,7 @@
                 $.ajax({
                     url: currentPage.module.server + currentPage.page,
                     data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
-                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                    contentType: "application/json; charset=utf-8",
                     type: 'PUT',
                     dataType: "json",
                     async: false,

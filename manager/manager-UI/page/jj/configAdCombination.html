@@ -235,7 +235,7 @@
                                 $.ajax({
                                     url: currentPageUrl + "/",
                                     type: 'DELETE',
-                                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                                    contentType: "application/json; charset=utf-8",
                                     data: JSON.stringify(deleteIdArray),
                                     dataType: "json",
                                     async: false,
@@ -269,7 +269,7 @@
                 $.ajax({
                     url: currentPageUrl + '/updateName',
                     data: JSON.stringify({ id: data.id, name: data.name }),
-                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                    contentType: "application/json; charset=utf-8",
                     type: 'POST',
                     dataType: "json",
                     async: false,
@@ -301,7 +301,7 @@
                             $.ajax({
                                 url: currentPageUrl,
                                 data: JSON.stringify(submitData),
-                                headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                                contentType: "application/json; charset=utf-8",
                                 type: methodType,
                                 dataType: "json",
                                 async: false,
@@ -394,7 +394,7 @@
                     $.ajax({
                         url: currentPageUrl + "/deleteAdPositions",
                         data: JSON.stringify(deleteData),
-                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                        contentType: "application/json; charset=utf-8",
                         type: 'POST',
                         dataType: "json",
                         async: false,
@@ -454,7 +454,7 @@
                 $.ajax({
                     url: currentPageUrl + "/updateAdStrategy",
                     data: JSON.stringify(updateAdStrategyOption),
-                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                    contentType: "application/json; charset=utf-8",
                     type: 'POST',
                     dataType: "json",
                     async: false,
@@ -504,7 +504,7 @@
                         $.ajax({
                             url: currentPageUrl + '/addAdPosition',
                             data: JSON.stringify(addPositionData),
-                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                            contentType: "application/json; charset=utf-8",
                             type: 'POST',
                             dataType: "json",
                             async: false,
@@ -594,7 +594,7 @@
                     $.ajax({
                         url: currentPageUrl + "/deleteAdSpaces",
                         data: JSON.stringify(deleteData),
-                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                        contentType: "application/json; charset=utf-8",
                         type: 'POST',
                         dataType: "json",
                         async: false,
@@ -651,7 +651,7 @@
                         $.ajax({
                             url: currentPageUrl + '/addAdSpace',
                             data: JSON.stringify(addSpaceData),
-                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                            contentType: "application/json; charset=utf-8",
                             type: 'POST',
                             dataType: "json",
                             async: false,
@@ -735,7 +735,7 @@
                     $.ajax({
                         url: currentPageUrl + "/saveAdContentIndex",
                         data: JSON.stringify(showIndexObject),
-                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                        contentType: "application/json; charset=utf-8",
                         type: 'POST',
                         dataType: "json",
                         async: false,
@@ -767,7 +767,7 @@
                     $.ajax({
                         url: currentPageUrl + "/deleteAdContents",
                         data: JSON.stringify(deleteData),
-                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                        contentType: "application/json; charset=utf-8",
                         type: 'POST',
                         dataType: "json",
                         async: false,
@@ -824,7 +824,7 @@
                         $.ajax({
                             url: currentPageUrl + '/addAdContent',
                             data: JSON.stringify(addContentData),
-                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                            contentType: "application/json; charset=utf-8",
                             type: 'POST',
                             dataType: "json",
                             async: false,

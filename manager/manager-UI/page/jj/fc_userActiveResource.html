@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>微信广告数据明细</title>
+    <title>用户来源明细-活跃</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -18,23 +18,22 @@
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">查询日期</label>
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
+                        <label class="layui-form-label">时间</label>
+                        <div class="layui-input-inline" style="width: 14rem;">
+                            <input class="layui-input" id="times" name="times" placeholder=" - " type="text">
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">APPID</label>
+                        <label class="layui-form-label">产品名称</label>
                         <div class="layui-input-inline">
-                            <select id="appIdSelect" name="id" lay-search=""></select>
+                            <select id="appIdSelect" name="appId" lay-search=""></select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
                             lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
                     </div>
-
-                </div>
+                    </div>
             </form>
 
             <!-- Table表头 -->
@@ -46,8 +45,9 @@
 
             <!-- 行内按钮 -->
             <script type="text/html" id="crudRowBar">
-                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
-                 <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i></a>
+                	   <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+       <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i></a>
+       
             </script>
 
             <!-- 行内表单 -->
@@ -85,12 +85,14 @@
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
             module: window.module.jj,
-            page: 'jj/wxAddDataDetail'
+            page: 'jj/userActiveResource'
         }
+
         // 渲染全部动态查询框
         function renderAllSelect(level) {
             renderNormalSelect('appIdSelect', 'jj', 'wxAddDataDetail', level);
         }
+        
         // 表单数据查询渲染
         layui.use(['form', 'table', 'layer', 'laydate'], function () {
             const $ = layui.jquery, form = layui.form, layer = layui.layer, laydate = layui.laydate, table = layui.table;
@@ -107,36 +109,88 @@
                     { type: 'checkbox', fixed: 'left' },
                     { field: 'wxDate', width: 120, title: '日期', sort: true },
                     { field: 'productName', width: 120, title: '产品名称', sort: true },
+                    { field: 'wxActive', width: 120, title: '活跃用户数', sort: true },
                     {
-                        field: 'wxActive', width: 120, title: '活跃用户数', sort: true
-                    },
-                    { field: 'revenueCount', width: 120, title: '总收入', sort: true },
-                    { field: 'wxVideoShow', width: 150, title: '视频曝光量', sort: true },
-                    {
-                        field: 'wxVideoClickrate', width: 150, title: '视频点击率', sort: true,
+                        field: 'wxActiveSearch', width: 100, title: '搜索', sort: true,
                         templet: (d) => {
-                            if (d.wxVideoClickrate !== null && d.wxVideoClickrate !== 0) {
-                                return d.wxVideoClickrate + "%";
+                            if (d.wxActiveSearch != null && d.wxActiveSearch !== "") {
+                                return d.wxActiveSearch;
                             } else {
-                                return d.wxVideoClickrate;
+                                return 0;
                             }
                         }
                     },
-                    { field: 'wxVideoIncome', width: 120, title: '视频收入', sort: true },
-                    { field: 'videoECPM', width: 160, title: '视频ECPM', sort: true },
-                    { field: 'wxBannerShow', width: 160, title: 'bannel曝光量', sort: true },
                     {
-                        field: 'wxBannerClickrate', width: 160, title: 'bannel点击率', sort: true,
+                        field: 'wxActiveAd', width: 100, title: '广告', sort: true,
                         templet: (d) => {
-                            if (d.wxBannerClickrate !== null && d.wxBannerClickrate !== 0) {
-                                return d.wxBannerClickrate + "%";
+                            if (d.wxActiveAd != null && d.wxActiveAd !== "") {
+                                return d.wxActiveAd;
                             } else {
-                                return d.wxBannerClickrate;
+                                return 0;
                             }
                         }
                     },
-                    { field: 'wxBannerIncome', width: 160, title: 'bannel收入', sort: true },
-                    { field: 'bannerECPM', width: 160, title: 'banner ECPM', sort: true }
+                    {
+                        field: 'wxActiveTaskBarMySp', width: 170, title: '任务栏-我的小程序', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveTaskBarMySp != null && d.wxActiveTaskBarMySp !== "") {
+                                return d.wxActiveTaskBarMySp;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxActiveFindMySp', width: 120, title: '发现-小程序', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveFindMySp != null && d.wxActiveFindMySp !== "") {
+                                return d.wxActiveFindMySp;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxActiveTaskBarRecent', width: 160, title: '任务栏-最近使用', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveTaskBarRecent != null && d.wxActiveTaskBarRecent !== "") {
+                                return d.wxActiveTaskBarRecent;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxActiveOther', width: 100, title: '其他', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveOther != null && d.wxActiveOther !== "") {
+                                return d.wxActiveOther;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxActiveOtherSp', width: 120, title: '其他小程序', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveOtherSp != null && d.wxActiveOtherSp !== "") {
+                                return d.wxActiveOtherSp;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    {
+                        field: 'wxActiveOtherReturn', width: 160, title: '其他小程序返回', sort: true,
+                        templet: (d) => {
+                            if (d.wxActiveOtherReturn != null && d.wxActiveOtherReturn !== "") {
+                                return d.wxActiveOtherReturn;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    },
+                    { field: 'wxActiveSource', width: 500, title: '活跃用户来源', sort: true }
                 ]],
                 limits: [10, 20, 30, 50, 100],
                 limit: 30,

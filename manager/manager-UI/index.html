@@ -61,7 +61,7 @@
                         <a href="javascript:;" data-check-screen="full"><i class="fa fa-arrows-alt"></i></a>
                     </li>
                     <li class="layui-nav-item layuimini-setting">
-                        <a href="javascript:;" id="nickName"></a>
+                        <a href="javascript:;">admin</a>
                         <dl class="layui-nav-child">
                             <dd>
                                 <a href="javascript:;" layuimini-content-href="page/user-setting.html" data-title="基本资料"
@@ -131,16 +131,10 @@
         </div>
     </div>
     <script src="lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
-    <script src="lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
-    <script src="lib/jquery-3.4.1/jquery.cookie.js" charset="utf-8"></script>
     <script src="js/lay-config.js?v=2.0.0" charset="utf-8"></script>
     <script>
         layui.use(['jquery', 'layer', 'miniAdmin'], function () {
-            const layer = layui.layer, miniAdmin = layui.miniAdmin;
-
-            // 用户昵称
-            const nickName = window.localStorage.getItem('nickName');
-            layui.jquery('#nickName').html(nickName);
+            const $ = layui.jquery, layer = layui.layer, miniAdmin = layui.miniAdmin;
 
             let options = {
                 iniUrl: "api/init.json",    // 初始化接口
@@ -155,24 +149,9 @@
             };
             miniAdmin.render(options);
 
-            layui.jquery('.login-out').on("click", () => {
-                console.log(window.module.system.server + "authc/logout")
-                $.ajax({
-                    url: window.module.system.server + "authc/logout",
-                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
-                    type: 'GET',
-                    dataType: "json",
-                    async: false,
-                    success: function (result) {
-                        console.log(JSON.stringify(result));
-                        layer.msg(result.msg, { icon: result.code, time: 2000 });
-                        if (result.code === 1) {
-                            window.localStorage.setItem('JSESSIONID', null);
-                            setTimeout(() => {
-                                window.location = 'login.html';
-                            }, 2000);
-                        }
-                    }
+            $('.login-out').on("click", function () {
+                layer.msg('退出登录成功', function () {
+                    window.location = 'page/login-1.html';
                 });
             });
         });

@@ -24,9 +24,6 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
         $("#data-search-form")[0].reset();
         const existRenderAllSelect = typeof renderAllSelect !== "undefined" && renderAllSelect !== null;
         existRenderAllSelect && renderAllSelect('serverDb');
-        setTimeout(() => {
-            layer.msg('刷新完成！', { icon: 1, time: 2000 });
-        }, 1000);
         return false;
     });
 
@@ -140,10 +137,9 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
                     $.ajax({
                         url: currentPage.module.server + currentPage.page,
                         data: JSON.stringify(submitData),
-                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                        contentType: "application/json; charset=utf-8",
                         type: methodType,
                         dataType: "json",
-                        xhrFields: { withCredentials: true },
                         async: false,
                         success: function (result) {
                             console.log(methodType, JSON.stringify(result));
@@ -179,7 +175,7 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
         $.ajax({
             url: currentPage.module.server + currentPage.page + "/",
             type: 'DELETE',
-            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+            contentType: "application/json; charset=utf-8",
             data: JSON.stringify(deleteIdArray),
             dataType: "json",
             async: false,

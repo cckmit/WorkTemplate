@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>微信广告数据明细</title>
+    <title>汇总数据</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -18,20 +18,24 @@
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">查询日期</label>
-                        <div class="layui-input-inline">
+                        <label class="layui-form-label">日期</label>
+                        <div class="layui-input-inline" style="width: 14rem;">
                             <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">APPID</label>
-                        <div class="layui-input-inline">
-                            <select id="appIdSelect" name="id" lay-search=""></select>
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-inline" style="width: 14rem;">
+                            <select name="type" id="type">
+                                <option value="">全部</option>
+                                <option value=0>小游戏</option>
+                                <option value=1>小程序</option>
+                            </select>
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
-                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                        <button type="submit" class="layui-btn layui-btn-primary" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
                     </div>
 
                 </div>
@@ -39,6 +43,11 @@
 
             <!-- Table表头 -->
             <script type="text/html" id="crudTableBar">
+
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"><i class="layui-icon"></i> 新增 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
+                </div>
             </script>
 
             <!-- Table -->
@@ -46,8 +55,9 @@
 
             <!-- 行内按钮 -->
             <script type="text/html" id="crudRowBar">
-                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
-                 <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i></a>
+                	   <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+       <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i></a>
+       
             </script>
 
             <!-- 行内表单 -->
@@ -79,18 +89,13 @@
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script src="../../js/lay-crud.js" charset="utf-8"></script>
-    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
-    <script src="../../js/lay-util-form-verify.js" charset="utf-8"></script>
     <script>
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
             module: window.module.jj,
-            page: 'jj/wxAddDataDetail'
+            page: 'dataCollect'
         }
-        // 渲染全部动态查询框
-        function renderAllSelect(level) {
-            renderNormalSelect('appIdSelect', 'jj', 'wxAddDataDetail', level);
-        }
+
         // 表单数据查询渲染
         layui.use(['form', 'table', 'layer', 'laydate'], function () {
             const $ = layui.jquery, form = layui.form, layer = layui.layer, laydate = layui.laydate, table = layui.table;
@@ -106,37 +111,55 @@
                 cols: [[
                     { type: 'checkbox', fixed: 'left' },
                     { field: 'wxDate', width: 120, title: '日期', sort: true },
-                    { field: 'productName', width: 120, title: '产品名称', sort: true },
-                    {
-                        field: 'wxActive', width: 120, title: '活跃用户数', sort: true
-                    },
+                    { field: 'productCount', width: 120, title: '产品数量', sort: true },
+                    { field: 'newCount', width: 120, title: '新增总数', sort: true },
+                    { field: 'activeCount', width: 120, title: '活跃总数', sort: true },
                     { field: 'revenueCount', width: 120, title: '总收入', sort: true },
-                    { field: 'wxVideoShow', width: 150, title: '视频曝光量', sort: true },
                     {
-                        field: 'wxVideoClickrate', width: 150, title: '视频点击率', sort: true,
+                        field: 'rechargeCount', width: 120, title: '充值收入', sort: true,
                         templet: (d) => {
-                            if (d.wxVideoClickrate !== null && d.wxVideoClickrate !== 0) {
-                                return d.wxVideoClickrate + "%";
+                            if (d.rechargeCount != null && d.rechargeCount !== "null") {
+                                return d.rechargeCount;
                             } else {
-                                return d.wxVideoClickrate;
+                                return "0";
                             }
                         }
                     },
-                    { field: 'wxVideoIncome', width: 120, title: '视频收入', sort: true },
-                    { field: 'videoECPM', width: 160, title: '视频ECPM', sort: true },
-                    { field: 'wxBannerShow', width: 160, title: 'bannel曝光量', sort: true },
+                    { field: 'adRevenueCount', width: 120, title: '广告收入', sort: true },
+                    { field: 'bannerIncomeCount', width: 120, title: 'banner收入', sort: true },
+                    { field: 'videoIncomeCount', width: 120, title: '视频收入', sort: true },
                     {
-                        field: 'wxBannerClickrate', width: 160, title: 'bannel点击率', sort: true,
+                        field: 'screenIncomeCount', width: 120, title: '插屏收入', sort: true,
                         templet: (d) => {
-                            if (d.wxBannerClickrate !== null && d.wxBannerClickrate !== 0) {
-                                return d.wxBannerClickrate + "%";
+                            if (d.screenIncomeCount != null && d.screenIncomeCount !== "null") {
+                                return d.screenIncomeCount;
                             } else {
-                                return d.wxBannerClickrate;
+                                return "0";
                             }
                         }
                     },
-                    { field: 'wxBannerIncome', width: 160, title: 'bannel收入', sort: true },
-                    { field: 'bannerECPM', width: 160, title: 'banner ECPM', sort: true }
+                    {
+                        field: 'buyPay', width: 120, title: '买量支出', sort: true,
+                        templet: (d) => {
+                            if (d.buyPay == null) {
+                                return 0;
+                            } else {
+                                return d.buyPay;
+                            }
+                        }
+                    },
+                    { field: 'shareUserCount', width: 120, title: '分享人数', sort: true },
+                    { field: 'shareCount', width: 120, title: '分享次数', sort: true },
+                    {
+                        field: 'shareRateCount', width: 120, title: '分享率', sort: true,
+                        templet: (d) => {
+                            if (d.shareRateCount != null) {
+                                return d.shareRateCount + "%";
+                            } else {
+                                return "";
+                            }
+                        }
+                    }
                 ]],
                 limits: [10, 20, 30, 50, 100],
                 limit: 30,
@@ -152,6 +175,22 @@
                 elem: '#times',
                 format: 'yyyy-MM-dd',
                 range: '~'
+            });
+            // 有效性状态切换
+            form.on('switch(switchStatus)', function (obj) {
+                console.log(this.value + ' ' + this.name + '：' + obj.elem.checked, JSON.stringify(obj.othis));
+                $.ajax({
+                    url: currentPage.module.server + currentPage.page,
+                    data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
+                    contentType: "application/json; charset=utf-8",
+                    type: 'PUT',
+                    dataType: "json",
+                    async: false,
+                    success: function (result) {
+                        console.log(JSON.stringify(result));
+                        layer.msg(result.msg, { icon: result.code, time: 2000 });
+                    }
+                });
             });
 
         });

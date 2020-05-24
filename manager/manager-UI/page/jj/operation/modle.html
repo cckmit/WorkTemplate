@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>微信广告数据明细</title>
+    <title>产品信息</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -18,15 +18,9 @@
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">查询日期</label>
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">APPID</label>
-                        <div class="layui-input-inline">
-                            <select id="appIdSelect" name="id" lay-search=""></select>
+                        <label class="layui-form-label" style="width: 6rem;">产品名称</label>
+                        <div class="layui-input-inline" style="width: 14rem;">
+                            <div id="productsName" name="productsName" lay-filter="productsName"></div>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -39,6 +33,10 @@
 
             <!-- Table表头 -->
             <script type="text/html" id="crudTableBar">
+                <div class="layui-btn-container">
+                  <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                  <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
+                </div>
             </script>
 
             <!-- Table -->
@@ -46,8 +44,8 @@
 
             <!-- 行内按钮 -->
             <script type="text/html" id="crudRowBar">
-                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
-                 <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i></a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+                <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>   
             </script>
 
             <!-- 行内表单 -->
@@ -79,21 +77,16 @@
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script src="../../js/lay-crud.js" charset="utf-8"></script>
-    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
-    <script src="../../js/lay-util-form-verify.js" charset="utf-8"></script>
     <script>
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
             module: window.module.jj,
-            page: 'jj/wxAddDataDetail'
+            page: 'wxConfig'
         }
-        // 渲染全部动态查询框
-        function renderAllSelect(level) {
-            renderNormalSelect('appIdSelect', 'jj', 'wxAddDataDetail', level);
-        }
+
         // 表单数据查询渲染
         layui.use(['form', 'table', 'layer', 'laydate'], function () {
-            const $ = layui.jquery, form = layui.form, layer = layui.layer, laydate = layui.laydate, table = layui.table;
+            $ = layui.jquery, form = layui.form, layer = layui.layer, table = layui.table;
             table.render({
                 elem: '#crudTableId',
                 url: currentPage.module.server + currentPage.page + '/getPage',
@@ -105,38 +98,8 @@
                 }],
                 cols: [[
                     { type: 'checkbox', fixed: 'left' },
-                    { field: 'wxDate', width: 120, title: '日期', sort: true },
-                    { field: 'productName', width: 120, title: '产品名称', sort: true },
-                    {
-                        field: 'wxActive', width: 120, title: '活跃用户数', sort: true
-                    },
-                    { field: 'revenueCount', width: 120, title: '总收入', sort: true },
-                    { field: 'wxVideoShow', width: 150, title: '视频曝光量', sort: true },
-                    {
-                        field: 'wxVideoClickrate', width: 150, title: '视频点击率', sort: true,
-                        templet: (d) => {
-                            if (d.wxVideoClickrate !== null && d.wxVideoClickrate !== 0) {
-                                return d.wxVideoClickrate + "%";
-                            } else {
-                                return d.wxVideoClickrate;
-                            }
-                        }
-                    },
-                    { field: 'wxVideoIncome', width: 120, title: '视频收入', sort: true },
-                    { field: 'videoECPM', width: 160, title: '视频ECPM', sort: true },
-                    { field: 'wxBannerShow', width: 160, title: 'bannel曝光量', sort: true },
-                    {
-                        field: 'wxBannerClickrate', width: 160, title: 'bannel点击率', sort: true,
-                        templet: (d) => {
-                            if (d.wxBannerClickrate !== null && d.wxBannerClickrate !== 0) {
-                                return d.wxBannerClickrate + "%";
-                            } else {
-                                return d.wxBannerClickrate;
-                            }
-                        }
-                    },
-                    { field: 'wxBannerIncome', width: 160, title: 'bannel收入', sort: true },
-                    { field: 'bannerECPM', width: 160, title: 'banner ECPM', sort: true }
+                    { field: 'ddSubscribe', width: 300, title: '订阅配置', sort: true },
+                    { field: 'operator', title: '操作', minWidth: 220, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
                 ]],
                 limits: [10, 20, 30, 50, 100],
                 limit: 30,
@@ -152,6 +115,22 @@
                 elem: '#times',
                 format: 'yyyy-MM-dd',
                 range: '~'
+            });
+            // 有效性状态切换
+            form.on('switch(switchStatus)', function (obj) {
+                console.log(this.value + ' ' + this.name + '：' + obj.elem.checked, JSON.stringify(obj.othis));
+                $.ajax({
+                    url: currentPage.module.server + currentPage.page,
+                    data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
+                    contentType: "application/json; charset=utf-8",
+                    type: 'PUT',
+                    dataType: "json",
+                    async: false,
+                    success: function (result) {
+                        console.log(JSON.stringify(result));
+                        layer.msg(result.msg, { icon: result.code, time: 2000 });
+                    }
+                });
             });
 
         });

@@ -243,7 +243,7 @@
                 $.ajax({
                     url: currentPage.module.server + currentPage.page + '/switchStatus',
                     data: JSON.stringify({ appId: appInfo[0], minVersion: appInfo[1], switchColumn: this.name, status: obj.elem.checked }),
-                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                    contentType: "application/json; charset=utf-8",
                     type: 'PUT',
                     dataType: "json",
                     async: false,

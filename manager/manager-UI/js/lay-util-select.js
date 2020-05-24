@@ -5,6 +5,9 @@
  * version:1.0.1
  */
 
+// 下拉框缓存数据
+window.defaultSelectOptionCache = {}
+
 /**
  * 渲染下拉框
  * @param {String} selectId 下拉框ID
@@ -13,7 +16,7 @@
  * @param {String} level 查询级别：windowCache-window对象种的缓存、serverCache-服务器缓存、serverDb-从服务器数据库查询
  */
 function renderNormalSelect(selectId, moduleName, page, level) {
-    const selectOption = localStorage.getItem("select-option" + moduleName + '-' + page);
+    const selectOption = window.defaultSelectOptionCache[moduleName + '_' + page];
     // 如果缓存种有，根据当前级别查询
     if (selectOption) {
         if ('serverDb' === level) {
@@ -47,7 +50,7 @@ function getSelectOptionByAjax(selectId, moduleName, page, level) {
                 selectOption.push('<option value="' + val.key + '" ' + selected + '>' + val.value + '</option>');
             });
             selectOption = selectOption.join('');
-            window.localStorage.setItem("select-option" + moduleName + '-' + page, selectOption);
+            window.defaultSelectOptionCache[moduleName + '_' + page] = selectOption;
             renderSelect(selectId, selectOption);
         }
     });

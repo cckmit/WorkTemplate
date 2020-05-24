@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>提现记录查询</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 查询表单 -->
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">提现时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">产品名称</label>
+                        <div class="layui-input-inline">
+                            <select id="appIdSelect" name="productName" lay-search=""></select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户昵称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="userName" name="userName">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户ID</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="uid" name="uid">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">提现状态</label>
+                        <div class="layui-input-inline">
+                            <select name="ddStatus" id="ddStatus">
+                                <option value=""> -</option>
+                                <option value=0>申请中</option>
+                                <option value=200>提现成功</option>
+                                <option value=1>未绑定</option>
+                                <option value=2>已提现操作，未到账</option>
+                                <option value=-1>申请驳回</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    </div>
+                    <div class="layui-btn-group auditTable">
+                        <button type="button" class="layui-btn layui-btn-sm" data-type="getCheckData">审核通过</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Table表头 -->
+            <script type="text/html" id="crudTableBar">
+                <div class="layui-btn-container">            
+                </div>
+            </script>
+
+            <!-- Table -->
+            <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
+
+            <!-- 行内按钮 -->
+            <script type="text/html" id="crudRowBar">
+                <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+            </script>
+
+            <!-- 行内表单 -->
+            <script type="text/html" id="switchStatus">
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                    {{ d.status ? 'checked' : '' }}>
+            </script>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
+    <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-form-verify.js" charset="utf-8"></script>
+    <script>
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置
+        const currentPage = {
+            module: window.module.jj,
+            page: 'jj/wxConfig'
+        }
+
+        // 渲染全部动态查询框
+        function renderAllSelect(level) {
+            renderNormalSelect('appIdSelect', 'jj', 'wxConfig', level);
+        }
+        
+        // 表单数据查询渲染
+        layui.use(['form', 'table', 'layer'], function () {
+            const $ = layui.jquery, form = layui.form, layer = layui.layer, table = layui.table;
+            table.render({
+                elem: '#crudTableId',
+                url: currentPage.module.server + currentPage.page + '/getPage',
+                toolbar: '#crudTableBar',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    { type: 'checkbox', fixed: 'left' },
+                    { field: 'ddUid', width: 270, title: '用户ID', sort: true },
+                    { field: 'userName', width: 120, title: '用户昵称', sort: true },
+                    { field: 'ddRmb', width: 160, title: '申请提现金额(元)', sort: true },
+                    { field: 'remainAmount', width: 160, title: '剩余提现金额(元)', sort: true },
+                    {
+                        field: 'programType', width: 120, title: '来源类型', sort: true,
+                        templet: (d) => {
+                            if (d.programType === 1) {
+                                return '小程序';
+                            } else if (d.programType === 0) {
+                                return '小游戏';
+                            } else if (d.programType === 2) {
+                                return '公众号';
+                            }
+                        }
+                    },
+                    { field: 'ddAppid', width: 180, title: '来源APPID', sort: true },
+                    { field: 'productName', width: 120, title: '来源产品名称', sort: true },
+                    { field: 'ddId', width: 180, title: '提现订单号', sort: true },
+                    {
+                        field: 'ddTip', width: 220, title: '提现描述', sort: true,
+                        templet: (d) => {
+                            if (d.ddtip == null || d.ddtip === "null") {
+                                return "无";
+                            } else {
+                                return d.ddtip;
+                            }
+                        }
+                    },
+                    {
+                        field: 'ddStatus', width: 180, title: '提现状态', sort: true,
+                        templet: (d) => {
+                            if (d.ddstatus === 0) {
+                                return '申请中';
+                            } else if (d.ddstatus === 1) {
+                                return '1-未绑定';
+                            } else if (d.ddstatus === 2) {
+                                return '2-已提现操作，未到账';
+                            } else if (d.ddstatus === 200) {
+                                return '提现成功';
+                            } else if (d.ddstatus === -1) {
+                                return '-1-申请驳回';
+                            } else
+                                return '其他';
+                        }
+                    },
+                    { field: 'ddTimes', width: 160, title: '提现时间', sort: true },
+                    { field: 'ddTrans', width: 160, title: '审核通过时间', sort: true },
+                    { field: 'operator', title: '操作', minWidth: 220, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-80'
+            });
+
+        });
+        let active = {
+            getCheckData: function () { //获取选中数据
+                let checkStatus = table.checkStatus('table-page');
+                let l = checkStatus.data.length;
+                let data = checkStatus.data;
+                if (l === 0) {
+                    layer.msg('请选择一行');
+                } else {
+                    let submitDatas = JSON.stringify(data);
+                    layer.confirm('请检查订单后确认提现', function (index) {
+                        $.ajax({
+                            url: '../manage/recharge/audit',
+                            data: submitDatas,
+                            contentType: "application/json; charset=utf-8",
+                            type: 'post',
+                            dataType: "json",
+                            success: function (result) {
+                                UIConfig.postMsg(result);
+                                if (result.successed) {
+                                    setTimeout(function () {
+                                        window.location.reload();
+                                    }, 1000);
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    });
+                }
+            }
+        };
+        $('.auditTable .layui-btn').on('click', function () {
+            let type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        laydate.render({
+            elem: '#times',
+            range: true
+        });
+    </script>
+
+</body>
+
+</html>
