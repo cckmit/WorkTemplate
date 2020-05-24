@@ -59,8 +59,8 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Orders> queryWrapper, StatsListResult statsListResult) {
 
-            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-        if(queryObject !=null) {
+        JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
+        if (queryObject != null) {
             String times = queryObject.getString("times");
             String tradeNumber = queryObject.getString("tradeNumber");
             String uid = queryObject.getString("uid");
@@ -84,7 +84,6 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
             JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
             String userName = queryObject.getString("userName");
         }
-
         for (Orders order : entityList) {
             String ddAppId = order.getDdAppId();
             WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, ddAppId);
@@ -102,9 +101,9 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
                     order.setOriginName(originName);
                 }
             }
-            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-            userInfoQueryWrapper.eq("ddUid", order.getDdUid());
-            UserInfo userInfo = this.userInfoService.getOne(userInfoQueryWrapper);
+//            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+//            userInfoQueryWrapper.eq("ddUid", order.getDdUid());
+            UserInfo userInfo = this.userInfoService.getById(order.getDdUid());
             if (userInfo != null) {
                 order.setUserName(userInfo.getDdName());
             }
