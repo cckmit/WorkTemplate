@@ -223,7 +223,7 @@
                 const data = table.checkStatus('crudTableId').data, dataLength = data.length;
                 if (dataLength === 0) {
                     layer.msg('补单，请至少选择一行！', { icon: 0, time: 2000 });
-                }  else if (l > 1) {
+                }  else if (dataLength >= 1) {
                     layer.msg('只能选择一条订单进行补单');
                 } else {
                     let appIdArray = [];

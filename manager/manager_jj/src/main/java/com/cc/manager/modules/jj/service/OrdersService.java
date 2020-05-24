@@ -12,11 +12,9 @@ import com.cc.manager.common.utils.SignatureAlgorithm;
 import com.cc.manager.common.utils.XMLHandler;
 import com.cc.manager.common.utils.log4j.Log4j;
 import com.cc.manager.modules.jj.config.JjConfig;
-import com.cc.manager.modules.jj.entity.GoodsValueExt;
-import com.cc.manager.modules.jj.entity.Orders;
-import com.cc.manager.modules.jj.entity.UserInfo;
-import com.cc.manager.modules.jj.entity.WxConfig;
+import com.cc.manager.modules.jj.entity.*;
 import com.cc.manager.modules.jj.mapper.OrdersMapper;
+import com.cc.manager.modules.jj.mapper.UserInfoMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +38,7 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
     private JjConfig jjConfig;
     private WxConfigService wxConfigService;
     private GoodsValueExtService goodsValueExtService;
-    private UserInfoService userInfoService;
+    private UserInfoMapper userInfoMapper;
 
     private OrdersMapper ordersMapper;
 
@@ -101,9 +99,9 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
                     order.setOriginName(originName);
                 }
             }
-//            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-//            userInfoQueryWrapper.eq("ddUid", order.getDdUid());
-            UserInfo userInfo = this.userInfoService.getById(order.getDdUid());
+            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+            userInfoQueryWrapper.eq("ddUid", order.getDdUid());
+            UserInfo userInfo = this.userInfoMapper.selectOne(userInfoQueryWrapper);
             if (userInfo != null) {
                 order.setUserName(userInfo.getDdName());
             }
@@ -126,8 +124,8 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
     }
 
     @Autowired
-    public void setUserInfoService(UserInfoService userInfoService) {
-        this.userInfoService = userInfoService;
+    public void setUserInfoMapper(UserInfoMapper userInfoMapper) {
+        this.userInfoMapper = userInfoMapper;
     }
 
     @Autowired

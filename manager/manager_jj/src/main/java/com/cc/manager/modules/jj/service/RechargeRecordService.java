@@ -57,7 +57,6 @@ public class RechargeRecordService extends BaseCrudService<Recharge, RechargeMap
                 });
             }
 
-
             this.updateGetPageWrapper(crudPageParam, queryWrapper);
             IPage<Recharge> entityPages = this.page(page, queryWrapper);
             if (Objects.nonNull(entityPages)) {
