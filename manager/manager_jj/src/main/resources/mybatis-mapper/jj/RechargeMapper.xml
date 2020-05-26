@@ -17,7 +17,7 @@
     ddId, ddUid, ddAppId, ddRmb, ddTip, ddStatus, ddTrans, ddTimes
   </sql>
 
-    <select id="selectAllCharge" resultType="com.cc.manager.modules.jj.entity.Recharge">
+    <select id="selectAllChargeRecord" resultType="com.cc.manager.modules.jj.entity.Recharge">
         SELECT a.ddCurrent*0.01 AS remainAmount,w.program_type AS programType,w.product_name AS productName,u.ddName AS
         userName,r.* FROM
         persie.recharge AS r LEFT JOIN persie.all_cost AS a ON r.ddUid = a.ddUid AND a.ddCostType= 'recharge' AND
@@ -28,19 +28,49 @@
             where DATE(ddTimes) between '${start}' and '${end}'
         </if>
     </select>
-    <select id="selectAll" resultType="com.cc.manager.modules.jj.entity.Recharge">
+    <select id="selectAllRechargeAudit" resultType="com.cc.manager.modules.jj.entity.Recharge">
         SELECT
         r.ddId as ddid,r.ddUid as ddUid, i.ddName as userName, r.ddRmb as ddRmb,r.ddAppId as ddAppId, r.ddTip as ddTip,
         r.ddStatus as ddStatus, w.product_name as productName , w.program_type as programType, r.ddTimes as ddTimes,
-        r.ddTrans as ddTrans FROM recharge AS r LEFT JOIN user_info AS i ON r.ddUid = i.ddUid
-        LEFT JOIN wx_config AS w ON r.ddAppId = w.ddAppId WHERE ddStatus != 200
+        r.ddTrans as ddTrans FROM persie.recharge AS r LEFT JOIN persie.user_info AS i ON r.ddUid = i.ddUid
+        LEFT JOIN persie.wx_config AS w ON r.ddAppId = w.ddAppId WHERE ddStatus != 200
         <if test="start != null and end !=null  and start != '' and end !='' ">
             and DATE(ddTimes) between '${start}' and '${end}'
         </if>
     </select>
     <select id="selectCashOut" resultType="java.lang.Integer" parameterType="java.lang.String">
-        SELECT COUNT(ddRmb) FROM recharge WHERE ddStatus = 200 AND ddUid = '${dduid}' AND ddTimes  &lt;= '${ddTime}'
+        SELECT COUNT(ddRmb) FROM persie.recharge WHERE ddStatus = 200 AND ddUid = '${ddUid}' AND ddTimes  &lt;= '${ddTime}'
+    </select>
+    <select id="selectAllUserRecharged" resultType="com.cc.manager.modules.jj.entity.Recharge">
+        SELECT  s.`ddUid` as ddUid, SUM(ddRmb) as ddRmb FROM  persie.recharge s  WHERE ddStatus = 200  GROUP BY s.`ddUid`
     </select>
 
+    <update id="updateBySelective" parameterType="com.cc.manager.modules.jj.entity.Recharge">
+        update recharge
+        <set>
+            <if test="ddUid != null">
+                ddUid = #{ddUid,jdbcType=VARCHAR},
+            </if>
+            <if test="ddAppId != null">
+                ddAppId = #{ddAppId,jdbcType=VARCHAR},
+            </if>
+            <if test="ddRmb != null">
+                ddRmb = #{ddRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="ddTip != null">
+                ddTip = #{ddTip,jdbcType=VARCHAR},
+            </if>
+            <if test="ddStatus != null">
+                ddStatus = #{ddStatus,jdbcType=INTEGER},
+            </if>
+            <if test="ddTrans != null">
+                ddTrans = #{ddTrans,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ddTimes != null">
+                ddTimes = #{ddTimes,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where ddId = #{ddId,jdbcType=VARCHAR}
+    </update>
 
 </mapper>

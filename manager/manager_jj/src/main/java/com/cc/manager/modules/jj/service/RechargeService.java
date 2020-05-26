@@ -1,13 +1,16 @@
 package com.cc.manager.modules.jj.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.cc.manager.common.mvc.BaseCrudService;
-import com.cc.manager.common.result.CrudPageParam;
+import com.cc.manager.common.mvc.BaseStatsService;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.jj.entity.Recharge;
 import com.cc.manager.modules.jj.mapper.RechargeMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author cf
@@ -15,16 +18,16 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @DS("jj")
-public class RechargeService extends BaseCrudService<Recharge, RechargeMapper> {
-
+public class RechargeService extends BaseStatsService<Recharge, RechargeMapper> {
 
     @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<Recharge> queryWrapper) {
+    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Recharge> queryWrapper, StatsListResult statsListResult) {
 
     }
 
     @Override
-    protected boolean delete(String requestParam, UpdateWrapper<Recharge> deleteWrapper) {
-        return false;
+    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<Recharge> entityList, StatsListResult statsListResult) {
+        return null;
     }
+
 }

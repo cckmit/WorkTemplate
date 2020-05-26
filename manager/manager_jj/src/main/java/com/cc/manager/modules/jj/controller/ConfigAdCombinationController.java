@@ -61,8 +61,19 @@ public class ConfigAdCombinationController implements BaseCrudController {
 
     @Override
     @GetMapping(value = "/getSelectArray/{requestParam}")
-    public JSONArray getSelectArray(@PathVariable String requestParam) {
+    public JSONObject getSelectArray(@PathVariable String requestParam) {
         return this.configAdCombinationService.getSelectArray(ConfigAdCombination.class, null);
+    }
+
+    /**
+     * 修改广告合集名称
+     *
+     * @param requestParam 请求参数
+     * @return 修改结果
+     */
+    @PostMapping(value = "/updateName")
+    public PostResult updateName(@RequestBody String requestParam) {
+        return this.configAdCombinationService.updateName(requestParam);
     }
 
     /**

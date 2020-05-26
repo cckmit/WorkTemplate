@@ -5,15 +5,12 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cc.manager.common.mvc.BaseCrudEntity;
 import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 /**
-
- *
  * @author cf
  * @since 2020-05-09
  */
@@ -162,24 +159,23 @@ public class UserInfo extends BaseStatsEntity<UserInfo> {
      */
     @TableField(exist = false)
     private String productName;
+    /**
+     * 展示数据-剩余金币数
+     */
     @TableField(exist = false)
-
     private Integer ddCoinCount;
+    /**
+     * 展示数据-剩余金额数
+     */
     @TableField(exist = false)
     private Double ddMoney;
+    /**
+     * 展示数据-提现金额
+     */
     @TableField(exist = false)
     private Integer cashOut = 0;
 
     @TableField(exist = false)
     private boolean haveDetail = false;
 
-//    @Override
-//    public String getCacheKey() {
-//        return this.ddUid;
-//    }
-//
-//    @Override
-//    public String getCacheValue() {
-//        return this.ddUid + "-" + this.ddName;
-//    }
 }

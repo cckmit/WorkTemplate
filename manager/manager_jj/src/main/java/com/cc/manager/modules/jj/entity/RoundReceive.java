@@ -3,6 +3,7 @@ package com.cc.manager.modules.jj.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import com.cc.manager.common.mvc.BaseCrudEntity;
+import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @TableName(schema = "persie_deamon", value = "round_receive")
-public class RoundReceive implements BaseCrudEntity<RoundReceive> {
+public class RoundReceive extends BaseStatsEntity<RoundReceive> {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,12 +59,14 @@ public class RoundReceive implements BaseCrudEntity<RoundReceive> {
     /**
      * 赛区开始时间
      */
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @TableField("ddMStart")
     private LocalDateTime ddMStart;
 
     /**
      * 赛区结束时间
      */
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @TableField("ddMEnd")
     private LocalDateTime ddMEnd;
 
@@ -112,10 +115,10 @@ public class RoundReceive implements BaseCrudEntity<RoundReceive> {
      */
     @TableField(exist = false)
     private String roundName;
-    @TableField(exist = false)
     /**
      * 展示字段-赛制编号
      */
+    @TableField(exist = false)
     private String roundCode;
     /**
      * 展示字段-赛制时长
@@ -124,5 +127,6 @@ public class RoundReceive implements BaseCrudEntity<RoundReceive> {
     private String roundTime;
 
     @TableField(exist = false)
-    private boolean haveDetail = true;
+    private boolean haveDetail = false;
+
 }

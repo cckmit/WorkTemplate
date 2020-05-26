@@ -1,15 +1,15 @@
 package com.cc.manager.modules.jj.controller;
 
 
-import com.alibaba.fastjson.JSONArray;
-import com.cc.manager.common.mvc.BaseCrudController;
-import com.cc.manager.common.result.CrudObjectResult;
-import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.result.CrudPageResult;
-import com.cc.manager.common.result.PostResult;
+import com.cc.manager.common.mvc.BaseStatsController;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.jj.service.RechargeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author cf
@@ -18,56 +18,26 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @RequestMapping("/jj/recharge")
-public class RechargeController implements BaseCrudController {
+public class RechargeController implements BaseStatsController {
 
 
     private RechargeService rechargeService;
 
-    @Override
-    @GetMapping(value = "/id/{id}")
-    public CrudObjectResult getObjectById(@PathVariable String id) {
-        return this.rechargeService.getObjectById(id);
-    }
 
     @Override
-    @GetMapping(value = "/getObject/{getObjectParam}")
-    public CrudObjectResult getObject(@PathVariable String getObjectParam) {
-        return this.rechargeService.getObject(getObjectParam);
-    }
-
-    @Override
-    @GetMapping(value = "/getPage")
-    public CrudPageResult getPage(CrudPageParam crudPageParam) {
-        return this.rechargeService.getPage(crudPageParam);
-    }
-
-    @Override
-    @PostMapping
-    public PostResult post(@RequestBody String requestParam) {
-        return this.rechargeService.post(requestParam);
-    }
-
-    @Override
-    @PutMapping
-    public PostResult put(@RequestBody String requestParam) {
-        return this.rechargeService.put(requestParam);
-    }
-
-    @Override
-    @DeleteMapping
-    public PostResult delete(@RequestBody String requestParam) {
-        return this.rechargeService.delete(requestParam);
-    }
-
-    @Override
-    public JSONArray getSelectArray(String requestParam) {
+    public StatsListResult getList(StatsListParam statsListParam) {
         return null;
     }
 
+    @GetMapping(value = "/getPage")
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        return this.rechargeService.getPage(statsListParam);
+    }
 
     @Autowired
     public void setRechargeService(RechargeService rechargeService) {
         this.rechargeService = rechargeService;
     }
+
 }
 

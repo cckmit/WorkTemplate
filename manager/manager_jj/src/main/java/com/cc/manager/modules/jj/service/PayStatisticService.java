@@ -46,10 +46,14 @@ public class PayStatisticService extends BaseStatsService<Orders, OrdersMapper> 
     public StatsListResult getPage(StatsListParam statsListParam) {
         String start = "2020-03-24";
         String end = "2020-03-24";
+        String ddAppId="";
+        String productType="";
         //  String end = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
             JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
             String times = queryObject.getString("times");
+             ddAppId = queryObject.getString("id");
+            productType = queryObject.getString("productType");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
                 start = timeRangeArray[0].trim();
@@ -66,9 +70,7 @@ public class PayStatisticService extends BaseStatsService<Orders, OrdersMapper> 
         }
         try {
             // 初始化查询wrapper
-            QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
-
-            List<Orders> entityList = ordersMapper.queryBuyStatistic(start, end);
+            List<Orders> entityList = ordersMapper.queryBuyStatistic(start, end,ddAppId,productType);
             if (Objects.nonNull(entityList)) {
                 JSONObject totalRow = this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
                 statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));

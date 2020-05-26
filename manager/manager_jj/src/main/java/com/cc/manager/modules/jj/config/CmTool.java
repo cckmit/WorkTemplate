@@ -1,8 +1,8 @@
-package com.cc.manager.common.utils;
+package com.cc.manager.modules.jj.config;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.cc.manager.common.utils.log4j.Log4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.MessageDigest;
-import java.sql.ResultSet;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -33,7 +32,7 @@ public class CmTool {
     //
     private static final String hexDigits[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 
-    private static Logger LOG = LoggerFactory.getLogger(CmTool.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(CmTool.class);
 
     /**
      * 获取文件上一次编辑时间
@@ -100,7 +99,7 @@ public class CmTool {
 
 
         } catch (Exception e) {
-            LOG.error(Log4j.getExceptionInfo(e));
+            LOG.error(ExceptionUtils.getStackTrace(e));
         }
         return sb.toString();
     }
@@ -589,34 +588,6 @@ public class CmTool {
     }
 
     /**
-     * 获取网络传输的 ascii 字符串字节流
-     */
-    public static byte[] getNetworkAsciiBytes(String info) {
-        byte[] bytes = info.getBytes();
-        byte[] lengths = CmTransfer.toLH(bytes.length);
-        byte[] result = new byte[bytes.length + 4];
-
-        System.arraycopy(lengths, 0, result, 0, 4);
-        System.arraycopy(bytes, 0, result, 4, bytes.length);
-
-        return result;
-    }
-
-    /**
-     * 获取网络传输的 unicode 字符串字节流
-     */
-    public static byte[] getNetworkUnicodeBytes(String info) {
-        byte[] bytes = getSimpleUnicodeBytes(info);
-        byte[] lengths = CmTransfer.toLH(bytes.length);
-        byte[] result = new byte[bytes.length + 4];
-
-        System.arraycopy(lengths, 0, result, 0, 4);
-        System.arraycopy(bytes, 0, result, 4, bytes.length);
-
-        return result;
-    }
-
-    /**
      * 获取简洁的 unicode 字符串字节流
      */
     public static byte[] getSimpleUnicodeBytes(String info) {
@@ -670,48 +641,6 @@ public class CmTool {
         e.printStackTrace(new PrintWriter(buf, true));
 
         return buf.toString();
-    }
-
-    /**
-     * 获取一个数据输入流
-     */
-    public static ByteArrayInputStream getRsDataInputStream(Object data, boolean compress) throws Exception {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(data);
-        oos.close();
-        bos.close();
-
-        byte[] bytes = bos.toByteArray();
-        if (compress) {
-            bytes = CmZip.compress(bytes);
-        }
-
-        return new ByteArrayInputStream(bytes);
-    }
-
-    /**
-     * 获取一个数据输出字节
-     */
-    public static Object getRsDataOutputBytes(ResultSet rs, String name, boolean compress) throws Exception {
-        InputStream ins = rs.getBinaryStream(name);
-        if (null == ins) {
-            return null;
-        }
-
-        byte[] bytes = new byte[ins.available()];
-        ins.read(bytes);
-        if (compress) {
-            bytes = CmZip.decompress(bytes);
-        }
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInputStream ois = new ObjectInputStream(bis);
-        Object object = ois.readObject();
-        ois.close();
-        ins.close();
-
-        return object;
     }
 
     /**
@@ -871,8 +800,9 @@ public class CmTool {
      */
     private static String byteToHexString(byte b) {
         int n = b;
-        if (n < 0)
+        if (n < 0) {
             n += 256;
+        }
         int d1 = n / 16;
         int d2 = n % 16;
         return hexDigits[d1] + hexDigits[d2];
@@ -886,8 +816,9 @@ public class CmTool {
      */
     private static String byteArrayToHexString(byte b[]) {
         StringBuffer resultSb = new StringBuffer();
-        for (int i = 0; i < b.length; i++)
+        for (int i = 0; i < b.length; i++) {
             resultSb.append(byteToHexString(b[i]));
+        }
 
         return resultSb.toString();
     }
@@ -903,7 +834,7 @@ public class CmTool {
             MessageDigest md = MessageDigest.getInstance("MD5");
             return byteArrayToHexString(md.digest(sign.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            LOG.error(Log4j.getExceptionInfo(e));
+            e.printStackTrace();
         }
 
         return null;
@@ -976,7 +907,7 @@ public class CmTool {
             httpsConn.disconnect();
 
             byte[] getXml = bos.toByteArray();
-            return new String(getXml, "utf-8");
+            return new String(getXml, StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw e;
         }

@@ -1,4 +1,4 @@
-package com.cc.manager.common.utils;
+package com.cc.manager.modules.jj.config;
 
 import java.util.*;
 
@@ -8,11 +8,11 @@ import java.util.*;
  * @author Host-0222
  */
 public class SignatureAlgorithm {
-    // 密钥
+    /** 密钥*/
     private String key;
-    // 需要进行设置签名信息
+    /** 需要进行设置签名信息*/
     private Map<String, String> signMap;
-    // 生成订单签名
+    /** 生成订单签名*/
     private String sign;
 
     public SignatureAlgorithm(String key, Map<String, String> signMap) {

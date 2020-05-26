@@ -1,8 +1,11 @@
 package com.cc.manager;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.modules.jj.entity.Recharge;
+import com.cc.manager.modules.jj.entity.UserApp;
 import com.cc.manager.modules.jj.entity.UserInfo;
 import com.cc.manager.modules.jj.mapper.RechargeMapper;
+import com.cc.manager.modules.jj.mapper.UserAppMapper;
 import com.cc.manager.modules.jj.service.UserInfoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +17,19 @@ import java.util.List;
 class ManagerJjApplicationTests {
 
     @Autowired
-    RechargeMapper rechargeMapper;
+    UserAppMapper userAppMapper;
     @Autowired
     UserInfoService userInfoService;
     @Test
     void contextLoads() {
+    }
+
+    @Test
+    public void getString() {
+        QueryWrapper<UserApp> userAppQueryWrapper = new QueryWrapper<>();
+        userAppQueryWrapper.eq("ddUid", "6F8BE96F678D2BCAA5653BA58E20EB96").eq("ddAppId", 1110381534);
+        UserApp userApp = userAppMapper.selectOne(userAppQueryWrapper);
+        System.out.println(userApp.toString());
     }
 
     @Test
@@ -30,10 +41,10 @@ class ManagerJjApplicationTests {
     }
     @Test
     public void getRecharge() {
-        List<Recharge> recharges = rechargeMapper.selectAllCharge(null,null);
-        for (Recharge recharge : recharges) {
-            System.out.println(recharge.toString());
-        }
+//        List<Recharge> recharges = rechargeMapper.selectAllCharge(null,null);
+//        for (Recharge recharge : recharges) {
+//            System.out.println(recharge.toString());
+//        }
 
     }
 

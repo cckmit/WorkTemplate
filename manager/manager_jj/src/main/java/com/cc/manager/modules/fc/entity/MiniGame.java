@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
@@ -15,7 +14,6 @@ import java.math.BigDecimal;
  * @since 2020-05-13
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @TableName(schema = "minigameback", value = "mini_game")
 public class MiniGame implements BaseCrudEntity<MiniGame> {
 

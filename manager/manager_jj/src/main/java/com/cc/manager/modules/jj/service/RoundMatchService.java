@@ -65,7 +65,7 @@ public class RoundMatchService extends BaseCrudService<RoundMatch, RoundMatchMap
             String roundName = queryObject.getString("roundName");
             queryWrapper.eq(StringUtils.isNotBlank(roundName), "ddName", roundName);
             String ddState = queryObject.getString("ddState");
-            queryWrapper.eq(StringUtils.isNotBlank(ddState), "ddStart", ddState);
+            queryWrapper.eq(StringUtils.isNotBlank(ddState), "ddState", Boolean.parseBoolean(ddState));
         }
     }
 

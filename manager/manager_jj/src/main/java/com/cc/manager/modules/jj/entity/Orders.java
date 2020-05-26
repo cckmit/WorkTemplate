@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cc.manager.common.mvc.BaseCrudEntity;
 import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 
@@ -126,11 +125,19 @@ public class Orders extends BaseStatsEntity<Orders> {
      */
     @TableField(exist = false)
     private String goodsName;
+    /**
+     * 描述
+     */
     @TableField(exist = false)
     private String ddDesc;
-
+    /**
+     * 支付金额
+     */
     @TableField(exist = false)
     private Double payMoney;
+    /**
+     * 支付用户数
+     */
     @TableField(exist = false)
     private Integer payUsers;
     @TableField(exist = false)

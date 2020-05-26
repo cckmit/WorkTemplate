@@ -76,7 +76,6 @@ public class GameSet implements BaseCrudEntity<GameSet> {
 
     @TableField(exist = false)
     private String gameSetContent;
-
     @Override
     public String getCacheKey() {
         return this.ddCode.toString();

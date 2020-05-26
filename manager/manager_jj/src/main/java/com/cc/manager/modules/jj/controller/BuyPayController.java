@@ -1,7 +1,6 @@
 package com.cc.manager.modules.jj.controller;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
 import com.cc.manager.common.result.CrudObjectResult;
@@ -98,7 +97,7 @@ public class BuyPayController implements BaseCrudController {
     }
 
     @Override
-    public JSONArray getSelectArray(String requestParam) {
+    public JSONObject getSelectArray(String requestParam) {
         return this.buyPayService.getSelectArray(BuyPay.class, requestParam);
     }
 

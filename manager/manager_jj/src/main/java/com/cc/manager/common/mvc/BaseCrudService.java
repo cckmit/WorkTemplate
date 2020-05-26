@@ -293,7 +293,7 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
      * @param requestParam 过滤参数
      * @return 下拉框选项数据组
      */
-    public JSONArray getSelectArray(Class<E> clazz, String requestParam) {
+    public JSONObject getSelectArray(Class<E> clazz, String requestParam) {
         JSONArray selectOptionArray = new JSONArray();
         List<E> list = this.getCacheEntityList(clazz);
         list.forEach(entity -> {
@@ -302,7 +302,10 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
             option.put("value", entity.getCacheValue());
             selectOptionArray.add(option);
         });
-        return selectOptionArray;
+        JSONObject resultObject = new JSONObject();
+        resultObject.put("code", -1);
+        resultObject.put("data", selectOptionArray);
+        return resultObject;
     }
 
     /**

@@ -27,11 +27,6 @@ public class AdValueWxAdUnitController implements BaseStatsController {
         return this.adValueWxAdUnitService.getList(statsListParam);
     }
 
-    @Override
-    public StatsListResult getPage(StatsListParam statsListParam) {
-        return null;
-    }
-
     @Autowired
     public void setAdValueService(AdValueWxAdUnitService adValueWxAdUnitService) {
         this.adValueWxAdUnitService = adValueWxAdUnitService;

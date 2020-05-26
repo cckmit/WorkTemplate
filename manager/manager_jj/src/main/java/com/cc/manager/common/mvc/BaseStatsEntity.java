@@ -2,6 +2,8 @@ package com.cc.manager.common.mvc;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 统计数据查询基础Entity
  *
@@ -9,7 +11,7 @@ import lombok.Data;
  * @date 2020-05-01 18:19
  */
 @Data
-public abstract class BaseStatsEntity<E> {
+public abstract class BaseStatsEntity<E> implements Serializable {
 
     /**
      * 这里使用抽象类，定义一个是否有详情的标识，用于动态控制每条数据是否有向下一步的详情操作

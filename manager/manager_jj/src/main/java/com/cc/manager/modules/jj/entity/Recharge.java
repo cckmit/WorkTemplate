@@ -1,10 +1,15 @@
 package com.cc.manager.modules.jj.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
+import com.cc.manager.common.mvc.BaseStatsEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,8 +19,8 @@ import java.time.LocalDateTime;
  * @since 2020-05-09
  */
 @Data
-@TableName(schema = "persie_deamon", value = "recharge")
-public class Recharge implements BaseCrudEntity<Recharge> {
+@TableName(schema = "persie", value = "recharge")
+public class Recharge extends BaseStatsEntity<Recharge> {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,7 +63,8 @@ public class Recharge implements BaseCrudEntity<Recharge> {
     /**
      * 完成时间
      */
-    @TableField("ddTrans")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @TableField(value = "ddTrans")
     private LocalDateTime ddTrans;
 
     /**
@@ -76,19 +82,26 @@ public class Recharge implements BaseCrudEntity<Recharge> {
     /**
      * 操作时间
      */
-    @TableField("ddTimes")
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @TableField(value = "ddTimes")
     private LocalDateTime ddTimes;
 
     /*** 已提现金额*/
+    @TableField(exist = false)
     private BigDecimal rmbOut;
     /*** 剩余金额*/
+    @TableField(exist = false)
     private Integer remainAmount;
     /*** 产品名称*/
+    @TableField(exist = false)
     private String productName;
+    @TableField(exist = false)
     private Integer programType;
-
     /*** 玩家昵称*/
+    @TableField(exist = false)
     private String userName;
 
+    @TableField(exist = false)
+    private boolean haveDetail = false;
 
 }

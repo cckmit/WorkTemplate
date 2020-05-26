@@ -24,4 +24,5 @@ public class AllCostService extends BaseCrudService<AllCost, AllCostMapper> {
     protected boolean delete(String requestParam, UpdateWrapper<AllCost> deleteWrapper) {
         return false;
     }
+    
 }

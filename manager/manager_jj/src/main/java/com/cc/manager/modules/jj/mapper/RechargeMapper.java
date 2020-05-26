@@ -2,7 +2,6 @@ package com.cc.manager.modules.jj.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cc.manager.modules.jj.entity.Recharge;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,12 +17,34 @@ public interface RechargeMapper extends BaseMapper<Recharge> {
      *
      * @return list
      */
-    @Select("SELECT  s.`ddUid` as ddUid, SUM(ddRmb) as ddRmb FROM  persie.recharge s  WHERE ddStatus = 200  GROUP BY s.`ddUid`")
     List<Recharge> selectAllUserRecharged();
 
-    List<Recharge> selectAllCharge(String start,String end);
+    /**
+     * 查询提现记录数据
+     *
+     * @return list
+     */
+    List<Recharge> selectAllChargeRecord(String start, String end);
 
-    List<Recharge> selectAll(String start,String end);
+    /**
+     * 查询提现审核数据
+     *
+     * @return list
+     */
+    List<Recharge> selectAllRechargeAudit(String start, String end);
 
-    int selectCashOut(String dduid, String ddTime);
+    /**
+     * 查询用户已提现金额
+     *
+     * @return int
+     */
+    int selectCashOut(String ddUid, String ddTime);
+
+    /**
+     * 更新提现审核选择数据
+     *
+     * @return int
+     */
+    int updateBySelective(Recharge record);
+
 }

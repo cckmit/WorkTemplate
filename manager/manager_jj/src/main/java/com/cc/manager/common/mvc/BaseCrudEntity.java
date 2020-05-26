@@ -2,6 +2,8 @@ package com.cc.manager.common.mvc;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
+
 /**
  * CURD操作基础Entity接口，并提供简单实现的自动缓存功能，如果需要实现，请自定义缓存KEY
  * 同时，cacheKey和cacheValue还会兼做下拉框查询默认值
@@ -9,7 +11,7 @@ import com.alibaba.fastjson.annotation.JSONField;
  * @author CC ccheng0725@outlook.com
  * @date 2020-04-26 22:20
  */
-public interface BaseCrudEntity<E> {
+public interface BaseCrudEntity<E> extends Serializable {
 
     /**
      * 无需缓存标识

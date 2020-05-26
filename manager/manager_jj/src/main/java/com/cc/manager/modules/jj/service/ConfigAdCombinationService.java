@@ -49,6 +49,25 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
     }
 
     /**
+     * 只修改名称
+     *
+     * @param requestParam 修改参数
+     * @return 修改结果
+     */
+    public PostResult updateName(String requestParam) {
+        PostResult postResult = new PostResult();
+        JSONObject requestObject = JSONObject.parseObject(requestParam);
+        UpdateWrapper<ConfigAdCombination> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set(true, "ddName", requestObject.getString("name"));
+        updateWrapper.eq(true, "ddId", requestObject.getString("id"));
+        if (!this.update(updateWrapper)) {
+            postResult.setCode(2);
+            postResult.setMsg("名称修改失败！");
+        }
+        return postResult;
+    }
+
+    /**
      * <div>通过广告合计ID获取当前合集下的广告位置列表</div>
      * <div>作为返回值的JSON对象都以return为前缀</div>
      *

@@ -8,10 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * <p>
- * Mapper 接口
- * </p>
- *
  * @author cf
  * @since 2020-05-13
  */
@@ -24,14 +20,18 @@ public interface OrdersMapper extends BaseMapper<Orders> {
      * @param end
      * @return
      */
-    @Select("SELECT DATE(o.ddTrans) AS ddTrans, SUM(o.ddPrice) AS ddPrice, COUNT(DISTINCT o.ddUid) AS payUsers,o.ddAppId AS ddAppId FROM persie.orders o, persie.wx_config w where DATE(o.ddTrans) BETWEEN #{start} AND #{end} AND ddOrder !='null'\n" +
-            "AND o.ddAppId = w.ddAppId GROUP BY DATE(o.ddTrans) ,o.ddAppId ORDER BY DATE(o.ddTrans) ASC")
-    List<Orders> queryBuyStatistic(String start, String end);
+    List<Orders> queryBuyStatistic(String start, String end, String ddAppId, String productType);
 
-    @Select("select * from orders where ddId = #{ddid,jdbcType=VARCHAR}")
-    Orders selectByPrimaryKey(String orderId);
-
+    /**
+     * 更新实体数据
+     * @param order order
+     */
     void updateByPrimaryKey(Orders order);
 
+    /**
+     * 更新非空数据
+     * @param order order
+     */
     void updateByPrimaryKeySelective(Orders order);
+
 }

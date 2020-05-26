@@ -42,4 +42,7 @@ public class SupplementOrderService extends BaseCrudService<SupplementOrder, Sup
         return false;
     }
 
+    public SupplementOrder selectCurrentCoin(String uid) {
+        return null;
+    }
 }

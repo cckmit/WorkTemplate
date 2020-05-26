@@ -10,10 +10,6 @@ import com.cc.manager.modules.jj.mapper.UserValueMapper;
 import org.springframework.stereotype.Service;
 
 /**
- * <p>
- * 服务实现类
- * </p>
- *
  * @author cf
  * @since 2020-05-14
  */

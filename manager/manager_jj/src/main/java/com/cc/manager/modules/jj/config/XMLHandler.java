@@ -1,4 +1,4 @@
-package com.cc.manager.common.utils;
+package com.cc.manager.modules.jj.config;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;

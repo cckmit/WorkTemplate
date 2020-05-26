@@ -5,25 +5,30 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
+import com.cc.manager.common.result.PostResult;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.common.utils.CmTool;
-import com.cc.manager.common.utils.SignatureAlgorithm;
-import com.cc.manager.common.utils.XMLHandler;
-import com.cc.manager.common.utils.log4j.Log4j;
+import com.cc.manager.modules.jj.config.CmTool;
 import com.cc.manager.modules.jj.config.JjConfig;
-import com.cc.manager.modules.jj.entity.*;
+import com.cc.manager.modules.jj.config.SignatureAlgorithm;
+import com.cc.manager.modules.jj.config.XMLHandler;
+import com.cc.manager.modules.jj.entity.GoodsValueExt;
+import com.cc.manager.modules.jj.entity.Orders;
+import com.cc.manager.modules.jj.entity.UserInfo;
+import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.OrdersMapper;
-import com.cc.manager.modules.jj.mapper.UserInfoMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.cc.manager.common.utils.CmTool.createNonceStr;
+import static com.cc.manager.modules.jj.config.CmTool.createNonceStr;
+
 
 /**
  * @author cf
@@ -35,53 +40,50 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
 
     // 签名类型
     private static final String SIGN_TYPE = "MD5";
+
     private JjConfig jjConfig;
     private WxConfigService wxConfigService;
     private GoodsValueExtService goodsValueExtService;
-    private UserInfoMapper userInfoMapper;
+    private OrdersService ordersService;
+    private UserInfoService userInfoService;
 
-    private OrdersMapper ordersMapper;
-
-    /**
-     * 检测是否匹配
-     *
-     * @param map 内容
-     * @param key 查询参数
-     * @return 是否匹配
-     */
-    private static boolean existResult(Map<String, String> map, String key) {
-        String resultCode = map.get(key);
-        return "success".equalsIgnoreCase(resultCode);
-    }
 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Orders> queryWrapper, StatsListResult statsListResult) {
-
+        List<String> uidList = new ArrayList<>();
         JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
         if (queryObject != null) {
             String times = queryObject.getString("times");
             String tradeNumber = queryObject.getString("tradeNumber");
             String uid = queryObject.getString("uid");
-            String userName = queryObject.getString("userName");
-            String openID = queryObject.getString("openID");
+            String appId = queryObject.getString("appId");
+            String openId = queryObject.getString("openID");
             String payState = queryObject.getString("payState");
+            String userName = queryObject.getString("userName");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
                 queryWrapper.between("DATE(ddTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
             }
+            if (StringUtils.isNotBlank(userName)) {
+                QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+                userInfoQueryWrapper.like("ddName", userName);
+                List<UserInfo> userInfos = this.userInfoService.getBaseMapper().selectList(userInfoQueryWrapper);
+                for (UserInfo userInfo : userInfos) {
+                    uidList.add(userInfo.getDdUid());
+                }
+                queryWrapper.in(uidList.size() > 1, "ddUid", uidList);
+            }
+            queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
             queryWrapper.like(StringUtils.isNotBlank(tradeNumber), "ddId", tradeNumber);
             queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
-            queryWrapper.like(StringUtils.isNotBlank(openID), "ddOId", openID);
-            queryWrapper.eq(StringUtils.isNotBlank(payState), "DATE(ddState)", payState);
+
+            queryWrapper.like(StringUtils.isNotBlank(openId), "ddOId", openId);
+            queryWrapper.eq(StringUtils.isNotBlank(payState), "ddState", payState);
         }
     }
 
     @Override
     protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<Orders> entityList, StatsListResult statsListResult) {
-        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-            String userName = queryObject.getString("userName");
-        }
         for (Orders order : entityList) {
             String ddAppId = order.getDdAppId();
             WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, ddAppId);
@@ -89,19 +91,13 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
                 String productName = wxConfig.getProductName();
                 String originName = wxConfig.getOriginName();
                 Integer programType = wxConfig.getProgramType();
-                if (programType != null) {
-                    order.setProductType(programType);
-                }
-                if (productName != null) {
-                    order.setProductName(productName);
-                }
-                if (originName != null) {
-                    order.setOriginName(originName);
-                }
+                order.setProductType(programType);
+                order.setProductName(productName);
+                order.setOriginName(originName);
             }
             QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
             userInfoQueryWrapper.eq("ddUid", order.getDdUid());
-            UserInfo userInfo = this.userInfoMapper.selectOne(userInfoQueryWrapper);
+            UserInfo userInfo = this.userInfoService.getBaseMapper().selectOne(userInfoQueryWrapper);
             if (userInfo != null) {
                 order.setUserName(userInfo.getDdName());
             }
@@ -113,7 +109,6 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
                 order.setGoodsName(goodName);
                 order.setDdDesc(ddDesc);
             }
-
         }
         return null;
     }
@@ -124,8 +119,8 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
     }
 
     @Autowired
-    public void setUserInfoMapper(UserInfoMapper userInfoMapper) {
-        this.userInfoMapper = userInfoMapper;
+    public void setUserInfoService(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
     }
 
     @Autowired
@@ -134,8 +129,8 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
     }
 
     @Autowired
-    public void setOrdersMapper(OrdersMapper ordersMapper) {
-        this.ordersMapper = ordersMapper;
+    public void setOrdersService(OrdersService ordersService) {
+        this.ordersService = ordersService;
     }
 
     @Autowired
@@ -146,41 +141,44 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
     /**
      * 补发订单
      *
-     * @param appId   appId
-     * @param uid     uid
-     * @param orderId orderId
+     * @param singleOrder singleOrder
      * @return int
      */
-    public int supplementOrders(String appId, String uid, String orderId) {
+    public PostResult supplementOrders(JSONObject singleOrder) {
+        PostResult postResult = new PostResult();
+        String appId = singleOrder.getString("appId");
+        String orderId = singleOrder.getString("orderId");
         //查询订单产品信息
         Orders order = this.getById(orderId);
         WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, appId);
-        String ddMchId = wxConfig.getDdMchId();
-        Map<String, String> stringStringMap = searchPayOrder(appId, ddMchId, orderId);
-        boolean status = orderIsSuccess(stringStringMap);
-        LOGGER.info("补单状态status :" + status + "-appId :" + appId + "-orderId :" + orderId);
-        if (status) {
+        Map<String, String> stringStringMap = searchPayOrder(appId, wxConfig.getDdMchId(), orderId);
+        LOGGER.info("补单状态status :" + orderIsSuccess(stringStringMap) + "-appId :" + appId + "-orderId :" + orderId);
+        if (orderIsSuccess(stringStringMap)) {
             order.setDdTrans(null);
             this.mapper.updateByPrimaryKey(order);
             String supplementUrl = this.jjConfig.getSupplementUrl();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("version", "2.2.2");
             jsonObject.put("appId", appId);
-            jsonObject.put("uid", uid);
+            jsonObject.put("uid", singleOrder.getString("uid"));
             jsonObject.put("orderid", orderId);
-            //验单
+            //验单结果
             String result = HttpUtil.post(supplementUrl, jsonObject.toString());
-            JSONObject jsonResult = JSONObject.parseObject(result);
             //订单状态
-            if ("success".equals(jsonResult.getString("result"))) {
+            if (StringUtils.equals(JSONObject.parseObject(result).getString("result"), "success")) {
                 String ddOrder = stringStringMap != null ? stringStringMap.get("transaction_id") : null;
                 order.setDdState(1);
                 order.setDdOrder(ddOrder);
-                ordersMapper.updateByPrimaryKeySelective(order);
-                return 200;
+                this.ordersService.mapper.updateByPrimaryKeySelective(order);
+            } else {
+                postResult.setCode(2);
+                postResult.setMsg("补单失败，数据处理异常！");
             }
+        } else {
+            postResult.setCode(2);
+            postResult.setMsg("补单失败，此单未交易成功！");
         }
-        return 0;
+        return postResult;
     }
 
     /**
@@ -206,9 +204,21 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
             XMLHandler parse = XMLHandler.parse(searchResultXml);
             return parse.getXmlMap();
         } catch (Exception e) {
-            LOGGER.error(Log4j.getExceptionInfo(e));
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
         }
         return null;
+    }
+
+    /**
+     * 检测是否匹配
+     *
+     * @param map 内容
+     * @param key 查询参数
+     * @return 是否匹配
+     */
+    private static boolean existResult(Map<String, String> map, String key) {
+        String resultCode = map.get(key);
+        return "success".equalsIgnoreCase(resultCode);
     }
 
     /**

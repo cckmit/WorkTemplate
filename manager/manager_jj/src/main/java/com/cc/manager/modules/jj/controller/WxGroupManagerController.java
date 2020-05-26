@@ -1,7 +1,6 @@
 package com.cc.manager.modules.jj.controller;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
 import com.cc.manager.common.result.CrudObjectResult;
@@ -84,7 +83,7 @@ public class WxGroupManagerController implements BaseCrudController {
     }
 
     @Override
-    public JSONArray getSelectArray(String requestParam) {
+    public JSONObject getSelectArray(String requestParam) {
         return null;
     }
 

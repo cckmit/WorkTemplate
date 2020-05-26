@@ -1,6 +1,5 @@
 package com.cc.manager.modules.jj.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
 import com.cc.manager.common.result.CrudObjectResult;
@@ -61,7 +60,7 @@ public class ConfigAdPositionController implements BaseCrudController {
 
     @Override
     @GetMapping(value = "/getSelectArray/{requestParam}")
-    public JSONArray getSelectArray(@PathVariable String requestParam) {
+    public JSONObject getSelectArray(@PathVariable String requestParam) {
         return this.configAdPositionService.getSelectArray(ConfigAdPosition.class, null);
     }
 

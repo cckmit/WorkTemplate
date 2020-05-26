@@ -1,6 +1,6 @@
 package com.cc.manager.common.mvc;
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
@@ -82,6 +82,6 @@ public interface BaseCrudController {
      * @param requestParam 查询参数
      * @return 下拉框选项数组
      */
-    JSONArray getSelectArray(String requestParam);
+    JSONObject getSelectArray(String requestParam);
 
 }

@@ -1,5 +1,6 @@
 package com.cc.manager.modules.jj.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -7,6 +8,7 @@ import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.modules.jj.entity.ConfigAdApp;
 import com.cc.manager.modules.jj.mapper.ConfigAdAppMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,7 +21,11 @@ public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdApp
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<ConfigAdApp> queryWrapper) {
-
+        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
+            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+            String appId = queryObject.getString("appId");
+            queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
+        }
     }
 
     @Override

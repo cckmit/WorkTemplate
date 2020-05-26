@@ -1,12 +1,13 @@
 package com.cc.manager.modules.jj.controller;
 
 
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
 import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
+import com.cc.manager.modules.jj.entity.SupplementOrder;
 import com.cc.manager.modules.jj.service.SupplementOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,15 @@ public class SupplementOrderController implements BaseCrudController {
         return this.supplementOrderService.getPage(crudPageParam);
     }
 
+    /**
+     * 查询用户当前金币
+     */
+    @ResponseBody
+    @GetMapping(value = "/queryUserInfo")
+    public SupplementOrder selectCurrentCoinByUid(@RequestParam("uid") String uid) {
+        return supplementOrderService.selectCurrentCoin(uid);
+    }
+
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
@@ -61,7 +71,7 @@ public class SupplementOrderController implements BaseCrudController {
     }
 
     @Override
-    public JSONArray getSelectArray(String requestParam) {
+    public JSONObject getSelectArray(String requestParam) {
         return null;
     }
 

@@ -11,10 +11,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * <p>
- *
- * </p>
- *
  * @author cf
  * @since 2020-05-09
  */

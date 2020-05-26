@@ -1,4 +1,4 @@
-package com.cc.manager.common.utils;
+package com.cc.manager.modules.jj.config;
 
 import javax.net.ssl.X509TrustManager;
 import java.security.cert.CertificateException;

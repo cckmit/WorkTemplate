@@ -1,6 +1,5 @@
 package com.cc.manager.modules.fc.service;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -101,33 +100,7 @@ public class WxAddDataDetailService extends BaseCrudService<MinitjWx, MinitjWxMa
         return false;
     }
 
-    /**
-     * 查询下拉框选项Json数组，默认是key-value形式的Json对象，如果要自定义，请自行重写
-     *
-     * @param clazz        查询下拉框数据类
-     * @param requestParam 过滤参数
-     * @return 下拉框选项数据组
-     */
-    @Override
-    public JSONArray getSelectArray(Class<MinitjWx> clazz, String requestParam) {
-        JSONArray selectOptionArray = new JSONArray();
-        List<WxConfig> wxConfigEntityList = this.wxConfigService.getCacheEntityList(WxConfig.class);
-        List<MiniGame> miniGameEntityList = this.miniGameService.getCacheEntityList(MiniGame.class);
 
-        wxConfigEntityList.forEach(entity -> {
-            JSONObject option = new JSONObject();
-            option.put("key", entity.getCacheKey());
-            option.put("value", entity.getCacheValue());
-            selectOptionArray.add(option);
-        });
-        miniGameEntityList.forEach(entity -> {
-            JSONObject option = new JSONObject();
-            option.put("key", entity.getCacheKey());
-            option.put("value", entity.getCacheValue());
-            selectOptionArray.add(option);
-        });
-        return selectOptionArray;
-    }
 
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {
