@@ -64,6 +64,16 @@ public class ConfigAdContentController implements BaseCrudController {
         return this.configAdContentService.getSelectArray(ConfigAdContent.class, null);
     }
 
+    /**
+     * 查询推广APP列表
+     *
+     * @return 推广APP列表
+     */
+    @GetMapping(value = "/getTargetAppArray")
+    public JSONObject getTargetAppArray() {
+        return this.configAdContentService.getTargetAppArray();
+    }
+
     @PutMapping(value = "/uploadImageUrlByUpload")
     public PostResult uploadImageUrlByUpload(@RequestBody String requestParam) {
         return this.configAdContentService.uploadImageUrlByUpload(requestParam);

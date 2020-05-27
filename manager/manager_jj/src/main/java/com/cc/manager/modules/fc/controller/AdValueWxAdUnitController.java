@@ -16,15 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/jj/adValueWxAdUnit")
+@RequestMapping(value = "/fc/adValueWxAdUnit")
 public class AdValueWxAdUnitController implements BaseStatsController {
 
     private AdValueWxAdUnitService adValueWxAdUnitService;
 
     @Override
-    @GetMapping(value = "/getList")
-    public StatsListResult getList(StatsListParam statsListParam) {
-        return this.adValueWxAdUnitService.getList(statsListParam);
+    @GetMapping(value = "/getPage")
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        return this.adValueWxAdUnitService.getPage(statsListParam);
     }
 
     @Autowired

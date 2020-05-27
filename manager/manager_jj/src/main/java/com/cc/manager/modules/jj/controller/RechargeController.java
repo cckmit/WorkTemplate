@@ -20,15 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/jj/recharge")
 public class RechargeController implements BaseStatsController {
 
-
     private RechargeService rechargeService;
 
-
     @Override
-    public StatsListResult getList(StatsListParam statsListParam) {
-        return null;
-    }
-
     @GetMapping(value = "/getPage")
     public StatsListResult getPage(StatsListParam statsListParam) {
         return this.rechargeService.getPage(statsListParam);

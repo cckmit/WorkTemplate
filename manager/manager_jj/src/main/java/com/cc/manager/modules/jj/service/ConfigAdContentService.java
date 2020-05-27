@@ -16,6 +16,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author CC ccheng0725@outlook.com
  * @date 2020-05-07 15:34
@@ -44,6 +46,28 @@ public class ConfigAdContentService extends BaseCrudService<ConfigAdContent, Con
         if (entity.getAdType() != 0) {
             entity.setAdTypeName(this.configAdTypeService.getCacheValue(ConfigAdType.class, String.valueOf(entity.getAdType())));
         }
+    }
+
+    /**
+     * 查询推广APP列表
+     *
+     * @return 推广APP列表
+     */
+    public JSONObject getTargetAppArray() {
+        JSONObject resultObject = new JSONObject();
+        QueryWrapper<ConfigAdContent> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("DISTINCT ddTargetAppId AS targetAppId, ddTargetAppName AS targetAppName");
+        List<ConfigAdContent> list = this.list(queryWrapper);
+        JSONArray jsonArray = new JSONArray();
+        list.forEach(configAdContent -> {
+            JSONObject targetAppObject = new JSONObject();
+            targetAppObject.put("key", configAdContent.getTargetAppId());
+            targetAppObject.put("value", configAdContent.getTargetAppId() + "-" + configAdContent.getTargetAppName());
+            jsonArray.add(targetAppObject);
+        });
+        resultObject.put("data", jsonArray);
+        resultObject.put("code", 1);
+        return resultObject;
     }
 
     @Override

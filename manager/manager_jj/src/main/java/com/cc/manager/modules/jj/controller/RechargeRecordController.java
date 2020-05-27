@@ -5,7 +5,6 @@ import com.cc.manager.common.mvc.BaseStatsController;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.jj.service.RechargeRecordService;
-import com.cc.manager.modules.jj.service.RechargeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +24,6 @@ public class RechargeRecordController implements BaseStatsController {
     private RechargeRecordService rechargeRecordService;
 
     @Override
-    public StatsListResult getList(StatsListParam statsListParam) {
-        return null;
-    }
-
     @GetMapping(value = "/getPage")
     public StatsListResult getPage(StatsListParam statsListParam) {
         return this.rechargeRecordService.getPage(statsListParam);

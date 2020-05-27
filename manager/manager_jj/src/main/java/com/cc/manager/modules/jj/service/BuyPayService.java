@@ -156,7 +156,7 @@ public class BuyPayService extends BaseCrudService<BuyPay, BuyPayMapper> {
         BuyPay tableContent = this.getOne(buyPayQueryWrapper);
         //数据存在更新，不存在则新增
         if (tableContent != null) {
-            QueryWrapper<BuyPay> updateWrapper = new QueryWrapper<>();
+            UpdateWrapper<BuyPay> updateWrapper = new UpdateWrapper<>();
             updateWrapper.eq("buy_date", buyDate).eq("buy_app_id", buyAppId);
             return this.update(entity, updateWrapper);
         } else {
@@ -180,6 +180,18 @@ public class BuyPayService extends BaseCrudService<BuyPay, BuyPayMapper> {
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {
         this.wxConfigService = wxConfigService;
+    }
+
+    /**
+     * 通过时间段查询买量汇总数据
+     *
+     * @param beginTime beginTime
+     * @param endTime endTime
+     * @param type type
+     * @return List
+     */
+    public List<BuyPay> queryByPayCollectByDate(String beginTime, String endTime, String type) {
+        return this.mapper.queryByPayCollectByDate(beginTime, endTime, type);
     }
 
 }

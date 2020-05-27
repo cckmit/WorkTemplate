@@ -114,12 +114,13 @@ public class AdValueService extends BaseStatsService<AdValue, AdValueMapper> {
         // 默认查询排除微信
         queryWrapper.gt("adContentId", 0);
 
-
         // 将查询字段和分组字段赋值给查询条件
         queryWrapper.select(selectList.toArray(new String[0]));
         queryWrapper.groupBy(groupByList.toArray(new String[0]));
         // 查询展示列表
         statsListResult.setShowColumn(showColumnList);
+        //
+        statsListParam.setLimit(Integer.MAX_VALUE);
     }
 
     /**
@@ -239,6 +240,7 @@ public class AdValueService extends BaseStatsService<AdValue, AdValueMapper> {
         JSONObject queryObject = statsListParam.getQueryObject();
         Map<String, AdValue> adValueMap = Maps.newHashMap();
         AdValue totalAdValue = new AdValue();
+
         for (AdValue adValue : entityList) {
             // 将yyyyMMdd(HH)格式的时间处理成yyyy-MM-dd( HH)格式
             String timeValue = StringUtils.substring(adValue.getTimeValue(), 0, 4) + "-" + StringUtils.substring(adValue.getTimeValue(), 4, 6) + "-" + StringUtils.substring(adValue.getTimeValue(), 6, 8);

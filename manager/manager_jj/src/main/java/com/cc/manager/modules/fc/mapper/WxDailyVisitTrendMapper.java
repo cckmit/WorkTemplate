@@ -15,23 +15,22 @@ import java.util.List;
 @Repository
 public interface WxDailyVisitTrendMapper extends BaseMapper<WxDailyVisitTrend> {
 
-    @Select("  SELECT t.appId AS wxAppid,  t.visitPv AS wxVisit,  t.visitUv AS wxActive,  t.visitUvNew AS wxNew,\n" +
-            "        ROUND(t.stayTimeUv,0) AS wxAvgOnline, DATE(t.refDate) AS wxDate, s.shareUv AS wxShareUser, s.sharePv AS wxShareCount, (r.day1/r.day0) AS wxRemain2\n" +
-            "        FROM wx_daily_visit_trend  AS t LEFT JOIN wx_daily_summary AS s ON t.appId = s.appId AND t.refDate =s.refDate LEFT JOIN\n" +
-            "         wx_daily_retain AS r ON t.appId = r.appId AND t.refDate =r.refDate\n" +
-            "        WHERE DATE(t.refDate) BETWEEN   #{start} AND #{end} AND r.dataType ='visit_uv_new'\n" +
-            "        GROUP BY t.refDate,t.appId,  t.visitPv,  t.visitUv,  t.visitUvNew,\n" +
-            "        t.stayTimeUv,s.shareUv, s.sharePv,(r.day1/r.day0)")
-    List<MinitjWx> selectVisitTrend(String start, String end);
 
+    /**
+     * 查询小程序产品数据
+     * @param start start
+     * @param end end
+     * @param ddAppId ddAppId
+     * @return List
+     */
+    List<MinitjWx> selectVisitTrend(String start, String end, String ddAppId);
 
-    @Select("  SELECT t.appId AS wxAppid,  t.visitPv AS wxVisit,  t.visitUv AS wxActive,  t.visitUvNew AS wxNew,\n" +
-            "        ROUND(t.stayTimeUv,0) AS wxAvgOnline, DATE(t.refDate) AS wxDate, s.shareUv AS wxShareUser, s.sharePv AS wxShareCount, (r.day1/r.day0) AS wxRemain2\n" +
-            "        FROM wx_daily_visit_trend  AS t LEFT JOIN wx_daily_summary AS s ON t.appId = s.appId AND t.refDate =s.refDate LEFT JOIN\n" +
-            "         wx_daily_retain AS r ON t.appId = r.appId AND t.refDate =r.refDate\n" +
-            "        WHERE DATE(t.refDate) BETWEEN   #{start} AND #{end} AND r.dataType ='visit_uv_new'\n" +
-            "        AND t.appId = #{appId, jdbcType=VARCHAR}\n" +
-            "        GROUP BY t.refDate,t.appId,  t.visitPv,  t.visitUv,  t.visitUvNew,\n" +
-            "        t.stayTimeUv,s.shareUv, s.sharePv,(r.day1/r.day0)")
-    List<MinitjWx> selectVisitTrend(String start, String end, String appId);
+    /**
+     *  小程序汇总数据
+     * @param start start
+     * @param end end
+     * @return List
+     */
+    List<MinitjWx> selectVisitTrendSummary(String start, String end);
+
 }

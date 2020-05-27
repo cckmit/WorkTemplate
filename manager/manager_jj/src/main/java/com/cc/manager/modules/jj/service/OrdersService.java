@@ -231,4 +231,11 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
         return existResult(orderMap, "result_code") && existResult(orderMap, "return_code") && existResult(orderMap, "trade_state");
     }
 
+    /**
+     * @return 获取小程序充值金额Map
+     */
+    public List<Orders> queryProgramReChargeCount() {
+        return this.mapper.queryProgramReChargeCount();
+    }
+
 }

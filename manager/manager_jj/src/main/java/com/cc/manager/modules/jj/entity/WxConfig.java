@@ -89,6 +89,12 @@ public class WxConfig implements BaseCrudEntity<WxConfig> {
     @TableField(exist = false)
     private String jumpDirect;
 
+    /**
+     * 展示名称
+     */
+    @TableField(exist = false)
+    private String showName;
+
     @Override
     public String getCacheKey() {
         return this.id;
@@ -96,6 +102,6 @@ public class WxConfig implements BaseCrudEntity<WxConfig> {
 
     @Override
     public String getCacheValue() {
-        return this.id + "-" + this.productName;
+        return this.showName;
     }
 }

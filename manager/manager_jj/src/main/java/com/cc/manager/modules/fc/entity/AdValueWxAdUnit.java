@@ -91,7 +91,7 @@ public class AdValueWxAdUnit extends BaseStatsEntity<AdValueWxAdUnit> {
     /**
      * 收入(分)
      */
-    private Integer income = 0;
+    private int income = 0;
 
     /**
      * 广告千次曝光收益(分)
@@ -121,7 +121,7 @@ public class AdValueWxAdUnit extends BaseStatsEntity<AdValueWxAdUnit> {
      * 单次点击收入
      */
     @TableField(exist = false)
-    private float clickIncome;
+    private double clickIncome;
 
     /*** 插屏总收入*/
     @TableField(exist = false)
@@ -150,8 +150,12 @@ public class AdValueWxAdUnit extends BaseStatsEntity<AdValueWxAdUnit> {
         if (exposureCount != 0) {
             this.clickRate = NumberUtil.roundStr(NumberUtil.div(100 * this.clickCount, this.exposureCount), 2) + "%";
         }
-        this.ecpm = new BigDecimal((float) this.income * 1000 / this.exposureCount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        this.clickIncome = (float) this.income / this.clickCount;
+        if (exposureCount != 0) {
+            this.ecpm = new BigDecimal((float) this.income * 1000 / this.exposureCount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        }
+        if (clickCount != 0) {
+            this.clickIncome = new BigDecimal((float) this.income / this.clickCount).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        }
     }
 
 }

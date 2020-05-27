@@ -3,7 +3,7 @@ package com.cc.manager.modules.fc.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cc.manager.common.mvc.BaseCrudEntity;
+import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -16,18 +16,14 @@ import java.time.LocalDateTime;
  * @since 2020-05-13
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 @TableName(schema = "minigameback", value = "minitj_wx")
-public class MinitjWx implements BaseCrudEntity<MinitjWx> {
-
-    private static final long serialVersionUID = 1L;
-
+public class MinitjWx extends BaseStatsEntity<MinitjWx> {
     /**
      * 游戏appid
      */
     @TableId
-    private String wxAppid;
-
+    private String wxAppId;
     /**
      * 日期
      */
@@ -148,101 +144,159 @@ public class MinitjWx implements BaseCrudEntity<MinitjWx> {
      */
     private String wxRegJson;
 
-    /*** 活跃用户来源--新增活跃来源  */
+    /**
+     * 活跃用户来源--新增活跃来源
+     */
     private String wxActiveSource;
 
     /**
      * 更新时间
      */
     private LocalDateTime wxUpdatetime;
-
-    /*** 产品数量 */
+    /**
+     * 产品数量
+     */
     @TableField(exist = false)
     private Integer productCount;
-    /*** 产品类型 */
+    /**
+     * 产品类型
+     */
     @TableField(exist = false)
     private Integer programType;
-    /*** 产品名称 */
+    /**
+     * 产品名称
+     */
     @TableField(exist = false)
     private String productName;
 
     @TableField(exist = false)
     private String ddAppPlatform;
 
-    /*** 充值收入 */
+    /**
+     * 充值收入
+     */
     @TableField(exist = false)
     private BigDecimal recharge;
-    /*** 总收入 */
+    /**
+     * 总收入
+     */
     @TableField(exist = false)
     private BigDecimal revenueCount;
-    /*** 广告收入 */
+    /**
+     * 广告收入
+     */
     @TableField(exist = false)
     private BigDecimal adRevenue;
-    /*** 展示字段  新增单价  买量支出/广告新增人数*/
+
+    /**
+     * 展示字段  新增单价  买量支出/广告新增人数
+     */
     @TableField(exist = false)
     private BigDecimal wxAdNewPrice;
+    /**
+     *
+     */
     @TableField(exist = false)
     private BigDecimal videoECPM;
+    /**
+     *
+     */
     @TableField(exist = false)
     private BigDecimal bannerECPM;
-    /*** 新增用户来源展示字段-- 任务栏-我的小程序 */
+    /**
+     * 新增用户来源展示字段-- 任务栏-我的小程序
+     */
     @TableField(exist = false)
-    private Integer wxRegTaskBarMySp;
-    /*** 新增用户来源展示字段-- 发现-我的小程序 */
+    private Integer wxRegTaskBarMySp = 0;
+    /**
+     * 新增用户来源展示字段-- 发现-我的小程序
+     */
     @TableField(exist = false)
-    private Integer wxRegFindMySp;
-    /*** 新增用户来源展示字段-- 任务栏-最近使用 */
+    private Integer wxRegFindMySp = 0;
+    /**
+     * 新增用户来源展示字段-- 任务栏-最近使用
+     */
     @TableField(exist = false)
-    private Integer wxRegTaskBarRecent;
-
-    /*** 新增用户来源展示字段-- 其他 */
+    private Integer wxRegTaskBarRecent = 0;
+    /**
+     * 新增用户来源展示字段-- 其他
+     */
     @TableField(exist = false)
-    private Integer wxRegOther;
-    /*** 新增用户来源展示字段-- 其他小程序 */
+    private Integer wxRegOther = 0;
+    /**
+     * 新增用户来源展示字段-- 其他小程序
+     */
     @TableField(exist = false)
-    private Integer wxRegOtherSp;
-    /*** 新增用户来源展示字段-- 其他小程序返回 */
+    private Integer wxRegOtherSp = 0;
+    /**
+     * 新增用户来源展示字段-- 其他小程序返回
+     */
     @TableField(exist = false)
-    private Integer wxRegOtherReturn;
-    /*** 展示数据-买量支出 */
+    private Integer wxRegOtherReturn = 0;
+    /**
+     * 展示数据-买量支出
+     */
     @TableField(exist = false)
     private BigDecimal buyCost;
-    /*** 展示数据-买量单价 */
+    /**
+     * 展示数据-买量单价
+     */
     @TableField(exist = false)
     private BigDecimal buyClickPrice;
-
-    /*** 展示数据--插屏收入 */
+    /**
+     * 展示数据--插屏收入
+     */
     @TableField(exist = false)
     private BigDecimal screenIncome;
-
-
-    /*** 活跃来源展示字段--广告 */
+    /**
+     * 活跃来源展示字段--广告
+     */
     @TableField(exist = false)
-    private Integer wxActiveAd;
-    /*** 活跃来源展示字段-- 任务栏-我的小程序 */
+    private Integer wxActiveAd = 0;
+    /**
+     * 活跃来源展示字段-- 任务栏-我的小程序
+     */
     @TableField(exist = false)
-    private Integer wxActiveTaskBarMySp;
-    /*** 活跃来源展示字段-- 发现-我的小程序 */
+    private Integer wxActiveTaskBarMySp = 0;
+    /**
+     * 活跃来源展示字段-- 发现-我的小程序
+     */
     @TableField(exist = false)
-    private Integer wxActiveFindMySp;
-
-    /*** 活跃来源展示字段-- 任务栏-最近使用 */
+    private Integer wxActiveFindMySp = 0;
+    /**
+     * 活跃来源展示字段-- 任务栏-最近使用
+     */
     @TableField(exist = false)
-    private Integer wxActiveTaskBarRecent;
-    /*** 活跃来源展示字段-- 搜索 */
+    private Integer wxActiveTaskBarRecent = 0;
+    /**
+     * 活跃来源展示字段-- 搜索
+     */
     @TableField(exist = false)
-    private Integer wxActiveSearch;
-    /*** 活跃来源展示字段-- 其他 */
+    private Integer wxActiveSearch = 0;
+    /**
+     * 活跃来源展示字段-- 其他
+     */
     @TableField(exist = false)
-    private Integer wxActiveOther;
-    /*** 活跃来源展示字段-- 其他小程序返回 */
+    private Integer wxActiveOther = 0;
+    /**
+     * 活跃来源展示字段-- 其他小程序返回
+     */
     @TableField(exist = false)
-    private Integer wxActiveOtherReturn;
-    /*** 活跃来源展示字段-- 其他小程序 */
+    private Integer wxActiveOtherReturn = 0;
+    /**
+     * 活跃来源展示字段-- 其他小程序
+     */
     @TableField(exist = false)
-    private Integer wxActiveOtherSp;
-
-    /*** 活跃 */
+    private Integer wxActiveOtherSp = 0;
+    /**
+     * 活跃
+     */
     @TableField(exist = false)
     private BigDecimal activeUp;
+    /**
+     *
+     */
+    @TableField(exist = false)
+    private boolean haveDetail = false;
+
 }

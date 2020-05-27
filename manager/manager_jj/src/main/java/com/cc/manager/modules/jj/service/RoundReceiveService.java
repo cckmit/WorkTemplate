@@ -1,19 +1,14 @@
 package com.cc.manager.modules.jj.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.jj.entity.*;
 import com.cc.manager.modules.jj.mapper.RoundReceiveMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +18,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author cf
@@ -39,123 +35,84 @@ public class RoundReceiveService extends BaseStatsService<RoundReceive, RoundRec
     private RoundMatchService roundMatchService;
     private RoundGameService roundGameService;
     private UserInfoService userInfoService;
-    private Map<String, JSONObject> roundInfoMap = new ConcurrentHashMap<>();
+
+    private final static Map<String, JSONObject> roundInfoMap = new ConcurrentHashMap<>();
 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<RoundReceive> queryWrapper, StatsListResult statsListResult) {
-        List<String> uidList = new ArrayList<>();
-        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-            String times = queryObject.getString("times");
-            if (StringUtils.isNotBlank(times)) {
-                String[] timeRangeArray = StringUtils.split(times, "~");
-                queryWrapper.between("DATE(ddTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
-            }
-            String gameName = queryObject.getString("gameName");
-            queryWrapper.eq(StringUtils.isNotBlank(gameName), "ddGCode", gameName);
-            String ddGroup = queryObject.getString("ddGroup");
-            queryWrapper.eq(StringUtils.isNotBlank(ddGroup), "ddGroup", Boolean.parseBoolean(ddGroup));
-
-            String userName = queryObject.getString("userName");
-            if (StringUtils.isNotBlank(userName)) {
-                QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-                userInfoQueryWrapper.like("ddName", userName);
-                List<UserInfo> userInfos = this.userInfoService.getBaseMapper().selectList(userInfoQueryWrapper);
-                for (UserInfo userInfo : userInfos) {
-                    uidList.add(userInfo.getDdUid());
-                }
-                queryWrapper.in(uidList.size() > 1, "ddUid", uidList);
-            }
-        } else {
-            String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-            String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-            queryWrapper.between("DATE(ddTime)", beginTime, endTime);
+        // 初始化时间，如果没有时间，默认查询当日数据
+        String beginTime = null, endTime = null;
+        String times = statsListParam.getQueryObject().getString("times");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            beginTime = timeRangeArray[0].trim();
+            endTime = timeRangeArray[1].trim();
         }
+        if (StringUtils.isBlank(beginTime) || StringUtils.isBlank(endTime)) {
+            beginTime = endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+        }
+        queryWrapper.between("DATE(ddTime)", beginTime, endTime);
+
+        // 其他请求参数
+        String gameName = statsListParam.getQueryObject().getString("gameName");
+        queryWrapper.eq(StringUtils.isNotBlank(gameName), "ddGCode", gameName);
+        String ddGroup = statsListParam.getQueryObject().getString("ddGroup");
+        queryWrapper.eq(StringUtils.isNotBlank(ddGroup), "ddGroup", Boolean.parseBoolean(ddGroup));
+
+        // 根据用户名模糊匹配查询
+        String userName = statsListParam.getQueryObject().getString("userName");
+        List<UserInfo> userInfoList = this.userInfoService.getUserInfoListByUserName(userName);
+        List<String> uidList = userInfoList.stream().map(UserInfo::getDdUid).collect(Collectors.toList());
+        queryWrapper.in(!uidList.isEmpty(), "ddUid", uidList);
     }
 
     @Override
     protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<RoundReceive> entityList, StatsListResult statsListResult) {
         List<RoundReceive> newList = new ArrayList<>();
-        for (RoundReceive roundReceive : entityList) {
-            String ddUid = roundReceive.getDdUid();
-            String ddType = roundReceive.getDdType();
-            if ("rmb".equals(ddType)) {
-                roundReceive.setDdTotal(roundReceive.getDdTotal() / 100);
-            }
-            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-            userInfoQueryWrapper.eq("ddUid", ddUid);
-            List<UserInfo> userInfos = this.userInfoService.getBaseMapper().selectList(userInfoQueryWrapper);
-
-            if (userInfos.size() > 0) {
-                roundReceive.setUserName(userInfos.get(0).getDdName());
-            }
-            Games games = this.gamesService.getCacheEntity(Games.class, roundReceive.getDdGCode().toString());
-            if (games != null) {
-                roundReceive.setGameName(games.getDdName());
-            } else {
-                roundReceive.setGameName("未知");
-            }
-            JSONObject roundInfo = getRoundInfo(roundReceive.getDdGroup(), roundReceive.getDdMCode());
-            if (roundInfo.containsKey("name")) {
-                roundReceive.setRoundName(roundInfo.getString("name"));
-            } else {
-                roundReceive.setRoundName("未知比赛");
-            }
-            if (roundInfo.containsKey("time")) {
-                roundReceive.setRoundTime(roundInfo.getString("time"));
-            } else {
-                roundReceive.setRoundTime("未知时长");
-            }
-            if ((roundInfo.containsKey("code"))) {
-                if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-                    JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-                    String roundName = queryObject.getString("roundName");
+        if (!entityList.isEmpty()) {
+            Set<String> uuidSet = entityList.stream().map(RoundReceive::getDdUid).collect(Collectors.toSet());
+            List<UserInfo> userInfoList = this.userInfoService.getUserInfoListByUuidList(uuidSet);
+            Map<String, String> userInfoMap = userInfoList.stream().collect(Collectors.toMap(UserInfo::getDdUid, UserInfo::getDdName));
+            for (RoundReceive roundReceive : entityList) {
+                // 更新金钱单位
+                if (StringUtils.equals("rmb", roundReceive.getDdType())) {
+                    roundReceive.setDdTotal(roundReceive.getDdTotal() / 100);
+                }
+                // 更新用户名
+                roundReceive.setUserName(userInfoMap.get(roundReceive.getDdUid()));
+                // 更新游戏名称
+                roundReceive.setGameName(this.gamesService.getCacheValue(Games.class, String.valueOf(roundReceive.getDdGCode())));
+                //
+                JSONObject roundInfo = getRoundInfo(roundReceive.getDdGroup(), roundReceive.getDdMCode());
+                if (roundInfo.containsKey("name")) {
+                    roundReceive.setRoundName(roundInfo.getString("name"));
+                } else {
+                    roundReceive.setRoundName("未知比赛");
+                }
+                if (roundInfo.containsKey("time")) {
+                    roundReceive.setRoundTime(roundInfo.getString("time"));
+                } else {
+                    roundReceive.setRoundTime("未知时长");
+                }
+                // 根据查询条件排除
+                if ((roundInfo.containsKey("code"))) {
+                    String roundName = statsListParam.getQueryObject().getString("roundName");
                     if (StringUtils.isNotBlank(roundName)) {
-                        if (!roundName.equals(roundInfo.getString("code"))) {
-                            continue;
+                        if (StringUtils.equals(roundName, roundInfo.getString("code"))) {
+                            roundReceive.setRoundCode(roundInfo.getString("code"));
+                            newList.add(roundReceive);
                         }
+                    } else {
+                        newList.add(roundReceive);
                     }
                 }
-                roundReceive.setRoundCode(roundInfo.getString("code"));
-            } else {
-                roundReceive.setRoundCode("未知赛制");
             }
-            newList.add(roundReceive);
         }
+
         entityList.clear();
         entityList.addAll(newList);
+        // statsListResult.setCount(newList.size());
         return null;
-    }
-
-    @Override
-    public StatsListResult getPage(StatsListParam statsListParam) {
-        StatsListResult statsListResult = new StatsListResult();
-        // 判断请求参数是否为空
-        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
-        }
-        if (Objects.isNull(statsListParam.getQueryObject())) {
-            statsListParam.setQueryObject(new JSONObject());
-        }
-        try {
-            // 初始化查询wrapper
-            QueryWrapper<RoundReceive> queryWrapper = new QueryWrapper<>();
-            this.updateGetListWrapper(statsListParam, queryWrapper, statsListResult);
-            Page<RoundReceive> page = new Page<>(statsListParam.getPage(), statsListParam.getLimit());
-            IPage<RoundReceive> entityPages = this.page(page, queryWrapper);
-            if (Objects.nonNull(entityPages)) {
-                List<RoundReceive> entityList = entityPages.getRecords();
-                JSONObject totalRow = this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
-                statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
-                statsListResult.setTotalRow(totalRow);
-                statsListResult.setCount(entityPages.getTotal());
-            }
-        } catch (Exception e) {
-            statsListResult.setCode(1);
-            statsListResult.setMsg("查询结果异常，请联系开发人员！");
-            LOGGER.error(ExceptionUtils.getStackTrace(e));
-        }
-        return statsListResult;
     }
 
     /**
@@ -166,6 +123,7 @@ public class RoundReceiveService extends BaseStatsService<RoundReceive, RoundRec
      * @return 赛制信息
      */
     private JSONObject getRoundInfo(boolean isGroup, int ddmCode) {
+        // TODO
         String key = MessageFormat.format("match-{0}-g{1}", isGroup, ddmCode);
         if (roundInfoMap.containsKey(key)) {
             return roundInfoMap.get(key);
@@ -220,5 +178,5 @@ public class RoundReceiveService extends BaseStatsService<RoundReceive, RoundRec
     public void setUserInfoService(UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
     }
-    
+
 }

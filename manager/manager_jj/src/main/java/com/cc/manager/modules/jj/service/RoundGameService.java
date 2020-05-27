@@ -58,10 +58,10 @@ public class RoundGameService extends BaseCrudService<RoundGame, RoundGameMapper
                 String[] timeRangeArray = StringUtils.split(times, "~");
                 queryWrapper.between("DATE(ddEnd)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
             }
-            String gameName = queryObject.getString("gameName");
-            queryWrapper.eq(StringUtils.isNotBlank(gameName), "ddGame", gameName);
-            String roundName = queryObject.getString("roundName");
-            queryWrapper.eq(StringUtils.isNotBlank(roundName), "ddName", roundName);
+            String gameCode = queryObject.getString("gameCode");
+            queryWrapper.eq(StringUtils.isNotBlank(gameCode), "ddGame", gameCode);
+            String roundCode = queryObject.getString("roundCode");
+            queryWrapper.eq(StringUtils.isNotBlank(roundCode), "ddRound", roundCode);
             String ddState = queryObject.getString("ddState");
             queryWrapper.eq(StringUtils.isNotBlank(ddState), "ddState", Boolean.parseBoolean(ddState));
 

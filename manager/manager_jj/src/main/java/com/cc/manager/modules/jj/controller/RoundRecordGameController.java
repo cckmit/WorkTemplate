@@ -1,16 +1,16 @@
 package com.cc.manager.modules.jj.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.cc.manager.common.mvc.BaseCrudController;
-import com.cc.manager.common.result.CrudObjectResult;
-import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.result.CrudPageResult;
-import com.cc.manager.common.result.PostResult;
+import com.cc.manager.common.mvc.BaseStatsController;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.jj.entity.RoundRecord;
 import com.cc.manager.modules.jj.service.RoundRecordGameService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,26 +23,14 @@ import javax.servlet.http.HttpServletResponse;
 @CrossOrigin
 @RestController
 @RequestMapping("/jj/roundRecordGame")
-public class RoundRecordGameController implements BaseCrudController {
+public class RoundRecordGameController implements BaseStatsController {
 
     private RoundRecordGameService roundRecordGameService;
 
-    @Override
-    @GetMapping(value = "/id/{id}")
-    public CrudObjectResult getObjectById(@PathVariable String id) {
-        return this.roundRecordGameService.getObjectById(id);
-    }
 
-    @Override
-    @GetMapping(value = "/getObject/{getObjectParam}")
-    public CrudObjectResult getObject(@PathVariable String getObjectParam) {
-        return this.roundRecordGameService.getObject(getObjectParam);
-    }
-
-    @Override
-    @GetMapping(value = "/getPage")
-    public CrudPageResult getPage(CrudPageParam crudPageParam) {
-        return this.roundRecordGameService.getPage(crudPageParam);
+    @Override    @GetMapping(value = "/getPage")
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        return this.roundRecordGameService.getPage(statsListParam);
     }
 
     /**
@@ -55,28 +43,7 @@ public class RoundRecordGameController implements BaseCrudController {
         roundRecordGameService.exportResult(roundRecord, response);
     }
 
-    @Override
-    @PostMapping
-    public PostResult post(@RequestBody String requestParam) {
-        return this.roundRecordGameService.post(requestParam);
-    }
 
-    @Override
-    @PutMapping
-    public PostResult put(@RequestBody String requestParam) {
-        return this.roundRecordGameService.put(requestParam);
-    }
-
-    @Override
-    @DeleteMapping
-    public PostResult delete(@RequestBody String requestParam) {
-        return this.roundRecordGameService.delete(requestParam);
-    }
-
-    @Override
-    public JSONObject getSelectArray(String requestParam) {
-        return null;
-    }
 
 
     @Autowired

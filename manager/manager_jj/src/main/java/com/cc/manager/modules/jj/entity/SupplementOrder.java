@@ -67,5 +67,7 @@ public class SupplementOrder implements BaseCrudEntity<SupplementOrder> {
     @TableField(value = "create_time")
     private LocalDateTime createTime;
 
+    @TableField(exist = false)
+    private long currentCoin;
 
 }

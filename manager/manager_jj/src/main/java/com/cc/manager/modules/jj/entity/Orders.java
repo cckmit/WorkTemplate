@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
  * @since 2020-05-13
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @TableName(schema = "persie", value = "orders")
 public class Orders extends BaseStatsEntity<Orders> {
 

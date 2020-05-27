@@ -14,7 +14,7 @@ import com.cc.manager.common.result.PostResult;
  * @author CC ccheng0725@outlook.com
  * @date 2020-04-22 20:21
  */
-public interface BaseCrudController {
+public interface BaseCrudController extends BaseController {
 
     /**
      * 根据ID查询对象

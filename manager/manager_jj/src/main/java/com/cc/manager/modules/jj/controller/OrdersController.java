@@ -24,10 +24,6 @@ public class OrdersController implements BaseStatsController {
     private OrdersService ordersService;
 
     @Override
-    public StatsListResult getList(StatsListParam statsListParam) {
-        return null;
-    }
-
     @GetMapping(value = "/getPage")
     public StatsListResult getPage(StatsListParam statsListParam) {
         return ordersService.getPage(statsListParam);

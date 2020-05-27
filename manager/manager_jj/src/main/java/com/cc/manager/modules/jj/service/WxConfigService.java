@@ -98,6 +98,32 @@ public class WxConfigService extends BaseCrudService<WxConfig, WxConfigMapper> {
     }
 
     @Override
+    protected void rebuildSelectedEntity(WxConfig entity) {
+        String platformName = "未知";
+        switch (entity.getDdAppPlatform()) {
+            case "weixin":
+                platformName = "微信";
+                break;
+            case "q":
+                platformName = "QQ";
+                break;
+            case "tt":
+                platformName = "头条";
+                break;
+            default:
+                break;
+        }
+
+        String programTypeName = "小游戏";
+        if (entity.getProgramType() == 1) {
+            programTypeName = "小程序";
+        } else if (entity.getProgramType() == 2) {
+            programTypeName = "公众号";
+        }
+        entity.setShowName(platformName + "-" + programTypeName + "-" + entity.getProductName());
+    }
+
+    @Override
     protected void updateInsertEntity(String requestParam, WxConfig entity) {
         AppConfig appConfig = new AppConfig();
         appConfig.setId(entity.getId());

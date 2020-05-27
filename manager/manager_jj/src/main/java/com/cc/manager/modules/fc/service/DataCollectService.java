@@ -8,11 +8,16 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cc.manager.common.mvc.BaseCrudService;
+import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
+import com.cc.manager.modules.fc.entity.AdValueWxAdUnit;
 import com.cc.manager.modules.fc.entity.MiniGame;
 import com.cc.manager.modules.fc.entity.MinitjWx;
 import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
+import com.cc.manager.modules.jj.entity.BuyPay;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.service.WxConfigService;
 import org.apache.commons.lang3.StringUtils;
@@ -26,131 +31,42 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * <p>
- * 服务实现类
- * </p>
  *
  * @author cf
  * @since 2020-05-13
  */
 @Service
-public class DataCollectService extends BaseCrudService<MinitjWx, MinitjWxMapper> {
+public class DataCollectService extends BaseStatsService<MinitjWx, MinitjWxMapper> {
 
     private WxConfigService wxConfigService;
     private MiniGameService miniGameService;
 
     @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<MinitjWx> queryWrapper) {
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
+    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<MinitjWx> queryWrapper, StatsListResult statsListResult) {
+        String beginTime = null;
+        String endTime = null;
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
             String times = queryObject.getString("times");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
-                queryWrapper.between("DATE(wx_date)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
-            }
-        } else {
-            String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-            String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-            queryWrapper.between("DATE(wx_date)", beginTime, endTime);
-        }
-    }
-
-    /**
-     * 分页查询
-     *
-     * @param crudPageParam 分页请求参数
-     */
-    @Override
-    public CrudPageResult getPage(CrudPageParam crudPageParam) {
-        CrudPageResult pageResult = new CrudPageResult();
-        try {
-            Page<MinitjWx> page = new Page<>(crudPageParam.getPage(), crudPageParam.getLimit());
-            QueryWrapper<MinitjWx> queryWrapper = new QueryWrapper<>();
-            // 更新查询排序条件
-            if (StringUtils.isNotBlank(crudPageParam.getOrderBy())) {
-                JSONObject orderByObject = JSONObject.parseObject(crudPageParam.getOrderBy());
-                orderByObject.forEach((orderByColumn, orderByType) -> {
-                    String typeStr = orderByType.toString();
-                    if ("ASC".equalsIgnoreCase(typeStr)) {
-                        queryWrapper.orderBy(true, true, orderByColumn);
-                    } else if ("DESC".equalsIgnoreCase(typeStr)) {
-                        queryWrapper.orderBy(true, false, orderByColumn);
-                    }
-                });
-            }
-            String[] times = getTimes(crudPageParam);
-            String type = "";
-            if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-                JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
-                type = queryObject.getString("type");
-            }
-            List<MinitjWx> dataCollects = new ArrayList<>();
-//            if (StringUtils.isBlank(type)) {
-//                dataCollects = queryProgramStatis(times[0], times[1]);
-//                Map<String, DataCollect> dataCollectMap = queryMinitjWxStatis(times[0], times[1], type);
-//                // 合并小游戏和小程序数据
-//                if (!dataCollectMap.isEmpty() && !dataCollects.isEmpty()) {
-//                    dataCollects = countProgramAndMititjWx(dataCollects, dataCollectMap);
-//                } else {
-//                    if (dataCollects.isEmpty()) {
-//                        dataCollects = new ArrayList<>(dataCollectMap.values());
-//                    }
-//                }
-//            } else {
-//                if ("1".equals(type)) {
-//                    // 小程序查询
-//                    dataCollects = queryProgramStatis(times[0], times[1]);
-//                } else {
-//                    // 小游戏查询
-//                    Map<String, DataCollect> dataCollectMap = queryMinitjWxStatis(times[0], times[1], type);
-//                    dataCollects = new ArrayList<>(dataCollectMap.values());
-//                }
-//            }
-            this.updateGetPageWrapper(crudPageParam, queryWrapper);
-            IPage<MinitjWx> entityPages = this.page(page, queryWrapper);
-            if (Objects.nonNull(entityPages)) {
-                pageResult.setCount(entityPages.getTotal());
-                List<MinitjWx> entityList = entityPages.getRecords();
-                this.rebuildSelectedList(crudPageParam, entityList);
-                pageResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
-            }
-        } catch (Exception e) {
-            pageResult.setCode(1);
-            pageResult.setMsg("查询结果异常，请联系开发人员！");
-            LOGGER.error(ExceptionUtils.getStackTrace(e));
-        }
-        return pageResult;
-    }
-
-    private String[] getTimes(CrudPageParam crudPageParam) {
-        String[] times = new String[2];
-        String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(14));
-        String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
-            String time = queryObject.getString("times");
-            if (StringUtils.isNotBlank(time)) {
-                String[] timeRangeArray = StringUtils.split(time, "~");
                 beginTime = timeRangeArray[0].trim();
                 endTime = timeRangeArray[1].trim();
             }
+        } else {
+            beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+            endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
         }
-        times[0] = beginTime;
-        times[1] = endTime;
-        return times;
+        queryWrapper.between("DATE(wx_date)", beginTime, endTime);
     }
 
-    /**
-     * 重构分页查询结果，比如进行汇总复制计算等操作
-     *
-     * @param crudPageParam 查询参数
-     * @param entityList    查询数据对象列表
-     */
     @Override
-    protected void rebuildSelectedList(CrudPageParam crudPageParam, List<MinitjWx> entityList) {
+    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
         for (MinitjWx productData : entityList) {
             // 通过appID查找配置信息
             WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, productData.getWxAppid());
@@ -191,13 +107,52 @@ public class DataCollectService extends BaseCrudService<MinitjWx, MinitjWxMapper
             }
             productData.setRevenueCount(adRevenue);
         }
-
+        return null;
     }
 
     @Override
-    protected boolean delete(String requestParam, UpdateWrapper<MinitjWx> deleteWrapper) {
-        return false;
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        StatsListResult statsListResult = new StatsListResult();
+        // 判断请求参数是否为空
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
+        }
+        if (Objects.isNull(statsListParam.getQueryObject())) {
+            statsListParam.setQueryObject(new JSONObject());
+        }
+        try {
+
+//            if (Objects.nonNull()) {
+//                statsListResult.setData(JSONArray.parseArray(JSON.toJSONString()));
+//                statsListResult.setCount(.size());
+//            }
+        } catch (Exception e) {
+            statsListResult.setCode(1);
+            statsListResult.setMsg("查询结果异常，请联系开发人员！");
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+        }
+        return statsListResult;
     }
+
+    private String[] getTimes(StatsListParam statsListParam) {
+        String[] times = new String[2];
+        String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(14));
+        String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
+            String time = queryObject.getString("times");
+            if (StringUtils.isNotBlank(time)) {
+                String[] timeRangeArray = StringUtils.split(time, "~");
+                beginTime = timeRangeArray[0].trim();
+                endTime = timeRangeArray[1].trim();
+            }
+        }
+        times[0] = beginTime;
+        times[1] = endTime;
+        return times;
+    }
+
+
 
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {
@@ -208,5 +163,6 @@ public class DataCollectService extends BaseCrudService<MinitjWx, MinitjWxMapper
     public void setMiniGameService(MiniGameService miniGameService) {
         this.miniGameService = miniGameService;
     }
+
 
 }

@@ -8,9 +8,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.cc.manager.common.mvc.BaseCrudService;
-import com.cc.manager.common.result.CrudPageParam;
+import com.cc.manager.common.mvc.BaseStatsService;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.jj.config.JjConfig;
 import com.cc.manager.modules.jj.entity.Games;
 import com.cc.manager.modules.jj.entity.RoundExt;
@@ -35,59 +35,39 @@ import java.util.List;
  */
 @Service
 @DS("jj")
-public class RoundRecordGameService extends BaseCrudService<RoundRecord, RoundRecordMapper> {
+public class RoundRecordGameService extends BaseStatsService<RoundRecord, RoundRecordMapper> {
 
     private JjConfig jjConfig;
     private GamesService gamesService;
     private RoundExtService roundExtService;
 
+
     @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<RoundRecord> queryWrapper) {
+    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<RoundRecord> queryWrapper, StatsListResult statsListResult) {
         queryWrapper.eq("ddGroup", 0);
         queryWrapper.gt("ddResult", 0);
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
-            String times = queryObject.getString("times");
-            if (StringUtils.isNotBlank(times)) {
-                String[] timeRangeArray = StringUtils.split(times, "~");
-                queryWrapper.between("DATE(ddEnd)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
-            }
-            String ddGame = queryObject.getString("gameName");
-            queryWrapper.eq(StringUtils.isNotBlank(ddGame), "ddGame", ddGame);
-            String ddRound = queryObject.getString("roundName");
-            queryWrapper.eq(StringUtils.isNotBlank(ddRound), "ddRound", ddRound);
+        String times = statsListParam.getQueryObject().getString("times");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            queryWrapper.between("DATE(create_time)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
         }
+        String gameName = statsListParam.getQueryObject().getString("gameName");
+        queryWrapper.eq(StringUtils.isNotBlank(gameName), "ddGame", gameName);
+        String roundName = statsListParam.getQueryObject().getString("roundName");
+        queryWrapper.eq(StringUtils.isNotBlank(roundName), "ddRound", roundName);
     }
 
-    /**
-     * 重构分页查询结果，比如进行汇总复制计算等操作
-     *
-     * @param crudPageParam 查询参数
-     * @param entityList    查询数据对象列表
-     */
     @Override
-    protected void rebuildSelectedList(CrudPageParam crudPageParam, List<RoundRecord> entityList) {
+    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<RoundRecord> entityList, StatsListResult statsListResult) {
         for (RoundRecord roundRecord : entityList) {
-            Integer ddCode = roundRecord.getDdGame();
-            Games games = this.gamesService.getCacheEntity(Games.class, ddCode.toString());
-            if (games != null) {
-                String gameName = games.getDdName();
-                roundRecord.setGamesName(gameName);
-            }
-            String ddRound = roundRecord.getDdRound();
-            RoundExt roundExt = this.roundExtService.getCacheEntity(RoundExt.class, ddRound);
+            roundRecord.setGamesName(this.gamesService.getCacheValue(Games.class, roundRecord.getDdGame().toString()));
+            RoundExt roundExt = this.roundExtService.getCacheEntity(RoundExt.class, roundRecord.getDdRound());
             if (roundExt != null) {
-                String roundName = roundExt.getDdName();
-                roundRecord.setRoundName(ddRound + "-" + roundName);
-                String tip = roundExt.getTip();
-                roundRecord.setRoundLength(tip);
+                roundRecord.setRoundName(roundRecord.getDdRound() + "-" + roundExt.getDdName());
+                roundRecord.setRoundLength(roundExt.getTip());
             }
         }
-    }
-
-    @Override
-    protected boolean delete(String requestParam, UpdateWrapper<RoundRecord> deleteWrapper) {
-        return false;
+        return null;
     }
 
     /**
@@ -232,5 +212,6 @@ public class RoundRecordGameService extends BaseCrudService<RoundRecord, RoundRe
     public void setRoundExtService(RoundExtService roundExtService) {
         this.roundExtService = roundExtService;
     }
+
 
 }

@@ -1,16 +1,15 @@
 package com.cc.manager.modules.fc.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.cc.manager.common.mvc.BaseCrudController;
-import com.cc.manager.common.result.CrudObjectResult;
-import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.result.CrudPageResult;
-import com.cc.manager.common.result.PostResult;
-import com.cc.manager.modules.fc.entity.MinitjWx;
+import com.cc.manager.common.mvc.BaseStatsController;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.service.WxAddDataDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author cf
@@ -18,51 +17,15 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/jj/wxAddDataDetail")
-public class WxAddDataDetailController implements BaseCrudController {
+@RequestMapping(value = "/fc/wxAddDataDetail")
+public class WxAddDataDetailController implements BaseStatsController {
 
     private WxAddDataDetailService wxAddDataDetailService;
 
     @Override
-    @GetMapping(value = "/id/{id}")
-    public CrudObjectResult getObjectById(@PathVariable String id) {
-        return this.wxAddDataDetailService.getObjectById(id);
-    }
-
-    @Override
-    @GetMapping(value = "/getObject/{getObjectParam}")
-    public CrudObjectResult getObject(@PathVariable String getObjectParam) {
-        return this.wxAddDataDetailService.getObject(getObjectParam);
-    }
-
-    @Override
     @GetMapping(value = "/getPage")
-    public CrudPageResult getPage(CrudPageParam crudPageParam) {
-        return this.wxAddDataDetailService.getPage(crudPageParam);
-    }
-
-    @Override
-    @PostMapping
-    public PostResult post(@RequestBody String requestParam) {
-        return this.wxAddDataDetailService.post(requestParam);
-    }
-
-    @Override
-    @PutMapping
-    public PostResult put(@RequestBody String requestParam) {
-        return this.wxAddDataDetailService.put(requestParam);
-    }
-
-    @Override
-    @DeleteMapping
-    public PostResult delete(@RequestBody String requestParam) {
-        return this.wxAddDataDetailService.delete(requestParam);
-    }
-
-    @Override
-    @GetMapping(value = "/getSelectArray/{requestParam}")
-    public JSONObject getSelectArray(@PathVariable String requestParam) {
-        return this.wxAddDataDetailService.getSelectArray(MinitjWx.class, requestParam);
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        return this.wxAddDataDetailService.getPage(statsListParam);
     }
 
     @Autowired

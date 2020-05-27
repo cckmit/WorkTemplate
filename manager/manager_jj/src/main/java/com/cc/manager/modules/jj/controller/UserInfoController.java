@@ -25,10 +25,6 @@ public class UserInfoController implements BaseStatsController {
     private UserInfoService userInfoService;
 
     @Override
-    public StatsListResult getList(StatsListParam statsListParam) {
-        return null;
-    }
-
     @GetMapping(value = "/getPage")
     public StatsListResult getPage(StatsListParam statsListParam) {
         return userInfoService.getPage(statsListParam);

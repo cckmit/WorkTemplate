@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cc.manager.common.mvc.BaseCrudEntity;
+import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 
 import java.sql.Date;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName(schema = "persie_deamon", value = "round_record")
-public class RoundRecord implements BaseCrudEntity<RoundRecord> {
+public class RoundRecord extends BaseStatsEntity<RoundRecord> {
 
     private static final long serialVersionUID = 1L;
 

@@ -2,9 +2,9 @@ package com.cc.manager.modules.fc.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.cc.manager.common.mvc.BaseCrudService;
-import com.cc.manager.common.result.CrudPageParam;
+import com.cc.manager.common.mvc.BaseStatsService;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.entity.MiniGame;
 import com.cc.manager.modules.fc.entity.MinitjWx;
 import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
@@ -25,39 +25,33 @@ import java.util.List;
  * @since 2020-05-13
  */
 @Service
-public class WxAddDataDetailService extends BaseCrudService<MinitjWx, MinitjWxMapper> {
+public class WxAddDataDetailService extends BaseStatsService<MinitjWx, MinitjWxMapper> {
 
     private WxConfigService wxConfigService;
     private MiniGameService miniGameService;
 
     @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<MinitjWx> queryWrapper) {
-
-        if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
-            JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
-            String appId = queryObject.getString("id");
-            queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
-            String times = queryObject.getString("times");
-            if (StringUtils.isNotBlank(times)) {
-                String[] timeRangeArray = StringUtils.split(times, "~");
-                queryWrapper.between("DATE(wx_date)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
-            }
-        } else {
-            String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
-            String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-            queryWrapper.between("DATE(wx_date)", beginTime, endTime);
+    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<MinitjWx> queryWrapper, StatsListResult statsListResult) {
+        String beginTime =null, endTime =null;
+        JSONObject queryObject = statsListParam.getQueryObject();
+        String appId = queryObject.getString("id");
+        queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
+        String times = queryObject.getString("times");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            beginTime = timeRangeArray[0].trim();
+            endTime = timeRangeArray[1].trim();
         }
+        if(StringUtils.isBlank(beginTime) || StringUtils.isBlank(endTime)){
+            beginTime =DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+            endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+        }
+        queryWrapper.between("DATE(wx_date)", beginTime, endTime);
         queryWrapper.orderBy(true, false, "wx_date");
     }
 
-    /**
-     * 重构分页查询结果，比如进行汇总复制计算等操作
-     *
-     * @param crudPageParam 查询参数
-     * @param entityList    查询数据对象列表
-     */
     @Override
-    protected void rebuildSelectedList(CrudPageParam crudPageParam, List<MinitjWx> entityList) {
+    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
         entityList.forEach(minitjWx -> {
             // 通过appID查找配置信息
             WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, minitjWx.getWxAppid());
@@ -93,14 +87,8 @@ public class WxAddDataDetailService extends BaseCrudService<MinitjWx, MinitjWxMa
             minitjWx.setRevenueCount(adRevenue);
 
         });
+        return null;
     }
-
-    @Override
-    protected boolean delete(String requestParam, UpdateWrapper<MinitjWx> deleteWrapper) {
-        return false;
-    }
-
-
 
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {

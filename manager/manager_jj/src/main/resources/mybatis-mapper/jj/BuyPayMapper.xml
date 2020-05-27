@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cc.manager.modules.jj.mapper.BuyPayMapper">
+
+    <resultMap id="BaseResultMap" type="com.cc.manager.modules.jj.entity.BuyPay">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="buy_date" jdbcType="VARCHAR" property="buyDate"/>
+        <result column="buy_app_id" jdbcType="VARCHAR" property="buyAppId"/>
+        <result column="buy_product_name" jdbcType="VARCHAR" property="buyProductName"/>
+        <result column="buy_cost" jdbcType="DECIMAL" property="buyCost"/>
+        <result column="buy_click_number" jdbcType="INTEGER" property="buyClickNumber"/>
+        <result column="buy_click_price" jdbcType="DECIMAL" property="buyClickPrice"/>
+        <result column="insert_time" jdbcType="TIMESTAMP" property="insertTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, buy_date, buy_app_id, buy_product_name, buy_cost, buy_click_number, buy_click_price,
+    insert_time
+  </sql>
+
+    <select id="queryByPayCollectByDate" resultType="com.cc.manager.modules.jj.entity.BuyPay">
+        SELECT
+        b.buy_date AS buyDate,
+        SUM(b.buy_cost) AS buyCost
+        FROM persie_deamon.buy_pay b
+        <if test="type !=null and type !=''">
+            , persie.wx_config w
+        </if>
+        WHERE DATE(b.buy_date) BETWEEN #{beginTime}  AND #{endTime}
+        <if test="type !=null and type !=''">
+            AND b.buy_app_id = w.ddAppId
+            AND w.program_type = #{type}
+        </if>
+        GROUP BY b.buy_date
+        ORDER BY b.buy_date
+    </select>
+
+</mapper>

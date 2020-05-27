@@ -1,6 +1,7 @@
 package com.cc.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cc.manager.common.utils.RedisUtil;
 import com.cc.manager.modules.jj.entity.Recharge;
 import com.cc.manager.modules.jj.entity.UserApp;
 import com.cc.manager.modules.jj.entity.UserInfo;
@@ -20,6 +21,8 @@ class ManagerJjApplicationTests {
     UserAppMapper userAppMapper;
     @Autowired
     UserInfoService userInfoService;
+    @Autowired
+    private RedisUtil redisUtil;
     @Test
     void contextLoads() {
     }
@@ -34,10 +37,12 @@ class ManagerJjApplicationTests {
 
     @Test
     public void getUserInfo() {
-        UserInfo userInfo = this.userInfoService.getById("oSn_Lw5rxqPXgC3b_M0heLW5wzbA");
-        System.out.println(userInfo.toString()
 
-        );
+        Integer coin = (Integer) redisUtil.hashGet("user-oxDM75DNVEcHIT0eHnL-QYCMv8sY", "coin");
+        System.out.println(coin.toString());
+//        UserInfo userInfo = this.userInfoService.getById("oSn_Lw5rxqPXgC3b_M0heLW5wzbA");
+//        System.out.println(userInfo.toString()
+
     }
     @Test
     public void getRecharge() {

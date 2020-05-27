@@ -1,15 +1,15 @@
 package com.cc.manager.modules.fc.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.cc.manager.common.mvc.BaseCrudController;
-import com.cc.manager.common.result.CrudObjectResult;
-import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.result.CrudPageResult;
-import com.cc.manager.common.result.PostResult;
+import com.cc.manager.common.mvc.BaseStatsController;
+import com.cc.manager.common.result.StatsListParam;
+import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.service.MinitjWxService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author cf
@@ -17,50 +17,15 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(value = "/minitjWx")
-public class MinitjWxController implements BaseCrudController {
+@RequestMapping(value = "/fc/minitjWx")
+public class MinitjWxController implements BaseStatsController {
 
     private MinitjWxService minitjWxService;
 
     @Override
-    @GetMapping(value = "/id/{id}")
-    public CrudObjectResult getObjectById(@PathVariable String id) {
-        return this.minitjWxService.getObjectById(id);
-    }
-
-    @Override
-    @GetMapping(value = "/getObject/{getObjectParam}")
-    public CrudObjectResult getObject(@PathVariable String getObjectParam) {
-        return this.minitjWxService.getObject(getObjectParam);
-    }
-
-    @Override
     @GetMapping(value = "/getPage")
-    public CrudPageResult getPage(CrudPageParam crudPageParam) {
-        return this.minitjWxService.getPage(crudPageParam);
-    }
-
-    @Override
-    @PostMapping
-    public PostResult post(@RequestBody String requestParam) {
-        return this.minitjWxService.post(requestParam);
-    }
-
-    @Override
-    @PutMapping
-    public PostResult put(@RequestBody String requestParam) {
-        return this.minitjWxService.put(requestParam);
-    }
-
-    @Override
-    @DeleteMapping
-    public PostResult delete(@RequestBody String requestParam) {
-        return this.minitjWxService.delete(requestParam);
-    }
-
-    @Override
-    public JSONObject getSelectArray(String requestParam) {
-        return null;
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        return this.minitjWxService.getPage(statsListParam);
     }
 
     @Autowired

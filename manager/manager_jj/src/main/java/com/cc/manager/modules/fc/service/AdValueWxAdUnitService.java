@@ -57,6 +57,7 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
      * 分组方式 — 产品+广告位
      */
     private static final String PRODUCT_APP_SPACE = "PRODUCT_APP_SPACE";
+
     private MiniGameService miniGameService;
     private WxConfigService wxConfigService;
 
@@ -89,8 +90,8 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
         this.updateParamByGroupType(queryObject, selectList, groupByList, showColumnList);
 
         // 4、其它可以在查询时过滤的条件赋值
-        String productAppId = queryObject.getString("productAppId");
-        queryWrapper.eq(StringUtils.isNotBlank(productAppId), "appId", productAppId);
+        String appId = queryObject.getString("appId");
+        queryWrapper.eq(StringUtils.isNotBlank(appId), "appId", appId);
         String slotId = queryObject.getString("slotId");
         queryWrapper.eq(StringUtils.isNotBlank(slotId), "slotId", slotId);
         String adUnitName = queryObject.getString("adUnitName");
@@ -101,6 +102,8 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
         queryWrapper.groupBy(groupByList.toArray(new String[0]));
         // 查询展示列表
         statsListResult.setShowColumn(showColumnList);
+        statsListParam.setLimit(30);
+
     }
 
     /**
@@ -145,8 +148,6 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
             queryObject.put("groupType", groupType);
         }
         switch (groupType) {
-            case TIME:
-                break;
             case PRODUCT_APP:
                 selectList.add("appId as appId");
                 groupByList.add("appId");
@@ -202,7 +203,6 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
         Map<String, AdValueWxAdUnit> adValueWxAdUnitMap = Maps.newHashMap();
         AdValueWxAdUnit totalAdValueWxAdUnit = new AdValueWxAdUnit();
         for (AdValueWxAdUnit adValueWxAdUnit : entityList) {
-
             // key用来汇判断需要汇总的数据总数据
             String key;
             switch (queryObject.getString("groupType")) {
@@ -212,19 +212,19 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
                     break;
                 case PRODUCT_APP:
                     key = this.rebuildGroupByProductApp(adValueWxAdUnit);
-                    statsListResult.setDetailGroupBy(PRODUCT_APP);
+                    statsListResult.setDetailGroupBy(PRODUCT_APP_SPACE);
                     break;
                 case AD_TYPE:
                     key = this.rebuildGroupByAdType(adValueWxAdUnit);
-                    statsListResult.setDetailGroupBy(AD_TYPE);
+                    statsListResult.setDetailGroupBy(PRODUCT_APP_SPACE);
                     break;
                 case AD_SPACE:
                     key = this.rebuildGroupByAdSpace(adValueWxAdUnit);
-                    statsListResult.setDetailGroupBy(AD_SPACE);
+                    statsListResult.setDetailGroupBy(PRODUCT_APP_SPACE);
                     break;
                 case PRODUCT_APP_TYPE:
                     key = this.rebuildGroupByProductAppType(adValueWxAdUnit);
-                    statsListResult.setDetailGroupBy(PRODUCT_APP_TYPE);
+                    statsListResult.setDetailGroupBy(PRODUCT_APP_SPACE);
                     break;
                 case PRODUCT_APP_SPACE:
                     key = this.rebuildGroupByProductAppSpace(adValueWxAdUnit);
@@ -252,6 +252,7 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
         // 汇总数据没有详情
         totalAdValueWxAdUnit.setHaveDetail(false);
         return JSONObject.parseObject(JSONObject.toJSONString(totalAdValueWxAdUnit));
+
     }
 
     /**
@@ -282,6 +283,7 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
                 adValueWxAdUnit.setProductName(miniGame.getGameName());
             }
         }
+        adValueWxAdUnit.setHaveDetail(true);
         return adValueWxAdUnit.getDate() + "_" + adValueWxAdUnit.getAppId();
     }
 
@@ -292,7 +294,6 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
      * @return 数据汇总key
      */
     private String rebuildGroupByAdType(AdValueWxAdUnit adValueWxAdUnit) {
-
         return adValueWxAdUnit.getDate() + "_" + adValueWxAdUnit.getSlotId();
     }
 
@@ -303,7 +304,7 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
      * @return 数据汇总key
      */
     private String rebuildGroupByAdSpace(AdValueWxAdUnit adValueWxAdUnit) {
-
+        adValueWxAdUnit.setHaveDetail(true);
         return adValueWxAdUnit.getDate() + "_" + adValueWxAdUnit.getAdUnitName();
     }
 
@@ -324,7 +325,7 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
                 adValueWxAdUnit.setProductName(miniGame.getGameName());
             }
         }
-
+        adValueWxAdUnit.setHaveDetail(true);
         return adValueWxAdUnit.getDate() + "_" + adValueWxAdUnit.getAppId() + "_" + adValueWxAdUnit.getSlotId();
     }
 
@@ -356,6 +357,20 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
      */
     private void calculateRate(Collection<AdValueWxAdUnit> adValueList) {
         adValueList.forEach(AdValueWxAdUnit::calculateRate);
+    }
+
+    /**
+     * 查询插屏收入汇总数据
+     *
+     * @return List
+     */
+    List<AdValueWxAdUnit> queryScreenIncomeByDate(String beginTime, String endTime) {
+        QueryWrapper<AdValueWxAdUnit> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("SUM(income) AS screenIncome", "DATE");
+        queryWrapper.between("DATE(DATE)", beginTime, endTime);
+        queryWrapper.eq("slotID", "3030046789020061").eq("appSource", "JJ");
+        queryWrapper.groupBy("DATE");
+        return this.list(queryWrapper);
     }
 
     @Autowired

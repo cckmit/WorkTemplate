@@ -22,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author cf
@@ -38,6 +35,35 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
     private RechargeMapper rechargeMapper;
     private UserValueService userValueService;
     private WxConfigService wxConfigService;
+
+    /**
+     * 根据用户名模糊匹配用户
+     *
+     * @param userName 输入的用户名
+     * @return 用户信息
+     */
+    public List<UserInfo> getUserInfoListByUserName(String userName) {
+        if (StringUtils.isNotBlank(userName)) {
+            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+            userInfoQueryWrapper.like("ddName", userName);
+            return this.list(userInfoQueryWrapper);
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * 根据uuid列表查询用户列表
+     *
+     * @param uuidList uuid列表
+     * @return 用户列表
+     */
+    public List<UserInfo> getUserInfoListByUuidList(Set<String> uuidSet) {
+        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+        userInfoQueryWrapper.like("ddUid", uuidSet);
+        return this.list(userInfoQueryWrapper);
+    }
+
 
     @Override
     public StatsListResult getPage(StatsListParam statsListParam) {

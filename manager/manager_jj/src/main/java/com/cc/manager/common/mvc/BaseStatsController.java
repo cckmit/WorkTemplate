@@ -10,7 +10,7 @@ import com.cc.manager.common.result.StatsListResult;
  * @author CC ccheng0725@outlook.com
  * @date 2020-05-03 19:59
  */
-public interface BaseStatsController {
+public interface BaseStatsController extends BaseController {
 
     /**
      * 分页查询
@@ -20,6 +20,6 @@ public interface BaseStatsController {
      * @param statsListParam 数据查询参数
      * @return 数据查询结果
      */
-    StatsListResult getList(StatsListParam statsListParam);
+    StatsListResult getPage(StatsListParam statsListParam);
 
 }

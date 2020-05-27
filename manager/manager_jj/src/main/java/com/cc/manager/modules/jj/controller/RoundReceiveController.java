@@ -24,15 +24,10 @@ public class RoundReceiveController implements BaseStatsController {
 
     private RoundReceiveService roundReceiveService;
 
-
+    @Override
     @GetMapping(value = "/getPage")
     public StatsListResult getPage(StatsListParam statsListParam) {
         return this.roundReceiveService.getPage(statsListParam);
-    }
-
-    @Override
-    public StatsListResult getList(StatsListParam statsListParam) {
-        return null;
     }
 
     @Autowired

@@ -25,10 +25,6 @@ public class PayStatisticController implements BaseStatsController {
     private PayStatisticService payStatisticService;
 
     @Override
-    public StatsListResult getList(StatsListParam statsListParam) {
-        return null;
-    }
-
     @GetMapping(value = "/getPage")
     public StatsListResult getPage(StatsListParam statsListParam) {
         return payStatisticService.getPage(statsListParam);

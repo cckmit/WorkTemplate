@@ -35,35 +35,17 @@ public class RoundMatchService extends BaseCrudService<RoundMatch, RoundMatchMap
 
     private JjConfig jjConfig;
 
-    /**
-     * 拼接链接地址
-     *
-     * @param icon    图标名称
-     * @param suffers 拼接数列
-     * @return url
-     */
-    private static String concatUrl(String resultUrl, String icon, String... suffers) {
-        if (StringUtils.isNotBlank(icon)) {
-            if (suffers != null) {
-                for (String suffer : suffers) {
-                    resultUrl = resultUrl.concat(suffer).concat("/");
-                }
-            }
-            return resultUrl.concat(icon);
-        }
-        return null;
-    }
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<RoundMatch> queryWrapper) {
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
             JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
-            String appId = queryObject.getString("productName");
+            String appId = queryObject.getString("appId");
             queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
-            String gameName = queryObject.getString("gameName");
-            queryWrapper.eq(StringUtils.isNotBlank(gameName), "ddGame", gameName);
-            String roundName = queryObject.getString("roundName");
-            queryWrapper.eq(StringUtils.isNotBlank(roundName), "ddName", roundName);
+            String gameCode = queryObject.getString("gameCode");
+            queryWrapper.eq(StringUtils.isNotBlank(gameCode), "ddGame", gameCode);
+            String roundCode = queryObject.getString("roundCode");
+            queryWrapper.eq(StringUtils.isNotBlank(roundCode), "ddRound", roundCode);
             String ddState = queryObject.getString("ddState");
             queryWrapper.eq(StringUtils.isNotBlank(ddState), "ddState", Boolean.parseBoolean(ddState));
         }
@@ -106,10 +88,9 @@ public class RoundMatchService extends BaseCrudService<RoundMatch, RoundMatchMap
                 roundMatch.setDdReward(roundExt.getDdReward());
                 roundMatch.setRoundLength(roundExt.getTip());
             }
-            WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, roundMatch.getDdAppId());
-            if (wxConfig != null) {
-                roundMatch.setAppName(wxConfig.getProductName());
-            }
+
+            roundMatch.setAppName(this.wxConfigService.getCacheValue(WxConfig.class, roundMatch.getDdAppId()));
+
             //获取资源图片信息
             String ddRes = roundMatch.getDdRes();
             if (StringUtils.isNotBlank(ddRes)) {
@@ -127,6 +108,25 @@ public class RoundMatchService extends BaseCrudService<RoundMatch, RoundMatchMap
                 roundMatch.setGamePicture1(gamePicture1);
             }
         }
+    }
+
+    /**
+     * 拼接链接地址
+     *
+     * @param icon    图标名称
+     * @param suffers 拼接数列
+     * @return url
+     */
+    private String concatUrl(String resultUrl, String icon, String... suffers) {
+        if (StringUtils.isNotBlank(icon)) {
+            if (suffers != null) {
+                for (String suffer : suffers) {
+                    resultUrl = resultUrl.concat(suffer).concat("/");
+                }
+            }
+            return resultUrl.concat(icon);
+        }
+        return null;
     }
 
     @Override
@@ -164,10 +164,11 @@ public class RoundMatchService extends BaseCrudService<RoundMatch, RoundMatchMap
      */
     private void updateOrInsertRoundMatch(RoundMatch record) {
         if (record.getDdGame() != null) {
-            long time;
             //获取游戏信息
             Games games = this.gamesService.getCacheEntity(Games.class, record.getDdGame().toString());
             RoundExt roundExt = this.roundExtService.getCacheEntity(RoundExt.class, record.getDdRound());
+
+            long time;
             if (games.getDdIsPk() == 1) {
                 //设置Pk类型结束时间
                 time = record.getDdStart().toEpochSecond(ZoneOffset.of("+8")) + roundExt.getDdTime() + 300;
