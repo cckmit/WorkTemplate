@@ -2,44 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cc.manager.modules.fc.mapper.WxDailyVisitTrendMapper">
 
-    <resultMap id="BaseResultMap" type="com.cc.manager.modules.fc.entity.WxDailyVisitTrend">
-        <id column="id" property="id" jdbcType="VARCHAR"/>
-        <result column="appId" property="appId" jdbcType="VARCHAR"/>
-        <result column="refDate" property="refDate" jdbcType="VARCHAR"/>
-        <result column="sessionCnt" property="sessionCnt" jdbcType="INTEGER"/>
-        <result column="visitPv" property="visitPv" jdbcType="INTEGER"/>
-        <result column="visitUv" property="visitUv" jdbcType="INTEGER"/>
-        <result column="visitUvNew" property="visitUvNew" jdbcType="INTEGER"/>
-        <result column="stayTimeUv" property="stayTimeUv" jdbcType="DOUBLE"/>
-        <result column="stayTimeSession" property="stayTimeSession" jdbcType="DOUBLE"/>
-        <result column="visitDepth" property="visitDepth" jdbcType="DOUBLE"/>
-        <result column="insertTime" property="insertTime" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-       id , date, appId, adUnitId, adUnitName, clickCount, clickRate,
-        ecpm, exposureCount, exposureRate, income, reqSuccCount
-    </sql>
-    <select id="selectVisitTrend" resultType="com.cc.manager.modules.fc.entity.MinitjWx">
-        SELECT t.appId AS wxAppid, t.visitPv AS wxVisit, t.visitUv AS wxActive, t.visitUvNew AS wxNew,
-        ROUND(t.stayTimeUv,0) AS wxAvgOnline, DATE(t.refDate) AS wxDate, s.shareUv AS wxShareUser, s.sharePv AS
-        wxShareCount, (r.day1/r.day0) AS wxRemain2
-        FROM persie_value.wx_daily_visit_trend AS t LEFT JOIN persie_value.wx_daily_summary AS s ON t.appId = s.appId
-        AND t.refDate = s.refDate LEFT JOIN
-        persie_value.wx_daily_retain AS r ON t.appId = r.appId AND t.refDate = r.refDate
-        WHERE DATE(t.refDate) BETWEEN #{start} AND #{end} AND r.dataType ='visit_uv_new'
-        <if test="ddAppId != null and ddAppId != ''">
-            and t.appId = #{ddAppId, jdbcType=VARCHAR}
-        </if>
-        GROUP BY t.refDate,t.appId, t.visitPv, t.visitUv, t.visitUvNew,
-        t.stayTimeUv,s.shareUv, s.sharePv,(r.day1/r.day0)
-    </select>
-    <select id="selectVisitTrendSummary" resultType="com.cc.manager.modules.fc.entity.MinitjWx">
-        SELECT  COUNT(t.appId) AS productCount, SUM(t.visitPv) AS wxVisit,  SUM(t.visitUv) AS wxActive,  SUM(t.visitUvNew) AS wxNew,
-        SUM(t.stayTimeUv) AS wxAvgOnline , DATE(t.refDate) AS wxDate, SUM(s.shareUv) AS wxShareUser,SUM(s.sharePv) AS wxShareCount
-        FROM persie_value.wx_daily_visit_trend AS t LEFT JOIN persie_value.wx_daily_summary AS s ON t.appId = s.appId AND t.refDate =s.refDate
-        WHERE DATE(t.refDate) between  #{start} and #{end}
-        GROUP BY t.refDate
-    </select>
-
 </mapper>

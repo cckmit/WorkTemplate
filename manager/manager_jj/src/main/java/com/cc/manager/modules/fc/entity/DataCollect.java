@@ -28,16 +28,16 @@ public class DataCollect implements Serializable {
     /*** 广告总收入*/
     private BigDecimal adRevenueCount;
     /*** 插屏总收入*/
-    private BigDecimal screenIncomeCount;
+    private BigDecimal screenIncomeCount = new BigDecimal(0);
     /*** 充值总收入*/
-    private BigDecimal rechargeCount;
+    private BigDecimal rechargeCount = new BigDecimal(0);
     /*** 视频总收入*/
     private BigDecimal videoIncomeCount;
 
     /*** banner总收入*/
     private BigDecimal bannerIncomeCount;
     /*** 买量支出*/
-    private BigDecimal buyPay;
+    private BigDecimal buyPay = new BigDecimal(0);
     /*** 分享人数*/
     private Integer shareUserCount;
     /*** 分享次数*/

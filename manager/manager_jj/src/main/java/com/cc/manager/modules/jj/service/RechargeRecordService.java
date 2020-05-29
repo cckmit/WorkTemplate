@@ -58,7 +58,18 @@ public class RechargeRecordService extends BaseStatsService<Recharge, RechargeMa
             statsListParam.setQueryObject(new JSONObject());
         }
         try {
-            String start = "", end = "" , uid  = "", userName= "",productName= "",ddStatus="";
+            // 初始化查询的起止日期
+            this.updateBeginAndEndDate(statsListParam);
+
+            String start = statsListParam.getQueryObject().getString("beginDate");
+            String end = statsListParam.getQueryObject().getString("endDate");
+
+            String uid = statsListParam.getQueryObject().getString("uid");
+            String userName = statsListParam.getQueryObject().getString("appId");
+            String productName = statsListParam.getQueryObject().getString("productName");
+            String ddStatus = statsListParam.getQueryObject().getString("ddStatus");
+
+
             if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
                 JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
                 String times = queryObject.getString("times");
@@ -67,10 +78,7 @@ public class RechargeRecordService extends BaseStatsService<Recharge, RechargeMa
                     start = timeRangeArray[0].trim();
                     end = timeRangeArray[1].trim();
                 }
-                 uid = queryObject.getString("uid");
-                 userName = queryObject.getString("userName");
-                 productName = queryObject.getString("productName");
-                 ddStatus = queryObject.getString("ddStatus");
+
             }
             List<Recharge> recharges = this.rechargeMapper.selectAllChargeRecord(start, end);
             List<Recharge> newRecharges = new ArrayList<>();
@@ -105,6 +113,27 @@ public class RechargeRecordService extends BaseStatsService<Recharge, RechargeMa
             LOGGER.error(ExceptionUtils.getStackTrace(e));
         }
         return statsListResult;
+    }
+
+    /**
+     * 初始化查询起止时间
+     *
+     * @param statsListParam 请求参数
+     */
+    private void updateBeginAndEndDate(StatsListParam statsListParam) {
+        String beginDate = null, endDate = null;
+        String times = statsListParam.getQueryObject().getString("times");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            beginDate = timeRangeArray[0].trim();
+            endDate = timeRangeArray[1].trim();
+        }
+        if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
+            beginDate = "2020-04-10";//DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2))
+            endDate = "2020-04-10";  //DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+        }
+        statsListParam.getQueryObject().put("beginDate", beginDate);
+        statsListParam.getQueryObject().put("endDate", endDate);
     }
 
     @Autowired

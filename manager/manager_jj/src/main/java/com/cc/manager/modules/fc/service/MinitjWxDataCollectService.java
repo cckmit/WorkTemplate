@@ -4,24 +4,19 @@ import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.modules.fc.entity.AdValueWxAdUnit;
-import com.cc.manager.modules.fc.entity.DataCollect;
-import com.cc.manager.modules.fc.entity.MiniGame;
-import com.cc.manager.modules.fc.entity.MinitjWx;
-import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
+import com.cc.manager.modules.fc.entity.*;
+import com.cc.manager.modules.jj.controller.JjAndFcAppConfigService;
 import com.cc.manager.modules.jj.entity.BuyPay;
 import com.cc.manager.modules.jj.entity.Orders;
-import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.service.BuyPayService;
 import com.cc.manager.modules.jj.service.OrdersService;
-import com.cc.manager.modules.jj.service.WxConfigService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,91 +24,78 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author cf
  * @since 2020-05-22
  */
 @Service
-public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, MinitjWxMapper> {
+public class MinitjWxDataCollectService {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(MinitjWxDataCollectService.class);
 
-    private WxConfigService wxConfigService;
-    private MiniGameService miniGameService;
 
     private WxDailyVisitTrendService wxDailyVisitTrendService;
+    private WxDailySummaryService wxDailySummaryService;
     private MinitjWxService minitjWxService;
 
     private AdValueWxAdUnitService adValueWxAdUnitService;
     private OrdersService orderService;
     private BuyPayService buyPayService;
+    private JjAndFcAppConfigService jjAndFcAppConfigService;
 
-    @Override
-    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<MinitjWx> queryWrapper, StatsListResult statsListResult) {
-    }
-
-    @Override
-    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
-        return null;
-    }
-
-    @Override
     public StatsListResult getPage(StatsListParam statsListParam) {
         StatsListResult statsListResult = new StatsListResult();
+        // 判断请求参数是否为空，并进行初始化
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
+        }
+        if (Objects.isNull(statsListParam.getQueryObject())) {
+            statsListParam.setQueryObject(new JSONObject());
+        }
+        // 初始化查询的起止日期
+        this.updateBeginAndEndDate(statsListParam);
+        String beginDate = statsListParam.getQueryObject().getString("beginDate");
+        String endDate = statsListParam.getQueryObject().getString("endDate");
 
+        List<DataCollect> dataCollects;
         try {
-            List<DataCollect> dataCollects;
-            List<DataCollect> newDataCollects = new ArrayList<>();
-            String[] times = getTimes(statsListParam);
-            String type = "";
-
-            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-            if (queryObject != null) {
-                type = queryObject.getString("type");
-            }
-            if (StringUtils.isBlank(type)) {
-                dataCollects = queryProgramStatis(times[0], times[1]);
-                Map<String, DataCollect> dataCollectMap = queryMinitjWxStatis(times[0], times[1], type);
+            String programType = statsListParam.getQueryObject().getString("programType");
+            if (StringUtils.isBlank(programType)) {
+                dataCollects = queryProgramStats(beginDate, endDate);
+                Map<String, DataCollect> queryGameStats = queryMinitjWxStatis(beginDate, endDate, programType);
                 // 合并小游戏和小程序数据
-                if (MapUtil.isNotEmpty(dataCollectMap) && CollectionUtils.isNotEmpty(dataCollects)) {
-                    dataCollects = countProgramAndMititjWx(dataCollects, dataCollectMap);
+                if (CollectionUtils.isEmpty(dataCollects)) {
+                    dataCollects = new ArrayList<>(queryGameStats.values());
                 } else {
-                    if (dataCollects.isEmpty()) {
-                        dataCollects = new ArrayList<>(dataCollectMap.values());
+                    if (MapUtil.isNotEmpty(queryGameStats)) {
+                        dataCollects = countProgramAndGame(dataCollects, queryGameStats);
                     }
                 }
             } else {
-                if ("1".equals(type)) {
+                if ("1".equals(programType)) {
                     // 小程序查询
-                    dataCollects = queryProgramStatis(times[0], times[1]);
+                    dataCollects = queryProgramStats(beginDate, endDate);
                 } else {
                     // 小游戏查询
-                    Map<String, DataCollect> dataCollectMap = queryMinitjWxStatis(times[0], times[1], type);
-                    dataCollects = new ArrayList<>(dataCollectMap.values());
+                    Map<String, DataCollect> queryGameStats = queryMinitjWxStatis(beginDate, endDate, programType);
+                    dataCollects = new ArrayList<>(queryGameStats.values());
                 }
             }
 
             // 查询买量数据
-            Map<String, BuyPay> buyPayMap = queryBuPayByDate(times[0], times[1], type);
+            Map<String, BuyPay> buyPayMap = queryBuPayByDate(beginDate, endDate, programType);
             // 追加买量数据和分享率
             countBuyData(dataCollects, buyPayMap);
 
             // 查询插屏总收入
-            Map<String, AdValueWxAdUnit> screenIncomeMap = queryAdValueWxAdUnitDate(times[0], times[1]);
+            Map<String, AdValueWxAdUnit> screenIncomeMap = queryAdValueWxAdUnitDate(beginDate, endDate);
             // 追加插屏总收入
             countScreenIncomeData(dataCollects, screenIncomeMap);
-            int page = statsListParam.getPage();
-            int limit = statsListParam.getLimit();
 
-            for (int i = (page - 1) * limit; i < page * limit; i++) {
-                if (dataCollects.size() > i) {
-                    newDataCollects.add(dataCollects.get(i));
-                }
-            }
-            statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(newDataCollects)));
+            // TODO 先不进行分组
+            statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(dataCollects)));
+            statsListResult.setTotalRow(null);
             statsListResult.setCount(dataCollects.size());
         } catch (Exception e) {
             statsListResult.setCode(1);
@@ -121,6 +103,27 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
             LOGGER.error(ExceptionUtils.getStackTrace(e));
         }
         return statsListResult;
+    }
+
+    /**
+     * 初始化查询起止时间
+     *
+     * @param statsListParam 请求参数
+     */
+    private void updateBeginAndEndDate(StatsListParam statsListParam) {
+        String beginDate = null, endDate = null;
+        String times = statsListParam.getQueryObject().getString("times");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            beginDate = timeRangeArray[0].trim();
+            endDate = timeRangeArray[1].trim();
+        }
+        if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
+            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+            endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+        }
+        statsListParam.getQueryObject().put("beginDate", beginDate);
+        statsListParam.getQueryObject().put("endDate", endDate);
     }
 
     /**
@@ -134,8 +137,9 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
             if (dataCollect == null) {
                 return;
             }
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             if (screenIncomeMap != null && screenIncomeMap.size() > 0) {
-                AdValueWxAdUnit adValueWxAdUnit = screenIncomeMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(dataCollect.getWxDate()));
+                AdValueWxAdUnit adValueWxAdUnit = screenIncomeMap.get(dateTimeFormatter.format(dataCollect.getWxDate()));
                 if (adValueWxAdUnit != null) {
                     BigDecimal screenIncome = new BigDecimal(adValueWxAdUnit.getScreenIncome()).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
                     dataCollect.setScreenIncomeCount(screenIncome);
@@ -173,7 +177,7 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
             if (dataCollect == null) {
                 return;
             }
-            if (buyPayMap != null && buyPayMap.size() > 0) {
+            if (MapUtil.isNotEmpty(buyPayMap)) {
                 BuyPay buyPay = buyPayMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(dataCollect.getWxDate()));
                 if (buyPay != null) {
                     dataCollect.setBuyPay(buyPay.getBuyCost());
@@ -197,7 +201,7 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
      * @param dataCollects   小程序数据集合
      * @param dataCollectMap 小游戏Map
      */
-    private List<DataCollect> countProgramAndMititjWx(List<DataCollect> dataCollects, Map<String, DataCollect> dataCollectMap) {
+    private List<DataCollect> countProgramAndGame(List<DataCollect> dataCollects, Map<String, DataCollect> dataCollectMap) {
         dataCollects.forEach(dataCollect -> {
             DataCollect collect = dataCollectMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(dataCollect.getWxDate()));
             if (collect != null) {
@@ -226,13 +230,15 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
      * @return 汇总结果
      */
     private Map<String, DataCollect> queryMinitjWxStatis(String beginTime, String endTime, String type) {
-        // 获取配置
-        Map<String, WxConfig> wxConfigMap = getWxConfigMap();
+
+        // 获取街机和FC的全部app信息
+        LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
+
         // 查询列表
-        List<MinitjWx> minitjWxes = minitjWxService.queryMinitjWxByDate(beginTime, endTime);
+        List<MinitjWx> minitjWxes = this.minitjWxService.list(null, beginTime, endTime);
         // 生成map集合
         Map<String, List<MinitjWx>> minitjWxListMap;
-        minitjWxListMap = getMinitjListMap(minitjWxes, wxConfigMap, type);
+        minitjWxListMap = getMinitjListMap(minitjWxes, getAllAppMap, type);
         return countMinitWxData(minitjWxListMap);
     }
 
@@ -245,8 +251,8 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
     private Map<String, DataCollect> countMinitWxData(Map<String, List<MinitjWx>> minitjListMap) {
         Map<String, DataCollect> dataCollectMap = new HashMap<>(16);
         // 循环map
-        if (!minitjListMap.isEmpty()) {
-            for (String str : minitjListMap.keySet()) {
+        if (MapUtil.isNotEmpty(minitjListMap)) {
+            for (String wxDate : minitjListMap.keySet()) {
                 DataCollect dataCollect = new DataCollect();
                 //新增数量
                 Integer newCount = 0;
@@ -261,7 +267,7 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
                 //分享次数
                 Integer shareCount = 0;
                 // 循环list
-                for (MinitjWx minitj : minitjListMap.get(str)) {
+                for (MinitjWx minitj : minitjListMap.get(wxDate)) {
                     newCount += minitj.getWxNew();
                     activeCount += minitj.getWxActive();
                     videoIncomeCount += minitj.getWxVideoIncome().doubleValue();
@@ -269,8 +275,8 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
                     shareUserCount += minitj.getWxShareUser();
                     shareCount += minitj.getWxShareCount();
                 }
-                dataCollect.setWxDate(LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                dataCollect.setProductCount(minitjListMap.get(str).size());
+                dataCollect.setWxDate(LocalDate.parse(wxDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                dataCollect.setProductCount(minitjListMap.get(wxDate).size());
                 dataCollect.setNewCount(newCount);
                 dataCollect.setActiveCount(activeCount);
                 dataCollect.setVideoIncomeCount(new BigDecimal(videoIncomeCount).setScale(2, BigDecimal.ROUND_HALF_UP));
@@ -279,7 +285,7 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
                 dataCollect.setShareCount(shareCount);
                 dataCollect.setAdRevenueCount(new BigDecimal(videoIncomeCount + bannerIncomeCount));
                 dataCollect.setRevenueCount(dataCollect.getAdRevenueCount());
-                dataCollectMap.put(str, dataCollect);
+                dataCollectMap.put(wxDate, dataCollect);
             }
         }
         return dataCollectMap;
@@ -293,25 +299,25 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
      * @param type        查询类型
      * @return Map集合
      */
-    private Map<String, List<MinitjWx>> getMinitjListMap(List<MinitjWx> minitjWxes, Map<String, WxConfig> wxConfigMap, String type) {
+    private Map<String, List<MinitjWx>> getMinitjListMap(List<MinitjWx> minitjWxes, LinkedHashMap<String, JSONObject> wxConfigMap, String type) {
         Map<String, List<MinitjWx>> minitjWxListMap = new HashMap<>(16);
         for (MinitjWx minitjWx : minitjWxes) {
-            WxConfig wxConfig = wxConfigMap.get(minitjWx.getWxAppid());
+            JSONObject jsonObject = wxConfigMap.get(minitjWx.getWxAppId());
             // 如果查不到配置不处理
-            if (wxConfig == null) {
+            if (jsonObject == null) {
                 continue;
             } else {
                 // 如果类型不为空
                 if (StringUtils.isNotBlank(type)) {
                     // 判断类型：如果该条数据的类型不符合不做处理
-                    if (!StringUtils.equals(String.valueOf(wxConfig.getProgramType()), type)) {
+                    if (!StringUtils.equals(String.valueOf(jsonObject.getString("programType")), type)) {
                         continue;
                     }
                 }
             }
             String date = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(minitjWx.getWxDate());
             List<MinitjWx> miniWxDate = minitjWxListMap.get(date);
-            if (miniWxDate == null || miniWxDate.isEmpty()) {
+            if (CollectionUtils.isEmpty(miniWxDate)) {
                 miniWxDate = new ArrayList<>();
                 miniWxDate.add(minitjWx);
                 minitjWxListMap.put(date, miniWxDate);
@@ -328,26 +334,71 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
      *
      * @return 汇总数据
      */
-    private List<DataCollect> queryProgramStatis(String beginTime, String endTime) {
+    private List<DataCollect> queryProgramStats(String beginTime, String endTime) {
         List<DataCollect> dataCollects = new ArrayList<>();
 
-        List<MinitjWx> productData = wxDailyVisitTrendService.selectVisitTrendSummary(beginTime, endTime);
+        //将日期数据放入先得set，防止循环时漏掉数据
+        LinkedHashSet<String> appAndDateSet = new LinkedHashSet<>();
+        //查询小程序数据
+        Map<String, WxDailyVisitTrend> wxDailyVisitTrendMap = new HashMap<>(16);
+        List<WxDailyVisitTrend> wxDailyVisitTrendList = wxDailyVisitTrendService.sumList(beginTime, endTime);
+        if (wxDailyVisitTrendList != null) {
+            wxDailyVisitTrendList.forEach(wxDailyVisitTrend -> {
+                String key = wxDailyVisitTrend.getRefDate();
+                appAndDateSet.add(key);
+                wxDailyVisitTrendMap.put(key, wxDailyVisitTrend);
+            });
+        }
+        Map<String, WxDailySummary> wxDailySummaryMap = new HashMap<>(16);
+        List<WxDailySummary> wxDailySummaryList = wxDailySummaryService.sumList(beginTime, endTime);
+        if (wxDailySummaryList != null) {
+            wxDailySummaryList.forEach(wxDailySummary -> {
+                String key = wxDailySummary.getRefDate();
+                appAndDateSet.add(key);
+                wxDailySummaryMap.put(key, wxDailySummary);
+            });
+        }
         Map<String, Orders> programReChargeMap = getProgramReChargeMap();
-        productData.forEach(appletData -> {
-            DataCollect dataCollect = new DataCollect();
-            // 日期
-            dataCollect.setWxDate(appletData.getWxDate());
-            // 总数量
-            dataCollect.setProductCount(appletData.getProductCount());
-            //新增
-            dataCollect.setNewCount(appletData.getWxNew());
-            // 活跃
-            dataCollect.setActiveCount(appletData.getWxActive());
-            // 分享人数
-            dataCollect.setShareUserCount(appletData.getWxShareUser());
-            // 分享次数
-            dataCollect.setShareCount(appletData.getWxShareCount());
-            Orders orders = programReChargeMap.get(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(appletData.getWxDate()));
+        DataCollect dataCollect = new DataCollect();
+        for (String appAndDate : appAndDateSet) {
+            StringBuilder dateString = new StringBuilder(appAndDate);
+            dateString.insert(4, "-").insert(7, "-");
+            LocalDate wxDate = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            dataCollect.setWxDate(wxDate);
+            WxDailyVisitTrend wxDailyVisitTrend = wxDailyVisitTrendMap.get(appAndDate);
+            if (wxDailyVisitTrend != null && wxDailyVisitTrend.getVisitPv() != 0) {
+                dataCollect.setProductCount(wxDailyVisitTrend.getProductCount());
+            } else {
+                dataCollect.setProductCount(0);
+            }
+            if (wxDailyVisitTrend != null && wxDailyVisitTrend.getVisitUvNew() != 0) {
+                dataCollect.setNewCount(wxDailyVisitTrend.getVisitUvNew());
+            } else {
+                dataCollect.setNewCount(0);
+            }
+            if (wxDailyVisitTrend != null && wxDailyVisitTrend.getVisitUv() != 0) {
+                dataCollect.setActiveCount(wxDailyVisitTrend.getVisitUv());
+            } else {
+                dataCollect.setActiveCount(0);
+            }
+            if (wxDailyVisitTrend != null && wxDailyVisitTrend.getVisitUv() != 0) {
+                dataCollect.setActiveCount(wxDailyVisitTrend.getVisitUv());
+            } else {
+                dataCollect.setActiveCount(0);
+            }
+            WxDailySummary wxDailySummary = wxDailySummaryMap.get(appAndDate);
+            if (wxDailySummary != null && wxDailySummary.getShareUv() != 0) {
+                dataCollect.setShareUserCount(wxDailySummary.getShareUv());
+            } else {
+                dataCollect.setShareUserCount(0);
+            }
+            if (wxDailySummary != null && wxDailySummary.getSharePv() != 0) {
+                dataCollect.setShareCount(wxDailySummary.getSharePv());
+            } else {
+                dataCollect.setShareCount(0);
+            }
+
+            Orders orders = programReChargeMap.get(appAndDate);
             if (orders != null) {
                 //充值
                 dataCollect.setRechargeCount(orders.getDdPrice());
@@ -357,7 +408,9 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
                 dataCollect.setRechargeCount(new BigDecimal(0));
             }
             dataCollects.add(dataCollect);
-        });
+
+        }
+
         return dataCollects;
     }
 
@@ -367,7 +420,7 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
     private Map<String, Orders> getProgramReChargeMap() {
         List<Orders> orders = orderService.queryProgramReChargeCount();
         Map<String, Orders> programReChargeMap = new HashMap<>(16);
-        orders.forEach(order -> programReChargeMap.put(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(order.getDdTrans()), order));
+        orders.forEach(order -> programReChargeMap.put(DateTimeFormatter.ofPattern("yyyyMMdd").format(order.getDdTrans()), order));
         return programReChargeMap;
     }
 
@@ -379,73 +432,16 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
     private Map<String, BuyPay> queryBuPayByDate(String beginTime, String endTime, String type) {
         Map<String, BuyPay> map = new HashMap<>(16);
         List<BuyPay> buyPays = buyPayService.queryByPayCollectByDate(beginTime, endTime, type);
-        if (!buyPays.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(buyPays)) {
             buyPays.forEach(buyPay -> map.put(buyPay.getBuyDate(), buyPay));
         }
         return map;
     }
 
-    /**
-     * 判断时间
-     *
-     * @param statsListParam statsListParam
-     * @return 返回格式化时间
-     */
-    private String[] getTimes(StatsListParam statsListParam) {
-        String[] times = new String[2];
-        String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(14));
-        String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-            String time = queryObject.getString("times");
-            if (StringUtils.isNotBlank(time)) {
-                String[] timeRangeArray = StringUtils.split(time, "~");
-                beginTime = timeRangeArray[0].trim();
-                endTime = timeRangeArray[1].trim();
-            }
-        }
-        times[0] = beginTime;
-        times[1] = endTime;
-        return times;
-    }
-
-    /**
-     * 获取配置Map
-     * 排除公众号配置
-     *
-     * @return 配置Map
-     */
-    private Map<String, WxConfig> getWxConfigMap() {
-        Map<String, WxConfig> wxConfigMap = new HashMap<>(16);
-        List<WxConfig> wxConfigs = this.wxConfigService.getCacheEntityList(WxConfig.class);
-        wxConfigs.forEach(wxConfig -> {
-            if (wxConfig.getProgramType() != 2) {
-                wxConfigMap.put(wxConfig.getAddId(), wxConfig);
-            }
-        });
-        List<MiniGame> miniGameEntityList = this.miniGameService.getCacheEntityList(MiniGame.class);
-        miniGameEntityList.forEach(entity -> {
-            WxConfig wxConfig = wxConfigMap.get(entity.getCacheKey());
-            if (wxConfig == null) {
-                WxConfig newWxConfig = new WxConfig();
-                newWxConfig.setAddId(entity.getGameAppid());
-                newWxConfig.setProductName(entity.getGameName());
-                newWxConfig.setDdAppPlatform(entity.getGameAppplatform());
-                newWxConfig.setProgramType(0);
-                wxConfigMap.put(entity.getGameAppid(), newWxConfig);
-            }
-        });
-        return wxConfigMap;
-    }
 
     @Autowired
-    public void setWxConfigService(WxConfigService wxConfigService) {
-        this.wxConfigService = wxConfigService;
-    }
-
-    @Autowired
-    public void setMiniGameService(MiniGameService miniGameService) {
-        this.miniGameService = miniGameService;
+    public void setWxDailySummaryService(WxDailySummaryService wxDailySummaryService) {
+        this.wxDailySummaryService = wxDailySummaryService;
     }
 
     @Autowired
@@ -471,6 +467,11 @@ public class MinitjWxDataCollectService extends BaseStatsService<MinitjWx, Minit
     @Autowired
     public void setBuyPayService(BuyPayService buyPayService) {
         this.buyPayService = buyPayService;
+    }
+
+    @Autowired
+    public void setJjAndFcAppConfigService(JjAndFcAppConfigService jjAndFcAppConfigService) {
+        this.jjAndFcAppConfigService = jjAndFcAppConfigService;
     }
 
 }

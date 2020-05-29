@@ -102,8 +102,18 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
         queryWrapper.groupBy(groupByList.toArray(new String[0]));
         // 查询展示列表
         statsListResult.setShowColumn(showColumnList);
-        statsListParam.setLimit(30);
+        statsListParam.setLimit(Integer.MAX_VALUE);
+    }
 
+    public List<AdValueWxAdUnit> list(String appId, String beginTime, String endTime) {
+        QueryWrapper<AdValueWxAdUnit> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("appId", "SUM(income) AS screenIncome", "date");
+        queryWrapper.between("date", beginTime, endTime);
+        queryWrapper.eq(StringUtils.isNotBlank(appId), "appId", appId);
+        queryWrapper.eq("slotId", "3030046789020061");
+        queryWrapper.eq("appSource", "JJ");
+        queryWrapper.groupBy("date", "appId");
+        return this.list(queryWrapper);
     }
 
     /**

@@ -28,7 +28,6 @@ public class MinitjWxProductDataCollectController implements BaseStatsController
         return this.minitjWxProductDataService.getPage(statsListParam);
     }
 
-
     @Autowired
     public void setMinitjWxProductDataService(MinitjWxProductDataService minitjWxProductDataService) {
         this.minitjWxProductDataService = minitjWxProductDataService;

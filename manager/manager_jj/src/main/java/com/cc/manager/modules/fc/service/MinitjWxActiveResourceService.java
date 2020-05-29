@@ -7,11 +7,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.modules.fc.entity.MiniGame;
 import com.cc.manager.modules.fc.entity.MinitjWx;
 import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
-import com.cc.manager.modules.jj.entity.WxConfig;
-import com.cc.manager.modules.jj.service.WxConfigService;
+import com.cc.manager.modules.jj.controller.JjAndFcAppConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +18,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
 
 /**
  * @author cf
@@ -30,8 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class MinitjWxActiveResourceService extends BaseStatsService<MinitjWx, MinitjWxMapper> {
 
-    private WxConfigService wxConfigService;
-    private MiniGameService miniGameService;
+    private MinitjWxService minitjWxService;
+    private JjAndFcAppConfigService jjAndFcAppConfigService;
 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<MinitjWx> queryWrapper, StatsListResult statsListResult) {
@@ -46,23 +45,28 @@ public class MinitjWxActiveResourceService extends BaseStatsService<MinitjWx, Mi
     @Override
     public StatsListResult getPage(StatsListParam statsListParam) {
         StatsListResult statsListResult = new StatsListResult();
+        // 判断请求参数是否为空，并进行初始化
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
+        }
+        if (Objects.isNull(statsListParam.getQueryObject())) {
+            statsListParam.setQueryObject(new JSONObject());
+        }
+        // 初始化查询的起止日期
+        this.updateBeginAndEndDate(statsListParam);
+        String beginDate = statsListParam.getQueryObject().getString("beginDate");
+        String endDate = statsListParam.getQueryObject().getString("endDate");
         try {
-            String[] times = getTimes(statsListParam);
-            ConcurrentHashMap<String, WxConfig> wxConfigMap = getProductMap();
-            String ddAppId = "";
+
+            // 获取街机和FC的全部app信息
+            LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
             List<MinitjWx> userResources;
-            List<MinitjWx> newUserResources = new ArrayList<>();
-            if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-                JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-                ddAppId = queryObject.getString("appId");
-            }
-            userResources = selectUserResources(times, ddAppId, wxConfigMap);
-            for (int i = (statsListParam.getPage() - 1) * statsListParam.getLimit(); i < statsListParam.getPage() * statsListParam.getLimit(); i++) {
-                if (userResources.size() > i) {
-                    newUserResources.add(userResources.get(i));
-                }
-            }
-            statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(newUserResources)));
+            String ddAppId = statsListParam.getQueryObject().getString("appId");
+            //查询数据
+            userResources = selectUserResources(beginDate, endDate, ddAppId, getAllAppMap);
+
+            statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(userResources)));
+            statsListResult.setTotalRow(null);
             statsListResult.setCount(userResources.size());
         } catch (Exception e) {
             statsListResult.setCode(1);
@@ -72,22 +76,19 @@ public class MinitjWxActiveResourceService extends BaseStatsService<MinitjWx, Mi
         return statsListResult;
     }
 
-    private List<MinitjWx> selectUserResources(String[] times, String ddAppId, ConcurrentHashMap<String, WxConfig> wxConfigMap) {
-        QueryWrapper<MinitjWx> queryWrapper = new QueryWrapper<>();
-        queryWrapper.between("DATE(wx_date)", times[0].trim(), times[1].trim());
-        queryWrapper.eq(StringUtils.isNotBlank(ddAppId), "wx_appid", ddAppId);
-        // 小游戏的时候查询
-        List<MinitjWx> resourceDataList = this.mapper.selectList(queryWrapper);
+    private List<MinitjWx> selectUserResources(String beginDate, String endDate, String ddAppId, LinkedHashMap<String, JSONObject> getAllAppMap) {
+
+        List<MinitjWx> resourceDataList = this.minitjWxService.list(ddAppId, beginDate, endDate);
         List<MinitjWx> newDataList = new ArrayList<>();
         for (MinitjWx resourceData : resourceDataList) {
-            WxConfig wxConfig = wxConfigMap.get(resourceData.getWxAppid());
-            if (wxConfig == null) {
+            JSONObject appObject = getAllAppMap.get(resourceData.getWxAppId());
+            if (appObject == null) {
                 continue;
             }
             // 设置data产品信息
-            resourceData.setProgramType(wxConfig.getProgramType());
-            resourceData.setProductName(wxConfig.getProductName());
-            resourceData.setDdAppPlatform(wxConfig.getDdAppPlatform());
+            resourceData.setProgramType(Integer.parseInt(appObject.getString("programType")));
+            resourceData.setProductName(appObject.getString("name"));
+            resourceData.setDdAppPlatform(appObject.getString("platform"));
             //处理用户新增数据
             String wxRegJson = resourceData.getWxRegJson();
             newSourceOther(resourceData, wxRegJson);
@@ -97,6 +98,27 @@ public class MinitjWxActiveResourceService extends BaseStatsService<MinitjWx, Mi
             newDataList.add(resourceData);
         }
         return newDataList;
+    }
+
+    /**
+     * 初始化查询起止时间
+     *
+     * @param statsListParam 请求参数
+     */
+    private void updateBeginAndEndDate(StatsListParam statsListParam) {
+        String beginDate = null, endDate = null;
+        String times = statsListParam.getQueryObject().getString("times");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            beginDate = timeRangeArray[0].trim();
+            endDate = timeRangeArray[1].trim();
+        }
+        if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
+            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+            endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+        }
+        statsListParam.getQueryObject().put("beginDate", beginDate);
+        statsListParam.getQueryObject().put("endDate", endDate);
     }
 
     /**
@@ -155,63 +177,14 @@ public class MinitjWxActiveResourceService extends BaseStatsService<MinitjWx, Mi
         }
     }
 
-
-    /**
-     * 获取产品集合map
-     *
-     * @return ConcurrentHashMap
-     */
-    private ConcurrentHashMap<String, WxConfig> getProductMap() {
-        ConcurrentHashMap<String, WxConfig> wxConfigMap = new ConcurrentHashMap<>();
-        List<WxConfig> wxConfigEntityList = this.wxConfigService.getCacheEntityList(WxConfig.class);
-        List<MiniGame> miniGameEntityList = this.miniGameService.getCacheEntityList(MiniGame.class);
-
-        wxConfigEntityList.forEach(entity -> {
-            wxConfigMap.put(entity.getCacheKey(), entity);
-            wxConfigMap.put("value", entity);
-
-        });
-        miniGameEntityList.forEach(entity -> {
-            WxConfig wxConfig = wxConfigMap.get(entity.getCacheKey());
-            if (wxConfig == null) {
-                WxConfig newWxConfig = new WxConfig();
-                newWxConfig.setAddId(entity.getGameAppid());
-                newWxConfig.setProductName(entity.getGameName());
-                newWxConfig.setDdAppPlatform(entity.getGameAppplatform());
-                newWxConfig.setProgramType(0);
-                wxConfigMap.put(entity.getGameAppid(), newWxConfig);
-            }
-        });
-        return wxConfigMap;
-    }
-
-    private String[] getTimes(StatsListParam statsListParam) {
-        String[] times = new String[2];
-        String beginTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-        String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-            JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-            String time = queryObject.getString("times");
-            if (StringUtils.isNotBlank(time)) {
-                String[] timeRangeArray = StringUtils.split(time, "~");
-                beginTime = timeRangeArray[0].trim();
-                endTime = timeRangeArray[1].trim();
-            }
-        }
-        times[0] = beginTime;
-        times[1] = endTime;
-        return times;
+    @Autowired
+    public void setMinitjWxService(MinitjWxService minitjWxService) {
+        this.minitjWxService = minitjWxService;
     }
 
     @Autowired
-    public void setWxConfigService(WxConfigService wxConfigService) {
-        this.wxConfigService = wxConfigService;
+    public void setJjAndFcAppConfigService(JjAndFcAppConfigService jjAndFcAppConfigService) {
+        this.jjAndFcAppConfigService = jjAndFcAppConfigService;
     }
-
-    @Autowired
-    public void setMiniGameService(MiniGameService miniGameService) {
-        this.miniGameService = miniGameService;
-    }
-
 
 }

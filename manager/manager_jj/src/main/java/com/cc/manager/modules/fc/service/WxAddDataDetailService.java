@@ -5,11 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.modules.fc.entity.MiniGame;
 import com.cc.manager.modules.fc.entity.MinitjWx;
 import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
-import com.cc.manager.modules.jj.entity.WxConfig;
-import com.cc.manager.modules.jj.service.WxConfigService;
+import com.cc.manager.modules.jj.controller.JjAndFcAppConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +16,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -27,77 +26,80 @@ import java.util.List;
 @Service
 public class WxAddDataDetailService extends BaseStatsService<MinitjWx, MinitjWxMapper> {
 
-    private WxConfigService wxConfigService;
-    private MiniGameService miniGameService;
+    private JjAndFcAppConfigService jjAndFcAppConfigService;
 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<MinitjWx> queryWrapper, StatsListResult statsListResult) {
-        String beginTime =null, endTime =null;
-        JSONObject queryObject = statsListParam.getQueryObject();
-        String appId = queryObject.getString("id");
+
+        // 初始化查询的起止日期
+        this.updateBeginAndEndDate(statsListParam);
+        String beginDate = statsListParam.getQueryObject().getString("beginDate");
+        String endDate = statsListParam.getQueryObject().getString("endDate");
+        String appId = statsListParam.getQueryObject().getString("appId");
         queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
-        String times = queryObject.getString("times");
-        if (StringUtils.isNotBlank(times)) {
-            String[] timeRangeArray = StringUtils.split(times, "~");
-            beginTime = timeRangeArray[0].trim();
-            endTime = timeRangeArray[1].trim();
-        }
-        if(StringUtils.isBlank(beginTime) || StringUtils.isBlank(endTime)){
-            beginTime =DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
-            endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
-        }
-        queryWrapper.between("DATE(wx_date)", beginTime, endTime);
+        queryWrapper.between("DATE(wx_date)", beginDate, endDate);
         queryWrapper.orderBy(true, false, "wx_date");
     }
 
     @Override
     protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
         entityList.forEach(minitjWx -> {
-            // 通过appID查找配置信息
-            WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, minitjWx.getWxAppid());
-            //过滤非wx_config配置里面的数据
-            if (wxConfig != null) {
-                //fc数据赋值展示数据
-                minitjWx.setProgramType(wxConfig.getProgramType());
-                minitjWx.setProductName(wxConfig.getProductName());
-            } else {
-                MiniGame miniGame = this.miniGameService.getCacheEntity(MiniGame.class, minitjWx.getWxAppid());
-                if (miniGame != null) {
-                    minitjWx.setProgramType(0);
-                    minitjWx.setProductName(miniGame.getGameName());
-                }
+            // 获取街机和FC的全部app信息
+            LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
+            JSONObject appObject = getAllAppMap.get(minitjWx.getWxAppId());
+            if (appObject != null) {
+                // 设置data产品信息
+                minitjWx.setProgramType(Integer.parseInt(appObject.getString("programType")));
+                minitjWx.setProductName(appObject.getString("name"));
+                minitjWx.setDdAppPlatform(appObject.getString("platform"));
             }
+            //设置广告收益
             minitjWx.setAdRevenue(minitjWx.getWxBannerIncome().add(minitjWx.getWxVideoIncome()));
-            BigDecimal adRevenue = minitjWx.getAdRevenue();
-            Integer wxVideoShow = minitjWx.getWxVideoShow();
-            BigDecimal wxVideoIncome = minitjWx.getWxVideoIncome();
-            minitjWx.setWxVideoShow(wxVideoShow);
-            if (wxVideoShow != 0) {
-                minitjWx.setVideoECPM((wxVideoIncome.divide(new BigDecimal(wxVideoShow), 5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
+            //设置VideoECPM
+            if (minitjWx.getWxVideoShow() != 0) {
+                minitjWx.setVideoECPM((minitjWx.getWxVideoIncome().divide(new BigDecimal(minitjWx.getWxVideoShow()),
+                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
             } else {
                 minitjWx.setVideoECPM(new BigDecimal(0));
             }
-            Integer wxBannerShow = minitjWx.getWxBannerShow();
-            BigDecimal wxBannerIncome = minitjWx.getWxBannerIncome();
-            if (wxBannerShow != 0) {
-                minitjWx.setBannerECPM((wxBannerIncome.divide(new BigDecimal(wxBannerShow), 5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
+            //设置BannerECPM
+            if (minitjWx.getWxBannerShow() != 0) {
+                minitjWx.setBannerECPM((minitjWx.getWxBannerIncome().divide(new BigDecimal(minitjWx.getWxBannerShow()),
+                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
             } else {
                 minitjWx.setBannerECPM(new BigDecimal(0));
             }
-            minitjWx.setRevenueCount(adRevenue);
+            //设置总收入
+            minitjWx.setRevenueCount(minitjWx.getAdRevenue());
 
         });
         return null;
     }
 
-    @Autowired
-    public void setWxConfigService(WxConfigService wxConfigService) {
-        this.wxConfigService = wxConfigService;
+    /**
+     * 初始化查询起止时间
+     *
+     * @param statsListParam 请求参数
+     */
+    private void updateBeginAndEndDate(StatsListParam statsListParam) {
+        String beginDate = null, endDate = null;
+        String times = statsListParam.getQueryObject().getString("times");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            beginDate = timeRangeArray[0].trim();
+            endDate = timeRangeArray[1].trim();
+        }
+        if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
+            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+            endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+        }
+        statsListParam.getQueryObject().put("beginDate", beginDate);
+        statsListParam.getQueryObject().put("endDate", endDate);
     }
 
     @Autowired
-    public void setMiniGameService(MiniGameService miniGameService) {
-        this.miniGameService = miniGameService;
+    public void setJjAndFcAppConfigService(JjAndFcAppConfigService jjAndFcAppConfigService) {
+        this.jjAndFcAppConfigService = jjAndFcAppConfigService;
     }
 
 }

@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
+import com.cc.manager.modules.fc.entity.WxDailyVisitTrend;
 import com.cc.manager.modules.jj.entity.AllCost;
 import com.cc.manager.modules.jj.mapper.AllCostMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,5 +26,15 @@ public class AllCostService extends BaseCrudService<AllCost, AllCostMapper> {
     protected boolean delete(String requestParam, UpdateWrapper<AllCost> deleteWrapper) {
         return false;
     }
-    
+
+    /**
+     * 查询当前时刻用户账户金额
+     * @param ddTime ddTime
+     * @return AllCost
+     */
+    public AllCost selectCurrentCoin(String ddTime) {
+        QueryWrapper<AllCost> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("ddType","rmb").eq(StringUtils.isNotBlank(ddTime), "ddTime", ddTime).last("LIMIT 1");
+        return this.mapper.selectOne(queryWrapper);
+    }
 }

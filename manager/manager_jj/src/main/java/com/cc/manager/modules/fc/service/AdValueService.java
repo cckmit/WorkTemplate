@@ -114,6 +114,7 @@ public class AdValueService extends BaseStatsService<AdValue, AdValueMapper> {
         // 默认查询排除微信
         queryWrapper.gt("adContentId", 0);
 
+
         // 将查询字段和分组字段赋值给查询条件
         queryWrapper.select(selectList.toArray(new String[0]));
         queryWrapper.groupBy(groupByList.toArray(new String[0]));

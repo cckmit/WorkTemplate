@@ -16,7 +16,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ManagerJjApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ManagerJjApplication.class, args);
+        try {
+            SpringApplication.run(ManagerJjApplication.class, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

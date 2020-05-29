@@ -69,40 +69,6 @@ public abstract class BaseStatsService<E extends BaseStatsEntity<E>, M extends B
     }
 
     /**
-     * 统计数据不分页查询
-     *
-     * @param statsListParam 查询请求参数
-     * @return 统计数据列表查询返回值封装对象
-     */
-    public StatsListResult getList(StatsListParam statsListParam) {
-        StatsListResult statsListResult = new StatsListResult();
-        // 判断请求参数是否为空
-        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
-        }
-        if (Objects.isNull(statsListParam.getQueryObject())) {
-            statsListParam.setQueryObject(new JSONObject());
-        }
-
-        try {
-            // 初始化查询wrapper
-            QueryWrapper<E> queryWrapper = new QueryWrapper<>();
-            this.updateGetListWrapper(statsListParam, queryWrapper, statsListResult);
-            List<E> entityList = this.list(queryWrapper);
-            if (Objects.nonNull(entityList)) {
-                JSONObject totalRow = this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
-                statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
-                statsListResult.setTotalRow(totalRow);
-            }
-        } catch (Exception e) {
-            statsListResult.setCode(1);
-            statsListResult.setMsg("查询结果异常，请联系开发人员！");
-            LOGGER.error(ExceptionUtils.getStackTrace(e));
-        }
-        return statsListResult;
-    }
-
-    /**
      * 更新查询列表参数
      *
      * @param statsListParam  查询参数

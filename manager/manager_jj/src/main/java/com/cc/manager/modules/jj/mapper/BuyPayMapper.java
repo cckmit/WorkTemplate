@@ -12,13 +12,4 @@ import java.util.List;
  */
 public interface BuyPayMapper extends BaseMapper<BuyPay> {
 
-    /**
-     * 通过时间段查询买量汇总数据
-     *
-     * @param beginTime
-     * @param endTime
-     * @param type
-     * @return
-     */
-    List<BuyPay> queryByPayCollectByDate(@Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("type") String type);
 }

@@ -65,9 +65,9 @@ public class ConfigAdContentController implements BaseCrudController {
     }
 
     /**
-     * 查询推广APP列表
+     * 鏌ヨ鎺ㄥ箍APP鍒楄〃
      *
-     * @return 推广APP列表
+     * @return 鎺ㄥ箍APP鍒楄〃
      */
     @GetMapping(value = "/getTargetAppArray")
     public JSONObject getTargetAppArray() {

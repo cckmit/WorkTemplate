@@ -4,6 +4,7 @@ import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.common.result.StatsListParam;
@@ -17,6 +18,7 @@ import com.cc.manager.modules.jj.entity.Orders;
 import com.cc.manager.modules.jj.entity.UserInfo;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.OrdersMapper;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,42 +46,54 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
     private JjConfig jjConfig;
     private WxConfigService wxConfigService;
     private GoodsValueExtService goodsValueExtService;
-    private OrdersService ordersService;
+
     private UserInfoService userInfoService;
 
 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Orders> queryWrapper, StatsListResult statsListResult) {
         List<String> uidList = new ArrayList<>();
-        JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-        if (queryObject != null) {
-            String times = queryObject.getString("times");
-            String tradeNumber = queryObject.getString("tradeNumber");
-            String uid = queryObject.getString("uid");
-            String appId = queryObject.getString("appId");
-            String openId = queryObject.getString("openID");
-            String payState = queryObject.getString("payState");
-            String userName = queryObject.getString("userName");
-            if (StringUtils.isNotBlank(times)) {
-                String[] timeRangeArray = StringUtils.split(times, "~");
-                queryWrapper.between("DATE(ddTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
-            }
-            if (StringUtils.isNotBlank(userName)) {
-                QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-                userInfoQueryWrapper.like("ddName", userName);
-                List<UserInfo> userInfos = this.userInfoService.getBaseMapper().selectList(userInfoQueryWrapper);
-                for (UserInfo userInfo : userInfos) {
-                    uidList.add(userInfo.getDdUid());
-                }
-                queryWrapper.in(uidList.size() > 1, "ddUid", uidList);
-            }
-            queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
-            queryWrapper.like(StringUtils.isNotBlank(tradeNumber), "ddId", tradeNumber);
-            queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
-
-            queryWrapper.like(StringUtils.isNotBlank(openId), "ddOId", openId);
-            queryWrapper.eq(StringUtils.isNotBlank(payState), "ddState", payState);
+        String times = statsListParam.getQueryObject().getString("times");
+        String tradeNumber = statsListParam.getQueryObject().getString("tradeNumber");
+        String uid = statsListParam.getQueryObject().getString("uid");
+        String appId = statsListParam.getQueryObject().getString("appId");
+        String openId = statsListParam.getQueryObject().getString("openID");
+        String payState = statsListParam.getQueryObject().getString("payState");
+        String userName = statsListParam.getQueryObject().getString("userName");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            queryWrapper.between("DATE(ddTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
         }
+        if (StringUtils.isNotBlank(userName)) {
+            List<UserInfo> userInfos = this.userInfoService.getUserInfoListByUserName(userName);
+            for (UserInfo userInfo : userInfos) {
+                uidList.add(userInfo.getDdUid());
+            }
+            queryWrapper.in(uidList.size() > 1, "ddUid", uidList);
+        }
+        queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
+        queryWrapper.like(StringUtils.isNotBlank(tradeNumber), "ddId", tradeNumber);
+        queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
+        queryWrapper.like(StringUtils.isNotBlank(openId), "ddOId", openId);
+        queryWrapper.eq(StringUtils.isNotBlank(payState), "ddState", payState);
+
+    }
+
+    /**
+     * 查询充值信息
+     *
+     * @param appId     appId
+     * @param beginDate beginDate
+     * @param endDate   endDate
+     * @return List
+     */
+    public List<Orders> list(String appId, String beginDate, String endDate) {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("DATE(ddTrans) as ddTrans", "ddAppId", "SUM(ddPrice) as ddPrice");
+        queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId).eq("ddState", 1);
+        queryWrapper.between("DATE(ddTrans)", beginDate, endDate);
+        queryWrapper.groupBy("DATE(ddTrans)", "ddAppId");
+        return this.list(queryWrapper);
     }
 
     @Override
@@ -88,16 +102,11 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
             String ddAppId = order.getDdAppId();
             WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, ddAppId);
             if (wxConfig != null) {
-                String productName = wxConfig.getProductName();
-                String originName = wxConfig.getOriginName();
-                Integer programType = wxConfig.getProgramType();
-                order.setProductType(programType);
-                order.setProductName(productName);
-                order.setOriginName(originName);
+                order.setProductName(wxConfig.getProductName());
+                order.setProductType(wxConfig.getProgramType());
+                order.setOriginName(wxConfig.getOriginName());
             }
-            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-            userInfoQueryWrapper.eq("ddUid", order.getDdUid());
-            UserInfo userInfo = this.userInfoService.getBaseMapper().selectOne(userInfoQueryWrapper);
+            UserInfo userInfo = this.userInfoService.getUserInfoByUuid(order.getDdUid());
             if (userInfo != null) {
                 order.setUserName(userInfo.getDdName());
             }
@@ -129,11 +138,6 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
     }
 
     @Autowired
-    public void setOrdersService(OrdersService ordersService) {
-        this.ordersService = ordersService;
-    }
-
-    @Autowired
     public void setJjConfig(JjConfig jjConfig) {
         this.jjConfig = jjConfig;
     }
@@ -154,8 +158,9 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
         Map<String, String> stringStringMap = searchPayOrder(appId, wxConfig.getDdMchId(), orderId);
         LOGGER.info("补单状态status :" + orderIsSuccess(stringStringMap) + "-appId :" + appId + "-orderId :" + orderId);
         if (orderIsSuccess(stringStringMap)) {
-            order.setDdTrans(null);
-            this.mapper.updateByPrimaryKey(order);
+            Orders updateOrder = new Orders();
+            updateOrder.setDdTrans(null);
+            this.update(updateOrder, new UpdateWrapper<Orders>().eq("ddId", order.getId()));
             String supplementUrl = this.jjConfig.getSupplementUrl();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("version", "2.2.2");
@@ -169,7 +174,7 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
                 String ddOrder = stringStringMap != null ? stringStringMap.get("transaction_id") : null;
                 order.setDdState(1);
                 order.setDdOrder(ddOrder);
-                this.ordersService.mapper.updateByPrimaryKeySelective(order);
+                this.updateById(order);
             } else {
                 postResult.setCode(2);
                 postResult.setMsg("补单失败，数据处理异常！");
@@ -235,7 +240,31 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
      * @return 获取小程序充值金额Map
      */
     public List<Orders> queryProgramReChargeCount() {
-        return this.mapper.queryProgramReChargeCount();
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+
+        queryWrapper.eq("ddState", 1).groupBy("ddTrans");
+        List<String> selectList = Lists.newArrayList("DATE(ddTrans) as ddTrans", "SUM(ddPrice) as ddPrice");
+        // 将查询字段和分组字段赋值给查询条件
+        queryWrapper.select(selectList.toArray(new String[0]));
+        return this.list(queryWrapper);
+    }
+
+    /**
+     * 查询实时付费数据
+     *
+     * @param beginDate beginDate
+     * @param endDate   endDate
+     * @return List
+     */
+    public List<Orders> queryBuyStatistic(String beginDate, String endDate) {
+        QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
+        queryWrapper.between(" DATE(ddTrans)", beginDate, endDate);
+        queryWrapper.ne("ddOrder", "null").groupBy("DATE(ddTrans)", "ddAppId").orderByAsc("DATE(ddTrans)");
+        List<String> selectList = Lists.newArrayList("DATE(ddTrans) AS ddTrans", "SUM(ddPrice) AS ddPrice",
+                "COUNT(DISTINCT ddUid) AS payUsers", "ddAppId");
+        // 将查询字段和分组字段赋值给查询条件
+        queryWrapper.select(selectList.toArray(new String[0]));
+        return this.list(queryWrapper);
     }
 
 }

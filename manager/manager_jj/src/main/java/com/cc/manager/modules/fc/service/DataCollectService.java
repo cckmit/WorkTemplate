@@ -1,23 +1,13 @@
 package com.cc.manager.modules.fc.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.mvc.BaseStatsService;
-import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.modules.fc.entity.AdValueWxAdUnit;
 import com.cc.manager.modules.fc.entity.MiniGame;
 import com.cc.manager.modules.fc.entity.MinitjWx;
 import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
-import com.cc.manager.modules.jj.entity.BuyPay;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.service.WxConfigService;
 import org.apache.commons.lang3.StringUtils;
@@ -29,14 +19,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * @author cf
  * @since 2020-05-13
  */
@@ -69,14 +55,14 @@ public class DataCollectService extends BaseStatsService<MinitjWx, MinitjWxMappe
     protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
         for (MinitjWx productData : entityList) {
             // 通过appID查找配置信息
-            WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, productData.getWxAppid());
+            WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, productData.getWxAppId());
             //过滤非wx_config配置里面的数据
             if (wxConfig != null) {
                 //fc数据赋值展示数据
                 productData.setProgramType(wxConfig.getProgramType());
                 productData.setProductName(wxConfig.getProductName());
             } else {
-                MiniGame cacheEntity = this.miniGameService.getCacheEntity(MiniGame.class, productData.getWxAppid());
+                MiniGame cacheEntity = this.miniGameService.getCacheEntity(MiniGame.class, productData.getWxAppId());
                 if (cacheEntity != null) {
                     productData.setProgramType(0);
                     productData.setProductName(cacheEntity.getGameName());
@@ -151,7 +137,6 @@ public class DataCollectService extends BaseStatsService<MinitjWx, MinitjWxMappe
         times[1] = endTime;
         return times;
     }
-
 
 
     @Autowired

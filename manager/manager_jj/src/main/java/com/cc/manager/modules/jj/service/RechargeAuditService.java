@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -43,10 +44,11 @@ import static com.cc.manager.modules.jj.config.CmTool.createNonceStr;
 public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMapper> {
 
     private RechargeMapper rechargeMapper;
-    private AllCostMapper allCostMapper;
-    private UserAppMapper userAppMapper;
+    private AllCostService allCostService;
+    private UserAppService userAppService;
     private WxConfigService wxConfigService;
 
+    private RechargeService rechargeService;
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Recharge> queryWrapper, StatsListResult statsListResult) {
 
@@ -67,23 +69,16 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
         if (Objects.isNull(statsListParam.getQueryObject())) {
             statsListParam.setQueryObject(new JSONObject());
         }
+        // 初始化查询的起止日期
+        this.updateBeginAndEndDate(statsListParam);
+        String beginDate = statsListParam.getQueryObject().getString("beginDate");
+        String endDate = statsListParam.getQueryObject().getString("endDate");
+        String  uid = statsListParam.getQueryObject().getString("uid");
+        String userName = statsListParam.getQueryObject().getString("userName");
+        String  productName = statsListParam.getQueryObject().getString("productName");
+        String ddStatus = statsListParam.getQueryObject().getString("ddStatus");
         try {
-            String start = "", end = "";
-            String uid = "", userName = "", productName = "", ddStatus = "";
-            if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-                JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-                String times = queryObject.getString("times");
-                if (StringUtils.isNotBlank(times)) {
-                    String[] timeRangeArray = StringUtils.split(times, "~");
-                    start = timeRangeArray[0].trim();
-                    end = timeRangeArray[1].trim();
-                }
-                uid = queryObject.getString("uid");
-                userName = queryObject.getString("userName");
-                productName = queryObject.getString("productName");
-                ddStatus = queryObject.getString("ddStatus");
-            }
-            List<Recharge> recharges = this.rechargeMapper.selectAllRechargeAudit(start, end);
+            List<Recharge> recharges = this.rechargeService.selectAllRechargeAudit(beginDate, endDate);
             List<Recharge> rechargeList = new ArrayList<>();
             for (Recharge recharge : recharges) {
                 String ddUid = recharge.getDdUid();
@@ -109,7 +104,7 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
                 }
                 LocalDateTime times = recharge.getDdTimes();
                 String ddTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(times);
-                AllCost allCost = allCostMapper.selectCurrentCoin(ddTime);
+                AllCost allCost = allCostService.selectCurrentCoin(ddTime);
                 if (allCost != null) {
                     Long rmbCurrent = allCost.getDdCurrent();
                     //剩余金额
@@ -135,19 +130,40 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
         return statsListResult;
     }
 
+    /**
+     * 初始化查询起止时间
+     *
+     * @param statsListParam 请求参数
+     */
+    private void updateBeginAndEndDate(StatsListParam statsListParam) {
+        String beginDate = null, endDate = null;
+        String times = statsListParam.getQueryObject().getString("times");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            beginDate = timeRangeArray[0].trim();
+            endDate = timeRangeArray[1].trim();
+        }
+        statsListParam.getQueryObject().put("beginDate", beginDate);
+        statsListParam.getQueryObject().put("endDate", endDate);
+    }
+
     @Autowired
     public void setRechargeMapper(RechargeMapper rechargeMapper) {
         this.rechargeMapper = rechargeMapper;
     }
-
     @Autowired
-    public void setAllCostMapper(AllCostMapper allCostMapper) {
-        this.allCostMapper = allCostMapper;
+    public void setRechargeService(RechargeService rechargeService) {
+        this.rechargeService = rechargeService;
     }
 
     @Autowired
-    public void setUserAppMapper(UserAppMapper userAppMapper) {
-        this.userAppMapper = userAppMapper;
+    public void setAllCostService(AllCostService allCostService) {
+        this.allCostService = allCostService;
+    }
+
+    @Autowired
+    public void setUserAppService(UserAppService userAppService) {
+        this.userAppService = userAppService;
     }
 
     @Autowired
@@ -170,9 +186,7 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
             Recharge recharge = this.rechargeMapper.selectById(ddId);
             Integer programType = recharge.getProgramType();
             if (programType == 1) {
-                QueryWrapper<UserApp> userAppQueryWrapper = new QueryWrapper<>();
-                userAppQueryWrapper.eq("ddUid", recharge.getDdUid()).eq("ddAppId", recharge.getDdAppId()).last("LIMIT 1");
-                UserApp userApp = userAppMapper.selectOne(userAppQueryWrapper);
+                UserApp userApp = this.userAppService.selectUserOpenId(recharge.getDdUid(), recharge.getDdAppId());
                 String openId = userApp != null ? userApp.getDdOId() : "";
                 BigDecimal ddRmb = recharge.getDdRmb().multiply(new BigDecimal("100"));
                 WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, recharge.getDdAppId());

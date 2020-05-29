@@ -47,23 +47,22 @@ public class BuyPayService extends BaseCrudService<BuyPay, BuyPayMapper> {
     }
 
     @Override
-    protected void updateInsertEntity(String requestParam, BuyPay entity) {
-
-    }
-
-    @Override
-    protected boolean update(String requestParam, BuyPay entity, UpdateWrapper<BuyPay> updateWrapper) {
-        return this.updateById(entity);
-    }
-
-    @Override
     protected boolean delete(String requestParam, UpdateWrapper<BuyPay> deleteWrapper) {
-        if (StringUtils.isNotBlank(requestParam)) {
-            String list = StrUtil.sub(requestParam, 1, -1);
-            List<String> idList = Lists.newArrayList(StringUtils.split(list, ","));
-            return this.removeByIds(idList);
-        }
         return false;
+    }
+
+    /**
+     * 根据起止时间查询购买数据
+     *
+     * @param appId     appId
+     * @param beginDate 开始时间
+     * @param endDate   结束时间
+     * @return 数据列表
+     */
+    public List<BuyPay> list(String appId, String beginDate, String endDate) {
+        QueryWrapper<BuyPay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(StringUtils.isNotBlank(appId), "buy_app_id", appId).between("buy_date", beginDate, endDate);
+        return this.list(queryWrapper);
     }
 
     /**
@@ -177,21 +176,29 @@ public class BuyPayService extends BaseCrudService<BuyPay, BuyPayMapper> {
         return true;
     }
 
-    @Autowired
-    public void setWxConfigService(WxConfigService wxConfigService) {
-        this.wxConfigService = wxConfigService;
-    }
-
     /**
      * 通过时间段查询买量汇总数据
      *
      * @param beginTime beginTime
-     * @param endTime endTime
-     * @param type type
+     * @param endTime   endTime
+     * @param type      type
      * @return List
      */
     public List<BuyPay> queryByPayCollectByDate(String beginTime, String endTime, String type) {
-        return this.mapper.queryByPayCollectByDate(beginTime, endTime, type);
+        QueryWrapper<BuyPay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.between("buy_date", beginTime, endTime).groupBy("buy_date").orderByDesc("buy_date");
+
+        List<String> selectList = Lists.newArrayList("buy_date as buyDate", " SUM(buy_cost) as buyCost");
+        // 将查询字段和分组字段赋值给查询条件
+        queryWrapper.select(selectList.toArray(new String[0]));
+        return this.list(queryWrapper);
+
+       // return this.mapper.queryByPayCollectByDate(beginTime, endTime, type);
+    }
+
+    @Autowired
+    public void setWxConfigService(WxConfigService wxConfigService) {
+        this.wxConfigService = wxConfigService;
     }
 
 }

@@ -22,7 +22,7 @@ public class MinitjWx extends BaseStatsEntity<MinitjWx> {
     /**
      * 游戏appid
      */
-    @TableId
+    @TableId("wx_appid")
     private String wxAppId;
     /**
      * 日期
@@ -72,7 +72,7 @@ public class MinitjWx extends BaseStatsEntity<MinitjWx> {
     /**
      * 视频收入
      */
-    private BigDecimal wxVideoIncome;
+    private BigDecimal wxVideoIncome = new BigDecimal(0);
 
     /**
      * bannel曝光量
@@ -87,7 +87,7 @@ public class MinitjWx extends BaseStatsEntity<MinitjWx> {
     /**
      * bannel收入
      */
-    private BigDecimal wxBannerIncome;
+    private BigDecimal wxBannerIncome = new BigDecimal(0);
 
     /**
      * 注册用户来自广告占比
@@ -176,7 +176,7 @@ public class MinitjWx extends BaseStatsEntity<MinitjWx> {
      * 充值收入
      */
     @TableField(exist = false)
-    private BigDecimal recharge;
+    private BigDecimal recharge = new BigDecimal(0);
     /**
      * 总收入
      */
@@ -186,13 +186,13 @@ public class MinitjWx extends BaseStatsEntity<MinitjWx> {
      * 广告收入
      */
     @TableField(exist = false)
-    private BigDecimal adRevenue;
+    private BigDecimal adRevenue = new BigDecimal(0);
 
     /**
      * 展示字段  新增单价  买量支出/广告新增人数
      */
     @TableField(exist = false)
-    private BigDecimal wxAdNewPrice;
+    private BigDecimal wxAdNewPrice = new BigDecimal(0);
     /**
      *
      */
@@ -237,17 +237,17 @@ public class MinitjWx extends BaseStatsEntity<MinitjWx> {
      * 展示数据-买量支出
      */
     @TableField(exist = false)
-    private BigDecimal buyCost;
+    private BigDecimal buyCost = new BigDecimal(0);
     /**
      * 展示数据-买量单价
      */
     @TableField(exist = false)
-    private BigDecimal buyClickPrice;
+    private BigDecimal buyClickPrice = new BigDecimal(0);
     /**
      * 展示数据--插屏收入
      */
     @TableField(exist = false)
-    private BigDecimal screenIncome;
+    private BigDecimal screenIncome = new BigDecimal(0);
     /**
      * 活跃来源展示字段--广告
      */
@@ -292,7 +292,7 @@ public class MinitjWx extends BaseStatsEntity<MinitjWx> {
      * 活跃
      */
     @TableField(exist = false)
-    private BigDecimal activeUp;
+    private BigDecimal activeUp = new BigDecimal(0);
     /**
      *
      */

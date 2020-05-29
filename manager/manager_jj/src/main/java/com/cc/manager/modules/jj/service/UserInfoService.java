@@ -55,7 +55,7 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
     /**
      * 根据uuid列表查询用户列表
      *
-     * @param uuidList uuid列表
+     * @param uuidSet uuid列表
      * @return 用户列表
      */
     public List<UserInfo> getUserInfoListByUuidList(Set<String> uuidSet) {
@@ -64,6 +64,17 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
         return this.list(userInfoQueryWrapper);
     }
 
+    /**
+     * 根据uuid查询用户信息
+     *
+     * @param uuid uuid列表
+     * @return 用户信息
+     */
+    public UserInfo getUserInfoByUuid(String uuid) {
+        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+        userInfoQueryWrapper.eq("ddUid", uuid).last("LIMIT 1");
+        return this.mapper.selectOne(userInfoQueryWrapper);
+    }
 
     @Override
     public StatsListResult getPage(StatsListParam statsListParam) {

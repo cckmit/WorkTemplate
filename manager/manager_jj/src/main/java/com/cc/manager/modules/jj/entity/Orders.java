@@ -113,7 +113,7 @@ public class Orders extends BaseStatsEntity<Orders> {
      * 产品类型
      */
     @TableField(exist = false)
-    private Integer productType;
+    private int productType;
 
     @TableField(exist = false)
     private String originName;
@@ -147,4 +147,5 @@ public class Orders extends BaseStatsEntity<Orders> {
 
     @TableField(exist = false)
     private boolean haveDetail = false;
+
 }

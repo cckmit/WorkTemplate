@@ -13,36 +13,5 @@ import java.util.List;
 @Repository
 public interface OrdersMapper extends BaseMapper<Orders> {
 
-    /**
-     * 查询实时付费统计
-     *
-     * @param start       start
-     * @param end         end
-     * @param ddAppId     ddAppId
-     * @param productType productType
-     * @return List<Orders>
-     */
-    List<Orders> queryBuyStatistic(String start, String end, String ddAppId, String productType);
-
-    /**
-     * 更新实体数据
-     *
-     * @param order order
-     */
-    void updateByPrimaryKey(Orders order);
-
-    /**
-     * 更新非空数据
-     *
-     * @param order order
-     */
-    void updateByPrimaryKeySelective(Orders order);
-
-    /**
-     * 小程序充值数据汇总查询
-     *
-     * @return List<Orders>
-     */
-    List<Orders> queryProgramReChargeCount();
 
 }

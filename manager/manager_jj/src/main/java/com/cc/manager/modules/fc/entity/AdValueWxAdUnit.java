@@ -20,9 +20,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = false)
 @TableName(schema = "persie_value", value = "ad_value_wx_adunit")
 public class AdValueWxAdUnit extends BaseStatsEntity<AdValueWxAdUnit> {
-
-    private static final long serialVersionUID = 1L;
-
     /**
      * id
      */
