@@ -120,5 +120,7 @@ public class RoundRecord extends BaseStatsEntity<RoundRecord> {
     @TableField(exist = false)
     private String roundLength;
 
+    @TableField(exist = false)
+    private boolean haveDetail = false;
 
 }

@@ -17,16 +17,13 @@ import com.cc.manager.modules.jj.entity.AllCost;
 import com.cc.manager.modules.jj.entity.Recharge;
 import com.cc.manager.modules.jj.entity.UserApp;
 import com.cc.manager.modules.jj.entity.WxConfig;
-import com.cc.manager.modules.jj.mapper.AllCostMapper;
 import com.cc.manager.modules.jj.mapper.RechargeMapper;
-import com.cc.manager.modules.jj.mapper.UserAppMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -43,12 +40,11 @@ import static com.cc.manager.modules.jj.config.CmTool.createNonceStr;
 @DS("jj")
 public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMapper> {
 
-    private RechargeMapper rechargeMapper;
     private AllCostService allCostService;
     private UserAppService userAppService;
     private WxConfigService wxConfigService;
-
     private RechargeService rechargeService;
+
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Recharge> queryWrapper, StatsListResult statsListResult) {
 
@@ -73,27 +69,28 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
         this.updateBeginAndEndDate(statsListParam);
         String beginDate = statsListParam.getQueryObject().getString("beginDate");
         String endDate = statsListParam.getQueryObject().getString("endDate");
-        String  uid = statsListParam.getQueryObject().getString("uid");
+        String uid = statsListParam.getQueryObject().getString("uid");
         String userName = statsListParam.getQueryObject().getString("userName");
-        String  productName = statsListParam.getQueryObject().getString("productName");
+        String appId = statsListParam.getQueryObject().getString("appId");
         String ddStatus = statsListParam.getQueryObject().getString("ddStatus");
         try {
+
             List<Recharge> recharges = this.rechargeService.selectAllRechargeAudit(beginDate, endDate);
             List<Recharge> rechargeList = new ArrayList<>();
             for (Recharge recharge : recharges) {
                 String ddUid = recharge.getDdUid();
                 if (StringUtils.isNotBlank(uid)) {
-                    if (!uid.equals(ddUid)) {
+                    if (!ddUid.contains(uid)) {
                         continue;
                     }
                 }
                 if (StringUtils.isNotBlank(userName)) {
-                    if (!userName.equals(recharge.getUserName())) {
+                    if (!recharge.getUserName().contains(userName)) {
                         continue;
                     }
                 }
-                if (StringUtils.isNotBlank(productName)) {
-                    if (!productName.equals(recharge.getDdAppId())) {
+                if (StringUtils.isNotBlank(appId)) {
+                    if (!StringUtils.equals(appId,recharge.getDdAppId())) {
                         continue;
                     }
                 }
@@ -112,9 +109,13 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
                 } else {
                     recharge.setRemainAmount(0);
                 }
-                int cashOutCurrent = rechargeMapper.selectCashOut(ddUid, ddTime);
+                BigDecimal cashOutCurrent = this.rechargeService.selectUserCashOut(ddUid, ddTime);
                 //已提现金额
-                recharge.setRmbOut(new BigDecimal(cashOutCurrent));
+                if (cashOutCurrent != null) {
+                    recharge.setRmbOut(cashOutCurrent);
+                } else {
+                    recharge.setRmbOut(new BigDecimal(0));
+                }
                 Integer programType = recharge.getProgramType();
                 if (programType == 1 || programType == 2) {
                     rechargeList.add(recharge);
@@ -147,30 +148,6 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
         statsListParam.getQueryObject().put("endDate", endDate);
     }
 
-    @Autowired
-    public void setRechargeMapper(RechargeMapper rechargeMapper) {
-        this.rechargeMapper = rechargeMapper;
-    }
-    @Autowired
-    public void setRechargeService(RechargeService rechargeService) {
-        this.rechargeService = rechargeService;
-    }
-
-    @Autowired
-    public void setAllCostService(AllCostService allCostService) {
-        this.allCostService = allCostService;
-    }
-
-    @Autowired
-    public void setUserAppService(UserAppService userAppService) {
-        this.userAppService = userAppService;
-    }
-
-    @Autowired
-    public void setWxConfigService(WxConfigService wxConfigService) {
-        this.wxConfigService = wxConfigService;
-    }
-
     /**
      * 审核提现操作
      *
@@ -183,7 +160,7 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
         int errorCount = 0;
         for (int i = 0; i < parameter.size(); i++) {
             String ddId = parameter.getString(i);
-            Recharge recharge = this.rechargeMapper.selectById(ddId);
+            Recharge recharge = this.rechargeService.selectById(ddId);
             Integer programType = recharge.getProgramType();
             if (programType == 1) {
                 UserApp userApp = this.userAppService.selectUserOpenId(recharge.getDdUid(), recharge.getDdAppId());
@@ -198,7 +175,7 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
                     recharge.setDdTip(returnMsg);
                     recharge.setDdStatus(2);
                     recharge.setDdTrans(LocalDateTime.now());
-                    error = rechargeMapper.updateBySelective(recharge);
+                    error = rechargeService.updateBySelective(recharge);
                     errorCount = errorCount + error;
                     LOGGER.info("提现返回结果 :" + returnCode);
                 } else if ("SUCCESS".equals(returnCode)) {
@@ -207,13 +184,13 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
                         recharge.setDdStatus(200);
                         recharge.setDdTip("提现成功");
                         recharge.setDdTrans(LocalDateTime.now());
-                        rechargeMapper.updateBySelective(recharge);
+                        rechargeService.updateBySelective(recharge);
                     } else if (StringUtils.equals(resultCode, "FAIL")) {
                         String errCode = backCharge.get("err_code");
                         recharge.setDdTip(errCode);
                         recharge.setDdStatus(2);
                         recharge.setDdTrans(LocalDateTime.now());
-                        error = rechargeMapper.updateBySelective(recharge);
+                        error = rechargeService.updateBySelective(recharge);
                         errorCount = errorCount + error;
                         LOGGER.info("提现返回结果 :" + returnCode);
                     }
@@ -267,6 +244,26 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
             LOGGER.error(ExceptionUtils.getStackTrace(e));
         }
         return null;
+    }
+
+    @Autowired
+    public void setRechargeService(RechargeService rechargeService) {
+        this.rechargeService = rechargeService;
+    }
+
+    @Autowired
+    public void setAllCostService(AllCostService allCostService) {
+        this.allCostService = allCostService;
+    }
+
+    @Autowired
+    public void setUserAppService(UserAppService userAppService) {
+        this.userAppService = userAppService;
+    }
+
+    @Autowired
+    public void setWxConfigService(WxConfigService wxConfigService) {
+        this.wxConfigService = wxConfigService;
     }
 
 }

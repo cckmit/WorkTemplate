@@ -4,21 +4,20 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cc.manager.common.mvc.BaseCrudEntity;
+import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 /**
- *
  * @author cf
  * @since 2020-05-23
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @TableName(schema = "persie", value = "all_cost")
-public class AllCost implements BaseCrudEntity<AllCost> {
-
-    private static final long serialVersionUID = 1L;
+public class AllCost extends BaseStatsEntity<AllCost> {
 
     /**
      * 主键
@@ -80,5 +79,9 @@ public class AllCost implements BaseCrudEntity<AllCost> {
     @TableField("ddTime")
     private LocalDateTime ddTime;
 
+    @TableField(exist = false)
+    private String nickName;
+    @TableField(exist = false)
+    private boolean haveDetail = false;
 
 }

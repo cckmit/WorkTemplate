@@ -8,6 +8,7 @@ import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.entity.ConfigAdContent;
 import com.cc.manager.modules.jj.service.ConfigAdContentService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class ConfigAdContentController implements BaseCrudController {
 
     private ConfigAdContentService configAdContentService;
+    private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
@@ -43,19 +45,31 @@ public class ConfigAdContentController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        return this.configAdContentService.post(requestParam);
+        PostResult postResult = this.configAdContentService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_content");
+        }
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        return this.configAdContentService.put(requestParam);
+        PostResult postResult = this.configAdContentService.put(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_content");
+        }
+        return postResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        return this.configAdContentService.delete(requestParam);
+        PostResult postResult = this.configAdContentService.delete(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_content");
+        }
+        return postResult;
     }
 
     @Override
@@ -76,12 +90,21 @@ public class ConfigAdContentController implements BaseCrudController {
 
     @PutMapping(value = "/uploadImageUrlByUpload")
     public PostResult uploadImageUrlByUpload(@RequestBody String requestParam) {
-        return this.configAdContentService.uploadImageUrlByUpload(requestParam);
+        PostResult postResult = this.configAdContentService.uploadImageUrlByUpload(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_content");
+        }
+        return postResult;
     }
 
     @Autowired
     public void setConfigAdContentService(ConfigAdContentService configAdContentService) {
         this.configAdContentService = configAdContentService;
+    }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
     }
 
 }

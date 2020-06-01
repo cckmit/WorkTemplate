@@ -5,13 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.mvc.BaseStatsService;
-import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.jj.entity.Recharge;
@@ -35,7 +29,7 @@ import java.util.Objects;
 @DS("jj")
 public class RechargeRecordService extends BaseStatsService<Recharge, RechargeMapper> {
 
-    private RechargeMapper rechargeMapper;
+    private RechargeService rechargeService;
 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Recharge> queryWrapper, StatsListResult statsListResult) {
@@ -60,46 +54,35 @@ public class RechargeRecordService extends BaseStatsService<Recharge, RechargeMa
         try {
             // 初始化查询的起止日期
             this.updateBeginAndEndDate(statsListParam);
-
-            String start = statsListParam.getQueryObject().getString("beginDate");
-            String end = statsListParam.getQueryObject().getString("endDate");
-
             String uid = statsListParam.getQueryObject().getString("uid");
             String userName = statsListParam.getQueryObject().getString("appId");
             String productName = statsListParam.getQueryObject().getString("productName");
             String ddStatus = statsListParam.getQueryObject().getString("ddStatus");
 
-
-            if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-                JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-                String times = queryObject.getString("times");
-                if (StringUtils.isNotBlank(times)) {
-                    String[] timeRangeArray = StringUtils.split(times, "~");
-                    start = timeRangeArray[0].trim();
-                    end = timeRangeArray[1].trim();
-                }
-
-            }
-            List<Recharge> recharges = this.rechargeMapper.selectAllChargeRecord(start, end);
+            String beginDate = statsListParam.getQueryObject().getString("beginDate");
+            String endDate = statsListParam.getQueryObject().getString("endDate");
+            //查询提现记录数据
+            List<Recharge> recharges = this.rechargeService.selectAllChargeRecord(beginDate, endDate);
+            //过滤查询条件，生成符合条件结果
             List<Recharge> newRecharges = new ArrayList<>();
             for (Recharge recharge : recharges) {
-                if(StringUtils.isNotBlank(uid)){
-                    if(!recharge.getDdUid().contains(uid)){
+                if (StringUtils.isNotBlank(uid)) {
+                    if (!recharge.getDdUid().contains(uid)) {
                         continue;
                     }
                 }
-                if(StringUtils.isNotBlank(userName)){
-                    if(!recharge.getUserName().contains(userName)){
+                if (StringUtils.isNotBlank(userName)) {
+                    if (!recharge.getUserName().contains(userName)) {
                         continue;
                     }
                 }
-                if(StringUtils.isNotBlank(productName)){
-                    if(!recharge.getProductName().contains(productName)){
+                if (StringUtils.isNotBlank(productName)) {
+                    if (!recharge.getProductName().contains(productName)) {
                         continue;
                     }
                 }
-                if(StringUtils.isNotBlank(ddStatus)){
-                    if(recharge.getDdStatus() != (Integer.parseInt(ddStatus))){
+                if (StringUtils.isNotBlank(ddStatus)) {
+                    if (recharge.getDdStatus() != (Integer.parseInt(ddStatus))) {
                         continue;
                     }
                 }
@@ -128,17 +111,13 @@ public class RechargeRecordService extends BaseStatsService<Recharge, RechargeMa
             beginDate = timeRangeArray[0].trim();
             endDate = timeRangeArray[1].trim();
         }
-        if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
-            beginDate = "2020-04-10";//DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2))
-            endDate = "2020-04-10";  //DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
-        }
         statsListParam.getQueryObject().put("beginDate", beginDate);
         statsListParam.getQueryObject().put("endDate", endDate);
     }
 
     @Autowired
-    public void setRechargeMapper(RechargeMapper rechargeMapper) {
-        this.rechargeMapper = rechargeMapper;
+    public void setRechargeService(RechargeService rechargeService) {
+        this.rechargeService = rechargeService;
     }
 
 }

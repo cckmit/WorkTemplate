@@ -1,12 +1,8 @@
 package com.cc.manager.modules.jj.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
@@ -14,10 +10,8 @@ import com.cc.manager.modules.jj.entity.Recharge;
 import com.cc.manager.modules.jj.entity.UserInfo;
 import com.cc.manager.modules.jj.entity.UserValue;
 import com.cc.manager.modules.jj.entity.WxConfig;
-import com.cc.manager.modules.jj.mapper.RechargeMapper;
 import com.cc.manager.modules.jj.mapper.UserInfoMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +26,7 @@ import java.util.*;
 @DS("jj")
 public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> {
 
-    private RechargeMapper rechargeMapper;
+    private RechargeService rechargeService;
     private UserValueService userValueService;
     private WxConfigService wxConfigService;
 
@@ -60,7 +54,7 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
      */
     public List<UserInfo> getUserInfoListByUuidList(Set<String> uuidSet) {
         QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-        userInfoQueryWrapper.like("ddUid", uuidSet);
+        userInfoQueryWrapper.in("ddUid", uuidSet);
         return this.list(userInfoQueryWrapper);
     }
 
@@ -77,43 +71,14 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
     }
 
     @Override
-    public StatsListResult getPage(StatsListParam statsListParam) {
-        StatsListResult statsListResult = new StatsListResult();
-        // 判断请求参数是否为空
-        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
-            try {
-                // 初始化查询wrapper
-                QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
-                this.updateGetListWrapper(statsListParam, queryWrapper, statsListResult);
-                Page<UserInfo> page = new Page<>(statsListParam.getPage(), statsListParam.getLimit());
-                IPage<UserInfo> entityPages = this.page(page, queryWrapper);
-                if (Objects.nonNull(entityPages)) {
-                    List<UserInfo> entityList = entityPages.getRecords();
-                    JSONObject totalRow = this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
-                    statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
-                    statsListResult.setTotalRow(totalRow);
-                    statsListResult.setCount(entityPages.getTotal());
-                }
-            } catch (Exception e) {
-                statsListResult.setCode(1);
-                statsListResult.setMsg("查询结果异常，请联系开发人员！");
-                LOGGER.error(ExceptionUtils.getStackTrace(e));
-            }
-        }
-        return statsListResult;
-    }
-
-    @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<UserInfo> queryWrapper, StatsListResult statsListResult) {
 
-        JSONObject queryObject = JSONObject.parseObject(statsListParam.getQueryData());
-        if (queryObject != null) {
-            String times = queryObject.getString("registerTime");
-            String ddName = queryObject.getString("ddName");
-            String uid = queryObject.getString("uid");
-            String ddAppId = queryObject.getString("ddAppId");
-            String ddOid = queryObject.getString("ddOid");
+
+            String times = statsListParam.getQueryObject().getString("registerTime");
+            String ddName = statsListParam.getQueryObject().getString("ddName");
+            String uid = statsListParam.getQueryObject().getString("uid");
+            String ddAppId = statsListParam.getQueryObject().getString("ddAppId");
+            String ddOid = statsListParam.getQueryObject().getString("ddOid");
             if (StringUtils.isNotBlank(times)) {
                 String[] timeRangeArray = StringUtils.split(times, "~");
                 queryWrapper.between("DATE(ddRegisterTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
@@ -122,12 +87,13 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
             queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
             queryWrapper.like(StringUtils.isNotBlank(ddAppId), "ddAppId", ddAppId);
             queryWrapper.like(StringUtils.isNotBlank(ddOid), "ddOId", ddOid);
-        }
+
 
     }
 
     @Override
     protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<UserInfo> entityList, StatsListResult statsListResult) {
+
         //已提现金额用户的提现金额赋值
         Map<String, BigDecimal> userRechargedMap = queryUserRecharged();
         for (String userId : userRechargedMap.keySet()) {
@@ -152,7 +118,7 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
      */
     private Map<String, BigDecimal> queryUserRecharged() {
         Map<String, BigDecimal> rechargeMap = new HashMap<>(10);
-        List<Recharge> userRecharged = rechargeMapper.selectAllUserRecharged();
+        List<Recharge> userRecharged = rechargeService.selectAllUserRecharged();
         for (Recharge recharge : userRecharged) {
             rechargeMap.put(recharge.getDdUid(), recharge.getDdRmb());
         }
@@ -160,8 +126,8 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
     }
 
     @Autowired
-    public void setRechargeMapper(RechargeMapper rechargeMapper) {
-        this.rechargeMapper = rechargeMapper;
+    public void setRechargeService(RechargeService rechargeService) {
+        this.rechargeService = rechargeService;
     }
 
     @Autowired

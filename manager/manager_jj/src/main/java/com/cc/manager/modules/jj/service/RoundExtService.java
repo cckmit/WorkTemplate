@@ -10,11 +10,14 @@ import com.cc.manager.modules.jj.entity.RoundExt;
 import com.cc.manager.modules.jj.mapper.RoundExtMapper;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 
 /**
  * @author cf
@@ -22,8 +25,6 @@ import java.util.List;
  */
 @Service
 public class RoundExtService extends BaseCrudService<RoundExt, RoundExtMapper> {
-
-    private RoundExtMapper roundExtMapper;
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<RoundExt> queryWrapper) {
@@ -50,16 +51,42 @@ public class RoundExtService extends BaseCrudService<RoundExt, RoundExtMapper> {
         }
         Integer ddGroup = entity.getDdGroup();
         if (ddGroup == 1) {
-            int maxId = roundExtMapper.selectGMaxId();
+            int maxId = this.selectMaxIdProgram();
             entity.setId("G" + (maxId + 1));
             entity.setDdGroup(1);
         } else {
-            int maxId = roundExtMapper.selectSMaxId();
+            int maxId = this.selectMaxIdGame();
             entity.setId("S" + (maxId + 1));
             entity.setDdGroup(0);
         }
         entity.setDdState(true);
 
+    }
+
+    /**
+     * 小游戏当前最大ID
+     *
+     * @return int
+     */
+    private int selectMaxIdGame() {
+        QueryWrapper<RoundExt> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("ddGroup", FALSE);
+        queryWrapper.select("COUNT(*) AS id");
+        Map<String, Object> map = this.mapper.selectMaps(queryWrapper).get(0);
+        return new Integer(String.valueOf(map.get("id")));
+    }
+
+    /**
+     * 小程序当前最大ID
+     *
+     * @return int
+     */
+    private int selectMaxIdProgram() {
+        QueryWrapper<RoundExt> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("ddGroup", TRUE);
+        queryWrapper.select("COUNT(*) AS id");
+        Map<String, Object> map = this.mapper.selectMaps(queryWrapper).get(0);
+        return new Integer(String.valueOf(map.get("id")));
     }
 
     @Override
@@ -138,11 +165,6 @@ public class RoundExtService extends BaseCrudService<RoundExt, RoundExtMapper> {
             default:
                 break;
         }
-    }
-
-    @Autowired
-    public void setRoundExtMapper(RoundExtMapper roundExtMapper) {
-        this.roundExtMapper = roundExtMapper;
     }
 
 }

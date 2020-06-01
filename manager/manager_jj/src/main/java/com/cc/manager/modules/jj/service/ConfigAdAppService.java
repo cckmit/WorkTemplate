@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
+import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.entity.ConfigAdApp;
 import com.cc.manager.modules.jj.entity.ConfigAdCombination;
 import com.cc.manager.modules.jj.entity.ConfigAdStrategy;
@@ -33,6 +34,11 @@ public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdApp
             JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
             String appId = queryObject.getString("appId");
             queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
+            String minVersion = queryObject.getString("minVersion");
+            queryWrapper.like(StringUtils.isNotBlank(minVersion), "ddMinVersion", minVersion);
+            String combinationId = queryObject.getString("combinationId");
+            queryWrapper.eq(StringUtils.isNotBlank(combinationId), "ddCombinationId", combinationId);
+
         }
     }
 
@@ -49,6 +55,42 @@ public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdApp
         return false;
     }
 
+    /**
+     * 更新状态
+     *
+     * @param requestParam 请求参数
+     * @return 执行结果
+     */
+    public PostResult switchStatus(String requestParam) {
+        PostResult postResult = new PostResult();
+        try {
+            JSONObject requestObject = JSONObject.parseObject(requestParam);
+            String switchColumn = requestObject.getString("switchColumn");
+            boolean status = requestObject.getBoolean("status");
+            UpdateWrapper<ConfigAdApp> updateWrapper = new UpdateWrapper<>();
+            if (StringUtils.equals("allowedShow", switchColumn)) {
+                updateWrapper.set("ddAllowedShow", status);
+            } else if (StringUtils.equals("wxBannerAllowedShow", switchColumn)) {
+                updateWrapper.set("ddWxBannerAllowedShow", status);
+            } else if (StringUtils.equals("wxIntAllowedShow", switchColumn)) {
+                updateWrapper.set("ddWxIntAllowedShow", status);
+            } else {
+                updateWrapper = null;
+            }
+            if (updateWrapper != null) {
+                updateWrapper.eq("ddAppId", requestObject.getString("appId")).eq("ddMinVersion", requestObject.getString("minVersion"));
+                if (!this.update(updateWrapper)) {
+                    postResult.setCode(2);
+                    postResult.setMsg("操作失败！");
+                }
+            }
+        } catch (RuntimeException e) {
+            postResult.setCode(2);
+            postResult.setMsg("操作失败！");
+        }
+        return postResult;
+    }
+
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {
         this.wxConfigService = wxConfigService;
@@ -63,4 +105,5 @@ public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdApp
     public void setConfigAdStrategyService(ConfigAdStrategyService configAdStrategyService) {
         this.configAdStrategyService = configAdStrategyService;
     }
+
 }

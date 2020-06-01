@@ -2,7 +2,6 @@ package com.cc.manager.modules.jj.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cc.manager.modules.jj.entity.RoundExt;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,11 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface RoundExtMapper extends BaseMapper<RoundExt> {
-
-    @Select("SELECT  COUNT(*) FROM persie_deamon.round_ext  WHERE ddGroup = TRUE")
-    int selectGMaxId();
-
-    @Select("SELECT  COUNT(*) FROM persie_deamon.round_ext  WHERE ddGroup = FALSE")
-    int selectSMaxId();
 
 }

@@ -38,38 +38,6 @@ public class PayStatisticService extends BaseStatsService<Orders, OrdersMapper> 
     private JjAndFcAppConfigService jjAndFcAppConfigService;
 
     @Override
-    public StatsListResult getPage(StatsListParam statsListParam) {
-        StatsListResult statsListResult = new StatsListResult();
-        // 判断请求参数是否为空，并进行初始化
-        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
-        }
-        if (Objects.isNull(statsListParam.getQueryObject())) {
-            statsListParam.setQueryObject(new JSONObject());
-        }
-
-        // 初始化查询的起止日期
-        this.updateBeginAndEndDate(statsListParam);
-        String beginDate = statsListParam.getQueryObject().getString("beginDate");
-        String endDate = statsListParam.getQueryObject().getString("endDate");
-
-        try {
-            //查询实时付费数据
-            List<Orders> entityList = ordersService.queryBuyStatistic(beginDate, endDate);
-            if (Objects.nonNull(entityList)) {
-                this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
-                statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
-                statsListResult.setCount(entityList.size());
-            }
-        } catch (Exception e) {
-            statsListResult.setCode(1);
-            statsListResult.setMsg("查询结果异常，请联系开发人员！");
-            LOGGER.error(ExceptionUtils.getStackTrace(e));
-        }
-        return statsListResult;
-    }
-
-    @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Orders> queryWrapper, StatsListResult statsListResult) {
 
     }
@@ -105,6 +73,38 @@ public class PayStatisticService extends BaseStatsService<Orders, OrdersMapper> 
         entityList.clear();
         entityList.addAll(newEntityList);
         return null;
+    }
+
+    @Override
+    public StatsListResult getPage(StatsListParam statsListParam) {
+        StatsListResult statsListResult = new StatsListResult();
+        // 判断请求参数是否为空，并进行初始化
+        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
+            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
+        }
+        if (Objects.isNull(statsListParam.getQueryObject())) {
+            statsListParam.setQueryObject(new JSONObject());
+        }
+
+        // 初始化查询的起止日期
+        this.updateBeginAndEndDate(statsListParam);
+        String beginDate = statsListParam.getQueryObject().getString("beginDate");
+        String endDate = statsListParam.getQueryObject().getString("endDate");
+
+        try {
+            //查询实时付费数据
+            List<Orders> entityList = ordersService.queryBuyStatistic(beginDate, endDate);
+            if (Objects.nonNull(entityList)) {
+                this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
+                statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
+                statsListResult.setCount(entityList.size());
+            }
+        } catch (Exception e) {
+            statsListResult.setCode(1);
+            statsListResult.setMsg("查询结果异常，请联系开发人员！");
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+        }
+        return statsListResult;
     }
 
     /**

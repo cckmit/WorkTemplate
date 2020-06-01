@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 public class WxConfigController implements BaseCrudController {
 
     private WxConfigService wxConfigService;
-
     private PersieServerUtils persieServerUtils;
 
     @Override
@@ -49,7 +48,8 @@ public class WxConfigController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.wxConfigService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("wx_config");
+            this.persieServerUtils.refreshTable("wx_config");
+            postResult = this.persieServerUtils.refreshTable("app_config");
         }
         return postResult;
     }
@@ -57,11 +57,12 @@ public class WxConfigController implements BaseCrudController {
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        PostResult put = this.wxConfigService.put(requestParam);
-        if (put.getCode() == 1) {
-            put = this.persieServerUtils.refreshTable("wx_config");
+        PostResult postResult = this.wxConfigService.put(requestParam);
+        if (postResult.getCode() == 1) {
+            this.persieServerUtils.refreshTable("wx_config");
+            postResult = this.persieServerUtils.refreshTable("app_config");
         }
-        return put;
+        return postResult;
     }
 
     @Override
@@ -69,8 +70,8 @@ public class WxConfigController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult deleteResult = this.wxConfigService.delete(requestParam);
         if (deleteResult.getCode() == 1) {
-            deleteResult = this.persieServerUtils.refreshTable("wx_config");
-            this.persieServerUtils.refreshTable("app_config");
+            this.persieServerUtils.refreshTable("wx_config");
+            deleteResult = this.persieServerUtils.refreshTable("app_config");
         }
         return deleteResult;
     }
@@ -92,7 +93,8 @@ public class WxConfigController implements BaseCrudController {
         PostResult postResult = wxConfigService.refreshResource(parameter);
         //刷新业务表结构
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("wx_config");
+            this.persieServerUtils.refreshTable("wx_config");
+            postResult = this.persieServerUtils.refreshTable("app_config");
         }
         return postResult;
     }
@@ -106,4 +108,5 @@ public class WxConfigController implements BaseCrudController {
     public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
         this.persieServerUtils = persieServerUtils;
     }
+
 }

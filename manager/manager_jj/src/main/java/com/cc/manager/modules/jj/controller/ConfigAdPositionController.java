@@ -8,6 +8,7 @@ import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.entity.ConfigAdPosition;
 import com.cc.manager.modules.jj.service.ConfigAdPositionService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class ConfigAdPositionController implements BaseCrudController {
 
     private ConfigAdPositionService configAdPositionService;
+    private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
@@ -43,19 +45,31 @@ public class ConfigAdPositionController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        return this.configAdPositionService.post(requestParam);
+        PostResult postResult = this.configAdPositionService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_position");
+        }
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        return this.configAdPositionService.put(requestParam);
+        PostResult postResult = this.configAdPositionService.put(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_position");
+        }
+        return postResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        return this.configAdPositionService.delete(requestParam);
+        PostResult postResult = this.configAdPositionService.delete(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_position");
+        }
+        return postResult;
     }
 
     @Override
@@ -65,8 +79,12 @@ public class ConfigAdPositionController implements BaseCrudController {
     }
 
     @PutMapping("/statusSwitch")
-    public PostResult statusSwitch(@RequestBody JSONObject switchObject) {
-        return this.configAdPositionService.statusSwitch(switchObject);
+    public PostResult statusSwitch(@RequestBody String requestParam) {
+        PostResult postResult = this.configAdPositionService.statusSwitch(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_position");
+        }
+        return postResult;
     }
 
     @Autowired
@@ -74,4 +92,8 @@ public class ConfigAdPositionController implements BaseCrudController {
         this.configAdPositionService = configAdPositionService;
     }
 
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
+    }
 }

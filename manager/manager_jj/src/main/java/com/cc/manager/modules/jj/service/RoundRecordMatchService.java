@@ -59,18 +59,28 @@ public class RoundRecordMatchService extends BaseStatsService<RoundRecord, Round
 
     @Override
     protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<RoundRecord> entityList, StatsListResult statsListResult) {
+        String appId = statsListParam.getQueryObject().getString("appId");
+        List<RoundRecord> newList = new ArrayList<>();
         for (RoundRecord roundRecord : entityList) {
             roundRecord.setDdGroup(true);
             RoundExt roundExt = this.roundExtService.getCacheEntity(RoundExt.class, roundRecord.getDdRound());
             roundRecord.setRoundLength(roundExt.getTip());
             //赛制名称
             RoundMatch roundMatch = this.roundMatchService.getCacheEntity(RoundMatch.class, String.valueOf(roundRecord.getDdCode()));
+            if (StringUtils.isNotBlank(appId)) {
+                if (!StringUtils.equals(appId, roundMatch.getDdAppId())) {
+                    continue;
+                }
+            }
             roundRecord.setAppId(roundMatch.getDdAppId());
             roundRecord.setAppName(this.wxConfigService.getCacheValue(WxConfig.class, roundMatch.getDdAppId()));
             roundRecord.setRoundName(roundRecord.getDdRound() + "-" + roundMatch.getDdName());
             //产品名称
             roundRecord.setGamesName(this.gamesService.getCacheValue(Games.class, String.valueOf(roundRecord.getDdGame())));
+            newList.add(roundRecord);
         }
+        entityList.clear();
+        entityList.addAll(newList);
         return null;
     }
 

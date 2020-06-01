@@ -82,7 +82,7 @@ public class RoundReceiveService extends BaseStatsService<RoundReceive, RoundRec
                 roundReceive.setUserName(userInfoMap.get(roundReceive.getDdUid()));
                 // 更新游戏名称
                 roundReceive.setGameName(this.gamesService.getCacheValue(Games.class, String.valueOf(roundReceive.getDdGCode())));
-                //
+                // 更新赛场信息
                 JSONObject roundInfo = getRoundInfo(roundReceive.getDdGroup(), roundReceive.getDdMCode());
                 if (roundInfo.containsKey("name")) {
                     roundReceive.setRoundName(roundInfo.getString("name"));
@@ -111,7 +111,6 @@ public class RoundReceiveService extends BaseStatsService<RoundReceive, RoundRec
 
         entityList.clear();
         entityList.addAll(newList);
-        // statsListResult.setCount(newList.size());
         return null;
     }
 

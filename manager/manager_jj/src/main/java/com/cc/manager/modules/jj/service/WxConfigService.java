@@ -1,6 +1,5 @@
 package com.cc.manager.modules.jj.service;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
@@ -14,7 +13,6 @@ import com.cc.manager.modules.jj.entity.AppConfig;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.WxConfigMapper;
 import com.cc.manager.modules.jj.utils.PersieServerUtils;
-import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -152,15 +149,11 @@ public class WxConfigService extends BaseCrudService<WxConfig, WxConfigMapper> {
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<WxConfig> deleteWrapper) {
         if (StringUtils.isNotBlank(requestParam)) {
-            String list = StrUtil.sub(requestParam, 1, -1);
-            List<String> idList = Lists.newArrayList(StringUtils.split(list, ","));
-            List<String> newList = new ArrayList<>();
-            for (String str : idList) {
-                String substring = str.substring(1, str.length() - 1);
-                newList.add(substring);
+            List<String> deleteIdList = JSONArray.parseArray(requestParam, String.class);
+            if (deleteIdList != null && !deleteIdList.isEmpty()) {
+                this.appConfigService.removeByIds(deleteIdList);
+                return this.removeByIds(deleteIdList);
             }
-            this.appConfigService.delete(newList);
-            return this.removeByIds(newList);
         }
         return false;
     }

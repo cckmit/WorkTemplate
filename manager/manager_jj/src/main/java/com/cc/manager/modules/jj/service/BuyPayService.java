@@ -1,6 +1,5 @@
 package com.cc.manager.modules.jj.service;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
@@ -193,7 +192,6 @@ public class BuyPayService extends BaseCrudService<BuyPay, BuyPayMapper> {
         queryWrapper.select(selectList.toArray(new String[0]));
         return this.list(queryWrapper);
 
-       // return this.mapper.queryByPayCollectByDate(beginTime, endTime, type);
     }
 
     @Autowired

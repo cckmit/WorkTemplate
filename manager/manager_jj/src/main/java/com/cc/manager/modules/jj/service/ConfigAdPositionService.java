@@ -51,21 +51,6 @@ public class ConfigAdPositionService extends BaseCrudService<ConfigAdPosition, C
     }
 
     @Override
-    protected void updateInsertEntity(String requestParam, ConfigAdPosition entity) {
-        entity.setAllowedOperation(StringUtils.equals("1", entity.getAllowedOperation()) ? "1" : "0");
-        entity.setShowWxAd(StringUtils.equals("1", entity.getShowWxAd()) ? "1" : "0");
-        entity.setShowWxReVideoAd(StringUtils.equals("1", entity.getShowWxReVideoAd()) ? "1" : "0");
-    }
-
-    @Override
-    protected boolean update(String requestParam, ConfigAdPosition entity, UpdateWrapper<ConfigAdPosition> updateWrapper) {
-        entity.setAllowedOperation(StringUtils.equals("1", entity.getAllowedOperation()) ? "1" : "0");
-        entity.setShowWxAd(StringUtils.equals("1", entity.getShowWxAd()) ? "1" : "0");
-        entity.setShowWxReVideoAd(StringUtils.equals("1", entity.getShowWxReVideoAd()) ? "1" : "0");
-        return this.updateById(entity);
-    }
-
-    @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigAdPosition> deleteWrapper) {
         return false;
     }
@@ -73,25 +58,30 @@ public class ConfigAdPositionService extends BaseCrudService<ConfigAdPosition, C
     /**
      * 表格内数据状态切换
      *
-     * @param switchObject 切换对象
+     * @param requestParam 请求参数
      */
-    public PostResult statusSwitch(JSONObject switchObject) {
+    public PostResult statusSwitch(String requestParam) {
         PostResult postResult = new PostResult();
         try {
-            ConfigAdPosition configAdPosition = new ConfigAdPosition();
-            configAdPosition.setId(switchObject.getInteger("id"));
-            String switchColumn = switchObject.getString("switchColumn");
-            String switchValue = Boolean.parseBoolean(switchObject.getString("status")) ? "1" : "0";
+            JSONObject requestObject = JSONObject.parseObject(requestParam);
+            String switchColumn = requestObject.getString("switchColumn");
+            boolean status = requestObject.getBoolean("status");
+            UpdateWrapper<ConfigAdPosition> updateWrapper = new UpdateWrapper<>();
             if (StringUtils.equals("allowedOperation", switchColumn)) {
-                configAdPosition.setAllowedOperation(switchValue);
+                updateWrapper.set("ddAllowedOperation", status);
             } else if (StringUtils.equals("showWxAd", switchColumn)) {
-                configAdPosition.setShowWxAd(switchValue);
+                updateWrapper.set("ddShowWxAd", status);
             } else if (StringUtils.equals("showWxReVideoAd", switchColumn)) {
-                configAdPosition.setShowWxReVideoAd(switchValue);
+                updateWrapper.set("ddShowWxReVideoAd", status);
+            } else {
+                updateWrapper = null;
             }
-            if (!this.updateById(configAdPosition)) {
-                postResult.setCode(2);
-                postResult.setMsg("切换状态失败：更新数据库失败！");
+            if (updateWrapper != null) {
+                updateWrapper.eq("ddId", requestObject.getInteger("id"));
+                if (!this.update(updateWrapper)) {
+                    postResult.setCode(2);
+                    postResult.setMsg("操作失败！");
+                }
             }
         } catch (Exception e) {
             postResult.setCode(2);

@@ -8,6 +8,7 @@ import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.entity.ConfigAdSpace;
 import com.cc.manager.modules.jj.service.ConfigAdSpaceService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class ConfigAdSpaceController implements BaseCrudController {
 
     private ConfigAdSpaceService configAdSpaceService;
+    private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
@@ -43,19 +45,31 @@ public class ConfigAdSpaceController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        return this.configAdSpaceService.post(requestParam);
+        PostResult postResult = this.configAdSpaceService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_space");
+        }
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        return this.configAdSpaceService.put(requestParam);
+        PostResult postResult = this.configAdSpaceService.put(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_space");
+        }
+        return postResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        return this.configAdSpaceService.delete(requestParam);
+        PostResult postResult = this.configAdSpaceService.delete(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_space");
+        }
+        return postResult;
     }
 
     @Override
@@ -64,9 +78,23 @@ public class ConfigAdSpaceController implements BaseCrudController {
         return this.configAdSpaceService.getSelectArray(ConfigAdSpace.class, null);
     }
 
+    @PutMapping("/statusSwitch")
+    public PostResult statusSwitch(@RequestBody String requestParam) {
+        PostResult postResult = this.configAdSpaceService.statusSwitch(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_space");
+        }
+        return postResult;
+    }
+
     @Autowired
     public void setConfigAdSpaceService(ConfigAdSpaceService configAdSpaceService) {
         this.configAdSpaceService = configAdSpaceService;
+    }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
     }
 
 }

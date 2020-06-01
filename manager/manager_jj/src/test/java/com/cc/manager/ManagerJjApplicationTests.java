@@ -1,18 +1,18 @@
 package com.cc.manager;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.utils.RedisUtil;
-import com.cc.manager.modules.jj.entity.Recharge;
-import com.cc.manager.modules.jj.entity.UserApp;
-import com.cc.manager.modules.jj.entity.UserInfo;
-import com.cc.manager.modules.jj.mapper.RechargeMapper;
+import com.cc.manager.modules.jj.entity.AllCost;
 import com.cc.manager.modules.jj.mapper.UserAppMapper;
+import com.cc.manager.modules.jj.service.AllCostService;
+import com.cc.manager.modules.jj.service.RechargeService;
+import com.cc.manager.modules.jj.service.RoundExtService;
 import com.cc.manager.modules.jj.service.UserInfoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @SpringBootTest
 class ManagerJjApplicationTests {
@@ -23,16 +23,28 @@ class ManagerJjApplicationTests {
     UserInfoService userInfoService;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    RechargeService RechargeService;
+    @Autowired
+    AllCostService allCostService;
+    @Autowired
+    RoundExtService roundExtService;
     @Test
     void contextLoads() {
     }
 
     @Test
     public void getString() {
-        QueryWrapper<UserApp> userAppQueryWrapper = new QueryWrapper<>();
-        userAppQueryWrapper.eq("ddUid", "6F8BE96F678D2BCAA5653BA58E20EB96").eq("ddAppId", 1110381534);
-        UserApp userApp = userAppMapper.selectOne(userAppQueryWrapper);
-        System.out.println(userApp.toString());
+//        QueryWrapper<UserApp> userAppQueryWrapper = new QueryWrapper<>();
+//        userAppQueryWrapper.eq("ddUid", "6F8BE96F678D2BCAA5653BA58E20EB96").eq("ddAppId", 1110381534);
+//        UserApp userApp = userAppMapper.selectOne(userAppQueryWrapper);
+//        System.out.println(userApp.toString());
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime parse = LocalDateTime.parse("2020-02-15 19:40:32",df);
+        AllCost allCost= allCostService.selectRemainAmount("oSn_Lw88gelVi7jYCijJUAArmMIs",parse);
+//        BigDecimal i = RechargeService.selectUserCashOut("oSn_Lw88gelVi7jYCijJUAArmMIs","2020-02-05");
+        System.out.println(allCost.toString());
+       // Recharge recharge = RechargeService.selectById("oSn_Lw88gelVi7jYCijJUAArmMIs");
     }
 
     @Test
@@ -50,7 +62,10 @@ class ManagerJjApplicationTests {
 //        for (Recharge recharge : recharges) {
 //            System.out.println(recharge.toString());
 //        }
+        //SELECT  COUNT(*) FROM persie_deamon.round_ext  WHERE ddGroup = TRUE
 
+       // int i = this.roundExtService.selectSMaxId();
+      //  System.out.println(i);
     }
 
 }

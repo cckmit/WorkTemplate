@@ -20,9 +20,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @TableName(schema = "persie", value = "orders")
 public class Orders extends BaseStatsEntity<Orders> {
-
-    private static final long serialVersionUID = 1L;
-
     /**
      * 订单号
      */
@@ -142,9 +139,12 @@ public class Orders extends BaseStatsEntity<Orders> {
      */
     @TableField(exist = false)
     private Integer payUsers;
+    /**
+     * 人均付费数据
+     */
     @TableField(exist = false)
     private String payUp;
-
+    
     @TableField(exist = false)
     private boolean haveDetail = false;
 

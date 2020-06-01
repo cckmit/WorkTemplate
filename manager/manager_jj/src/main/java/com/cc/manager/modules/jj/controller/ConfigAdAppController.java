@@ -7,6 +7,7 @@ import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.service.ConfigAdAppService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class ConfigAdAppController implements BaseCrudController {
 
     private ConfigAdAppService configAdAppService;
+    private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
@@ -42,19 +44,31 @@ public class ConfigAdAppController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        return this.configAdAppService.post(requestParam);
+        PostResult postResult = this.configAdAppService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_app");
+        }
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        return this.configAdAppService.put(requestParam);
+        PostResult postResult = this.configAdAppService.put(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_app");
+        }
+        return postResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        return this.configAdAppService.delete(requestParam);
+        PostResult postResult = this.configAdAppService.delete(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_app");
+        }
+        return postResult;
     }
 
     @Override
@@ -63,9 +77,23 @@ public class ConfigAdAppController implements BaseCrudController {
         return null;
     }
 
+    @PutMapping("/switchStatus")
+    public PostResult switchStatus(@RequestBody String requestParam){
+        PostResult postResult = this.configAdAppService.switchStatus(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_ad_app");
+        }
+        return postResult;
+    }
+
     @Autowired
     public void setConfigAdAppService(ConfigAdAppService configAdAppService) {
         this.configAdAppService = configAdAppService;
+    }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.cc.manager.modules.jj.config;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
