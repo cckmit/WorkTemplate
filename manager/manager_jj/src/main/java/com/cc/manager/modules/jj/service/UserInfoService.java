@@ -73,21 +73,19 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<UserInfo> queryWrapper, StatsListResult statsListResult) {
 
-
-            String times = statsListParam.getQueryObject().getString("registerTime");
-            String ddName = statsListParam.getQueryObject().getString("ddName");
-            String uid = statsListParam.getQueryObject().getString("uid");
-            String ddAppId = statsListParam.getQueryObject().getString("ddAppId");
-            String ddOid = statsListParam.getQueryObject().getString("ddOid");
-            if (StringUtils.isNotBlank(times)) {
-                String[] timeRangeArray = StringUtils.split(times, "~");
-                queryWrapper.between("DATE(ddRegisterTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
-            }
-            queryWrapper.like(StringUtils.isNotBlank(ddName), "ddName", ddName);
-            queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
-            queryWrapper.like(StringUtils.isNotBlank(ddAppId), "ddAppId", ddAppId);
-            queryWrapper.like(StringUtils.isNotBlank(ddOid), "ddOId", ddOid);
-
+        String times = statsListParam.getQueryObject().getString("registerTime");
+        String ddName = statsListParam.getQueryObject().getString("ddName");
+        String uid = statsListParam.getQueryObject().getString("uid");
+        String ddAppId = statsListParam.getQueryObject().getString("ddAppId");
+        String ddOid = statsListParam.getQueryObject().getString("ddOid");
+        if (StringUtils.isNotBlank(times)) {
+            String[] timeRangeArray = StringUtils.split(times, "~");
+            queryWrapper.between("DATE(ddRegisterTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
+        }
+        queryWrapper.like(StringUtils.isNotBlank(ddName), "ddName", ddName);
+        queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
+        queryWrapper.like(StringUtils.isNotBlank(ddAppId), "ddAppId", ddAppId);
+        queryWrapper.like(StringUtils.isNotBlank(ddOid), "ddOId", ddOid);
 
     }
 

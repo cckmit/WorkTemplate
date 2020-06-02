@@ -58,43 +58,30 @@ public class SupplementOrderService extends BaseCrudService<SupplementOrder, Sup
     protected void updateInsertEntity(String requestParam, SupplementOrder entity) {
         UserValue userValue = new UserValue();
         String userId = entity.getUserId();
+        userValue.setDdUid(userId);
         Integer coinCount = entity.getCoinCount();
         UserValue userValues = this.userValueService.getById(userId);
         //查询用户当前账户金额
-        Integer orCoin = userValues.getDdCoinCount();
-        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-        userInfoQueryWrapper.eq("ddUid",userId).last("LIMIT 1");
-        UserInfo userInfo = this.userInfoService.getBaseMapper().selectOne(userInfoQueryWrapper);
-       //获取用户昵称
+        userValue.setDdCoinCount(coinCount + userValues.getDdCoinCount());
+        UserInfo userInfo = this.userInfoService.getUserInfoByUuid(userId);
+        //获取用户昵称
         String ddName = userInfo.getDdName();
         //昵称设置
-        if (StringUtils.isNotBlank(ddName)) {
-            entity.setUserName(ddName);
-        }
-        //手动拼接appName
-        String appId = entity.getAppId();
+        entity.setUserName(StringUtils.isNotBlank(ddName) ? ddName : "");
         //产品信息处理
-        WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, appId);
+        WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, entity.getAppId());
         if (wxConfig != null) {
-            String productName = wxConfig.getProductName();
-            Integer programType = wxConfig.getProgramType();
-            if (StringUtils.isNotBlank(productName)) {
-                entity.setAppName(productName);
-            }
-            if (programType != null) {
-                entity.setProgramType(programType);
-            }
+            entity.setAppName(StringUtils.isNotBlank(wxConfig.getProductName()) ? wxConfig.getProductName() : "");
+            entity.setProgramType(wxConfig.getProgramType());
         }
         entity.setCreateTime(LocalDateTime.now());
-        userValue.setDdUid(userId);
-        userValue.setDdCoinCount(coinCount + orCoin);
         //更新UserValue的用户账户数据
         UpdateWrapper<UserValue> userValueUpdate = new UpdateWrapper<>();
-        userValueUpdate.eq("ddUid",userId);
-        this.userValueService.update(userValue,userValueUpdate);
+        userValueUpdate.eq("ddUid", userId);
+        this.userValueService.update(userValue, userValueUpdate);
         //处理redis客户端实时金币数量
         Integer coin = (Integer) redisUtil.hashGet("user-" + userId, "coin");
-        coinCount = coinCount + coin ;
+        coinCount = coinCount + coin;
         redisUtil.hashPut("user-" + userId, "coin", String.valueOf(coinCount));
     }
 
@@ -106,9 +93,7 @@ public class SupplementOrderService extends BaseCrudService<SupplementOrder, Sup
     public SupplementOrder selectCurrentCoin(String uid) {
         SupplementOrder supplementOrder = new SupplementOrder();
         //查询当前用户信息
-        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-        userInfoQueryWrapper.eq("ddUid",uid);
-        UserInfo userInfo = this.userInfoService.getBaseMapper().selectOne(userInfoQueryWrapper);
+        UserInfo userInfo = this.userInfoService.getUserInfoByUuid(uid);
         if (userInfo != null) {
             UserValue cacheUserValue = this.userValueService.getById(userInfo.getDdUid());
             userInfo.setDdCoinCount(cacheUserValue.getDdCoinCount());
@@ -124,14 +109,17 @@ public class SupplementOrderService extends BaseCrudService<SupplementOrder, Sup
     public void setWxConfigService(WxConfigService wxConfigService) {
         this.wxConfigService = wxConfigService;
     }
+
     @Autowired
     public void setUserInfoService(UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
     }
+
     @Autowired
     public void setUserValueService(UserValueService userValueService) {
         this.userValueService = userValueService;
     }
+
     @Autowired
     public void setRedisUtil(RedisUtil redisUtil) {
         this.redisUtil = redisUtil;

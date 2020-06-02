@@ -99,13 +99,11 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
                         continue;
                     }
                 }
-                LocalDateTime times = recharge.getDdTimes();
-                String ddTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(times);
+                String ddTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(recharge.getDdTimes());
                 AllCost allCost = allCostService.selectCurrentCoin(ddTime);
                 if (allCost != null) {
-                    Long rmbCurrent = allCost.getDdCurrent();
                     //剩余金额
-                    recharge.setRemainAmount(rmbCurrent.intValue() / 100);
+                    recharge.setRemainAmount(allCost.getDdCurrent().intValue() / 100);
                 } else {
                     recharge.setRemainAmount(0);
                 }

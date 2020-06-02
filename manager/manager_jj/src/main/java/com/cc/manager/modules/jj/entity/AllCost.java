@@ -1,5 +1,6 @@
 package com.cc.manager.modules.jj.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -76,11 +77,22 @@ public class AllCost extends BaseStatsEntity<AllCost> {
     /**
      * 消耗时间
      */
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @TableField("ddTime")
     private LocalDateTime ddTime;
 
+    /**
+     * 用户昵称
+     */
     @TableField(exist = false)
     private String nickName;
+
+    /**
+     * 产品名称
+     */
+    @TableField(exist = false)
+    private String appName;
+
     @TableField(exist = false)
     private boolean haveDetail = false;
 
