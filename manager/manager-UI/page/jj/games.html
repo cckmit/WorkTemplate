@@ -15,18 +15,12 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">游戏代号</label>
+                        <label class="layui-form-label">游戏列表</label>
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="gameId" name="gameId">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">游戏名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="gameName" name="gameName">
+                            <select id="gameIdSelect" name="gameId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -40,12 +34,12 @@
 
             <!-- Table表头 -->
             <script type="text/html" id="crudTableBar">
-               <div class="layui-btn-container">
+                <div class="layui-btn-container">
                     <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
                     <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
                     <button class="layui-btn layui-btn-sm" lay-event="refreshResource"><i class="layui-icon">&#xe9aa;</i> 刷新缩略图 </button>
                 </div>
-             </script>
+            </script>
 
             <!-- Table -->
             <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
@@ -54,7 +48,7 @@
             <script type="text/html" id="crudRowBar">
                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
                 <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
-                
+
             </script>
 
             <!-- 行内表单 -->
@@ -190,11 +184,16 @@
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
     <script>
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
             module: window.module.jj,
             page: 'jj/games'
+        }
+
+        function renderAllSelect(level) {
+            renderNormalSelect('gameIdSelect', 'jj', 'games', level);
         }
 
         // 表单数据查询渲染
@@ -321,7 +320,7 @@
                     $.ajax({
                         url: currentPage.module.server + currentPage.page + '/refreshResource',
                         data: JSON.stringify(gamesIdArray),
-                        contentType: "application/json; charset=utf-8",
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                         type: 'post',
                         dataType: "json",
                         success: function (result) {

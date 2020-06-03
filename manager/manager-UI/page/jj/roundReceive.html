@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">获奖日期</label>
@@ -55,7 +55,6 @@
                         <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
                             lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
                     </div>
-
                 </div>
             </form>
 
@@ -67,28 +66,12 @@
             <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
 
             <!-- 行内按钮 -->
-            <script type="text/html" id="crudRowBar">
-                  <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
-                  <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
-            </script>
 
             <!-- 行内表单 -->
-            <script type="text/html" id="switchStatus">
-                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
-                    {{ d.status ? 'checked' : '' }}>
-            </script>
         </div>
     </div>
 
     <!-- 编辑表单 -->
-    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
-                    lay-filter="crudSaveBtnFilter">确认保存</button>
-            </div>
-        </div>
-    </form>
 
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>

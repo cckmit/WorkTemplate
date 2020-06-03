@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="" id="data-search-form">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">广告位</label>
@@ -58,7 +58,7 @@
             <!-- 行内表单 -->
             <script type="text/html" id="switchStatusAllowedOperation">
                 <input type="checkbox" name="allowedOperation" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatusAllowedOperation"
-                    {{ d.allowedOperation ? 'checked' : '' }}>
+                    {{ d.allowedOperation === true ? 'checked' : '' }}>
             </script>
         </div>
     </div>
@@ -151,14 +151,13 @@
             form.on('switch(switchStatusAllowedOperation)', function (obj) {
                 console.log(this.value + ' ' + this.name + '：' + obj.elem.checked, JSON.stringify(obj.othis));
                 $.ajax({
-                    url: currentPage.module.server + currentPage.page,
+                    url: currentPage.module.server + currentPage.page + '/statusSwitch',
                     data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
-                    contentType: "application/json; charset=utf-8",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
                     dataType: "json",
                     async: false,
                     success: function (result) {
-                        console.log(JSON.stringify(result));
                         layer.msg(result.msg, { icon: result.code, time: 2000 });
                     }
                 });

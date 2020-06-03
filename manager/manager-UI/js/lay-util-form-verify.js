@@ -18,7 +18,6 @@ function formVerify(value, item, type) {
                 } catch (e) {
                     verifyInfo = '您输入的参数不符合Json格式，请重新输入！';
                 }
-
                 break;
             case 'url':
                 try {
@@ -31,8 +30,11 @@ function formVerify(value, item, type) {
                 } catch (e) {
                     verifyInfo = "链接不符合，请以输入正确链接地址";
                 }
-
                 break;
+            case 'image':
+                if (!value.endsWith('.img') && !value.endsWith('.gif') && !value.endsWith('.png')) {
+                    verifyInfo = "请输入正确的图片格式，当前只支持[img]、[gif]或[png]！";
+                }
             // 验证是否中国大陆地区手机号码
             case 'cnPhone':
                 break;

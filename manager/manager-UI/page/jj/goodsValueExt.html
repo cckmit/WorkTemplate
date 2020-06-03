@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="" id="data-search-form">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">计费点金额</label>
@@ -56,7 +56,7 @@
             <script type="text/html" id="crudRowBar">
                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
                 <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
-                
+
             </script>
 
             <!-- 行内表单 -->
@@ -206,7 +206,7 @@
                         }
                     },
                     { field: 'insertTime', width: 180, title: '创建时间', sort: true },
-                    { field: 'operator', title: '操作', minWidth: 180, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                    { field: 'operator', title: '操作', minWidth: 150, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
                 ]],
                 limits: [10, 20, 30, 50, 100],
                 limit: 30,

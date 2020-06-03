@@ -30,8 +30,9 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-primary" lay-submit id="data-search-btn"
-                            lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        <button shiro:lacksPermission="user:query" type="submit" class="layui-btn layui-btn-warm"
+                            lay-submit id="data-search-btn" lay-filter="data-search-btn"><i
+                                class="layui-icon">&#xe615;</i> 搜 索</button>
                     </div>
                 </div>
             </form>
@@ -39,8 +40,8 @@
             <!-- Table表头 -->
             <script type="text/html" id="crudTableBar">
                 <div class="layui-btn-container">
-                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"><i class="layui-icon"></i> 新增 </button>
-                    <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="layui-icon"></i> 批量删除 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
                 </div>
             </script>
 
@@ -49,9 +50,8 @@
 
             <!-- 行内按钮 -->
             <script type="text/html" id="crudRowBar">
-                <a class="layui-btn layui-btn-primary layui-btn-xs data-count-edit" lay-event="edit"><i class="layui-icon"></i>编辑</a>
-                <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="copy"><i class="layui-icon"></i>复制</a>
-                <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete"><i class="layui-icon"></i>删除</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+                <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
             </script>
 
             <!-- 行内表单 -->
@@ -82,16 +82,16 @@
         <div class="layui-form-item">
             <label class="layui-form-label required">昵称</label>
             <div class="layui-input-block">
-                <input type="text" name="nickName" lay-verify="required" lay-reqtext="昵称不能为空"" placeholder=" 请输入昵称"
+                <input type="text" name="nickName" lay-verify="required" lay-reqtext="昵称不能为空" placeholder=" 请输入昵称"
                     value="" class="layui-input" autocomplete="off">
-                <tip>请求输入密码</tip>
+                <tip>请求输入昵称</tip>
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label required">密码</label>
+            <label class="layui-form-label">密码</label>
             <div class="layui-input-block">
-                <input type="password" name="password" lay-verify="required" lay-reqtext="密码不能为空"" placeholder=" 请输入密码"
-                    value="" class="layui-input" autocomplete="off">
+                <input type="password" name="password" placeholder=" 请输入密码" value="" class="layui-input"
+                    autocomplete="off">
                 <tip>请求输入密码</tip>
             </div>
         </div>
@@ -100,6 +100,11 @@
             <div class="layui-input-block">
                 <input type="checkbox" checked="" name="status" lay-skin="switch" lay-filter="switchTest" value="true"
                     lay-text="有效|无效">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色</label>
+            <div class="layui-input-block" id="formRoleDiv">
             </div>
         </div>
         <div class="layui-form-item">
@@ -117,12 +122,60 @@
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
             module: window.module.system,
-            page: 'user'
+            page: 'sys/user'
+        }
+
+        const roleStart = 'role-';
+
+        function renderAllSelect(level) {
+            console.log(currentPage.module.server + "sys/role/getSelectArray/" + level)
+            $.ajax({
+                url: currentPage.module.server + "sys/role/getSelectArray/" + level,
+                type: 'GET',
+                dataType: "json",
+                success: (result) => {
+                    let selectOption = [];
+                    if (result && result.code === 1) {
+                        result.data.forEach((val, index, arr) => {
+                            selectOption.push('<input type="checkbox" name="' + roleStart + val.key + '" title="' + val.value + '">');
+                        });
+                    }
+                    selectOption = selectOption.join('');
+                    $('#formRoleDiv').empty();
+                    $('#formRoleDiv').append(selectOption);
+                }
+            });
         }
 
         // 表单数据查询渲染
         layui.use(['form', 'table', 'layer'], function () {
-            const $ = layui.jquery, form = layui.form, layer = layui.layer, table = layui.table;
+            $ = layui.jquery, form = layui.form, layer = layui.layer, table = layui.table;
+
+            // 监听查询表单搜索操作
+            form.on('submit(data-search-btn1)', (data) => {
+                console.log('begin Query');
+                $.ajax({
+                    url: currentPage.module.server + currentPage.page + '/getPage?page=1&limit=30',
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                    type: 'GET',
+                    dataType: "json",
+                    async: false,
+                    success: (result) => {
+                        console.log(result);
+                    },
+                    error: (XMLHttpRequest, textStatus) => {
+                        console.log('error.XMLHttpRequest -> ', JSON.stringify(XMLHttpRequest));
+                        console.log('error.textStatus -> ', textStatus);
+                        layer.msg('Ajax Error -> 请求服务器异常，请联系管理员！', { icon: 2, time: 2000 });
+                    },
+                    complete: (XMLHttpRequest, textStatus) => {
+                        console.log('complete.XMLHttpRequest -> ', JSON.stringify(XMLHttpRequest));
+                        console.log('complete.textStatus -> ', textStatus);
+                        return false;
+                    }
+                });
+            });
+
             table.render({
                 elem: '#crudTableId',
                 url: currentPage.module.server + currentPage.page + '/getPage',
@@ -133,15 +186,15 @@
                     icon: 'layui-icon-tips'
                 }],
                 cols: [[
-                    { field: 'aaa', type: "checkbox", width: 50, align: "center" },
-                    { field: 'id', width: 80, title: 'ID', align: "center", sort: true },
-                    { field: 'username', width: 160, title: '用户名' },
-                    { field: 'nickName', width: 160, title: '昵称' },
-                    { field: 'roleNames', width: 480, title: '角色列表' },
-                    { field: 'status', width: 160, title: '允许登录', align: "center", templet: '#switchStatus' },
+                    { type: "checkbox", align: "center", fixed: 'left' },
+                    { field: 'id', title: 'ID', align: "center", sort: true },
+                    { field: 'username', width: 200, title: '用户名' },
+                    { field: 'nickName', width: 200, title: '昵称' },
+                    { field: 'roleNames', width: 600, title: '角色列表' },
+                    { field: 'status', width: 140, title: '允许登录', align: "center", templet: '#switchStatus' },
                     { field: 'lastLoginTime', width: 140, title: '最后登录时间', align: "center", sort: true },
                     { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true },
-                    { field: 'operator', title: '操作', minWidth: 220, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                    { field: 'operator', title: '操作', minWidth: 150, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
                 ]],
                 limits: [10, 20, 30, 50, 100],
                 limit: 30,
@@ -158,7 +211,7 @@
                 $.ajax({
                     url: currentPage.module.server + currentPage.page,
                     data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
-                    contentType: "application/json; charset=utf-8",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
                     dataType: "json",
                     async: false,
@@ -170,6 +223,29 @@
             });
 
         });
+
+        function rebuildEditData(editData, type) {
+            if (type === 'edit' && editData.roleIds) {
+                const roleIdArray = JSON.parse(editData.roleIds);
+                roleIdArray.forEach((val, ind, arr) => {
+                    editData[roleStart + val] = true;
+                });
+                console.log(JSON.stringify(editData))
+            }
+        }
+
+        function rebuildSubmitData(data) {
+            let roleIdArray = [];
+            for (let name in data) {
+                if (name.startsWith(roleStart)) {
+                    roleIdArray.push(Number.parseInt(name.substring(roleStart.length)));
+                    data[name] = null;
+                }
+            }
+            data.roleIds = roleIdArray;
+            return data;
+        }
+
     </script>
 
 </body>

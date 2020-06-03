@@ -34,7 +34,7 @@ public interface BaseController {
     default void authorizationException(HttpServletRequest request, HttpServletResponse response) {
         PostResult postResult = new PostResult();
         postResult.setCode(-2);
-        postResult.setMsg("操作失败：您无权执行此操作，请联系管理员！");
+        postResult.setMsg("操作失败：您无权执行此操作，请联系管理员配置后重新登录！");
 
         response.setStatus(HttpStatus.OK.value());
         response.setCharacterEncoding(CharsetUtil.UTF_8);

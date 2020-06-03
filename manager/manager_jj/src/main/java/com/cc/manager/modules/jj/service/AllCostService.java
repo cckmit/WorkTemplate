@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * @author cf
@@ -32,32 +31,34 @@ public class AllCostService extends BaseStatsService<AllCost, AllCostMapper> {
 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<AllCost> queryWrapper, StatsListResult statsListResult) {
-
-        // 初始化查询的起止日期
-        this.updateBeginAndEndDate(statsListParam);
-        String beginDate = statsListParam.getQueryObject().getString("beginDate");
-        String endDate = statsListParam.getQueryObject().getString("endDate");
-        queryWrapper.between("DATE(ddTime)", beginDate, endDate);
-
-        String uid = statsListParam.getQueryObject().getString("uid");
-        queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
-        String appId = statsListParam.getQueryObject().getString("appId");
-        queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
-        String ddCostType = statsListParam.getQueryObject().getString("ddCostType");
-        queryWrapper.eq(StringUtils.isNotBlank(ddCostType), "ddCostType", ddCostType);
-        String gameCode = statsListParam.getQueryObject().getString("gameCode");
-        queryWrapper.eq(StringUtils.isNotBlank(gameCode), "ddCostExtra", gameCode);
-        String operate = statsListParam.getQueryObject().getString("operate");
-        if (StringUtils.isNotBlank(operate)) {
-            if (StringUtils.equals(operate, "0")) {
-                queryWrapper.le("ddValue", 0);
-            } else {
-                queryWrapper.gt("ddValue", 0);
+        if (StringUtils.isBlank(statsListParam.getQueryData())) {
+            String nowDate = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
+            queryWrapper.eq("ddTime", nowDate);
+        } else {
+            // 初始化查询的起止日期
+            this.updateBeginAndEndDate(statsListParam);
+            String beginDate = statsListParam.getQueryObject().getString("beginDate");
+            String endDate = statsListParam.getQueryObject().getString("endDate");
+            queryWrapper.between("ddTime", beginDate, endDate).orderByAsc("ddTime");
+            String uid = statsListParam.getQueryObject().getString("uid");
+            queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
+            String appId = statsListParam.getQueryObject().getString("appId");
+            queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
+            String ddCostType = statsListParam.getQueryObject().getString("ddCostType");
+            queryWrapper.eq(StringUtils.isNotBlank(ddCostType), "ddCostType", ddCostType);
+            String gameCode = statsListParam.getQueryObject().getString("gameCode");
+            queryWrapper.eq(StringUtils.isNotBlank(gameCode), "ddCostExtra", gameCode);
+            String operate = statsListParam.getQueryObject().getString("operate");
+            if (StringUtils.isNotBlank(operate)) {
+                if (StringUtils.equals(operate, "0")) {
+                    queryWrapper.le("ddValue", 0);
+                } else {
+                    queryWrapper.gt("ddValue", 0);
+                }
             }
+            String type = statsListParam.getQueryObject().getString("ddType");
+            queryWrapper.eq(StringUtils.isNotBlank(type), "ddType", type);
         }
-        String type = statsListParam.getQueryObject().getString("ddType ");
-        queryWrapper.eq(StringUtils.isNotBlank(type), "ddType", type);
-
     }
 
     @Override
@@ -65,8 +66,10 @@ public class AllCostService extends BaseStatsService<AllCost, AllCostMapper> {
         List<AllCost> newList = new ArrayList<>();
         String nickName = statsListParam.getQueryObject().getString("nickName");
         for (AllCost allCost : entityList) {
+            //设置产品名称
             allCost.setAppName(this.wxConfigService.getCacheValue(WxConfig.class, allCost.getDdAppId()));
             UserInfo userInfoByUuid = userInfoService.getUserInfoByUuid(allCost.getDdUid());
+            //设置用户昵称
             allCost.setNickName(userInfoByUuid != null ? userInfoByUuid.getDdName() : "");
             if (StringUtils.isNotBlank(nickName)) {
                 if (!allCost.getNickName().contains(nickName)) {
@@ -101,21 +104,11 @@ public class AllCostService extends BaseStatsService<AllCost, AllCostMapper> {
             endDate = timeRangeArray[1].trim();
         }
         if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
-            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
-            endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+            endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
         }
-        statsListParam.getQueryObject().put("beginDate", beginDate);
-        statsListParam.getQueryObject().put("endDate", endDate);
-    }
-
-    @Autowired
-    public void setUserInfoService(UserInfoService userInfoService) {
-        this.userInfoService = userInfoService;
-    }
-
-    @Autowired
-    public void setWxConfigService(WxConfigService wxConfigService) {
-        this.wxConfigService = wxConfigService;
+        statsListParam.getQueryObject().put("beginDate", beginDate + " 00:00:00");
+        statsListParam.getQueryObject().put("endDate", endDate + " 23:59:59");
     }
 
     /**
@@ -144,6 +137,16 @@ public class AllCostService extends BaseStatsService<AllCost, AllCostMapper> {
         queryWrapper.eq("ddCostType", "recharge").eq(StringUtils.isNotBlank(ddUid), "ddUid", ddUid).last("LIMIT 1");
         queryWrapper.select("ddUid", "ddCurrent*0.01 AS ddCurrent", "ddTime");
         return this.mapper.selectOne(queryWrapper);
+    }
+
+    @Autowired
+    public void setUserInfoService(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
+    }
+
+    @Autowired
+    public void setWxConfigService(WxConfigService wxConfigService) {
+        this.wxConfigService = wxConfigService;
     }
 
 }

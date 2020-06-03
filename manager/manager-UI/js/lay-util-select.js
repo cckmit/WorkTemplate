@@ -5,9 +5,6 @@
  * version:1.0.1
  */
 
-// 下拉框缓存数据
-window.defaultSelectOptionCache = {}
-
 /**
  * 渲染下拉框
  * @param {String} selectId 下拉框ID
@@ -16,7 +13,7 @@ window.defaultSelectOptionCache = {}
  * @param {String} level 查询级别：windowCache-window对象种的缓存、serverCache-服务器缓存、serverDb-从服务器数据库查询
  */
 function renderNormalSelect(selectId, moduleName, page, level) {
-    const selectOption = window.defaultSelectOptionCache[moduleName + '_' + page];
+    const selectOption = localStorage.getItem("select-option" + moduleName + '-' + page);
     // 如果缓存种有，根据当前级别查询
     if (selectOption) {
         if ('serverDb' === level) {
@@ -38,19 +35,24 @@ function renderNormalSelect(selectId, moduleName, page, level) {
  */
 function getSelectOptionByAjax(selectId, moduleName, page, level) {
     $.ajax({
-        url: window.module[moduleName].server + "/" + moduleName + "/" + page + "/getSelectArray/" + 1111,
+        url: window.module[moduleName].server + "/" + moduleName + "/" + page + "/getSelectArray/" + level,
+        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
         type: 'GET',
         dataType: "json",
         success: (result) => {
             const selectVal = $("#" + selectId).val()
             let selectOption = [];
             selectOption.push('<option value="">全部</option>');
-            result.forEach((val, index, arr) => {
-                const selected = val.key === selectVal ? 'selected' : '';
-                selectOption.push('<option value="' + val.key + '" ' + selected + '>' + val.value + '</option>');
-            });
+            if (result && result.code === 1) {
+                result.data.forEach((val, index, arr) => {
+                    const selected = val.key === selectVal ? 'selected' : '';
+                    selectOption.push('<option value="' + val.key + '" ' + selected + '>' + val.value + '</option>');
+                });
+            }
             selectOption = selectOption.join('');
-            window.defaultSelectOptionCache[moduleName + '_' + page] = selectOption;
+            if (result && result.code === 1) {
+                window.localStorage.setItem("select-option-" + moduleName + '-' + page, selectOption);
+            }
             renderSelect(selectId, selectOption);
         }
     });

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>实时付费统计</title>
+    <title>付费实时统计</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -15,12 +15,12 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">产品名称</label>
                         <div class="layui-input-inline">
-                            <select id="appIdSelect" name="id" lay-search=""> </select>
+                            <select id="appIdSelect" name="appId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -31,7 +31,7 @@
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">类型</label>
-                        <div class="layui-input-inline" >
+                        <div class="layui-input-inline">
                             <select name="productType" id="productType">
                                 <option value="">全部</option>
                                 <option value=0>小游戏</option>
@@ -41,8 +41,8 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-primary" lay-submit id="data-search-btn"
-                            lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
                     </div>
 
                 </div>
@@ -57,9 +57,6 @@
 
             <!-- 行内按钮 -->
             <script type="text/html" id="crudRowBar">
-               	   <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
-       <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
-       
             </script>
 
             <!-- 行内表单 -->
@@ -72,20 +69,6 @@
 
     <!-- 编辑表单 -->
     <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
-        <div class="layui-form-item ">
-            <label class="layui-form-label">产品名称 *</label>
-            <div class="layui-input-block">
-                <input type="text" id="productName" name="productName" lay-verify="required" autocomplete="off"
-                    class="layui-input">
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
-                    lay-filter="crudSaveBtnFilter">确认保存</button>
-            </div>
-        </div>
     </form>
 
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>

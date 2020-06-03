@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="" id="data-search-form">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">APPID</label>
@@ -162,7 +162,7 @@
                         }
                     },
                     { field: 'remark', width: 180, title: '备注', sort: true },
-                    { field: 'operator', title: '操作', minWidth: 60, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                    { field: 'operator', title: '操作', width: 150, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
                 ]],
                 limits: [10, 20, 30, 50, 100],
                 limit: 30,

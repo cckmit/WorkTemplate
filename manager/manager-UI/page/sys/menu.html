@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>menu</title>
-    <link rel="stylesheet" href="../lib/layui-v2.5.6/css/layui.css" media="all">
-    <link rel="stylesheet" href="../css/public.css" media="all">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
     <style>
         .layui-btn:not(.layui-btn-lg):not(.layui-btn-sm):not(.layui-btn-xs) {
             height: 34px;
@@ -18,12 +19,101 @@
 <body>
     <div class="layuimini-container">
         <div class="layuimini-main">
-            <div>
-                <div class="layui-btn-group">
-                    <button class="layui-btn" id="btn-expand">全部展开</button>
-                    <button class="layui-btn layui-btn-normal" id="btn-fold">全部折叠</button>
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-xs12 layui-col-md5">
+                    <div class="layui-card">
+                        <div class="layui-card-header">
+                            <span>菜单树，当前选中： </span>
+                            <span style="color: red; font-size: large;" id="treeNodeId"></span> -
+                            <span style="color: red; font-size: large;" id="treeNodeName"></span>
+                        </div>
+                        <div class="layui-card-body layui-text">
+                            <div id="menuTree"></div>
+                        </div>
+                    </div>
                 </div>
-                <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+                <div class="layui-col-xs12 layui-col-md7">
+                    <div class="layui-card">
+                        <div class="layui-card-header">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" id="menu-add-child"><i
+                                    class="layui-icon">&#xe654;</i>新增子菜单</button>
+                            <button class="layui-btn layui-btn-sm" id="menu-edit"><i
+                                    class="layui-icon">&#xe642;</i>编辑菜单</button>
+                            <button class="layui-btn layui-btn-sm layui-btn-danger" id="menu-delete"><i
+                                    class="layui-icon">&#xe640;</i>删除当前菜单
+                            </button>
+                        </div>
+                        <div class="layui-card-body layui-text">
+                            <form id="menuForm" class="layui-form layuimini-form layui-hide"
+                                lay-filter="menuFormFilter">
+                                <div class="layui-form-item layui-hide">
+                                    <label class="layui-form-label required">ID</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="id" placeholder="新增成功自动生成" value="" class="layui-input"
+                                            autocomplete="off" readonly>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item layui-hide">
+                                    <label class="layui-form-label">父ID</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="parentId" placeholder="父ID" value=""
+                                            class="layui-input" autocomplete="off" readonly>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label required">名称</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="name" lay-verify="required" lay-reqtext="菜单名称不能为空"
+                                            placeholder=" 请输入菜单名称" value="" class="layui-input" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">地址</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="href" placeholder=" 请输入地址" value="" class="layui-input"
+                                            autocomplete="off">
+                                        <tip>地址可为空，类型为按钮时地址无效</tip>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">图标</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="icon" id="iconPicker" lay-filter="iconPicker"
+                                            class="hide">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label ">权限标识</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="perms" placeholder=" 请输入权限标识" value=""
+                                            class="layui-input" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">类型</label>
+                                    <div class="layui-input-block">
+                                        <input type="radio" name="type" value="0" title="菜单" checked="">
+                                        <input type="radio" name="type" value="1" title="按钮">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">排序</label>
+                                    <div class="layui-input-block">
+                                        <input type="text" name="orderNum" placeholder=" 排序" lay-verify="number"
+                                            value="0" class="layui-input" autocomplete="off">
+                                        <tip>菜单展示时按照从小到大的顺序展示，如果为0则会默认添加到最后</tip>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button id="menuSaveBtnId" class="layui-btn layui-btn-normal" lay-submit
+                                            lay-filter="menuSaveBtnFilter">确认保存</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -33,65 +123,201 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
-    <script src="../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
-    <script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
     <script>
-        layui.use(['table', 'treetable'], function () {
-            const $ = layui.jquery, table = layui.table, treetable = layui.treetable;
+        const currentPage = {
+            module: window.module.system,
+            page: 'sys/menu'
+        }
 
-            // 渲染表格
-            layer.load(2);
-            treetable.render({
-                treeColIndex: 1,
-                treeSpid: -1,
-                treeIdName: 'authorityId',
-                treePidName: 'parentId',
-                elem: '#munu-table',
-                url: '../api/menus.json',
-                page: false,
-                cols: [[
-                    { type: 'numbers' },
-                    { field: 'authorityName', minWidth: 200, title: '权限名称' },
-                    { field: 'authority', title: '权限标识' },
-                    { field: 'menuUrl', title: '菜单url' },
-                    { field: 'orderNumber', width: 80, align: 'center', title: '排序号' },
-                    {
-                        field: 'isMenu', width: 80, align: 'center', templet: function (d) {
-                            if (d.isMenu == 1) {
-                                return '<span class="layui-badge layui-bg-gray">按钮</span>';
-                            }
-                            if (d.parentId == -1) {
-                                return '<span class="layui-badge layui-bg-blue">目录</span>';
-                            } else {
-                                return '<span class="layui-badge-rim">菜单</span>';
-                            }
-                        }, title: '类型'
+        layui.use(['form', 'tree', 'iconPickerFa'], function () {
+            const $ = layui.jquery, form = layui.form, tree = layui.tree, iconPickerFa = layui.iconPickerFa;
+
+            // 菜单树
+            let data = [];
+            getMenuTree();
+
+            function getMenuTree() {
+                $.ajax({
+                    url: currentPage.module.server + currentPage.page + '/getMenuTree',
+                    type: 'GET',
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                    dataType: "json",
+                    async: false,
+                    success: (result) => {
+                        data = [];
+                        data.push(result);
+                        treeRender();
+                    }
+                });
+            }
+
+            function treeRender() {
+                //手风琴模式
+                tree.render({
+                    id: 'menuTree',
+                    elem: '#menuTree',
+                    data: data,
+                    // edit: ['add', 'del'],
+                    showLine: true,
+                    click: function (obj) {
+                        console.log(JSON.stringify(obj));
+                        $("#treeNodeId").html(obj.data.id);
+                        $("#treeNodeName").html(obj.data.title);
+                        $('#menuForm').removeClass('layui-show').addClass('layui-hide');
+                        $('#menu-edit').trigger('click');
                     },
-                    { templet: '#auth-state', width: 120, align: 'center', title: '操作' }
-                ]],
-                done: function () {
-                    layer.closeAll('loading');
+                    operate: function (obj) {
+                        console.log(JSON.stringify(obj))
+                        if (obj.type === 'add') { //增加节点
+                            //返回 key 值
+                            return 123;
+                        } else if (obj.type === 'del') { //删除节点
+                            if (obj.data.id === 0) {
+                                layer.msg('根菜单不允许删除！', { icon: 0, time: 2000 });
+                            } else {
+
+                            }
+                        };
+                    }
+                });
+            }
+
+            // 新增子菜单
+            $("#menu-add-child").click(() => {
+                const menuId = $("#treeNodeId").html();
+                // form.val('menuFormFilter', {});
+                // $("#menuForm")[0].reset();
+                // form.render();
+                if (menuId) {
+                    $.ajax({
+                        url: currentPage.module.server + currentPage.page + '/id/' + menuId,
+                        type: 'GET',
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                        dataType: "json",
+                        async: false,
+                        success: (result) => {
+                            if (result.code === 1) {
+                                if (result.data.type === '0') {
+                                    console.log(result.data)
+                                    $("#menuForm")[0].reset();
+                                    form.val('menuFormFilter', { parentId: menuId });
+                                } else {
+                                    layer.msg('您当前选中的菜单类型为【按钮】，不能新增子菜单！', { icon: 0, time: 2000 });
+                                }
+                            }
+                            return false;
+                        }
+                    });
+                } else {
+                    layer.msg('您未选中任何菜单！', { icon: 0, time: 2000 });
                 }
             });
 
-            $('#btn-expand').click(function () {
-                treetable.expandAll('#munu-table');
-            });
-
-            $('#btn-fold').click(function () {
-                treetable.foldAll('#munu-table');
-            });
-
-            //监听工具条
-            table.on('tool(munu-table)', function (obj) {
-                var data = obj.data;
-                var layEvent = obj.event;
-
-                if (layEvent === 'del') {
-                    layer.msg('删除' + data.id);
-                } else if (layEvent === 'edit') {
-                    layer.msg('修改' + data.id);
+            // 编辑当前菜单
+            $("#menu-edit").click(() => {
+                const menuId = $("#treeNodeId").html();
+                if (menuId) {
+                    if (menuId === '0') {
+                        layer.msg('根菜单不允许编辑！', { icon: 0, time: 2000 });
+                    } else {
+                        $.ajax({
+                            url: currentPage.module.server + currentPage.page + '/id/' + menuId,
+                            type: 'GET',
+                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                            dataType: "json",
+                            async: false,
+                            success: (result) => {
+                                if (result.code === 1) {
+                                    $("#menuForm")[0].reset();
+                                    form.val('menuFormFilter', result.data);
+                                    $('#menuForm').removeClass('layui-hide').addClass('layui-show');
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                } else {
+                    layer.msg('您未选中任何菜单！', { icon: 0, time: 2000 });
                 }
+                return false;
+            });
+
+            $("#menu-delete").click(() => {
+                const menuId = $("#treeNodeId").html();
+                if (menuId) {
+                    if (menuId === '0') {
+                        layer.msg('根菜单不允许删除！', { icon: 0, time: 2000 });
+                    } else {
+                        const menuName = $("#treeNodeName").html();
+                        layer.confirm('真的删除菜单【' + menuName + '】么，当前菜单及其子菜单会一并删除?', (index) => {
+                            layer.close(index);
+                            let deleteIdArray = [];
+                            deleteIdArray.push(menuId);
+                            $.ajax({
+                                url: currentPage.module.server + currentPage.page,
+                                type: 'DELETE',
+                                headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                                data: JSON.stringify(deleteIdArray),
+                                dataType: "json",
+                                async: false,
+                                success: function (result) {
+                                    layer.msg(result.msg, { icon: result.code, time: 2000 });
+                                    if (result.code === 1) {
+                                        getMenuTree();
+                                        $("#treeNodeId").html('');
+                                        $("#treeNodeName").html('');
+                                    }
+                                }
+                            });
+                        });
+                    }
+                } else {
+                    layer.msg('您未选中任何菜单！', { icon: 0, time: 2000 });
+                }
+                return false;
+            });
+
+            // 图标选择
+            iconPickerFa.render({
+                // 选择器，推荐使用input
+                elem: '#iconPicker',
+                // fa 图标接口
+                url: "../../lib/font-awesome-4.7.0/less/variables.less",
+                // 是否开启搜索：true/false，默认true
+                search: true,
+                // 是否开启分页：true/false，默认true
+                page: true,
+                // 每页显示数量，默认12
+                limit: 20,
+                // 每个图标格子的宽度：'43px'或'20%'
+                cellWidth: '20%',
+                // 点击回调
+                click: function (data) {
+                    console.log(data);
+                },
+                // 渲染成功后的回调
+                success: function (d) {
+                    console.log(d);
+                }
+            });
+
+            form.on('submit(menuSaveBtnFilter)', (menuData) => {
+                console.log(JSON.stringify(menuData.field))
+                $.ajax({
+                    url: currentPage.module.server + currentPage.page,
+                    data: JSON.stringify(menuData.field),
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                    type: menuData.field.id ? 'PUT' : 'POST',
+                    dataType: "json",
+                    async: false,
+                    success: function (result) {
+                        layer.msg(result.msg, { icon: result.code, time: 2000 });
+                        getMenuTree();
+                    }
+                });
+                return false;
             });
         });
     </script>

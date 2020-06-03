@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">APPID</label>
@@ -126,8 +126,8 @@
                 }],
                 cols: [[
                     { type: 'checkbox', fixed: 'left' },
-                    { field: 'productName', width: 120, title: '产品名称', sort: true },
                     { field: 'ddAppId', width: 180, title: 'AppId', sort: true },
+                    { field: 'productName', width: 120, title: '产品名称', sort: true },
                     { field: 'ddMinVer', width: 180, title: '最低版本号', sort: true },
                     {
                         field: 'programType', width: 150, title: '类型', sort: true,

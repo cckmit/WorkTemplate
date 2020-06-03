@@ -167,7 +167,8 @@
             laydate.render({
                 elem: '#createTime',
                 type: 'datetime',
-                format: 'yyyy/MM/dd HH:mm'
+                format: 'yyyy/MM/dd HH:mm',
+                 range: '~'
             });
 
             //有效性状态切换
@@ -176,7 +177,7 @@
                 $.ajax({
                     url: currentPage.module.server + currentPage.page + '/switchStatus',
                     data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
-                    contentType: "application/json; charset=utf-8",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
                     dataType: "json",
                     async: false,

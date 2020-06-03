@@ -7,11 +7,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.entity.*;
-import com.cc.manager.modules.jj.controller.JjAndFcAppConfigService;
 import com.cc.manager.modules.jj.entity.BuyPay;
 import com.cc.manager.modules.jj.entity.Orders;
+import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.service.BuyPayService;
 import com.cc.manager.modules.jj.service.OrdersService;
+import com.cc.manager.modules.jj.service.WxConfigService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -42,7 +43,7 @@ public class MinitjWxDataCollectService {
     private AdValueWxAdUnitService adValueWxAdUnitService;
     private OrdersService orderService;
     private BuyPayService buyPayService;
-    private JjAndFcAppConfigService jjAndFcAppConfigService;
+    private WxConfigService wxConfigService;
 
     public StatsListResult getPage(StatsListParam statsListParam) {
         StatsListResult statsListResult = new StatsListResult();
@@ -230,15 +231,23 @@ public class MinitjWxDataCollectService {
      * @return 汇总结果
      */
     private Map<String, DataCollect> queryMinitjWxStatis(String beginTime, String endTime, String type) {
-
-        // 获取街机和FC的全部app信息
-        LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
-
+        LinkedHashMap<String, JSONObject> allAppMap = new LinkedHashMap<>();
+        List<WxConfig> wxConfigEntityList = this.wxConfigService.getCacheEntityList(WxConfig.class);
+        wxConfigEntityList.forEach(wxConfig -> {
+            JSONObject jsonObject = new JSONObject();
+            // 平台
+            jsonObject.put("platform", wxConfig.getDdAppPlatform());
+            // 类型
+            jsonObject.put("programType", wxConfig.getProgramType());
+            // 名称
+            jsonObject.put("name", wxConfig.getProductName());
+            allAppMap.put(wxConfig.getCacheKey(), jsonObject);
+        });
         // 查询列表
         List<MinitjWx> minitjWxes = this.minitjWxService.list(null, beginTime, endTime);
         // 生成map集合
         Map<String, List<MinitjWx>> minitjWxListMap;
-        minitjWxListMap = getMinitjListMap(minitjWxes, getAllAppMap, type);
+        minitjWxListMap = getMinitjListMap(minitjWxes, allAppMap, type);
         return countMinitWxData(minitjWxListMap);
     }
 
@@ -359,8 +368,8 @@ public class MinitjWxDataCollectService {
             });
         }
         Map<String, Orders> programReChargeMap = getProgramReChargeMap();
-        DataCollect dataCollect = new DataCollect();
         for (String appAndDate : appAndDateSet) {
+            DataCollect dataCollect = new DataCollect();
             StringBuilder dateString = new StringBuilder(appAndDate);
             dateString.insert(4, "-").insert(7, "-");
             LocalDate wxDate = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -470,8 +479,8 @@ public class MinitjWxDataCollectService {
     }
 
     @Autowired
-    public void setJjAndFcAppConfigService(JjAndFcAppConfigService jjAndFcAppConfigService) {
-        this.jjAndFcAppConfigService = jjAndFcAppConfigService;
+    public void setWxConfigService(WxConfigService wxConfigService) {
+        this.wxConfigService = wxConfigService;
     }
 
 }

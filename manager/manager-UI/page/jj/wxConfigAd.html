@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">APPID</label>
@@ -173,7 +173,7 @@
                     { field: 'otherVideo', width: 180, title: '其他视频', sort: true },
                     { field: 'screen', width: 180, title: '插屏1', sort: true },
                     { field: 'otherScreen', width: 180, title: '其他插屏 ', sort: true },
-                    { field: 'operator', title: '操作', minWidth: 60, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                    { field: 'operator', title: '操作', minWidth: 120, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
                 ]],
                 limits: [10, 20, 30, 50, 100],
                 limit: 30,

@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="" id="data-search-form">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">广告位置</label>
@@ -52,15 +52,15 @@
             <!-- 行内表单 -->
             <script type="text/html" id="switchAllowedOperation">
                 <input type="checkbox" name="allowedOperation" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
-                    {{ d.allowedOperation === '1' ? 'checked' : '' }}>
+                    {{ d.allowedOperation === true ? 'checked' : '' }}>
             </script>
             <script type="text/html" id="switchShowWxAd">
                 <input type="checkbox" name="showWxAd" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
-                    {{ d.showWxAd === '1' ? 'checked' : '' }}>
+                    {{ d.showWxAd === true ? 'checked' : '' }}>
             </script>
             <script type="text/html" id="switchShowWxReVideoAd">
                 <input type="checkbox" name="showWxReVideoAd" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
-                    {{ d.showWxReVideoAd === '1' ? 'checked' : '' }}>
+                    {{ d.showWxReVideoAd === true ? 'checked' : '' }}>
             </script>
         </div>
     </div>
@@ -84,19 +84,19 @@
         <div class="layui-form-item">
             <label class="layui-form-label">允许运营</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="allowedOperation" lay-skin="switch" lay-text="是|否" value="1">
+                <input type="checkbox" name="allowedOperation" lay-skin="switch" lay-text="是|否" value="true">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">微信广告</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="showWxAd" lay-skin="switch" lay-text="是|否" value="1">
+                <input type="checkbox" name="showWxAd" lay-skin="switch" lay-text="是|否" value="true">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">激励视频广告</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="showWxReVideoAd" lay-skin="switch" lay-text="是|否" value="1">
+                <input type="checkbox" name="showWxReVideoAd" lay-skin="switch" lay-text="是|否" value="true">
             </div>
         </div>
         <div class="layui-form-item">
@@ -161,7 +161,7 @@
                 $.ajax({
                     url: currentPage.module.server + currentPage.page + '/statusSwitch',
                     data: JSON.stringify({ id: this.value, switchColumn: this.name, status: obj.elem.checked }),
-                    contentType: "application/json; charset=utf-8",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
                     dataType: "json",
                     async: false,
@@ -173,17 +173,6 @@
             });
 
         });
-
-        function rebuildEditData(editData, type) {
-            if ('edit' === type || 'copy' === type) {
-                console.log('editData.allowedOperation -> ', editData.allowedOperation);
-                console.log('editData.showWxAd -> ', editData.showWxAd);
-                console.log('editData.showWxReVideoAd -> ', editData.showWxReVideoAd);
-                editData.allowedOperation = '1' === editData.allowedOperation;
-                editData.showWxAd = '1' === editData.showWxAd;
-                editData.showWxReVideoAd = '1' === editData.showWxReVideoAd;
-            }
-        }
 
     </script>
 

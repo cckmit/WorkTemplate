@@ -25,7 +25,8 @@
                         <div class="layui-card-body layui-text">
 
                             <!-- 查询表单 -->
-                            <form class="layui-form layui-form-pane" action="" id="data-search-form">
+                            <form class="layui-form layui-form-pane" action="" id="data-search-form"
+                                lay-filter="data-search-form">
                             </form>
 
                             <!-- Table表头 -->
@@ -62,8 +63,8 @@
                             <!-- Table表头 -->
                             <script type="text/html" id="adPositionTableBar">
                                 <div class="layui-btn-container">
-                                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add" id=""><i class="layui-icon"></i> 新增 </button>
-                                    <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="layui-icon"></i> 批量删除 </button>
+                                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
                                 </div>
                             </script>
                             <table class="layui-hide" id="adPositionId" lay-filter="adPositionFilter"></table>
@@ -107,8 +108,8 @@
                             <input type="text" id="addAdSpace" autocomplete="off" class="layui-input layui-hide">
                             <script type="text/html" id="adSpaceTableBar">
                                 <div class="layui-btn-container">
-                                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"><i class="layui-icon"></i> 新增 </button>
-                                    <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="layui-icon"></i> 批量删除 </button>
+                                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
                                 </div>
                             </script>
                             <table class="layui-hide" id="adSpaceId" lay-filter="adSpaceFilter"></table>
@@ -121,9 +122,9 @@
                     <div class="layui-card-body layui-text lay-hide" id="adContentDiv">
                         <script type="text/html" id="adContentTableBar">
                             <div class="layui-btn-container">
-                                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"><i class="layui-icon"></i> 新增 </button>
+                                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
                                 <button class="layui-btn layui-btn-sm data-add-btn" lay-event="saveIndex"><i class="layui-icon layui-icon-ok"></i> 保存序号 </button>
-                                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="layui-icon"></i> 批量删除 </button>
+                                <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
                             </div>
                         </script>
                         <table class="layui-hide" id="adContentId" lay-filter="adContentFilter"></table>
@@ -235,7 +236,7 @@
                                 $.ajax({
                                     url: currentPageUrl + "/",
                                     type: 'DELETE',
-                                    contentType: "application/json; charset=utf-8",
+                                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                                     data: JSON.stringify(deleteIdArray),
                                     dataType: "json",
                                     async: false,
@@ -269,7 +270,7 @@
                 $.ajax({
                     url: currentPageUrl + '/updateName',
                     data: JSON.stringify({ id: data.id, name: data.name }),
-                    contentType: "application/json; charset=utf-8",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'POST',
                     dataType: "json",
                     async: false,
@@ -301,7 +302,7 @@
                             $.ajax({
                                 url: currentPageUrl,
                                 data: JSON.stringify(submitData),
-                                contentType: "application/json; charset=utf-8",
+                                headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                                 type: methodType,
                                 dataType: "json",
                                 async: false,
@@ -394,7 +395,7 @@
                     $.ajax({
                         url: currentPageUrl + "/deleteAdPositions",
                         data: JSON.stringify(deleteData),
-                        contentType: "application/json; charset=utf-8",
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                         type: 'POST',
                         dataType: "json",
                         async: false,
@@ -454,7 +455,7 @@
                 $.ajax({
                     url: currentPageUrl + "/updateAdStrategy",
                     data: JSON.stringify(updateAdStrategyOption),
-                    contentType: "application/json; charset=utf-8",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'POST',
                     dataType: "json",
                     async: false,
@@ -504,7 +505,7 @@
                         $.ajax({
                             url: currentPageUrl + '/addAdPosition',
                             data: JSON.stringify(addPositionData),
-                            contentType: "application/json; charset=utf-8",
+                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                             type: 'POST',
                             dataType: "json",
                             async: false,
@@ -594,7 +595,7 @@
                     $.ajax({
                         url: currentPageUrl + "/deleteAdSpaces",
                         data: JSON.stringify(deleteData),
-                        contentType: "application/json; charset=utf-8",
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                         type: 'POST',
                         dataType: "json",
                         async: false,
@@ -651,7 +652,7 @@
                         $.ajax({
                             url: currentPageUrl + '/addAdSpace',
                             data: JSON.stringify(addSpaceData),
-                            contentType: "application/json; charset=utf-8",
+                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                             type: 'POST',
                             dataType: "json",
                             async: false,
@@ -735,7 +736,7 @@
                     $.ajax({
                         url: currentPageUrl + "/saveAdContentIndex",
                         data: JSON.stringify(showIndexObject),
-                        contentType: "application/json; charset=utf-8",
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                         type: 'POST',
                         dataType: "json",
                         async: false,
@@ -767,7 +768,7 @@
                     $.ajax({
                         url: currentPageUrl + "/deleteAdContents",
                         data: JSON.stringify(deleteData),
-                        contentType: "application/json; charset=utf-8",
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                         type: 'POST',
                         dataType: "json",
                         async: false,
@@ -824,7 +825,7 @@
                         $.ajax({
                             url: currentPageUrl + '/addAdContent',
                             data: JSON.stringify(addContentData),
-                            contentType: "application/json; charset=utf-8",
+                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                             type: 'POST',
                             dataType: "json",
                             async: false,

@@ -7,7 +7,7 @@
 let $, layer, form, table, element;
 
 layui.use(['table', 'form', 'layer', 'element'], () => {
-    $ = layui.jquery, layer = layui.layer, form = layui.form, table = layui.table, element = layui.element;
+    $ = layui.jquery, table = layui.table, form = layui.form, layer = layui.layer, element = layui.element;
 
     // 如果定义了动态下拉框，初始化数据
     const existRenderAllSelect = typeof renderAllSelect !== "undefined" && renderAllSelect !== null;
@@ -24,12 +24,14 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
         $("#data-search-form")[0].reset();
         const existRenderAllSelect = typeof renderAllSelect !== "undefined" && renderAllSelect !== null;
         existRenderAllSelect && renderAllSelect('serverDb');
+        setTimeout(() => {
+            layer.msg('刷新完成！', { icon: 1, time: 2000 });
+        }, 1000);
         return false;
     });
 
     // 刷新数据
     function tableReload(data) {
-        console.log(data)
         if (data instanceof Object) {
             data = JSON.stringify(data);
         }
@@ -50,7 +52,7 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
             case 'add':
                 edit({}, obj.event, 'POST', '新增');
                 break;
-            case 'delete':
+            case 'delete': {
                 const data = table.checkStatus('crudTableId').data, dataLength = data.length;
                 if (dataLength === 0) {
                     layer.msg('批量删除，请至少选择一行！', { icon: 0, time: 2000 });
@@ -64,14 +66,21 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
                         del(deleteIdArray);
                     });
                 }
+            }
                 break;
-            default:
-                // 系统操作：筛选列、导出、打印、提示
-                const sysEvents = ["LAYTABLE_COLS", "LAYTABLE_EXPORT", "LAYTABLE_PRINT", "LAYTABLE_TIPS"];
-                if (sysEvents.indexOf(obj.event) < 0) {
-                    // 执行其它方法，请自行实现
-                    otherToolbarEvent(obj);
+            default: {
+                const data = table.checkStatus('crudTableId').data, dataLength = data.length;
+                if (dataLength === 0) {
+                    layer.msg('请至少选择一行！', { icon: 0, time: 2000 });
+                } else {
+                    // 系统操作：筛选列、导出、打印、提示
+                    const sysEvents = ["LAYTABLE_COLS", "LAYTABLE_EXPORT", "LAYTABLE_PRINT", "LAYTABLE_TIPS"];
+                    if (sysEvents.indexOf(obj.event) < 0) {
+                        // 执行其它方法，请自行实现
+                        otherToolbarEvent(obj);
+                    }
                 }
+            }
                 break;
         }
     });
@@ -102,7 +111,7 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
                 break;
             default:
                 // 执行其它方法，请自行实现
-                otherToolEvent(obj.data);
+                otherToolEvent(obj);
                 break;
         }
     });
@@ -122,7 +131,6 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
             btn: ['确定', '取消'],
             btnAlign: 'c',
             success: (layero, index) => {
-                console.log(editData);
                 // 可以在<script></script>内自定义私有的数据处理方法，如果不定义，则按照默认方式初始化数据
                 const existRebuildFunction = typeof rebuildEditData !== "undefined" && rebuildEditData !== null;
                 existRebuildFunction && rebuildEditData(editData, type);
@@ -133,23 +141,23 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
                 form.on('submit(crudSaveBtnFilter)', (submitData) => {
                     const existRebuildFunction = typeof rebuildSubmitData !== "undefined" && rebuildSubmitData !== null;
                     submitData = existRebuildFunction ? rebuildSubmitData(submitData.field) : submitData.field;
-                    console.log('submitData -> ', submitData);
                     $.ajax({
                         url: currentPage.module.server + currentPage.page,
                         data: JSON.stringify(submitData),
-                        contentType: "application/json; charset=utf-8",
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                         type: methodType,
                         dataType: "json",
                         async: false,
                         success: function (result) {
-                            console.log(methodType, JSON.stringify(result));
                             parent.layer.msg(result.msg, { icon: result.code, time: 2000 });
                             if (result.code === 1) {
                                 layer.close(index);
-                                tableReload();
+                                tableReload(form.val('data-search-form'));
+                                return false;
                             }
                         }
                     });
+                    return false;
                 });
                 $('#crudSaveBtnId').trigger('click');
             },
@@ -171,18 +179,17 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
      * @param {Array} deleteIdArray 批量删除的ID数组
      */
     function del(deleteIdArray) {
-        console.log(deleteIdArray);
         $.ajax({
             url: currentPage.module.server + currentPage.page + "/",
             type: 'DELETE',
-            contentType: "application/json; charset=utf-8",
+            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
             data: JSON.stringify(deleteIdArray),
             dataType: "json",
             async: false,
             success: function (result) {
                 layer.msg(result.msg, { icon: result.code, time: 2000 });
                 if (result.code === 1) {
-                    tableReload();
+                    tableReload(form.val('data-search-form'));
                 }
             }
         });

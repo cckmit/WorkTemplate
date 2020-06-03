@@ -178,10 +178,12 @@
                     layer.msg('密码不能为空');
                     return false;
                 }
-                $.post(SYSTEM_SERVER + "login", data, function (result) {
+                $.post(window.module.system.server + "authc/login", data, (result) => {
                     console.log(result);
                     layer.msg(result.msg, { icon: result.code });
                     if (result.code == 1) {
+                        window.localStorage.setItem('nickName', result.nickName);
+                        window.localStorage.setItem('JSESSIONID', result.JSESSIONID);
                         window.location = 'index.html';
                     }
                 })

@@ -15,12 +15,12 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">产品名称</label>
                         <div class="layui-input-inline">
-                            <select id="appIdSelect" name="id" lay-search=""> </select>
+                            <select id="appIdSelect" name="appId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -206,7 +206,7 @@
                 page: true,
                 event: true,
                 size: 'sm',
-                height: 'full-80'
+                height: 'full-120'
             });
 
             // 日期范围选择框渲染
@@ -217,34 +217,39 @@
             });
 
         });
+
         //补单操作
         function otherToolbarEvent(obj) {
             if ('supplementOrder' === obj.event) {
                 const data = table.checkStatus('crudTableId').data, dataLength = data.length;
                 if (dataLength === 0) {
                     layer.msg('补单，请至少选择一行！', { icon: 0, time: 2000 });
-                }  else if (dataLength >= 1) {
+                } else if (dataLength > 1) {
                     layer.msg('只能选择一条订单进行补单');
                 } else {
-                    let appIdArray = [];
-                    data.forEach((val, ind, arr) => {
-                        appIdArray.push(val.id);
-
-                    });
-                    $.ajax({
-                        url: currentPage.module.server + currentPage.page + '/supplement',
-                        data: JSON.stringify(appIdArray),
-                        contentType: "application/json; charset=utf-8",
-                        type: 'post',
-                        dataType: "json",
-                        success: function (result) {
-                            layer.msg(result.msg, { icon: result.code, time: 2000 });
-                        }
-                    });
+                    const data = table.checkStatus('crudTableId').data
+                    let obj = {
+                        "appId": data[0].ddAppId,
+                        "uid": data[0].ddUid,
+                        "orderId": data[0].id
+                    };
+                    layer.confirm('确定补发订单号：' + data[0].id + '  订单，  ' + '金额 ：' + data[0].ddPrice + '元吗', function (index) {
+                        $.ajax({
+                            url: currentPage.module.server + currentPage.page + '/supplement',
+                            data: JSON.stringify(obj),
+                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                            type: 'post',
+                            dataType: "json",
+                            success: function (result) {
+                                layer.msg(result.msg, { icon: result.code, time: 2000 });
+                            }
+                        });
+                    })
                 }
             }
             return false;
         }
+
     </script>
 
 </body>

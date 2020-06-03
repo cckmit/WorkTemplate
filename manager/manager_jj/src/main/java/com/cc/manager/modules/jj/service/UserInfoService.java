@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -29,6 +31,61 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
     private RechargeService rechargeService;
     private UserValueService userValueService;
     private WxConfigService wxConfigService;
+
+    @Override
+    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<UserInfo> queryWrapper, StatsListResult statsListResult) {
+        if (StringUtils.isBlank(statsListParam.getQueryData())) {
+            String nowDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
+            queryWrapper.between("DATE(ddRegisterTime)", nowDate, nowDate);
+        } else {
+            if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("registerTime"))) {
+                String[] timeRangeArray = StringUtils.split(statsListParam.getQueryObject().getString("registerTime"), "~");
+                queryWrapper.between("DATE(ddRegisterTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
+            }
+            String ddName = statsListParam.getQueryObject().getString("ddName");
+            queryWrapper.like(StringUtils.isNotBlank(ddName), "ddName", ddName);
+            String uid = statsListParam.getQueryObject().getString("uid");
+            queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
+            String ddAppId = statsListParam.getQueryObject().getString("ddAppId");
+            queryWrapper.eq(StringUtils.isNotBlank(ddAppId), "ddAppId", ddAppId);
+            String ddOid = statsListParam.getQueryObject().getString("ddOid");
+            queryWrapper.like(StringUtils.isNotBlank(ddOid), "ddOId", ddOid);
+        }
+    }
+
+    @Override
+    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<UserInfo> entityList, StatsListResult statsListResult) {
+
+        //已提现金额用户的提现金额赋值
+        Map<String, BigDecimal> userRechargedMap = queryUserRecharged();
+        for (String userId : userRechargedMap.keySet()) {
+            for (UserInfo userInfo : entityList) {
+                if (userInfo.getDdUid().equals(userId)) {
+                    userInfo.setCashOut(userRechargedMap.get(userId).intValue());
+                }
+                WxConfig cacheWxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, userInfo.getDdAppId());
+                userInfo.setProductName(cacheWxConfig.getProductName());
+                UserValue cacheUserValue = this.userValueService.getById(userInfo.getDdUid());
+                userInfo.setDdCoinCount(cacheUserValue.getDdCoinCount());
+                userInfo.setDdMoney(cacheUserValue.getDdMoney() * 0.01);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 已提现金额查询
+     *
+     * @return Map
+     */
+    private Map<String, BigDecimal> queryUserRecharged() {
+        Map<String, BigDecimal> rechargeMap = new HashMap<>(10);
+        List<Recharge> userRecharged = rechargeService.selectAllUserRecharged();
+        for (Recharge recharge : userRecharged) {
+            rechargeMap.put(recharge.getDdUid(), recharge.getDdRmb());
+        }
+        return rechargeMap;
+    }
 
     /**
      * 根据用户名模糊匹配用户
@@ -68,59 +125,6 @@ public class UserInfoService extends BaseStatsService<UserInfo, UserInfoMapper> 
         QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
         userInfoQueryWrapper.eq("ddUid", uuid).last("LIMIT 1");
         return this.mapper.selectOne(userInfoQueryWrapper);
-    }
-
-    @Override
-    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<UserInfo> queryWrapper, StatsListResult statsListResult) {
-
-        String times = statsListParam.getQueryObject().getString("registerTime");
-        String ddName = statsListParam.getQueryObject().getString("ddName");
-        String uid = statsListParam.getQueryObject().getString("uid");
-        String ddAppId = statsListParam.getQueryObject().getString("ddAppId");
-        String ddOid = statsListParam.getQueryObject().getString("ddOid");
-        if (StringUtils.isNotBlank(times)) {
-            String[] timeRangeArray = StringUtils.split(times, "~");
-            queryWrapper.between("DATE(ddRegisterTime)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
-        }
-        queryWrapper.like(StringUtils.isNotBlank(ddName), "ddName", ddName);
-        queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
-        queryWrapper.like(StringUtils.isNotBlank(ddAppId), "ddAppId", ddAppId);
-        queryWrapper.like(StringUtils.isNotBlank(ddOid), "ddOId", ddOid);
-
-    }
-
-    @Override
-    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<UserInfo> entityList, StatsListResult statsListResult) {
-
-        //已提现金额用户的提现金额赋值
-        Map<String, BigDecimal> userRechargedMap = queryUserRecharged();
-        for (String userId : userRechargedMap.keySet()) {
-            for (UserInfo userInfo : entityList) {
-                if (userInfo.getDdUid().equals(userId)) {
-                    userInfo.setCashOut(userRechargedMap.get(userId).intValue());
-                }
-                WxConfig cacheWxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, userInfo.getDdAppId());
-                userInfo.setProductName(cacheWxConfig.getProductName());
-                UserValue cacheUserValue = this.userValueService.getById(userInfo.getDdUid());
-                userInfo.setDdCoinCount(cacheUserValue.getDdCoinCount());
-                userInfo.setDdMoney(cacheUserValue.getDdMoney() * 0.01);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 已提现金额查询
-     *
-     * @return Map
-     */
-    private Map<String, BigDecimal> queryUserRecharged() {
-        Map<String, BigDecimal> rechargeMap = new HashMap<>(10);
-        List<Recharge> userRecharged = rechargeService.selectAllUserRecharged();
-        for (Recharge recharge : userRecharged) {
-            rechargeMap.put(recharge.getDdUid(), recharge.getDdRmb());
-        }
-        return rechargeMap;
     }
 
     @Autowired

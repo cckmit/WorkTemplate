@@ -15,25 +15,21 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">游戏代号</label>
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="gameId" name="gameId">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">游戏名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="gameName" name="gameName">
+                            <select id="gameIdSelect" name="gameId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
                             lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
-                    </div>
+                        <button type="button" class="layui-btn layui-btn-primary" id="data-search-reset"
+                            lay-filter="data-search-reset"><i class="layui-icon">&#xe666;</i>重置</button>
 
+                    </div>
                 </div>
             </form>
 
@@ -47,7 +43,7 @@
 
             <!-- 行内按钮 -->
             <script type="text/html" id="crudRowBar">
-                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
             </script>
 
             <!-- 行内表单 -->
@@ -97,12 +93,17 @@
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
     <script src="../../js/lay-util-form-verify.js" charset="utf-8"></script>
     <script>
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
             module: window.module.jj,
             page: 'jj/gameShareJson'
+        }
+
+        function renderAllSelect(level) {
+            renderNormalSelect('gameIdSelect', 'jj', 'games', level);
         }
 
         // 表单数据查询渲染

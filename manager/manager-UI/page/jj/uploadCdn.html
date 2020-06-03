@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <title>资源统一上传接口</title>
+    <title>文件上传</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -11,9 +11,8 @@
     <link rel="stylesheet" href="../../css/public.css" media="all">
 </head>
 
-
 <body>
-    lockquote class="layui-elem-quote">为了节省上传接口滥用，统一使用该界面上传文件，zip文件会自动解压，如需关闭请选择关闭。</blockquote>
+    <blockquote class="layui-elem-quote">为了节省上传接口滥用，统一使用该界面上传文件，zip文件会自动解压，如需关闭请选择关闭。</blockquote>
     <hr class="layui-bg-green">
     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
         <legend>多文件上传</legend>
@@ -98,7 +97,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label" style="width: 6rem;">游戏名称</label>
                     <div class="layui-input-inline" style="width:14rem;">
-                        <div id="gameCode" name="gameCode" lay-filter="gameCode"></div>
+                        <select id="appIdSelect" name="gameCode" lay-search=""> </select>
                     </div>
                 </div>
                 <button type="button" class="layui-btn" id="image">开始上传</button>
@@ -116,90 +115,38 @@
         </div>
     </fieldset>
     <hr class="layui-bg-green">
-    <script src="../../js/xm-select.js" charset="utf-8"></script>
-    <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script>
-        function addHistory(history) {
-            let historyLocalStorge = window.localStorage.getItem('upload-cdn-history');
-            console.log(historyLocalStorge);
-            if (historyLocalStorge === undefined)
-                historyLocalStorge = [];
-            else
-                historyLocalStorge = JSON.parse(historyLocalStorge);
-            historyLocalStorge.push(history);
-            window.localStorage.setItem('upload-cdn-history', JSON.stringify(historyLocalStorge));
-        }
+        const uploadUrl = 'http://192.168.1.190:8010/file-system/jj/upload/';
 
-        function getHistory() {
-            let historyLocalStorge = window.localStorage.getItem('upload-cdn-history');
-            if (historyLocalStorge == undefined || historyLocalStorge.length <= 0) {
-                return '空记录';
-            }
-            historyLocalStorge = JSON.parse(historyLocalStorge);
-            let str = "";
-            for (var i = historyLocalStorge.length - 1; i >= 0; i--) {
-                str += `<p class="layui-elem-quote">${historyLocalStorge[i]}</p> `;
-            }
-            return str;
-        }
-
-        function getDate() {
-            var myDate = new Date;
-            return `${myDate.getFullYear()}/${myDate.getMonth() + 1}/${myDate.getDate()} ${myDate.getHours()}:${myDate.getMinutes()}`;
-        }
-
-        let gameCodes = {};
-        const gameCode = xmSelect.render({
-            el: '#gameCode',
-            language: 'zn',
-            toolbar: { show: true },
-            data: [],
-            autoRow: true,
-            paging: true,
-            pageSize: 5,
-            delay: 500,
-            filterable: true,
-            filterDone: function (val, list) {
-                console.log(`搜索完毕, 搜索关键词: ${val}, 过滤数据: ${list.length}个`)
-            },
-        });
-        // 当前页面所属模块，使用之前请先在lay-config.js中配置
-        const currentPage = {
-            module: window.module.jj,
-            page: 'wxConfig'
-        }
-        layui.use(['layer', 'form'], function () {
-            var $ = layui.jquery;
-            var layer = layui.layer,
-                form = layer.form;
-            layui.form.render("select");
-            $(() => {
-                $.ajax({
-                    type: "get",
-                    dataType: "json",
-                    url: '/manager/manage/games/selectBox',
-                    success: (res) => {
-                        res.forEach(function (val, index, arr) {
-                            gameCodes[val.value] = val.title;
-                        });
-                        let data = [];
-                        data.push({ name: '全部', value: 'all', selected: false });
-                        Object.keys(gameCodes).forEach(key => {
-                            let context = { name: gameCodes[key], value: key, selected: false };
-                            data.push(context);
-                        });
-                        gameCode.update(
-                            {
-                                data: data,
-                                autoRow: true,
-                            }
-                        );
-                    },
-                    error: function () {
-                        alert("查询失败")
+        layui.use(['table', 'form', 'layer', 'upload'], () => {
+            const $ = layui.jquery, layer = layui.layer, form = layui.form, table = layui.table, upload = layui.upload;
+            $.ajax({
+                url: window.module.jj.server + "/jj/wxConfig/getSelectArray/serverCache",
+                headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                type: 'GET',
+                dataType: "json",
+                success: (result) => {
+                    const selectVal = $("#appIdSelect").val()
+                    if (result) {
+                        let selectOption = [];
+                        if (result.code === 1) {
+                            selectOption.push('<option value="">全部</option>');
+                            result.data.forEach((val, index, arr) => {
+                                const selected = val.key === selectVal ? 'selected' : '';
+                                selectOption.push('<option value="' + val.key + '" ' + selected + '>' + val.value + '</option>');
+                            });
+                            selectOption = selectOption.join('');
+                            $('#appIdSelect').empty();
+                            $('#appIdSelect').append(selectOption);
+                            form.render();
+                        }
                     }
-                })
+                }
             });
+
             $('#historyList').on('click', () => {
                 var that = this;
                 var history = getHistory();
@@ -209,62 +156,73 @@
                     title: '上传历史记录',
                     shade: 0,
                     maxmin: true,
+                    area: ['60%', '40%'],
                     content: `<div class="clear">${history}</div>`,
                     btn: ['清空', '关闭'],
+                    btnAlign: 'c',
                     yes: function () {
                         window.localStorage.removeItem('upload-cdn-history');
                         layer.closeAll();
-                        layer.msg('清空完成');
+                        layer.msg('清空完成', { icon: 1, time: 2000 });
                     },
                     btn2: function () {
                         layer.closeAll();
                     },
                     zIndex: layer.zIndex,
                     success: function (layero) {
-
                     }
                 });
             });
-        });
-        // 当前页面所属模块，使用之前请先在lay-config.js中配置
-        const currentPage = {
-            module: window.module.jj,
-            page: 'up;oadCdn'
-        }
-        layui.use(['upload', 'form'], function () {
-            var $ = layui.jquery,
-                layer = layui.layer,
-                upload = layui.upload,
-                form = layui.form;
+
             upload.render({ //允许上传的文件后缀
                 elem: '#zipRes',
-                url: currentPage.module.server + currentPage.page + '/upload/zip/',
+                url: uploadUrl + 'zip',
                 accept: 'file', //普通文件
                 auto: false,
                 before: function (obj) {
                     layer.load(); //上传loading
-                    console.log('携参:', obj);
                     this.data = { type: $('#type').val(), isAuto: $('#autoZip').val(), isDelete: $('#deleteZip').val() };
                 },
                 bindAction: '#zip',
                 exts: 'zip|rar|7z', //只允许上传压缩文件
                 done: function (result) {
                     layer.closeAll('loading');
-                    UIConfig.postMsg(result);
+                    // 更新对应广告内容的图片
+                    if (result.code === 1) {
+                        const contentImages = result.contentImages;
+                        if (contentImages) {
+                            $.ajax({
+                                url: window.module.jj.server + 'jj/configAdContent/uploadImageUrlByUpload',
+                                data: JSON.stringify(contentImages),
+                                headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                                type: 'PUT',
+                                dataType: "json",
+                                async: false,
+                                success: function (result) {
+                                    layer.msg(result.msg, { icon: result.code, time: 2000 });
+                                }
+                            });
+                        }
+                    } else {
+                        layer.msg(result.msg, { icon: result.code, time: 2000 });
+                    }
+                }, error: function () {
+                    layer.closeAll('loading');
+                    layer.msg('上传文件失败，请联系技术人员！', { icon: 2, time: 2000 });
                 }
             });
+
             //设定文件大小限制
             upload.render({
                 elem: '#imageRes',
-                url: currentPage.module.server + currentPage.page + '/upload/image/',
+                url: uploadUrl + 'image',
                 accept: 'image',
                 auto: false,
                 before: function (obj) {
                     $('#imageURL').attr('value', '');
-                    var selectArr = gameCode.getValue("value");
-                    console.log('携参:', obj, selectArr);
+                    const gameCode = $("#appIdSelect").val()
                     layer.load(); //上传loading
-                    this.data = { flushType: $('#flushType').val(), gameCode: selectArr };
+                    this.data = { flushType: $('#flushType').val(), gameCode: gameCode };
                 },
                 bindAction: '#image',
                 size: 1024,//限制文件大小，单位 KB
@@ -277,7 +235,7 @@
                     imageURL.select();
                     document.execCommand("Copy");
                     result.msg += '，图片地址已自动复制到剪切板！';
-                    UIConfig.postMsg(result);
+                    layer.msg(result.msg, { icon: 1, time: 2000 });
                 }
             });
 
@@ -285,7 +243,7 @@
             var demoListView = $('#demoList'),
                 uploadListIns = upload.render({
                     elem: '#testList',
-                    url: currentPage.module.server + currentPage.page + '/upload',
+                    url: uploadUrl,
                     accept: 'file',
                     multiple: true,
                     auto: false,
@@ -343,8 +301,37 @@
                 layer.msg('图片地址已复制到剪切板！', { icon: 1 });
             });
         });
-    </script>
 
+        function addHistory(history) {
+            let historyLocalStorge = window.localStorage.getItem('upload-cdn-history');
+            console.log(historyLocalStorge);
+            if (historyLocalStorge) {
+                historyLocalStorge = JSON.parse(historyLocalStorge);
+            } else {
+                historyLocalStorge = [];
+            }
+            historyLocalStorge.push(history);
+            window.localStorage.setItem('upload-cdn-history', JSON.stringify(historyLocalStorge));
+        }
+
+        function getHistory() {
+            let historyLocalStorge = window.localStorage.getItem('upload-cdn-history');
+            if (historyLocalStorge == undefined || historyLocalStorge.length <= 0) {
+                return '空记录';
+            }
+            historyLocalStorge = JSON.parse(historyLocalStorge);
+            let str = "";
+            for (var i = historyLocalStorge.length - 1; i >= 0; i--) {
+                str += `<p class="layui-elem-quote">${historyLocalStorge[i]}</p> `;
+            }
+            return str;
+        }
+
+        function getDate() {
+            var myDate = new Date;
+            return `${myDate.getFullYear()}/${myDate.getMonth() + 1}/${myDate.getDate()} ${myDate.getHours()}:${myDate.getMinutes()}`;
+        }
+    </script>
 </body>
 
 </html>

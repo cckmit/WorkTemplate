@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="" id="query-data-form" lay-filter="query-data-form">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">时间</label>
@@ -35,28 +35,25 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">运营产品</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="productAppId" name="productAppId" autocomplete="off"
-                                class="layui-input">
+                            <select id="appIdSelect" name="productAppId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">推广产品</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="targetAppId" name="targetAppId" autocomplete="off"
-                                class="layui-input">
+                            <select id="targetAppSelect" name="targetAppId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">广告位置</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="adPositionId" name="adPositionId" autocomplete="off"
-                                class="layui-input">
+                            <select id="adPositionSelect" name="adPositionId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">广告位</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="adSpaceId" name="adSpaceId" autocomplete="off" class="layui-input">
+                            <select id="adSpaceSelect" name="adSpaceId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -75,22 +72,24 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-primary" lay-submit id="data-search-btn"
-                            lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                        <button type="button" class="layui-btn layui-btn-primary" id="data-search-reset"
+                            lay-filter="data-search-reset"><i class="layui-icon">&#xe666;</i>重置</button>
                     </div>
                 </div>
             </form>
             <!-- Table表头，统计模块不需要表头操作 -->
             <script type="text/html" id="statsTableBar">
                 <div class="layui-btn-container">
-                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="return"><i class="layui-icon layui-icon-return"></i> 返回 </button>
+                    <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="return"><i class="layui-icon">&#xe65c;</i>返回</button>
                 </div>
             </script>
             <!-- Table -->
             <table class="layui-hide" id="statsTableId" lay-filter="statsTableFilter"></table>
             <!-- 行内按钮 -->
             <script type="text/html" id="statsRowBar">
-                <a class="layui-btn layui-btn-primary layui-btn-xs data-count-edit" lay-event="detail"><i class="layui-icon fa-table"></i>详情</a>
+                <a class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe65b;</i>详情</a>
             </script>
         </div>
     </div>
@@ -98,11 +97,12 @@
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script src="../../js/lay-stats.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
     <script>
         // 当前页面所属模块，使用之前请先在lay-config.js中配置module
         const currentPage = {
             module: window.module.jj,
-            page: 'jj/adValue'
+            page: 'fc/adValue'
         }
 
         // 全部需要展示的列属性，必须定义
@@ -123,6 +123,38 @@
             detail: { title: '详情', minWidth: 100, toolbar: '#statsRowBar', align: "center", fixed: 'right' }
         }
 
+        function renderAllSelect(level) {
+            renderNormalSelect('appIdSelect', 'jj', 'wxConfig', level);
+            renderNormalSelect('adPositionSelect', 'jj', 'configAdPosition', level);
+            renderNormalSelect('adSpaceSelect', 'jj', 'configAdSpace', level);
+            $.ajax({
+                url: window.module.jj.server + "jj/configAdContent/getTargetAppArray/",
+                headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                type: 'GET',
+                dataType: "json",
+                success: (result) => {
+                    let selectOption = [];
+                    selectOption.push('<option value="">全部</option>');
+                    if (result) {
+                        console.log(result.code);
+                        if (result.code < 0) {
+                            layer.msg(result.msg, { icon: 2, time: 2000 });
+                            if (result.code === -1) {
+                                setTimeout(() => {
+                                    window.location = '../../login.html';
+                                }, 2000);
+                            }
+                        } else if (result.code === 1) {
+                            result.data.forEach((val, index, arr) => {
+                                selectOption.push('<option value="' + val.key + '">' + val.value + '</option>');
+                            });
+                        }
+                    }
+                    selectOption = selectOption.join('');
+                    renderSelect("targetAppSelect", selectOption);
+                }
+            });
+        }
 
         /**
          * 构建查询表单对象
@@ -142,8 +174,8 @@
             return formObject;
         }
 
-        layui.use(['form', 'table', 'laydate'], () => {
-            const $ = layui.jquery, form = layui.form, table = layui.table, laydate = layui.laydate;
+        layui.use(['table', 'form', 'layer', 'laydate'], () => {
+            $ = layui.jquery, table = layui.table, form = layui.form, layer = layui.layer, laydate = layui.laydate;
 
             // 日期范围选择框渲染
             laydate.render({

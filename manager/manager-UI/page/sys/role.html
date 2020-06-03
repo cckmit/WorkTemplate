@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <div class="layui-row layui-col-space15">
-                <div class="layui-col-xs12 layui-col-md6">
+                <div class="layui-col-xs12 layui-col-md7">
                     <!-- 查询表单 -->
                     <form class="layui-form layui-form-pane" action="">
                         <div class="layui-form-item">
@@ -36,18 +36,18 @@
                     <!-- Table表头 -->
                     <script type="text/html" id="crudTableBar">
                         <div class="layui-btn-container">
-                            <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"><i class="layui-icon"></i> 新增 </button>
-                            <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="layui-icon"></i> 批量删除 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
                         </div>
                     </script>
 
                     <!-- Table -->
-                    <table class="layui-hide" id="crudTableId" lay-filter="currentTableFilter"></table>
+                    <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
 
                     <!-- 行内按钮 -->
-                    <script type="text/html" id="currentTableBar">
-                        <a class="layui-btn layui-btn-primary layui-btn-xs data-count-edit" lay-event="configMenu"><i class="layui-icon"></i>菜单配置</a>
-                        <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete"><i class="layui-icon"></i>删除</a>
+                    <script type="text/html" id="crudRowBar">
+                        <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+                        <a class="layui-btn layui-btn-xs data-count-edit" lay-event="getMenuTree">菜单配置<i class="layui-icon">&#xe65b;</i></a>
                     </script>
 
                     <!-- 行内表单 -->
@@ -56,14 +56,54 @@
                             {{ d.status ? 'checked' : '' }}>
                     </script>
                 </div>
-                <div class="layui-col-xs12 layui-col-md6">
+                <div class="layui-col-xs12 layui-col-md5">
                     <div id="echarts-map" style="background-color:#ffffff;min-height:300px;padding: 10px">
-                        <h1>角色菜单树位置，待开发</h1>
+                        <div class="layui-card-header">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" id="menu-add-child"><i
+                                    class="layui-icon">&#x1005;</i>保存角色菜单配置</button>
+                            <span>菜单树，当前选中角色： </span>
+                            <span style="color: red; font-size: large;" id="roleId"></span> -
+                            <span style="color: red; font-size: large;" id="roleName"></span>
+                        </div>
+                        <div class="layui-card-body layui-text">
+                            <div id="menuTree"></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- 编辑表单 -->
+    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
+        <div class="layui-form-item">
+            <label class="layui-form-label">ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" placeholder="新增成功自动生成" value="" class="layui-input" autocomplete="off"
+                    readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">角色名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="roleName" lay-verify="required" lay-reqtext="角色名称不能为空" placeholder=" 请输入角色名称"
+                    value="" class="layui-input" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" checked="" name="status" lay-skin="switch" lay-filter="switchTest" value="true"
+                    lay-text="有效|无效">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            </div>
+        </div>
+    </form>
 
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>
@@ -72,12 +112,14 @@
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
             module: window.module.system,
-            page: 'role'
+            page: 'sys/role'
         }
 
+        let tree;
+
         // 表单数据查询渲染
-        layui.use(['form', 'table'], function () {
-            var $ = layui.jquery, form = layui.form, table = layui.table;
+        layui.use(['form', 'table', 'tree'], function () {
+            $ = layui.jquery, form = layui.form, table = layui.table, tree = layui.tree;
 
             table.render({
                 elem: '#crudTableId',
@@ -89,12 +131,12 @@
                     icon: 'layui-icon-tips'
                 }],
                 cols: [[
-                    { type: "checkbox", width: 50 },
-                    { field: 'id', width: 80, title: 'ID', sort: true },
+                    { type: "checkbox", fixed: 'left' },
+                    { field: 'id', title: 'ID', sort: true },
                     { field: 'roleName', width: 200, title: '角色名称', edit: 'text' },
                     { field: 'status', width: 160, title: '是否有效', align: "center", templet: '#switchStatus' },
                     { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true },
-                    { title: '操作', minWidth: 120, toolbar: '#currentTableBar', align: "center" }
+                    { title: '操作', width: 180, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
                 ]],
                 limits: [10, 20, 30, 50, 100],
                 limit: 30,
@@ -110,12 +152,11 @@
                 $.ajax({
                     url: currentPage.module.server + currentPage.page,
                     data: JSON.stringify({ id: obj.data.id, roleName: obj.data.roleName }),
-                    contentType: "application/json; charset=utf-8",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
                     dataType: "json",
                     async: false,
                     success: function (result) {
-                        console.log(result);
                         layer.msg(result.msg, { icon: result.code });
                         if (result.code === 1) {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));
@@ -126,30 +167,92 @@
 
             // 有效性状态切换
             form.on('switch(switchStatus)', function (obj) {
-                console.log(this.value + ' ' + this.name + '：' + obj.elem.checked, JSON.stringify(obj.othis));
                 $.ajax({
                     url: currentPage.module.server + currentPage.page,
                     data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
-                    contentType: "application/json; charset=utf-8",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
                     dataType: "json",
                     async: false,
                     success: function (result) {
-                        console.log(JSON.stringify(result));
                         layer.msg(result.msg, { icon: result.code, time: 2000 });
                     }
                 });
             });
+
+            // 保存角色菜单列表
+            let menuIds = [];
+            $("#menu-add-child").click(() => {
+                const id = $("#roleId").html();
+                console.log(id);
+                if (id !== '1') {
+                    const checkedTreeData = tree.getChecked('menuTree');
+                    // 递归获取菜单树中的角色ID
+                    menuIds = [];
+                    getMenuIds(checkedTreeData);
+                    $.ajax({
+                        url: currentPage.module.server + currentPage.page + '/updateMenuIds',
+                        data: JSON.stringify({ id: id, menuIds: menuIds }),
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                        type: 'PUT',
+                        dataType: "json",
+                        async: false,
+                        success: function (result) {
+                            layer.msg(result.msg, { icon: result.code, time: 2000 });
+                            return false;
+                        }
+                    });
+                }
+            });
+
+            function getMenuIds(checkedTreeData) {
+                checkedTreeData.forEach((val, ind, arr) => {
+                    menuIds.push(val.id);
+                    if (val.children) {
+                        getMenuIds(val.children);
+                    }
+                });
+            }
         });
+
 
         /**
          * 行内按钮其它操作
          */
         function otherToolEvent(obj) {
-            if (obj.event === 'configMenu') {
-                console.log(obj.data);
+            if (obj.event === 'getMenuTree') {
+                $("#roleId").html(obj.data.id);
+                $("#roleName").html(obj.data.roleName);
+                if (obj.data.id === 1) {
+                    layer.msg('系统管理员默认拥有全部页面权限，无需配置！', { icon: 0, time: 2000 });
+                    $('#menu-add-child').addClass('layui-btn-disabled');
+                    $('#menuTree').removeClass('layui-show').addClass('layui-hide');
+                } else {
+                    $('#menu-add-child').removeClass('layui-btn-disabled');
+                    $('#menuTree').removeClass('layui-hide').addClass('layui-show');
+                    $.ajax({
+                        url: currentPage.module.server + currentPage.page + '/id/' + obj.data.id,
+                        type: 'GET',
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                        dataType: "json",
+                        async: false,
+                        success: (result) => {
+                            let treeData = [];
+                            treeData.push(result.data.menuTreeJson);
+                            tree.render({
+                                id: 'menuTree',
+                                elem: '#menuTree',
+                                data: treeData,
+                                showLine: true,
+                                showCheckbox: true,
+                                oncheck: (obj) => { }
+                            });
+                        }
+                    });
+                }
             }
         }
+
     </script>
 
 </body>

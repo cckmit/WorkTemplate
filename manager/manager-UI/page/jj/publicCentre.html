@@ -38,7 +38,7 @@
             <script type="text/html" id="crudRowBar">
                 <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
                 <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
-                
+
             </script>
 
             <!-- 行内表单 -->
@@ -156,7 +156,8 @@
                 }],
                 cols: [[
                     { type: 'checkbox', fixed: 'left' },
-                    { type: 'numbers', width: 60, title: '序号' },
+                    { type: 'numbers', title: '序号', align: 'center' },
+                    { field: 'id', title: 'ID', align: 'center' },
                     {
                         field: 'recommendType', width: 140, title: '推荐位类型', align: 'center',
                         templet: (d) => {
@@ -213,10 +214,9 @@
                 page: true,
                 event: true,
                 size: 'sm',
-                height: 'full-60'
-
-
+                height: 'full-40'
             });
+
             table.on('edit(crudTableFilter)', function (obj) {
                 console.log(JSON.stringify(obj));
                 const value = obj.value //得到修改后的值
@@ -234,7 +234,7 @@
                         $.ajax({
                             url: currentPage.module.server + currentPage.page + "/updateShowId",
                             data: JSON.stringify(saveData),
-                            contentType: "application/json; charset=utf-8",
+                            headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                             type: 'post',
                             dataType: "json",
                             success: function (result) {
@@ -260,45 +260,13 @@
                     $('#bannerTypes').addClass('layui-hide');
                 }
             });
-
-            //校验是否为图片格式结尾
-            String.prototype.endWith = function (endStr) {
-                var d = this.length - endStr.length;
-                return (d >= 0 && this.lastIndexOf(endStr) === d)
-            };
-            let img = ".img";
-            let gif = ".gif";
-            let png = ".png";
-            $('#crudSaveBtnId').on('click', function () {
-                let bannerType = $('#bannerType').val();
-                let content = $('#resourceName').val();
-                let detailName = $('#detailName').val();
-                if (bannerType === "1") {
-                    if (!content.endWith(img) && !content.endWith(gif) && !content.endWith(png)) {
-                        UIConfig.warnMsg("图片名称 请检查后缀填写");
-                        return false;
-                    }
-                    if (!detailName.endWith(img) && !detailName.endWith(gif) && !detailName.endWith(png) && (detailName !== "")) {
-                        UIConfig.warnMsg("展示内容名称 请检查后缀填写");
-                        return false;
-                    }
-                } else {
-                    //提交链接地址检测
-                    let reg = /(http|https):\/\/([\w.]+\/?)\S*/
-                    let isTrue = reg.test(detailName);
-                    let isNull = (detailName === "");
-                    if (!(isNull || isTrue)) {
-                        UIConfig.warnMsg("请以正确链接地址输入链接");
-                        return false;
-                    }
-                }
-            });
         });
         //提交JSON文件操作
         function otherToolbarEvent(obj) {
             if ('submitJsonInfo' === obj.event) {
                 $.ajax({
                     url: currentPage.module.server + currentPage.page + '/submitJson',
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'get',
                     success: function (result) {
                         layer.msg(result.msg, { icon: result.code, time: 2000 });

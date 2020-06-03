@@ -15,7 +15,8 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="" id="data-search-form">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" id="data-search-form"
+                lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">APPID</label>
@@ -108,8 +109,8 @@
             <label class="layui-form-label required">小程序类型</label>
             <div class="layui-input-block">
                 <select name="programType" lay-filter="">
-                    <option value=1>小程序</option>
                     <option value=0>小游戏</option>
+                    <option value=1>小程序</option>
                     <option value=2>公众号</option>
                 </select>
             </div>
@@ -242,7 +243,7 @@
             module: window.module.jj,
             page: 'jj/wxConfig'
         }
-
+        
         // 渲染全部动态查询框
         function renderAllSelect(level) {
             renderNormalSelect('appIdSelect', 'jj', 'wxConfig', level);
@@ -316,7 +317,7 @@
                     {
                         field: 'jumpDirect', width: 120, title: '资源图',
                         templet: function (d) {
-                            if (d.jumpDirect !== null) {
+                            if (d.jumpDirect) {
                                 return '<a href="' + d.jumpDirect + '" target="_blank " title="点击查看">' +
                                     '<img src="' + d.jumpDirect + '" style="max-width: 100px;line-height:100px!important;"/>' +
                                     '</a>';
@@ -365,7 +366,7 @@
                     $.ajax({
                         url: currentPage.module.server + currentPage.page + '/refreshResource',
                         data: JSON.stringify(appIdArray),
-                        contentType: "application/json; charset=utf-8",
+                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                         type: 'post',
                         dataType: "json",
                         success: function (result) {

@@ -15,23 +15,19 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">合集号</label>
                         <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="gameId" name="gameId">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">合集名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" class="layui-input" id="gameName" name="gameName">
+                            <select id="gameIdSelect" name="gameId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
                             lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                        <button type="button" class="layui-btn layui-btn-primary" id="data-search-reset"
+                            lay-filter="data-search-reset"><i class="layui-icon">&#xe666;</i>重置</button>
                     </div>
                 </div>
 
@@ -51,9 +47,9 @@
 
             <!-- 行内按钮 -->
             <script type="text/html" id="crudRowBar">
-               	<a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+                <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
                 <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>
-             </script>
+            </script>
             <!-- 行内表单 -->
             <script type="text/html" id="switchStatus">
                 <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
@@ -116,11 +112,23 @@
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
     <script src="../../js/lay-module/xm-select/xm-select.js" charset="utf-8"></script>
     <script>
+
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置
+        const currentPage = {
+            module: window.module.jj,
+            page: 'jj/gameSet'
+        }
+
+        function renderAllSelect(level) {
+            renderNormalSelect('gameIdSelect', 'jj', 'gameSet', level);
+        }
+
         /**
-        * 游戏合集选择下拉框
-        */
+         * 游戏合集选择下拉框
+         */
         let boxSelect = xmSelect.render({
             el: '#gameSetSelect',
             name: 'gameSetContent',
@@ -135,38 +143,28 @@
             filterDone: function (val, list) {
             },
         });
-        // 当前页面所属模块，使用之前请先在lay-config.js中配置
-        const currentPage = {
-            module: window.module.jj,
-            page: 'jj/gameSet'
-        }
+
         //全部游戏合集数据
         let allGameSets = [];
         //游戏合集下拉框数据
         let selectData = [];
+
         // 表单数据查询渲染
         layui.use(['form', 'table', 'layer', 'tableSelect'], function () {
             $ = layui.jquery, form = layui.form, layer = layui.layer, table = layui.table;
+
             $(() => {
                 $.ajax({
                     type: "get",
                     dataType: "json",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     url: currentPage.module.server + 'jj/games/getSelectArray/' + 111,
-                    success: (res) => {
-                        res.forEach(function (val, index, arr) {
-                            allGameSets.push(val);
-                        });
-                        for (let i = 0; i < allGameSets.length; i++) {
-                            let val = allGameSets[i];
-                            let context = { name: val.value + "(" + val.key + ")", value: val.value, selected: false };
-                            selectData.push(context);
+                    success: (result) => {
+                        if (result && result.code === 1) {
+                            result.data.forEach(function (val, index, arr) {
+                                allGameSets.push(val);
+                            });
                         }
-                        boxSelect.update(
-                            {
-                                data: selectData,
-                                autoRow: true,
-                            }
-                        );
                     },
                     error: function () {
                         layer.msg("查询失败");
@@ -214,33 +212,31 @@
          * @param type
          */
         function rebuildEditData(editData, type) {
-            layui.use(['form', 'layer'], () => {
-                const $ = layui.$, form = layui.form, layer = layui.layer;
-                console.log("editData.gameSetContent--" + editData.gameSetContent)
-                // 编辑游戏合集内容
-                if (type !== 'add') {
-                    let newGameSets = [];
-                    for (let i = 0; i < allGameSets.length; i++) {
-                        let val = allGameSets[i];
-                        let context = {
-                            name:  val.value,
-                            value: val.key,
-                            selected: editData.gameSetContent.indexOf(val.key.toString()) > -1
-                        };
-                        newGameSets.push(context);
-                    }
-                    boxSelect.update({
-                        data: newGameSets,
-                        autoRow: true,
-                    });
-                } else {
-                    boxSelect.update({
-                        data: selectData,
-                        autoRow: true,
-                    });
+            // const $ = layui.$, form = layui.form, layer = layui.layer;
+            // console.log("editData.gameSetContent--" + editData.gameSetContent)
+            // 编辑游戏合集内容
+            if (type === 'edit' || type === 'copy') {
+                let newGameSets = [];
+                for (let i = 0; i < allGameSets.length; i++) {
+                    let val = allGameSets[i];
+                    let context = {
+                        name: val.value,
+                        value: val.key,
+                        selected: editData.gameSetContent.indexOf(val.key.toString()) > -1
+                    };
+                    newGameSets.push(context);
                 }
-                form.val("crudFormFilter", editData);
-            });
+                boxSelect.update({
+                    data: newGameSets,
+                    autoRow: true,
+                });
+            } else {
+                boxSelect.update({
+                    data: selectData,
+                    autoRow: true,
+                });
+            }
+            form.val("crudFormFilter", editData);
         }
     </script>
 

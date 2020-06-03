@@ -15,11 +15,11 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">时间</label>
-                        <div class="layui-input-inline" style="width: 14rem;">
+                        <div class="layui-input-inline">
                             <input class="layui-input" id="times" name="times" placeholder=" - " type="text">
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                         <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
                             lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
                     </div>
-                    </div>
+                </div>
             </form>
 
             <!-- Table表头 -->
@@ -45,9 +45,6 @@
 
             <!-- 行内按钮 -->
             <script type="text/html" id="crudRowBar">
-                	   <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
-       <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i></a>
-       
             </script>
 
             <!-- 行内表单 -->
@@ -60,14 +57,6 @@
 
     <!-- 编辑表单 -->
     <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
-        <div class="layui-form-item ">
-            <label class="layui-form-label">产品名称 *</label>
-            <div class="layui-input-block">
-                <input type="text" id="productName" name="productName" lay-verify="required" autocomplete="off"
-                    class="layui-input">
-            </div>
-        </div>
-
         <div class="layui-form-item">
             <div class="layui-input-block">
                 <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
@@ -85,14 +74,14 @@
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
             module: window.module.jj,
-            page: 'jj/userActiveResource'
+            page: 'fc/userResource'
         }
 
         // 渲染全部动态查询框
         function renderAllSelect(level) {
-            renderNormalSelect('appIdSelect', 'jj', 'wxAddDataDetail', level);
+            renderNormalSelect('appIdSelect', 'jj', 'jjAndFcAppConfig', level);
         }
-        
+
         // 表单数据查询渲染
         layui.use(['form', 'table', 'layer', 'laydate'], function () {
             const $ = layui.jquery, form = layui.form, layer = layui.layer, laydate = layui.laydate, table = layui.table;
@@ -110,86 +99,14 @@
                     { field: 'wxDate', width: 120, title: '日期', sort: true },
                     { field: 'productName', width: 120, title: '产品名称', sort: true },
                     { field: 'wxActive', width: 120, title: '活跃用户数', sort: true },
-                    {
-                        field: 'wxActiveSearch', width: 100, title: '搜索', sort: true,
-                        templet: (d) => {
-                            if (d.wxActiveSearch != null && d.wxActiveSearch !== "") {
-                                return d.wxActiveSearch;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    },
-                    {
-                        field: 'wxActiveAd', width: 100, title: '广告', sort: true,
-                        templet: (d) => {
-                            if (d.wxActiveAd != null && d.wxActiveAd !== "") {
-                                return d.wxActiveAd;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    },
-                    {
-                        field: 'wxActiveTaskBarMySp', width: 170, title: '任务栏-我的小程序', sort: true,
-                        templet: (d) => {
-                            if (d.wxActiveTaskBarMySp != null && d.wxActiveTaskBarMySp !== "") {
-                                return d.wxActiveTaskBarMySp;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    },
-                    {
-                        field: 'wxActiveFindMySp', width: 120, title: '发现-小程序', sort: true,
-                        templet: (d) => {
-                            if (d.wxActiveFindMySp != null && d.wxActiveFindMySp !== "") {
-                                return d.wxActiveFindMySp;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    },
-                    {
-                        field: 'wxActiveTaskBarRecent', width: 160, title: '任务栏-最近使用', sort: true,
-                        templet: (d) => {
-                            if (d.wxActiveTaskBarRecent != null && d.wxActiveTaskBarRecent !== "") {
-                                return d.wxActiveTaskBarRecent;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    },
-                    {
-                        field: 'wxActiveOther', width: 100, title: '其他', sort: true,
-                        templet: (d) => {
-                            if (d.wxActiveOther != null && d.wxActiveOther !== "") {
-                                return d.wxActiveOther;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    },
-                    {
-                        field: 'wxActiveOtherSp', width: 120, title: '其他小程序', sort: true,
-                        templet: (d) => {
-                            if (d.wxActiveOtherSp != null && d.wxActiveOtherSp !== "") {
-                                return d.wxActiveOtherSp;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    },
-                    {
-                        field: 'wxActiveOtherReturn', width: 160, title: '其他小程序返回', sort: true,
-                        templet: (d) => {
-                            if (d.wxActiveOtherReturn != null && d.wxActiveOtherReturn !== "") {
-                                return d.wxActiveOtherReturn;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    },
+                    { field: 'wxActiveSearch', width: 100, title: '搜索', sort: true },
+                    { field: 'wxActiveAd', width: 100, title: '广告', sort: true },
+                    { field: 'wxActiveTaskBarMySp', width: 170, title: '任务栏-我的小程序', sort: true },
+                    { field: 'wxActiveFindMySp', width: 120, title: '发现-小程序', sort: true },
+                    { field: 'wxActiveTaskBarRecent', width: 160, title: '任务栏-最近使用', sort: true },
+                    { field: 'wxActiveOther', width: 100, title: '其他', sort: true },
+                    { field: 'wxActiveOtherSp', width: 120, title: '其他小程序', sort: true },
+                    { field: 'wxActiveOtherReturn', width: 160, title: '其他小程序返回', sort: true },
                     { field: 'wxActiveSource', width: 500, title: '活跃用户来源', sort: true }
                 ]],
                 limits: [10, 20, 30, 50, 100],

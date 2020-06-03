@@ -52,11 +52,8 @@ public abstract class BaseStatsService<E extends BaseStatsEntity<E>, M extends B
             // 初始化查询wrapper
             QueryWrapper<E> queryWrapper = new QueryWrapper<>();
             this.updateGetListWrapper(statsListParam, queryWrapper, statsListResult);
-            System.out.println("处理查询条件:" + (System.currentTimeMillis() - startTime) / 1000 + "s" );
             Page<E> page = new Page<>(statsListParam.getPage(), statsListParam.getLimit());
-            System.out.println("page查询前:" + (System.currentTimeMillis() - startTime) / 1000 + "s" );
             IPage<E> entityPages = this.page(page, queryWrapper);
-            System.out.println("page查询:" + (System.currentTimeMillis() - startTime) / 1000 + "s" );
             if (Objects.nonNull(entityPages)) {
                 List<E> entityList = entityPages.getRecords();
                 JSONObject totalRow = this.rebuildStatsListResult(statsListParam, entityList, statsListResult);

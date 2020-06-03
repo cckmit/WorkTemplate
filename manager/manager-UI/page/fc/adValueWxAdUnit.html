@@ -15,7 +15,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="" id="query-data-form" lay-filter="query-data-form">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">时间</label>
@@ -26,14 +26,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">产品名称</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="productAppId" name="productAppId" autocomplete="off"
-                                class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">产品名称</label>
-                        <div class="layui-input-inline">
-                            <select id="productNameSelect" name="productAppId" lay-search=""> </select>
+                            <select id="appId" name="appId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -48,53 +41,54 @@
                             </select>
                         </div>
                     </div>
-               
-                <div class="layui-inline">
-                    <label class="layui-form-label">广告位名称</label>
-                    <div class="layui-input-inline">
-                        <select name="adUnitName" id="adUnitName">
-                            <option value="">全部</option>
-                            <option value="视频1">视频1</option>
-                            <option value="其他视频">其他视频</option>
-                            <option value="banner1">banner1</option>
-                            <option value="其他banner">其他banner</option>
-                            <option value="插屏1">插屏1</option>
-                            <option value="其他插屏">其他插屏</option>
-                        </select>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">广告位名称</label>
+                        <div class="layui-input-inline">
+                            <select name="adUnitName" id="adUnitName">
+                                <option value="">全部</option>
+                                <option value="视频1">视频1</option>
+                                <option value="其他视频">其他视频</option>
+                                <option value="banner1">banner1</option>
+                                <option value="其他banner">其他banner</option>
+                                <option value="插屏1">插屏1</option>
+                                <option value="其他插屏">其他插屏</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">分组方式</label>
+                        <div class="layui-input-inline">
+                            <select id="groupType" name="groupType" lay-verify="required" lay-search="">
+                                <option value="TIME">时间</option>
+                                <option value="PRODUCT_APP">产品</option>
+                                <option value="AD_TYPE">广告类型</option>
+                                <option value="AD_SPACE">广告位</option>
+                                <option value="PRODUCT_APP_TYPE">产品+广告类型</option>
+                                <option value="PRODUCT_APP_SPACE" selected>产品+广告位</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
                     </div>
                 </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">分组方式</label>
-                    <div class="layui-input-inline">
-                        <select id="groupType" name="groupType" lay-verify="required" lay-search="">
-                            <option value="TIME">时间</option>
-                            <option value="PRODUCT_APP">产品</option>
-                            <option value="AD_TYPE">广告类型</option>
-                            <option value="AD_SPACE">广告位</option>
-                            <option value="PRODUCT_APP_TYPE">产品+广告类型</option>
-                            <option value="PRODUCT_APP_SPACE">产品+广告位</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
-                        lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
-                </div>
-        </div>
-        </form>
-        <!-- Table表头，统计模块不需要表头操作 -->
-        <script type="text/html" id="statsTableBar">
+            </form>
+            <!-- Table表头，统计模块不需要表头操作 -->
+            <script type="text/html" id="statsTableBar">
                 <div class="layui-btn-container">
                     <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="return"><i class="layui-icon layui-icon-return"></i> 返回 </button>
                 </div>
             </script>
-        <!-- Table -->
-        <table class="layui-hide" id="statsTableId" lay-filter="statsTableFilter"></table>
-        <!-- 行内按钮 -->
-        <script type="text/html" id="statsRowBar">
-                <a class="layui-btn layui-btn-primary layui-btn-xs data-count-edit" lay-event="detail"><i class="layui-icon fa-table"></i>详情</a>
+            <!-- Table -->
+            <table class="layui-hide" id="statsTableId" lay-filter="statsTableFilter"></table>
+
+            <!-- 行内按钮 -->
+            <script type="text/html" id="statsRowBar">
+                <a class="layui-btn layui-btn-xs" lay-event="detail"><i class="layui-icon">&#xe65b;</i>详情</a>
             </script>
-    </div>
+        </div>
     </div>
 
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
@@ -106,18 +100,35 @@
         // 当前页面所属模块，使用之前请先在lay-config.js中配置module
         const currentPage = {
             module: window.module.jj,
-            page: 'jj/adValueWxAdUnit'
+            page: 'fc/adValueWxAdUnit'
         }
         // 渲染全部动态查询框
         function renderAllSelect(level) {
-            renderNormalSelect('productNameSelect', 'jj', 'wxConfig', level);
+            renderNormalSelect('appId', 'jj', 'jjAndFcAppConfig', level);
         }
         // 全部需要展示的列属性，必须定义
         const allCols = {
             date: { field: 'date', width: 180, title: '日期' },
             appId: { field: 'appId', width: 200, title: 'appId' },
             productName: { field: 'productName', width: 180, title: '产品名称' },
-            slotId: { field: 'slotId', width: 180, title: '广告类型' },
+            slotId: {
+                field: 'slotId', width: 180, title: '广告类型',
+                templet: (d) => {
+                    if (d.slotId === '8040321819858439') {
+                        return 'banner广告位';
+                    }
+                    if (d.slotId === '1030436212907001') {
+                        return '激励视频广告位';
+                    }
+                    if (d.slotId === '3030046789020061') {
+                        return '插屏广告位';
+                    }
+                    if (d.slotId === '7070083760581921') {
+                        return '格子广告位';
+                    }
+                    return "";
+                }
+            },
             adUnitName: { field: 'adUnitName', width: 180, title: '广告位名称' },
             reqSuccCount: { field: 'reqSuccCount', width: 160, title: '拉取量', align: "right", sort: true, totalRow: true },
             exposureCount: { field: 'exposureCount', width: 160, title: '曝光量', align: "right", sort: true, totalRow: true },
@@ -137,10 +148,10 @@
             console.log('data -> ', data, data.timeValue);
             let formObject = {};
             // 拼接查询时间，格式位yyyy-MM-dd，长度为10
-            const queryDate = data.timeValue.substring(0, 10);
+            const queryDate = data.date.substring(0, 10);
             const timeRange = queryDate + ' ~ ' + queryDate;
             formObject.timeRange = timeRange;
-            formObject.productAppId = data.productAppId;
+            formObject.appId = data.appId;
             formObject.slotId = data.slotId;
             formObject.adUnitName = data.adUnitName;
             formObject.groupType = data.detailGroupBy;

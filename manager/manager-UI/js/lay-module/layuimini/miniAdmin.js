@@ -41,40 +41,55 @@ layui.define(["jquery", "miniMenu", "element", "miniTab", "miniTheme"], function
             options.loadingTime = options.loadingTime || 1;
             options.pageAnim = options.pageAnim || false;
             options.maxTabNum = options.maxTabNum || 20;
-            $.getJSON(options.iniUrl, function (data) {
-                if (data == null) {
-                    miniAdmin.error('暂无菜单信息')
-                } else {
-                    miniAdmin.renderLogo(data.logoInfo);
-                    miniAdmin.renderClear(options.clearUrl);
-                    miniAdmin.renderHome(data.homeInfo);
-                    miniAdmin.renderAnim(options.pageAnim);
-                    miniAdmin.listen();
-                    miniMenu.render({
-                        menuList: data.menuInfo,
-                        multiModule: options.multiModule,
-                        menuChildOpen: options.menuChildOpen
-                    });
-                    miniTab.render({
-                        filter: 'layuiminiTab',
-                        urlHashLocation: options.urlHashLocation,
-                        multiModule: options.multiModule,
-                        menuChildOpen: options.menuChildOpen,
-                        maxTabNum: options.maxTabNum,
-                        menuList: data.menuInfo,
-                        homeInfo: data.homeInfo,
-                        listenSwichCallback: function () {
-                            miniAdmin.renderDevice();
-                        }
-                    });
-                    miniTheme.render({
-                        bgColorDefault: options.bgColorDefault,
-                        listen: true,
-                    });
-                    miniAdmin.deleteLoader(options.loadingTime);
+
+            $.ajax({
+                url: options.iniUrl,
+                headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: (result) => {
+                    if (result) {
+                        miniAdmin.renderLogo(result.logoInfo);
+                        miniAdmin.renderClear(options.clearUrl);
+                        miniAdmin.renderHome(result.homeInfo);
+                        miniAdmin.renderAnim(options.pageAnim);
+                        miniAdmin.listen();
+                        miniMenu.render({
+                            menuList: result.menuInfo,
+                            multiModule: options.multiModule,
+                            menuChildOpen: options.menuChildOpen
+                        });
+                        miniTab.render({
+                            filter: 'layuiminiTab',
+                            urlHashLocation: options.urlHashLocation,
+                            multiModule: options.multiModule,
+                            menuChildOpen: options.menuChildOpen,
+                            maxTabNum: options.maxTabNum,
+                            menuList: result.menuInfo,
+                            homeInfo: result.homeInfo,
+                            listenSwichCallback: function () {
+                                miniAdmin.renderDevice();
+                            }
+                        });
+                        miniTheme.render({
+                            bgColorDefault: options.bgColorDefault,
+                            listen: true,
+                        });
+                        miniAdmin.deleteLoader(options.loadingTime);
+                    } else {
+                        miniAdmin.error('拉取菜单失败，请重新登录！')
+                        setTimeout(() => {
+                            window.location = '/manager/login.html';
+                        }, 2000);
+                    }
+                },
+                error: (XMLHttpRequest, textStatus) => {
+                    miniAdmin.error('拉取菜单失败，请重新登录！');
+                    setTimeout(() => {
+                        window.location = '/manager/login.html';
+                    }, 2000);
                 }
-            }).fail(function () {
-                miniAdmin.error('菜单接口有误');
             });
         },
 
@@ -243,7 +258,6 @@ layui.define(["jquery", "miniMenu", "element", "miniTab", "miniTheme"], function
          * 监听
          */
         listen: function () {
-
             /**
              * 清理
              */
@@ -344,7 +358,6 @@ layui.define(["jquery", "miniMenu", "element", "miniTab", "miniTheme"], function
 
         }
     };
-
 
     exports("miniAdmin", miniAdmin);
 });

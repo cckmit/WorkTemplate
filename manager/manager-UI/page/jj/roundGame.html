@@ -19,7 +19,7 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">时间范围</label>
@@ -30,13 +30,13 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">游戏名称</label>
                         <div class="layui-input-inline">
-                            <select id="gameCodeSelect" name="gameName" lay-search=""> </select>
+                            <select id="gameCodeSelect" name="gameCode" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">赛制名称</label>
                         <div class="layui-input-inline">
-                            <input name="roundName" type="text" class="layui-input">
+                            <select id="roundCodeSelect" name="roundCode" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -52,6 +52,8 @@
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
                             lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                        <button type="button" class="layui-btn layui-btn-primary" id="data-search-reset"
+                            lay-filter="data-search-reset"><i class="layui-icon">&#xe666;</i>重置</button>
                     </div>
                 </div>
             </form>
@@ -91,39 +93,39 @@
         <div class="layui-form-item">
             <label class="layui-form-label">游戏ID</label>
             <div class="layui-input-block">
-                <select id="gameNameSelect" name="ddGame" lay-search=""> </select>
+                <select id="formGameCodeSelect" name="ddGame" lay-search=""> </select>
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">赛制编号</label>
             <div class="layui-input-block">
-                <select id="roundCodeSelect" name="ddRound" lay-search=""> </select>
+                <select id="formRoundCodeSelect" name="ddRound" lay-search=""> </select>
             </div>
         </div>
         <div class="layui-form-item ">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="ddState" lay-skin="switch" checked="checked" " value=" 1">
+                <input type="checkbox" name="ddState" lay-skin="switch" checked="checked" " value='1'>
             </div>
         </div>
-        <div class="layui-form-item ">
-            <label class="layui-form-label">生效时间</label>
-            <div class="layui-input-block">
-                <input autocomplete="off" class="layui-input" id="ddStart" name="ddStart" type="text">
+        <div class=" layui-form-item ">
+            <label class=" layui-form-label">生效时间</label>
+                <div class="layui-input-block">
+                    <input autocomplete="off" class="layui-input" id="ddStart" name="ddStart" type="text">
+                </div>
             </div>
-        </div>
-        <div class="layui-form-item ">
-            <label class="layui-form-label">结束时间</label>
-            <div class="layui-input-block">
-                <input autocomplete="off" class="layui-input" id="ddEnd" name="ddEnd" type="text">
+            <div class="layui-form-item ">
+                <label class="layui-form-label">结束时间</label>
+                <div class="layui-input-block">
+                    <input autocomplete="off" class="layui-input" id="ddEnd" name="ddEnd" type="text">
+                </div>
             </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
-                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                        lay-filter="crudSaveBtnFilter">确认保存</button>
+                </div>
             </div>
-        </div>
     </form>
 
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
@@ -139,10 +141,11 @@
         }
         // 渲染全部动态查询框
         function renderAllSelect(level) {
-
             renderNormalSelect('gameCodeSelect', 'jj', 'games', level);
-            renderNormalSelect('gameNameSelect', 'jj', 'games', level);
             renderNormalSelect('roundCodeSelect', 'jj', 'roundExt', level);
+
+            renderNormalSelect('formGameCodeSelect', 'jj', 'games', level);
+            renderNormalSelect('formRoundCodeSelect', 'jj', 'roundExt', level);
 
         }
         // 表单数据查询渲染

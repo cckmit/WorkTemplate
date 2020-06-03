@@ -8,8 +8,8 @@ layui.define(['laypage', 'form'], function (exports) {
     "use strict";
 
     var IconPicker = function () {
-            this.v = '1.1';
-        }, _MOD = 'iconPickerFa',
+        this.v = '1.1';
+    }, _MOD = 'iconPickerFa',
         _this = this,
         $ = layui.jquery,
         laypage = layui.laypage,
@@ -354,7 +354,7 @@ layui.define(['laypage', 'form'], function (exports) {
                 var iconlist = [];
                 $.ajax({
                     url: url,
-                    type: 'get',
+                    type: 'GET',
                     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                     async: false,
                     success: function (ret) {

@@ -69,53 +69,40 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
         this.updateBeginAndEndDate(statsListParam);
         String beginDate = statsListParam.getQueryObject().getString("beginDate");
         String endDate = statsListParam.getQueryObject().getString("endDate");
-        String uid = statsListParam.getQueryObject().getString("uid");
-        String userName = statsListParam.getQueryObject().getString("userName");
-        String appId = statsListParam.getQueryObject().getString("appId");
-        String ddStatus = statsListParam.getQueryObject().getString("ddStatus");
         try {
-
             List<Recharge> recharges = this.rechargeService.selectAllRechargeAudit(beginDate, endDate);
             List<Recharge> rechargeList = new ArrayList<>();
             for (Recharge recharge : recharges) {
                 String ddUid = recharge.getDdUid();
-                if (StringUtils.isNotBlank(uid)) {
-                    if (!ddUid.contains(uid)) {
+                if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("uid"))) {
+                    if (!ddUid.contains(statsListParam.getQueryObject().getString("uid"))) {
                         continue;
                     }
                 }
-                if (StringUtils.isNotBlank(userName)) {
-                    if (!recharge.getUserName().contains(userName)) {
+                if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("userName"))) {
+                    if (!recharge.getUserName().contains(statsListParam.getQueryObject().getString("userName"))) {
                         continue;
                     }
                 }
-                if (StringUtils.isNotBlank(appId)) {
-                    if (!StringUtils.equals(appId,recharge.getDdAppId())) {
+                if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("appId"))) {
+                    if (!StringUtils.equals(statsListParam.getQueryObject().getString("appId"), recharge.getDdAppId())) {
                         continue;
                     }
                 }
-                if (StringUtils.isNotBlank(ddStatus)) {
-                    if (recharge.getDdStatus() != (Integer.parseInt(ddStatus))) {
+                if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("ddStatus"))) {
+                    if (recharge.getDdStatus() != (Integer.parseInt(statsListParam.getQueryObject().getString("ddStatus")))) {
                         continue;
                     }
                 }
                 String ddTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(recharge.getDdTimes());
                 AllCost allCost = allCostService.selectCurrentCoin(ddTime);
-                if (allCost != null) {
-                    //剩余金额
-                    recharge.setRemainAmount(allCost.getDdCurrent().intValue() / 100);
-                } else {
-                    recharge.setRemainAmount(0);
-                }
+                //剩余金额
+                recharge.setRemainAmount(allCost == null ? 0 : allCost.getDdCurrent().intValue() / 100);
                 BigDecimal cashOutCurrent = this.rechargeService.selectUserCashOut(ddUid, ddTime);
                 //已提现金额
-                if (cashOutCurrent != null) {
-                    recharge.setRmbOut(cashOutCurrent);
-                } else {
-                    recharge.setRmbOut(new BigDecimal(0));
-                }
-                Integer programType = recharge.getProgramType();
-                if (programType == 1 || programType == 2) {
+                recharge.setRmbOut(cashOutCurrent == null ? new BigDecimal(0) : cashOutCurrent);
+
+                if (recharge.getProgramType() == 1 || recharge.getProgramType() == 2) {
                     rechargeList.add(recharge);
                 }
             }
@@ -159,8 +146,7 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
         for (int i = 0; i < parameter.size(); i++) {
             String ddId = parameter.getString(i);
             Recharge recharge = this.rechargeService.selectById(ddId);
-            Integer programType = recharge.getProgramType();
-            if (programType == 1) {
+            if (recharge.getProgramType() == 1) {
                 UserApp userApp = this.userAppService.selectUserOpenId(recharge.getDdUid(), recharge.getDdAppId());
                 String openId = userApp != null ? userApp.getDdOId() : "";
                 BigDecimal ddRmb = recharge.getDdRmb().multiply(new BigDecimal("100"));

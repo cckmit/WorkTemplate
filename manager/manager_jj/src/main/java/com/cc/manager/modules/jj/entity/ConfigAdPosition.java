@@ -27,13 +27,13 @@ public class ConfigAdPosition implements BaseCrudEntity<ConfigAdPosition> {
     private String adTypes;
 
     @TableField(value = "ddAllowedOperation", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String allowedOperation;
+    private boolean allowedOperation;
 
-    @TableField(value = "ddShowWxAd", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String showWxAd;
+    @TableField(value = "ddShowWxAd")
+    private boolean showWxAd;
 
-    @TableField(value = "ddShowWxReVideoAd", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String showWxReVideoAd;
+    @TableField(value = "ddShowWxReVideoAd")
+    private boolean showWxReVideoAd;
 
     @JSONField(format = "yyyy-MM-dd HH:mm")
     @TableField(value = "updateTime", fill = FieldFill.INSERT_UPDATE)

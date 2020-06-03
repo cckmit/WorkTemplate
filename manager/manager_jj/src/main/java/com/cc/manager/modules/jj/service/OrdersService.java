@@ -242,7 +242,7 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
     public List<Orders> queryProgramReChargeCount() {
         QueryWrapper<Orders> queryWrapper = new QueryWrapper<>();
 
-        queryWrapper.eq("ddState", 1).groupBy("ddTrans");
+        queryWrapper.eq("ddState", 1).groupBy("DATE(ddTrans)");
         List<String> selectList = Lists.newArrayList("DATE(ddTrans) as ddTrans", "SUM(ddPrice) as ddPrice");
         // 将查询字段和分组字段赋值给查询条件
         queryWrapper.select(selectList.toArray(new String[0]));

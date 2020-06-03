@@ -11,16 +11,24 @@
 window.module = {
     system: {
         // 模块地址
-        server: 'http://127.0.0.1:8098/manager_system/',
+        server: 'http://192.168.1.237:10000/manager_sys/',
         // 模块文件夹名称
         dir: 'sys'
-    }, jj: {
+    },
+    jj: {
         // 模块地址
-        server: 'http://127.0.0.1:8099/manager_jj/',
+        server: 'http://192.168.1.237:8099/manager_jj/',
         dir: 'jj'
-    }, sf: {
+    },
+    fc: {
         // 模块地址
-        server: 'http://127.0.0.1:8098/manager_system/',
+        server: 'http://192.168.1.237:8099/manager_jj/',
+        dir: 'fc'
+    },
+
+    sf: {
+        // 模块地址
+        server: 'http://localhost:10000/manager_sys/',
         // 模块文件夹名称
         dir: 'sf'
     }

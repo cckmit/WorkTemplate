@@ -15,12 +15,24 @@
     <div class="layuimini-container">
         <div class="layuimini-main">
             <!-- 查询表单 -->
-            <form class="layui-form layui-form-pane" action="" id="data-search-form">
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">App</label>
                         <div class="layui-input-inline">
                             <select id="appIdSelect" name="appId" lay-search=""> </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">最低版本号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input"  name="minVersion">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">自有广告合集</label>
+                        <div class="layui-input-inline">
+                            <select id="combinationSelect" name="combinationId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -188,6 +200,7 @@
         // 渲染全部动态查询框
         function renderAllSelect(level) {
             renderNormalSelect('appIdSelect', 'jj', 'wxConfig', level);
+            renderNormalSelect('combinationSelect', 'jj', 'configAdCombination', level);
             renderNormalSelect('formAppIdSelect', 'jj', 'wxConfig', level);
             renderNormalSelect('formCombinationSelect', 'jj', 'configAdCombination', level);
             renderNormalSelect('formBannerStrategySelect', 'jj', 'configAdStrategy', level);
@@ -243,7 +256,7 @@
                 $.ajax({
                     url: currentPage.module.server + currentPage.page + '/switchStatus',
                     data: JSON.stringify({ appId: appInfo[0], minVersion: appInfo[1], switchColumn: this.name, status: obj.elem.checked }),
-                    contentType: "application/json; charset=utf-8",
+                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
                     dataType: "json",
                     async: false,
@@ -253,7 +266,6 @@
                     }
                 });
             });
-
         });
 
     </script>
