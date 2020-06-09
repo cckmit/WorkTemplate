@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.modules.jj.controller.JjAndFcAppConfigService;
 import com.cc.manager.modules.jj.entity.AllCost;
 import com.cc.manager.modules.jj.entity.Recharge;
 import com.cc.manager.modules.jj.entity.UserInfo;
@@ -54,7 +53,7 @@ public class RechargeService extends BaseStatsService<Recharge, RechargeMapper> 
     public List<Recharge> selectAllChargeRecord(String beginDate, String endDate) {
         QueryWrapper<Recharge> queryWrapper = new QueryWrapper<>();
         queryWrapper.between(StringUtils.isNotBlank(beginDate) && StringUtils.isNotBlank(endDate), "DATE(ddTimes)", beginDate, endDate);
-
+        queryWrapper.orderByDesc("ddTrans");
         // 获取街机和FC的全部app信息
         LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
         List<Recharge> allRechargeList = this.list(queryWrapper);
@@ -86,7 +85,7 @@ public class RechargeService extends BaseStatsService<Recharge, RechargeMapper> 
     public List<Recharge> selectAllRechargeAudit(String beginDate, String endDate) {
         QueryWrapper<Recharge> queryWrapper = new QueryWrapper<>();
         queryWrapper.between(StringUtils.isNotBlank(beginDate) && StringUtils.isNotBlank(endDate), "DATE(ddTimes)", beginDate, "endDate");
-        queryWrapper.ne("ddStatus", 200);
+        queryWrapper.ne("ddStatus", 200).orderByDesc("ddTimes");
         // 获取街机和FC的全部app信息
         LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
         List<Recharge> allRechargeList = this.list(queryWrapper);

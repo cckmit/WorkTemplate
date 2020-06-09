@@ -44,6 +44,7 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
     private UserAppService userAppService;
     private WxConfigService wxConfigService;
     private RechargeService rechargeService;
+    private Config config;
 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<Recharge> queryWrapper, StatsListResult statsListResult) {
@@ -146,13 +147,15 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
         for (int i = 0; i < parameter.size(); i++) {
             String ddId = parameter.getString(i);
             Recharge recharge = this.rechargeService.selectById(ddId);
-            if (recharge.getProgramType() == 1) {
+            WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, recharge.getDdAppId());
+            recharge.setProgramType(wxConfig.getProgramType());
+            if (recharge.getProgramType() != 0) {
                 UserApp userApp = this.userAppService.selectUserOpenId(recharge.getDdUid(), recharge.getDdAppId());
                 String openId = userApp != null ? userApp.getDdOId() : "";
                 BigDecimal ddRmb = recharge.getDdRmb().multiply(new BigDecimal("100"));
-                WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, recharge.getDdAppId());
                 LOGGER.info("当前订单提现金额：" + ddRmb.intValue() / 100 + "元, 用户Uid ：" + recharge.getDdUid() + " ,产品名 : " + wxConfig.getProductName());
-                Map<String, String> backCharge = recharge(recharge.getDdId(), ddRmb.intValue(), wxConfig, openId, wxConfig.getProductName() + "-赛事奖金提现" + ddRmb.intValue() / 100 + "元", Config.SPBILL_CREATE_IP);
+
+                Map<String, String> backCharge = recharge(recharge.getDdId(), ddRmb.intValue(), wxConfig, openId, wxConfig.getProductName() + "-赛事奖金提现" + ddRmb.intValue() / 100 + "元", config.getSPBILL_CREATE_IP());
                 String returnCode = backCharge != null ? backCharge.get("return_code") : null;
                 if (StringUtils.equals(returnCode, "FAIL")) {
                     String returnMsg = backCharge != null ? backCharge.get("return_msg") : null;
@@ -200,33 +203,33 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
      * @return 提现结果
      */
     private Map<String, String> recharge(String orderId, int amount, WxConfig wxConfig, String openid, String desc, String ip) {
-        Map<String, String> signMap = new HashMap<>();
-        signMap.put("mch_appid", wxConfig.getId());
-        signMap.put("mchid", wxConfig.getDdMchId());
-        if (StringUtils.isNotBlank(Config.DEVICE_INFO)) {
-            signMap.put("device_info", Config.DEVICE_INFO);
-        }
-        signMap.put("nonce_str", createNonceStr());
-        signMap.put("partner_trade_no", orderId);
-        signMap.put("openid", openid);
-        signMap.put("check_name", Config.CHECK_NAME.name());
-        signMap.put("re_user_name", "default");
-        signMap.put("amount", String.valueOf(amount));
-        if (StringUtils.isNotBlank(desc)) {
-            signMap.put("desc", desc);
-        } else {
-            signMap.put("desc", Config.DESC);
-        }
-        signMap.put("spbill_create_ip", ip);
-        SignatureAlgorithm algorithm = new SignatureAlgorithm(wxConfig.getDdKey(), signMap);
-        String xml = algorithm.getSignXml();
-        try {
-            String result = CmTool.sendHttps(xml, Config.TRANSFERS_URL, RechargeService.class.getResource("/").getPath() + "static/" + wxConfig.getDdP12(), wxConfig.getDdP12Password());
-            XMLHandler handler = XMLHandler.parse(result);
-            return handler.getXmlMap();
-        } catch (Exception e) {
-            LOGGER.error(ExceptionUtils.getStackTrace(e));
-        }
+//        Map<String, String> signMap = new HashMap<>();
+//        signMap.put("mch_appid", wxConfig.getId());
+//        signMap.put("mchid", wxConfig.getDdMchId());
+//        if (StringUtils.isNotBlank(config.getDEVICE_INFO())) {
+//            signMap.put("device_info", config.getDEVICE_INFO());
+//        }
+//        signMap.put("nonce_str", createNonceStr());
+//        signMap.put("partner_trade_no", orderId);
+//        signMap.put("openid", openid);
+//        signMap.put("check_name", "NO_CHECK");
+//        signMap.put("re_user_name", "default");
+//        signMap.put("amount", String.valueOf(amount));
+//        if (StringUtils.isNotBlank(desc)) {
+//            signMap.put("desc", desc);
+//        } else {
+//            signMap.put("desc", config.getDESC());
+//        }
+//        signMap.put("spbill_create_ip", ip);
+//        SignatureAlgorithm algorithm = new SignatureAlgorithm(wxConfig.getDdKey(), signMap);
+//        String xml = algorithm.getSignXml();
+//        try {
+//            String result = CmTool.sendHttps(xml, config.getTRANSFERS_URL(), RechargeService.class.getResource("/").getPath() + "static/" + wxConfig.getDdP12(), wxConfig.getDdP12Password());
+//            XMLHandler handler = XMLHandler.parse(result);
+//            return handler.getXmlMap();
+//        } catch (Exception e) {
+//            LOGGER.error(ExceptionUtils.getStackTrace(e));
+//        }
         return null;
     }
 
@@ -248,6 +251,11 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {
         this.wxConfigService = wxConfigService;
+    }
+
+    @Autowired
+    public void setConfig(Config config) {
+        this.config = config;
     }
 
 }

@@ -3,15 +3,15 @@ package com.cc.manager.modules.fc.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.entity.MinitjWx;
-import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
-import com.cc.manager.modules.jj.controller.JjAndFcAppConfigService;
+import com.cc.manager.modules.jj.service.JjAndFcAppConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,22 +27,13 @@ import java.util.Objects;
  * @since 2020-05-22
  */
 @Service
-public class MinitjWxActiveResourceService extends BaseStatsService<MinitjWx, MinitjWxMapper> {
+public class MinitjWxActiveResourceService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseStatsService.class);
 
     private MinitjWxService minitjWxService;
     private JjAndFcAppConfigService jjAndFcAppConfigService;
 
-    @Override
-    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<MinitjWx> queryWrapper, StatsListResult statsListResult) {
-
-    }
-
-    @Override
-    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
-        return null;
-    }
-
-    @Override
     public StatsListResult getPage(StatsListParam statsListParam) {
         StatsListResult statsListResult = new StatsListResult();
         // 判断请求参数是否为空，并进行初始化
@@ -114,7 +105,7 @@ public class MinitjWxActiveResourceService extends BaseStatsService<MinitjWx, Mi
             endDate = timeRangeArray[1].trim();
         }
         if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
-            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
             endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
         }
         statsListParam.getQueryObject().put("beginDate", beginDate);

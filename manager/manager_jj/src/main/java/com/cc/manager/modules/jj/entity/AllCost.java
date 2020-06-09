@@ -9,6 +9,7 @@ import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -95,5 +96,38 @@ public class AllCost extends BaseStatsEntity<AllCost> {
 
     @TableField(exist = false)
     private boolean haveDetail = false;
+
+    /**
+     * 开赛消耗展示位参数
+     */
+    @TableField(exist = false)
+    private String appId;
+    @TableField(exist = false)
+    private String gameCode;
+    @TableField(exist = false)
+    private BigDecimal coinCount = new BigDecimal(0);
+    @TableField(exist = false)
+    private BigDecimal videoCount = new BigDecimal(0);
+    @TableField(exist = false)
+    private BigDecimal coinTotal = new BigDecimal(0);
+    @TableField(exist = false)
+    private BigDecimal videoTotal = new BigDecimal(0);
+    @JSONField(format = "yyyy-MM-dd")
+    @TableField(exist = false)
+    private LocalDateTime localDate;
+
+    /**
+     * 對比是否匹配
+     *
+     * @param cost 消耗参数
+     * @return 匹配结果
+     */
+    public boolean compare(AllCost cost) {
+        if (getLocalDate().compareTo(cost.getLocalDate()) != 0)
+            return false;
+        if (appId != null && !getAppId().equals(cost.getAppId()))
+            return false;
+        return gameCode == null || getGameCode().equals(cost.getGameCode());
+    }
 
 }

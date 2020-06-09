@@ -1,56 +1,52 @@
 package com.cc.manager.modules.jj.controller;
 
-
 import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
 import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.modules.jj.service.GoodsValueExtService;
+import com.cc.manager.modules.jj.entity.ConfigStatus;
+import com.cc.manager.modules.jj.service.ConfigStatusService;
 import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 全局配置
- *
- * @author cf
- * @since 2020-05-09
+ * @author CC ccheng0725@outlook.com
+ * @date 2020-06-03 12:27
  */
-@CrossOrigin
 @RestController
-@RequestMapping(value = "/jj/goodsValueExt")
-public class GoodsValueExtController implements BaseCrudController {
+@RequestMapping(value = "/jj/configStatus")
+public class ConfigStatusController implements BaseCrudController {
 
-    private GoodsValueExtService goodsValueExtService;
+    private ConfigStatusService configStatusService;
     private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(@PathVariable String id) {
-        return this.goodsValueExtService.getObjectById(id);
+        return this.configStatusService.getObjectById(id);
     }
 
     @Override
     @GetMapping(value = "/getObject/{getObjectParam}")
     public CrudObjectResult getObject(@PathVariable String getObjectParam) {
-        return this.goodsValueExtService.getObject(getObjectParam);
+        return this.configStatusService.getObject(getObjectParam);
     }
 
     @Override
     @GetMapping(value = "/getPage")
     public CrudPageResult getPage(CrudPageParam crudPageParam) {
-        return this.goodsValueExtService.getPage(crudPageParam);
+        return this.configStatusService.getPage(crudPageParam);
     }
 
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        PostResult postResult = this.goodsValueExtService.post(requestParam);
+        PostResult postResult = this.configStatusService.post(requestParam);
         if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("goods_value_ext");
-            postResult = this.persieServerUtils.refreshPublicTable("goods_value_ext");
+            postResult = this.persieServerUtils.refreshTable("config_status");
         }
         return postResult;
     }
@@ -58,35 +54,33 @@ public class GoodsValueExtController implements BaseCrudController {
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-
-        PostResult putResult = this.goodsValueExtService.put(requestParam);
-        if (putResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("goods_value_ext");
-            putResult = this.persieServerUtils.refreshPublicTable("goods_value_ext");
+        PostResult postResult = this.configStatusService.put(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_status");
         }
-        return putResult;
+        return postResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-
-        PostResult deleteResult = this.goodsValueExtService.delete(requestParam);
-        if (deleteResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("goods_value_ext");
-            deleteResult = this.persieServerUtils.refreshPublicTable("goods_value_ext");
+        PostResult postResult = this.configStatusService.delete(requestParam);
+        if (postResult.getCode() == 1) {
+            postResult = this.persieServerUtils.refreshTable("config_status");
         }
-        return deleteResult;
+        return postResult;
     }
 
     @Override
-    public JSONObject getSelectArray(String requestParam) {
-        return null;
+    @GetMapping(value = "/getSelectArray/{requestParam}")
+    public JSONObject getSelectArray(@PathVariable String requestParam) {
+        return this.configStatusService.getSelectArray(ConfigStatus.class, null);
     }
 
+
     @Autowired
-    public void setGoodsValueExtService(GoodsValueExtService goodsValueExtService) {
-        this.goodsValueExtService = goodsValueExtService;
+    public void setConfigStatusService(ConfigStatusService configStatusService) {
+        this.configStatusService = configStatusService;
     }
 
     @Autowired
@@ -95,4 +89,3 @@ public class GoodsValueExtController implements BaseCrudController {
     }
 
 }
-

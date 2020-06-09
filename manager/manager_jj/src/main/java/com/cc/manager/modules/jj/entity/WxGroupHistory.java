@@ -51,8 +51,8 @@ public class WxGroupHistory implements BaseCrudEntity<WxGroupHistory> {
     /**
      * 描述
      */
-    @TableField("ddDescribe")
-    private String ddDescribe;
+    @TableField("`describe`")
+    private String describe;
 
     /**
      * 二维码状态

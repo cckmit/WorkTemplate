@@ -57,7 +57,7 @@ public abstract class BaseStatsService<E extends BaseStatsEntity<E>, M extends B
             if (Objects.nonNull(entityPages)) {
                 List<E> entityList = entityPages.getRecords();
                 JSONObject totalRow = this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
-                System.out.println("重写list:" + (System.currentTimeMillis() - startTime) / 1000 + "s" );
+                System.out.println("重写list:" + (System.currentTimeMillis() - startTime) / 1000 + "s");
                 statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
                 statsListResult.setTotalRow(totalRow);
                 statsListResult.setCount(entityPages.getTotal());

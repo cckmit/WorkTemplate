@@ -28,8 +28,8 @@ public class ConfigConfirm implements BaseCrudEntity<ConfigConfirm> {
     /**
      * 描述信息
      */
-    @TableField("ddDescribe")
-    private String ddDescribe;
+    @TableField("`describe`")
+    private String describe;
 
     /**
      * 状态
@@ -63,6 +63,6 @@ public class ConfigConfirm implements BaseCrudEntity<ConfigConfirm> {
 
     @Override
     public String getCacheValue() {
-        return this.ddId + "-" + this.ddDescribe;
+        return this.ddId + "-" + this.describe;
     }
 }

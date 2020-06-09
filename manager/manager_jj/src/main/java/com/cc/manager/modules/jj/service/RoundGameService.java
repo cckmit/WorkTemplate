@@ -1,8 +1,8 @@
 package com.cc.manager.modules.jj.service;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
@@ -12,7 +12,6 @@ import com.cc.manager.modules.jj.entity.Games;
 import com.cc.manager.modules.jj.entity.RoundExt;
 import com.cc.manager.modules.jj.entity.RoundGame;
 import com.cc.manager.modules.jj.mapper.RoundGameMapper;
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,7 @@ import java.util.List;
  * @since 2020-05-08
  */
 @Service
+@DS("jj")
 public class RoundGameService extends BaseCrudService<RoundGame, RoundGameMapper> {
 
     private GamesService gamesService;
@@ -120,8 +120,7 @@ public class RoundGameService extends BaseCrudService<RoundGame, RoundGameMapper
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<RoundGame> deleteWrapper) {
         if (StringUtils.isNotBlank(requestParam)) {
-            String list = StrUtil.sub(requestParam, 1, -1);
-            List<String> idList = Lists.newArrayList(StringUtils.split(list, ","));
+            List<String> idList = JSONObject.parseArray(requestParam, String.class);
             return this.removeByIds(idList);
         }
         return false;

@@ -34,7 +34,7 @@ public class MiniGame implements BaseCrudEntity<MiniGame> {
      * 产品平台 weixin-微信，q-QQ,tt-头条,quick-快应用
      */
     @TableField("game_appPlatform")
-    private String gameAppplatform;
+    private String gameAppPlatform;
 
     /**
      * 文件名称
@@ -203,6 +203,9 @@ public class MiniGame implements BaseCrudEntity<MiniGame> {
      */
     private Integer platRecommend;
 
+    @TableField(exist = false)
+    private String showName;
+
     @Override
     public String getCacheKey() {
         return this.gameAppid;
@@ -212,5 +215,6 @@ public class MiniGame implements BaseCrudEntity<MiniGame> {
     public String getCacheValue() {
         return this.gameAppid + "-" + this.gameName;
     }
+
 
 }

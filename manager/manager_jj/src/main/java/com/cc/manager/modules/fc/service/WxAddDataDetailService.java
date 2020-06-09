@@ -1,13 +1,14 @@
 package com.cc.manager.modules.fc.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.entity.MinitjWx;
 import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
-import com.cc.manager.modules.jj.controller.JjAndFcAppConfigService;
+import com.cc.manager.modules.jj.service.JjAndFcAppConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -24,6 +26,7 @@ import java.util.List;
  * @since 2020-05-13
  */
 @Service
+@DS("fc")
 public class WxAddDataDetailService extends BaseStatsService<MinitjWx, MinitjWxMapper> {
 
     private JjAndFcAppConfigService jjAndFcAppConfigService;
@@ -36,18 +39,21 @@ public class WxAddDataDetailService extends BaseStatsService<MinitjWx, MinitjWxM
         String beginDate = statsListParam.getQueryObject().getString("beginDate");
         String endDate = statsListParam.getQueryObject().getString("endDate");
         String appId = statsListParam.getQueryObject().getString("appId");
-        queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
         queryWrapper.between("DATE(wx_date)", beginDate, endDate);
+        queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
         queryWrapper.orderBy(true, false, "wx_date");
     }
 
     @Override
     protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
-        entityList.forEach(minitjWx -> {
+        List<MinitjWx> newEntityList = new ArrayList<>();
+        for (MinitjWx minitjWx : entityList) {
             // 获取街机和FC的全部app信息
             LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
             JSONObject appObject = getAllAppMap.get(minitjWx.getWxAppId());
-            if (appObject != null) {
+            if (appObject == null) {
+                continue;
+            } else {
                 // 设置data产品信息
                 minitjWx.setProgramType(Integer.parseInt(appObject.getString("programType")));
                 minitjWx.setProductName(appObject.getString("name"));
@@ -71,8 +77,10 @@ public class WxAddDataDetailService extends BaseStatsService<MinitjWx, MinitjWxM
             }
             //设置总收入
             minitjWx.setRevenueCount(minitjWx.getAdRevenue());
-
-        });
+            newEntityList.add(minitjWx);
+        }
+        entityList.clear();
+        entityList.addAll(newEntityList);
         return null;
     }
 

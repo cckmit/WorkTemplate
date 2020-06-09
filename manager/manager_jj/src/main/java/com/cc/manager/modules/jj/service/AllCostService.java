@@ -1,6 +1,7 @@
 package com.cc.manager.modules.jj.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
@@ -24,6 +25,7 @@ import java.util.List;
  * @since 2020-05-23
  */
 @Service
+@DS("jj")
 public class AllCostService extends BaseStatsService<AllCost, AllCostMapper> {
 
     private WxConfigService wxConfigService;

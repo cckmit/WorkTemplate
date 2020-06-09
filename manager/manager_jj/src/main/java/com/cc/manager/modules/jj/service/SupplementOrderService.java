@@ -45,6 +45,7 @@ public class SupplementOrderService extends BaseCrudService<SupplementOrder, Sup
             String name = queryObject.getString("name");
             queryWrapper.like(StringUtils.isNotBlank(name), "userName", name);
         }
+        queryWrapper.orderByDesc("create_time");
 
     }
 
@@ -61,28 +62,36 @@ public class SupplementOrderService extends BaseCrudService<SupplementOrder, Sup
         userValue.setDdUid(userId);
         Integer coinCount = entity.getCoinCount();
         UserValue userValues = this.userValueService.getById(userId);
-        //查询用户当前账户金额
+        // 查询用户当前账户金额
         userValue.setDdCoinCount(coinCount + userValues.getDdCoinCount());
         UserInfo userInfo = this.userInfoService.getUserInfoByUuid(userId);
-        //获取用户昵称
+        // 获取用户昵称
         String ddName = userInfo.getDdName();
-        //昵称设置
+        // 昵称设置
         entity.setUserName(StringUtils.isNotBlank(ddName) ? ddName : "");
-        //产品信息处理
+        // 产品信息处理
         WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, entity.getAppId());
         if (wxConfig != null) {
             entity.setAppName(StringUtils.isNotBlank(wxConfig.getProductName()) ? wxConfig.getProductName() : "");
             entity.setProgramType(wxConfig.getProgramType());
         }
-        entity.setCreateTime(LocalDateTime.now());
-        //更新UserValue的用户账户数据
-        UpdateWrapper<UserValue> userValueUpdate = new UpdateWrapper<>();
-        userValueUpdate.eq("ddUid", userId);
-        this.userValueService.update(userValue, userValueUpdate);
-        //处理redis客户端实时金币数量
-        Integer coin = (Integer) redisUtil.hashGet("user-" + userId, "coin");
-        coinCount = coinCount + coin;
-        redisUtil.hashPut("user-" + userId, "coin", String.valueOf(coinCount));
+        // 处理redis客户端实时金币数量
+        Object coin = redisUtil.hashGet("user-" + userId, "coin");
+        LOGGER.info("获取redis客户端实时金币数量：" + coin.toString());
+        coinCount = coinCount + (Integer) coin;
+        boolean redisUpdate = redisUtil.hashPut("user-" + userId, "coin", coinCount);
+        if (redisUpdate) {
+            entity.setCreateTime(LocalDateTime.now());
+            // 更新UserValue的用户账户数据
+            UpdateWrapper<UserValue> userValueUpdate = new UpdateWrapper<>();
+            userValueUpdate.eq("ddUid", userId);
+            Object coinCurrent = redisUtil.hashGet("user-" + userId, "coin");
+            // 获取补单后的redis实时金币进行更新数据库
+            userValue.setDdCoinCount((Integer) coinCurrent);
+            this.userValueService.update(userValue, userValueUpdate);
+        } else {
+            entity = null;
+        }
     }
 
     @Override
@@ -92,7 +101,7 @@ public class SupplementOrderService extends BaseCrudService<SupplementOrder, Sup
 
     public SupplementOrder selectCurrentCoin(String uid) {
         SupplementOrder supplementOrder = new SupplementOrder();
-        //查询当前用户信息
+        // 查询当前用户信息
         UserInfo userInfo = this.userInfoService.getUserInfoByUuid(uid);
         if (userInfo != null) {
             UserValue cacheUserValue = this.userValueService.getById(userInfo.getDdUid());

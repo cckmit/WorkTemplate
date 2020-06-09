@@ -1,5 +1,6 @@
 package com.cc.manager.modules.jj.service;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
  * @since 2020-05-20
  */
 @Service
+@DS("jj")
 public class ConfigConfirmService extends BaseCrudService<ConfigConfirm, ConfigConfirmMapper> {
 
     @Override

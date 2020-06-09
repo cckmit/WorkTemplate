@@ -71,8 +71,7 @@ public class GameSetService extends BaseCrudService<GameSet, GameSetMapper> {
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<GameSet> deleteWrapper) {
         if (StringUtils.isNotBlank(requestParam)) {
-            String list = StrUtil.sub(requestParam, 1, -1);
-            List<String> idList = Lists.newArrayList(StringUtils.split(list, ","));
+            List<String> idList = JSONObject.parseArray(requestParam, String.class);
             return this.removeByIds(idList);
         }
         return false;

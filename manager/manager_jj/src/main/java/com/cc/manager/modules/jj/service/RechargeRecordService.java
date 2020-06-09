@@ -54,11 +54,6 @@ public class RechargeRecordService extends BaseStatsService<Recharge, RechargeMa
         try {
             // 初始化查询的起止日期
             this.updateBeginAndEndDate(statsListParam);
-            String uid = statsListParam.getQueryObject().getString("uid");
-            String userName = statsListParam.getQueryObject().getString("appId");
-            String productName = statsListParam.getQueryObject().getString("productName");
-            String ddStatus = statsListParam.getQueryObject().getString("ddStatus");
-
             String beginDate = statsListParam.getQueryObject().getString("beginDate");
             String endDate = statsListParam.getQueryObject().getString("endDate");
             //查询提现记录数据
@@ -66,23 +61,23 @@ public class RechargeRecordService extends BaseStatsService<Recharge, RechargeMa
             //过滤查询条件，生成符合条件结果
             List<Recharge> newRecharges = new ArrayList<>();
             for (Recharge recharge : recharges) {
-                if (StringUtils.isNotBlank(uid)) {
-                    if (!recharge.getDdUid().contains(uid)) {
+                if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("uid"))) {
+                    if (!recharge.getDdUid().contains(statsListParam.getQueryObject().getString("uid"))) {
                         continue;
                     }
                 }
-                if (StringUtils.isNotBlank(userName)) {
-                    if (!recharge.getUserName().contains(userName)) {
+                if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("userName"))) {
+                    if (!recharge.getUserName().contains(statsListParam.getQueryObject().getString("userName"))) {
                         continue;
                     }
                 }
-                if (StringUtils.isNotBlank(productName)) {
-                    if (!recharge.getProductName().contains(productName)) {
+                if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("appId"))) {
+                    if (!StringUtils.equals(statsListParam.getQueryObject().getString("appId"), recharge.getDdAppId())) {
                         continue;
                     }
                 }
-                if (StringUtils.isNotBlank(ddStatus)) {
-                    if (recharge.getDdStatus() != (Integer.parseInt(ddStatus))) {
+                if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("ddStatus"))) {
+                    if (recharge.getDdStatus() != (Integer.parseInt(statsListParam.getQueryObject().getString("ddStatus")))) {
                         continue;
                     }
                 }

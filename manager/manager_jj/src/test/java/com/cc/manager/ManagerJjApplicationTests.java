@@ -2,6 +2,7 @@ package com.cc.manager;
 
 import com.cc.manager.common.utils.RedisUtil;
 import com.cc.manager.modules.jj.entity.AllCost;
+import com.cc.manager.modules.jj.entity.Recharge;
 import com.cc.manager.modules.jj.mapper.UserAppMapper;
 import com.cc.manager.modules.jj.service.AllCostService;
 import com.cc.manager.modules.jj.service.RechargeService;
@@ -22,13 +23,14 @@ class ManagerJjApplicationTests {
     @Autowired
     UserInfoService userInfoService;
     @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
     RechargeService RechargeService;
     @Autowired
     AllCostService allCostService;
     @Autowired
     RoundExtService roundExtService;
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Test
     void contextLoads() {
     }
@@ -39,12 +41,13 @@ class ManagerJjApplicationTests {
 //        userAppQueryWrapper.eq("ddUid", "6F8BE96F678D2BCAA5653BA58E20EB96").eq("ddAppId", 1110381534);
 //        UserApp userApp = userAppMapper.selectOne(userAppQueryWrapper);
 //        System.out.println(userApp.toString());
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime parse = LocalDateTime.parse("2020-02-15 19:40:32",df);
-        AllCost allCost= allCostService.selectRemainAmount("oSn_Lw88gelVi7jYCijJUAArmMIs",parse);
+    //    DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    //    LocalDateTime parse = LocalDateTime.parse("2020-02-15 19:40:32", df);
+      //  AllCost allCost = allCostService.selectRemainAmount("oSn_Lw88gelVi7jYCijJUAArmMIs", parse);
 //        BigDecimal i = RechargeService.selectUserCashOut("oSn_Lw88gelVi7jYCijJUAArmMIs","2020-02-05");
-        System.out.println(allCost.toString());
-       // Recharge recharge = RechargeService.selectById("oSn_Lw88gelVi7jYCijJUAArmMIs");
+      //  System.out.println(allCost.toString());
+        boolean save = RechargeService.save(null);
+        System.out.println(save);
     }
 
     @Test
@@ -56,6 +59,7 @@ class ManagerJjApplicationTests {
 //        System.out.println(userInfo.toString()
 
     }
+
     @Test
     public void getRecharge() {
 //        List<Recharge> recharges = rechargeMapper.selectAllCharge(null,null);
@@ -64,8 +68,10 @@ class ManagerJjApplicationTests {
 //        }
         //SELECT  COUNT(*) FROM persie_deamon.round_ext  WHERE ddGroup = TRUE
 
-       // int i = this.roundExtService.selectSMaxId();
-      //  System.out.println(i);
+        // int i = this.roundExtService.selectSMaxId();
+        //  System.out.println(i);
+        Integer aa =123;
+        System.out.println(String.valueOf(aa));
     }
 
 }

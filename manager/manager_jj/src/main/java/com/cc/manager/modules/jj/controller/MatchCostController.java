@@ -1,37 +1,38 @@
-package com.cc.manager.modules.fc.controller;
+package com.cc.manager.modules.jj.controller;
 
 
 import com.cc.manager.common.mvc.BaseStatsController;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.modules.fc.service.MinitjWxService;
+import com.cc.manager.modules.jj.service.MatchCostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author cf
- * @since 2020-05-13
+ * @since 2020-05-23
  */
-@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(value = "/fc/minitjWx")
-public class MinitjWxController implements BaseStatsController {
+@RequestMapping(value = "/jj/matchCost")
+public class MatchCostController implements BaseStatsController {
 
-    private MinitjWxService minitjWxService;
+    private MatchCostService matchCostService;
 
     @Override
     @GetMapping(value = "/getPage")
     public StatsListResult getPage(StatsListParam statsListParam) {
-        return this.minitjWxService.getPage(statsListParam);
+        return this.matchCostService.getPage(statsListParam);
     }
 
     @Autowired
-    public void setMinitjWxService(MinitjWxService minitjWxService) {
-        this.minitjWxService = minitjWxService;
+    public void setMatchCostService(MatchCostService matchCostService) {
+        this.matchCostService = matchCostService;
     }
 
 }
+
+
+
 

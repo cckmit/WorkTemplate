@@ -33,6 +33,7 @@ import java.util.*;
  */
 @Service
 public class MinitjWxDataCollectService {
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(MinitjWxDataCollectService.class);
 
 
@@ -120,7 +121,7 @@ public class MinitjWxDataCollectService {
             endDate = timeRangeArray[1].trim();
         }
         if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
-            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(13));
             endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
         }
         statsListParam.getQueryObject().put("beginDate", beginDate);

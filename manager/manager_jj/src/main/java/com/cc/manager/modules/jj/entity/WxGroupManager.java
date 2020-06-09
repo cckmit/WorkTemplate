@@ -65,7 +65,7 @@ public class WxGroupManager implements BaseCrudEntity<WxGroupManager> {
      * *微信群备注
      */
     @TableField(exist = false)
-    private String ddDescribe;
+    private String describe;
     /**
      * 二维码状态 0：关闭；1开启
      */

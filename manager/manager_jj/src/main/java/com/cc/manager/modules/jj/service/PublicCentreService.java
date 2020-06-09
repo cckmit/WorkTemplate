@@ -1,6 +1,5 @@
 package com.cc.manager.modules.jj.service;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
@@ -13,7 +12,6 @@ import com.cc.manager.modules.jj.entity.GameSet;
 import com.cc.manager.modules.jj.entity.Games;
 import com.cc.manager.modules.jj.entity.PublicCentre;
 import com.cc.manager.modules.jj.mapper.PublicCentreMapper;
-import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -61,8 +59,7 @@ public class PublicCentreService extends BaseCrudService<PublicCentre, PublicCen
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<PublicCentre> deleteWrapper) {
         if (StringUtils.isNotBlank(requestParam)) {
-            String list = StrUtil.sub(requestParam, 1, -1);
-            List<String> idList = Lists.newArrayList(StringUtils.split(list, ","));
+            List<String> idList = JSONObject.parseArray(requestParam, String.class);
             return this.removeByIds(idList);
         }
         return false;

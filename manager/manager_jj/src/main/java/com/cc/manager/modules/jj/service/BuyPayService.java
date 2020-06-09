@@ -1,5 +1,8 @@
 package com.cc.manager.modules.jj.service;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
@@ -8,15 +11,23 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
+import com.cc.manager.common.utils.ReadExcel;
+import com.cc.manager.modules.jj.config.JjConfig;
 import com.cc.manager.modules.jj.entity.BuyPay;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.BuyPayMapper;
 import com.google.common.collect.Lists;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -30,6 +41,7 @@ import java.util.*;
 public class BuyPayService extends BaseCrudService<BuyPay, BuyPayMapper> {
 
     private WxConfigService wxConfigService;
+    private JjConfig jjConfig;
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<BuyPay> queryWrapper) {
@@ -43,10 +55,15 @@ public class BuyPayService extends BaseCrudService<BuyPay, BuyPayMapper> {
                 queryWrapper.between("DATE(buy_date)", timeRangeArray[0].trim(), timeRangeArray[1].trim());
             }
         }
+        queryWrapper.orderByDesc("insert_time");
     }
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<BuyPay> deleteWrapper) {
+        if (StringUtils.isNotBlank(requestParam)) {
+            List<String> idList = JSONObject.parseArray(requestParam, String.class);
+            return this.removeByIds(idList);
+        }
         return false;
     }
 
@@ -194,9 +211,66 @@ public class BuyPayService extends BaseCrudService<BuyPay, BuyPayMapper> {
 
     }
 
+
+    /**
+     * 导出模板
+     *
+     * @param response response
+     */
+    public void exportModel(HttpServletResponse response) {
+        try {
+            ExcelWriter writer = ExcelUtil.getWriter(true);
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("日期", "");
+            row.put("产品名称", "");
+            row.put("买量支出", "");
+            row.put("点击次数", "");
+            row.put("点击单价", "");
+            row.put("AppId", "");
+            ArrayList<Map<String, Object>> rows = CollUtil.newArrayList(row);
+            writer.write(rows, true);
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
+            String nameDecode = new String(("买量支出导入模板" + ".xlsx").getBytes("gb2312"), "ISO8859-1");
+            response.setHeader("Content-Disposition", "attachment;filename=" + nameDecode);
+            ServletOutputStream out = response.getOutputStream();
+            writer.flush(out, true);
+        } catch (IOException e) {
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+        }
+    }
+
+    /**
+     * 导入买量Excel
+     *
+     * @param file file
+     */
+    public JSONObject uploadExcel(MultipartFile file) {
+        JSONObject jsonObject = new JSONObject();
+        Integer insertResult = 1;
+        try {
+            String readPath = jjConfig.getExcelSave();
+            String originalFilename = file.getOriginalFilename();
+            File saveFile = new File(readPath, Objects.requireNonNull(originalFilename));
+            FileUtils.copyInputStreamToFile(file.getInputStream(), saveFile);
+            ReadExcel readExcel = new ReadExcel();
+            readExcel.readFile(saveFile);
+            jsonObject.put("context", readExcel.read(0));
+            insertResult = this.insertExcel(jsonObject);
+            jsonObject.put("code", insertResult);
+        } catch (Exception e) {
+            jsonObject.put("code", insertResult);
+        }
+        return jsonObject;
+    }
+
     @Autowired
     public void setWxConfigService(WxConfigService wxConfigService) {
         this.wxConfigService = wxConfigService;
+    }
+
+    @Autowired
+    public void setJjConfig(JjConfig jjConfig) {
+        this.jjConfig = jjConfig;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.cc.manager.modules.fc.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
@@ -10,13 +11,12 @@ import com.cc.manager.modules.fc.mapper.MiniGameMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * @author cf
  * @since 2020-05-13
  */
 @Service
+@DS("fc")
 public class MiniGameService extends BaseCrudService<MiniGame, MiniGameMapper> {
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<MiniGame> queryWrapper) {
@@ -30,15 +30,25 @@ public class MiniGameService extends BaseCrudService<MiniGame, MiniGameMapper> {
         }
     }
 
-    /**
-     * 重构分页查询结果，比如进行汇总复制计算等操作
-     *
-     * @param crudPageParam 查询参数
-     * @param entityList    查询数据对象列表
-     */
     @Override
-    protected void rebuildSelectedList(CrudPageParam crudPageParam, List<MiniGame> entityList) {
+    protected void rebuildSelectedEntity(MiniGame entity) {
+        String platformName = "未知";
+        switch (entity.getGameAppPlatform()) {
+            case "weixin":
+                platformName = "微信";
+                break;
+            case "q":
+                platformName = "QQ";
+                break;
+            case "tt":
+                platformName = "头条";
+                break;
+            default:
+                break;
+        }
 
+        entity.setShowName("FC-" + platformName + "-小游戏-" + entity.getGameName());
+        super.rebuildSelectedEntity(entity);
     }
 
     @Override

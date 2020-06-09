@@ -37,6 +37,24 @@ public class PersieServerUtils {
         return postResult;
     }
 
+    /**
+     * 刷新公众号数据表
+     *
+     * @param tableName 数据表名称
+     * @return 刷新结果
+     */
+    public PostResult refreshPublicTable(String tableName) {
+        PostResult postResult = new PostResult();
+        JSONObject tableObject = new JSONObject();
+        tableObject.put("name", tableName);
+        String refreshResult = HttpUtil.post(this.jjConfig.getFlushPublicCache(), tableObject.toJSONString());
+        if (StringUtils.isBlank(refreshResult) || !StringUtils.contains(refreshResult, "success")) {
+            postResult.setCode(2);
+            postResult.setMsg("操作失败：数据保存成功，但公众号服务器缓存刷新失败！");
+        }
+        return postResult;
+    }
+
     @Autowired
     public void setJjConfig(JjConfig jjConfig) {
         this.jjConfig = jjConfig;

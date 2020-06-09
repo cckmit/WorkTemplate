@@ -1,11 +1,10 @@
-package com.cc.manager.modules.jj.controller;
+package com.cc.manager.modules.jj.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.modules.fc.entity.MiniGame;
 import com.cc.manager.modules.fc.service.MiniGameService;
 import com.cc.manager.modules.jj.entity.WxConfig;
-import com.cc.manager.modules.jj.service.WxConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -65,7 +64,7 @@ public class JjAndFcAppConfigService {
             if (!allAppMap.containsKey(miniGame.getCacheKey())) {
                 JSONObject jsonObject = new JSONObject();
                 // 平台
-                jsonObject.put("platform", miniGame.getGameAppplatform());
+                jsonObject.put("platform", miniGame.getGameAppPlatform());
                 // 类型
                 jsonObject.put("programType", 0);
                 // 名称

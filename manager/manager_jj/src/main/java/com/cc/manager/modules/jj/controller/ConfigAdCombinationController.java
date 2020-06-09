@@ -1,6 +1,5 @@
 package com.cc.manager.modules.jj.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.mvc.BaseCrudController;
 import com.cc.manager.common.result.CrudObjectResult;
@@ -90,15 +89,9 @@ public class ConfigAdCombinationController implements BaseCrudController {
         return this.configAdCombinationService.updateName(requestParam);
     }
 
-    /**
-     * 获取广告合集下配置的广告位置列表
-     *
-     * @param id 广告合集ID
-     * @return 广告位置列表
-     */
-    @GetMapping(value = "/getAdPositionList/{id}")
-    public JSONArray getAdPositionList(@PathVariable String id) {
-        return this.configAdCombinationService.getAdPositionList(id);
+    @GetMapping(value = "/getAdCombinationTable/{id}")
+    public JSONObject getAdCombinationTable(@PathVariable String id){
+        return this.configAdCombinationService.getAdCombinationTable(id);
     }
 
     /**
@@ -122,9 +115,9 @@ public class ConfigAdCombinationController implements BaseCrudController {
      * @param deleteAdPositionsObject 批量删除广告位置
      * @return 新增结果
      */
-    @PostMapping(value = "/deleteAdPositions")
-    public PostResult deleteAdPositions(@RequestBody JSONObject deleteAdPositionsObject) {
-        PostResult postResult = this.configAdCombinationService.deleteAdPositions(deleteAdPositionsObject);
+    @DeleteMapping(value = "/deleteAdPosition")
+    public PostResult deleteAdPosition(@RequestBody JSONObject deleteAdPositionsObject) {
+        PostResult postResult = this.configAdCombinationService.deleteAdPosition(deleteAdPositionsObject);
         if (postResult.getCode() == 1) {
             postResult = this.persieServerUtils.refreshTable("config_ad_combination");
         }
@@ -167,9 +160,9 @@ public class ConfigAdCombinationController implements BaseCrudController {
      * @param deleteAdSpacesObject 新增数据对象
      * @return 新增结果
      */
-    @PostMapping(value = "/deleteAdSpaces")
-    public PostResult deleteAdSpaces(@RequestBody JSONObject deleteAdSpacesObject) {
-        PostResult postResult = this.configAdCombinationService.deleteAdSpaces(deleteAdSpacesObject);
+    @DeleteMapping(value = "/deleteAdSpace")
+    public PostResult deleteAdSpace(@RequestBody JSONObject deleteAdSpacesObject) {
+        PostResult postResult = this.configAdCombinationService.deleteAdSpace(deleteAdSpacesObject);
         if (postResult.getCode() == 1) {
             postResult = this.persieServerUtils.refreshTable("config_ad_combination");
         }
@@ -197,9 +190,9 @@ public class ConfigAdCombinationController implements BaseCrudController {
      * @param deleteAdContentsObject 新增数据对象
      * @return 删除结果
      */
-    @PostMapping(value = "/deleteAdContents")
-    public PostResult deleteAdContents(@RequestBody JSONObject deleteAdContentsObject) {
-        PostResult postResult = this.configAdCombinationService.deleteAdContents(deleteAdContentsObject);
+    @DeleteMapping(value = "/deleteAdContent")
+    public PostResult deleteAdContent(@RequestBody JSONObject deleteAdContentsObject) {
+        PostResult postResult = this.configAdCombinationService.deleteAdContent(deleteAdContentsObject);
         if (postResult.getCode() == 1) {
             postResult = this.persieServerUtils.refreshTable("config_ad_combination");
         }
@@ -219,28 +212,6 @@ public class ConfigAdCombinationController implements BaseCrudController {
             postResult = this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
-    }
-
-    /**
-     * 获取广告合集-广告位置下的广告位列表
-     *
-     * @param id 广告合集ID
-     * @return 广告位置列表
-     */
-    @GetMapping(value = "/getAdSpaceList/{id}/{adPositionId}")
-    public JSONObject getAdSpaceList(@PathVariable String id, @PathVariable String adPositionId) {
-        return this.configAdCombinationService.getAdSpaceList(id, adPositionId);
-    }
-
-    /**
-     * 获取广告合集-广告位置-广告位下的广告内容列表
-     *
-     * @param id 广告合集ID
-     * @return 广告位置列表
-     */
-    @GetMapping(value = "/getAdContentList/{id}/{adPositionId}/{adSpaceId}")
-    public JSONArray getAdContentList(@PathVariable String id, @PathVariable String adPositionId, @PathVariable String adSpaceId) {
-        return this.configAdCombinationService.getAdContentList(id, adPositionId, adSpaceId);
     }
 
     @Autowired

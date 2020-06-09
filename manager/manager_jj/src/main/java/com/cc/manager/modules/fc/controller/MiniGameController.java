@@ -7,6 +7,7 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
+import com.cc.manager.modules.fc.entity.MiniGame;
 import com.cc.manager.modules.fc.service.MiniGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
  * @since 2020-05-13
  */
 
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RestController
-@RequestMapping(value = "/miniGame")
+@RequestMapping(value = "/fc/miniGame")
 public class MiniGameController implements BaseCrudController {
     private MiniGameService miniGameService;
 
@@ -59,8 +60,9 @@ public class MiniGameController implements BaseCrudController {
     }
 
     @Override
+    @GetMapping(value = "/getSelectArray")
     public JSONObject getSelectArray(String requestParam) {
-        return null;
+        return this.miniGameService.getSelectArray(MiniGame.class, requestParam);
     }
 
     @Autowired

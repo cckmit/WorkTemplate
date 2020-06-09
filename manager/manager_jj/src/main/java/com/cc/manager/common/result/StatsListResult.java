@@ -45,4 +45,8 @@ public class StatsListResult implements Serializable {
      */
     private String detailGroupBy;
 
+    /**
+     * 折线图统计
+     */
+    private JSONObject lineData;
 }

@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.modules.jj.controller.JjAndFcAppConfigService;
 import com.cc.manager.modules.jj.entity.Orders;
 import com.cc.manager.modules.jj.mapper.OrdersMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -121,8 +120,8 @@ public class PayStatisticService extends BaseStatsService<Orders, OrdersMapper> 
             endDate = timeRangeArray[1].trim();
         }
         if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
-            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
-            endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+            endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now());
         }
         statsListParam.getQueryObject().put("beginDate", beginDate);
         statsListParam.getQueryObject().put("endDate", endDate);

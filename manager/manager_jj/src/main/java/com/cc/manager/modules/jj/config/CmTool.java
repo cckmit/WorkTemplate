@@ -27,12 +27,11 @@ import java.util.*;
  */
 public class CmTool {
 
+    protected static final Logger LOG = LoggerFactory.getLogger(CmTool.class);
     //
     // 十六进制字符串模板
     //
     private static final String hexDigits[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
-
-    protected static final Logger LOG = LoggerFactory.getLogger(CmTool.class);
 
     /**
      * 获取文件上一次编辑时间

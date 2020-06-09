@@ -28,7 +28,8 @@ public class RoundRecordGameController implements BaseStatsController {
     private RoundRecordGameService roundRecordGameService;
 
 
-    @Override    @GetMapping(value = "/getPage")
+    @Override
+    @GetMapping(value = "/getPage")
     public StatsListResult getPage(StatsListParam statsListParam) {
         return this.roundRecordGameService.getPage(statsListParam);
     }
@@ -42,8 +43,6 @@ public class RoundRecordGameController implements BaseStatsController {
     public void getGameRankingResult(RoundRecord roundRecord, HttpServletResponse response) {
         roundRecordGameService.exportResult(roundRecord, response);
     }
-
-
 
 
     @Autowired

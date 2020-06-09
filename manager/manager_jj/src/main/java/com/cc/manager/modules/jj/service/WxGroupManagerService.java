@@ -44,7 +44,7 @@ public class WxGroupManagerService extends BaseCrudService<WxGroupManager, WxGro
             ConfigConfirm configConfirm = this.configConfirmService.getById(wxGroupManager.getCdId());
             if (configConfirm != null) {
                 wxGroupManager.setUpdateTime(configConfirm.getUpdateTime());
-                wxGroupManager.setDdDescribe(configConfirm.getDdDescribe());
+                wxGroupManager.setDescribe(configConfirm.getDescribe());
                 wxGroupManager.setDdYes(configConfirm.getDdYes());
                 wxGroupManager.setDdNo(configConfirm.getDdNo());
                 wxGroupManager.setDdStatus(configConfirm.getDdStatus());
@@ -65,7 +65,7 @@ public class WxGroupManagerService extends BaseCrudService<WxGroupManager, WxGro
         } else {
             wxGroupHistory.setDdStatus(0);
         }
-        wxGroupHistoryService.save(wxGroupHistory);
+        this.wxGroupHistoryService.save(wxGroupHistory);
         // 判断是否需要更新上传二维码时间
         if (isUpdateOperateTime(entity)) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -80,7 +80,7 @@ public class WxGroupManagerService extends BaseCrudService<WxGroupManager, WxGro
             configConfirm.setUpdateTime(LocalDateTime.now());
             UpdateWrapper<ConfigConfirm> configConfirmUpdateWrapper = new UpdateWrapper<>();
             configConfirmUpdateWrapper.eq("ddId", entity.getCdId());
-            boolean configConfirmUpdate = configConfirmService.update(configConfirm, configConfirmUpdateWrapper);
+            boolean configConfirmUpdate = this.configConfirmService.update(configConfirm, configConfirmUpdateWrapper);
             if (configConfirmUpdate) {
                 this.persieServerUtils.refreshTable("config_confirm");
             }
@@ -124,7 +124,7 @@ public class WxGroupManagerService extends BaseCrudService<WxGroupManager, WxGro
         Boolean status = jsonObject.getBoolean("status");
         configConfirm.setDdStatus(status);
         configConfirmUpdateWrapper.eq("ddId", id);
-        boolean update = configConfirmService.update(configConfirm, configConfirmUpdateWrapper);
+        boolean update = this.configConfirmService.update(configConfirm, configConfirmUpdateWrapper);
         if (!update) {
             result.setCode(2);
             result.setMsg("操作失败，变更开关状态失败！");

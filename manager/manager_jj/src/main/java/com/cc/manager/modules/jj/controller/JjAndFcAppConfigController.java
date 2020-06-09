@@ -1,6 +1,7 @@
 package com.cc.manager.modules.jj.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cc.manager.modules.jj.service.JjAndFcAppConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

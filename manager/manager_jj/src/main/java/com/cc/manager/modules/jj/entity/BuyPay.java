@@ -69,14 +69,4 @@ public class BuyPay implements BaseCrudEntity<BuyPay> {
     private LocalDateTime insertTime;
 
 
-    @Override
-    public String getCacheKey() {
-        return this.buyDate + "-" + this.buyAppId;
-    }
-
-    @Override
-    public String getCacheValue() {
-        return this.buyDate + "-" + this.buyAppId;
-    }
-
 }

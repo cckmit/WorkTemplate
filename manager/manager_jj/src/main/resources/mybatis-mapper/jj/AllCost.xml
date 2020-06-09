@@ -18,12 +18,5 @@
     id, ddUid, ddAppId, ddType, ddHistory, ddCurrent, ddValue, ddCostType, ddCostExtra,
     ddTime
   </sql>
-    <select id="selectCurrentCoin" resultType="com.cc.manager.modules.jj.entity.AllCost">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM persie.all_cost WHERE ddType = 'rmb'
-        <if test="ddTime != null and ddTime !=''">
-            and ddTime = #{ddTime, jdbcType=TIMESTAMP}
-        </if>
-    </select>
+
 </mapper>

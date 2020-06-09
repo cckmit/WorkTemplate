@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.entity.*;
-import com.cc.manager.modules.jj.controller.JjAndFcAppConfigService;
+import com.cc.manager.modules.jj.service.JjAndFcAppConfigService;
 import com.cc.manager.modules.jj.entity.BuyPay;
 import com.cc.manager.modules.jj.entity.Orders;
 import com.cc.manager.modules.jj.service.BuyPayService;
@@ -124,7 +124,7 @@ public class MinitjWxProductDataService {
             endDate = timeRangeArray[1].trim();
         }
         if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
-            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
             endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
         }
         statsListParam.getQueryObject().put("beginDate", beginDate);

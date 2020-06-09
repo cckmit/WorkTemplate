@@ -76,7 +76,7 @@ public class OrdersService extends BaseStatsService<Orders, OrdersMapper> {
         queryWrapper.like(StringUtils.isNotBlank(uid), "ddUid", uid);
         queryWrapper.like(StringUtils.isNotBlank(openId), "ddOId", openId);
         queryWrapper.eq(StringUtils.isNotBlank(payState), "ddState", payState);
-
+        queryWrapper.orderByDesc("ddTime");
     }
 
     /**
