@@ -144,7 +144,7 @@ public class Orders extends BaseStatsEntity<Orders> {
      */
     @TableField(exist = false)
     private String payUp;
-    
+
     @TableField(exist = false)
     private boolean haveDetail = false;
 

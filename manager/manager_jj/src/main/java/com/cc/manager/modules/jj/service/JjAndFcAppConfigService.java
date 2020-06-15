@@ -43,7 +43,6 @@ public class JjAndFcAppConfigService {
     }
 
     /**
-     *
      * @return
      */
     public LinkedHashMap<String, JSONObject> getAllAppMap() {

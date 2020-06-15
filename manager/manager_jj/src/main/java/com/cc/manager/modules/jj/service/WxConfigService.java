@@ -118,6 +118,7 @@ public class WxConfigService extends BaseCrudService<WxConfig, WxConfigMapper> {
             programTypeName = "公众号";
         }
         entity.setShowName(platformName + "-" + programTypeName + "-" + entity.getProductName());
+
     }
 
     @Override

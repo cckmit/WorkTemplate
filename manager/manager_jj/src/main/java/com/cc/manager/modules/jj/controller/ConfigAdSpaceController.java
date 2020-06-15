@@ -47,7 +47,7 @@ public class ConfigAdSpaceController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdSpaceService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_space");
+            this.persieServerUtils.refreshTable("config_ad_space");
         }
         return postResult;
     }
@@ -57,7 +57,7 @@ public class ConfigAdSpaceController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdSpaceService.put(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_space");
+            this.persieServerUtils.refreshTable("config_ad_space");
         }
         return postResult;
     }
@@ -67,7 +67,7 @@ public class ConfigAdSpaceController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult postResult = this.configAdSpaceService.delete(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_space");
+            this.persieServerUtils.refreshTable("config_ad_space");
         }
         return postResult;
     }
@@ -82,7 +82,7 @@ public class ConfigAdSpaceController implements BaseCrudController {
     public PostResult statusSwitch(@RequestBody String requestParam) {
         PostResult postResult = this.configAdSpaceService.statusSwitch(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_space");
+            this.persieServerUtils.refreshTable("config_ad_space");
         }
         return postResult;
     }

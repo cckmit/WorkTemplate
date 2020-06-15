@@ -52,7 +52,7 @@ public class GamesController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.gamesService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("games");
+            this.persieServerUtils.refreshTable("games");
         }
         return postResult;
     }
@@ -62,7 +62,7 @@ public class GamesController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult putResult = this.gamesService.put(requestParam);
         if (putResult.getCode() == 1) {
-            putResult = this.persieServerUtils.refreshTable("games");
+            this.persieServerUtils.refreshTable("games");
         }
         return putResult;
     }
@@ -91,7 +91,7 @@ public class GamesController implements BaseCrudController {
         PostResult postResult = gamesService.flushGamesResources(parameter);
         //刷新业务表结构
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("games");
+            this.persieServerUtils.refreshTable("games");
         }
         return postResult;
     }

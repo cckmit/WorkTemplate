@@ -23,6 +23,9 @@ public class ConfigAdContent implements BaseCrudEntity<ConfigAdContent> {
     @TableField(value = "ddAdType", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
     private int adType;
 
+    @TableField(value = "ddWeight")
+    private int weight = 1;
+
     @TableField(value = "ddImageUrl")
     private String imageUrl;
 

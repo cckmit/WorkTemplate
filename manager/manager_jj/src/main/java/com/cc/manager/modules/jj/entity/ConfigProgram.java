@@ -21,13 +21,13 @@ public class ConfigProgram implements BaseCrudEntity<ConfigProgram> {
      * appId
      */
     @TableField("ddAppId")
-    private String ddAppId;
+    private String appId;
 
     /**
      * 满足最低版本
      */
     @TableField("ddMinVer")
-    private String ddMinVer;
+    private String minVersion;
 
     /**
      * 合集编号

@@ -52,7 +52,7 @@ public class RoundExtController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.roundExtService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("round_ext");
+            this.persieServerUtils.refreshTable("round_ext");
         }
         return postResult;
     }
@@ -62,7 +62,7 @@ public class RoundExtController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult putResult = this.roundExtService.put(requestParam);
         if (putResult.getCode() == 1) {
-            putResult = this.persieServerUtils.refreshTable("round_ext");
+            this.persieServerUtils.refreshTable("round_ext");
         }
         return putResult;
     }
@@ -72,7 +72,7 @@ public class RoundExtController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult deleteResult = this.roundExtService.delete(requestParam);
         if (deleteResult.getCode() == 1) {
-            deleteResult = this.persieServerUtils.refreshTable("round_ext");
+            this.persieServerUtils.refreshTable("round_ext");
         }
         return deleteResult;
     }

@@ -30,13 +30,12 @@ import java.util.stream.Collectors;
 @DS("jj")
 public class RoundReceiveService extends BaseStatsService<RoundReceive, RoundReceiveMapper> {
 
+    private final static Map<String, JSONObject> roundInfoMap = new ConcurrentHashMap<>();
     private GamesService gamesService;
     private RoundExtService roundExtService;
     private RoundMatchService roundMatchService;
     private RoundGameService roundGameService;
     private UserInfoService userInfoService;
-
-    private final static Map<String, JSONObject> roundInfoMap = new ConcurrentHashMap<>();
 
     @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<RoundReceive> queryWrapper, StatsListResult statsListResult) {
@@ -111,6 +110,7 @@ public class RoundReceiveService extends BaseStatsService<RoundReceive, RoundRec
 
         entityList.clear();
         entityList.addAll(newList);
+        // statsListResult.setCount(newList.size());
         return null;
     }
 

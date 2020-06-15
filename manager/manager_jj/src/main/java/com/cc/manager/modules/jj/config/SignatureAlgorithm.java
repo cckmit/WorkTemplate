@@ -8,11 +8,17 @@ import java.util.*;
  * @author Host-0222
  */
 public class SignatureAlgorithm {
-    /** 密钥*/
-    private String key;
-    /** 需要进行设置签名信息*/
-    private Map<String, String> signMap;
-    /** 生成订单签名*/
+    /**
+     * 密钥
+     */
+    private final String key;
+    /**
+     * 需要进行设置签名信息
+     */
+    private final Map<String, String> signMap;
+    /**
+     * 生成订单签名
+     */
     private String sign;
 
     public SignatureAlgorithm(String key, Map<String, String> signMap) {

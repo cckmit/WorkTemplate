@@ -60,7 +60,7 @@ public class SupplementOrderService extends BaseCrudService<SupplementOrder, Sup
         UserValue userValue = new UserValue();
         String userId = entity.getUserId();
         userValue.setDdUid(userId);
-        Integer coinCount = entity.getCoinCount();
+        int coinCount = entity.getCoinCount();
         UserValue userValues = this.userValueService.getById(userId);
         // 查询用户当前账户金额
         userValue.setDdCoinCount(coinCount + userValues.getDdCoinCount());
@@ -79,7 +79,7 @@ public class SupplementOrderService extends BaseCrudService<SupplementOrder, Sup
         Object coin = redisUtil.hashGet("user-" + userId, "coin");
         LOGGER.info("获取redis客户端实时金币数量：" + coin.toString());
         coinCount = coinCount + (Integer) coin;
-        boolean redisUpdate = redisUtil.hashPut("user-" + userId, "coin", coinCount);
+        boolean redisUpdate = redisUtil.hashPut("user-" + userId, "coin", String.valueOf(coinCount));
         if (redisUpdate) {
             entity.setCreateTime(LocalDateTime.now());
             // 更新UserValue的用户账户数据

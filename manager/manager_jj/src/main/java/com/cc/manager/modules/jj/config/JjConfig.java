@@ -1,11 +1,11 @@
 package com.cc.manager.modules.jj.config;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
 
 /**
  * 街机业务相关配置
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
  * @author CC ccheng0725@outlook.com
  * @date 2020-05-15 17:28
  */
-@Component
 @Configuration
 @PropertySource("classpath:module-jj.properties")
 @Data
@@ -54,6 +53,11 @@ public class JjConfig {
     @Value("${flushCache}")
     private String flushCache;
     /**
+     * 刷新接口
+     */
+    @Value("#{T(com.alibaba.fastjson.JSONArray).parseArray('${flushTables}')}")
+    private JSONArray flushTables;
+    /**
      * 刷新公众号接口
      */
     @Value("${flushPublicCache}")
@@ -78,4 +82,9 @@ public class JjConfig {
      */
     @Value("${supplementUrl}")
     private String supplementUrl;
+    /**
+     * 服务器补单地址
+     */
+    @Value("${gameServiceFlushUrl}")
+    private String gameServiceFlushUrl;
 }

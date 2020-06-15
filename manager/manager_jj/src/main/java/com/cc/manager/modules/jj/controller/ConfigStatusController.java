@@ -46,7 +46,7 @@ public class ConfigStatusController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configStatusService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_status");
+            this.persieServerUtils.refreshTable("config_status");
         }
         return postResult;
     }
@@ -56,7 +56,7 @@ public class ConfigStatusController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configStatusService.put(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_status");
+            this.persieServerUtils.refreshTable("config_status");
         }
         return postResult;
     }
@@ -66,7 +66,7 @@ public class ConfigStatusController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult postResult = this.configStatusService.delete(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_status");
+            this.persieServerUtils.refreshTable("config_status");
         }
         return postResult;
     }

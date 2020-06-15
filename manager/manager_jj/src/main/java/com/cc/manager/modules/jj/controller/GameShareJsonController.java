@@ -51,7 +51,7 @@ public class GameShareJsonController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.gameShareJsonService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("games");
+            this.persieServerUtils.refreshTable("games");
         }
         return postResult;
     }
@@ -61,7 +61,7 @@ public class GameShareJsonController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult putResult = this.gameShareJsonService.put(requestParam);
         if (putResult.getCode() == 1) {
-            putResult = this.persieServerUtils.refreshTable("games");
+            this.persieServerUtils.refreshTable("games");
         }
         return putResult;
     }

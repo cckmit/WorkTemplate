@@ -19,17 +19,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
- * @author cf
- * @since 2020-05-22
+ * @author CC ccheng0725@outlook.com
+ * @date 2020-06-12 12:00
  */
 @Service
 @DS("jj")
 public class OnlineService extends BaseStatsService<Online, OnlineMapper> {
 
-    /*** 是否进行对比*/
-    private boolean isCompare = false;
-    /*** 选择线类型*/
-    private String lineType = "online";
     /*** 房间占用数*/
     private static final String BUSY_ROOM = "buzy";
     /*** 在线人数*/
@@ -38,6 +34,12 @@ public class OnlineService extends BaseStatsService<Online, OnlineMapper> {
     private static final String IDLE_ROOM = "idle";
     /*** ECharts图y轴点数量*/
     private static final Integer Y_AXIS = 144;
+    /*** 游戏名称搜索框*/
+    private static final String GAME_CODE = "gameCode";
+    /*** 是否进行对比*/
+    private final boolean isCompare = false;
+    /*** 曲线类型*/
+    private final String lineType = "online";
 
     /**
      * @param statsListParam 查询参数
@@ -57,15 +59,14 @@ public class OnlineService extends BaseStatsService<Online, OnlineMapper> {
         this.updateBeginAndEndDate(statsListParam);
         String beginDate = statsListParam.getQueryObject().getString("beginDate");
         String endDate = statsListParam.getQueryObject().getString("endDate");
-        lineType = statsListParam.getQueryObject().getString("lineType");
         try {
             QueryWrapper<Online> queryWrapper = new QueryWrapper<>();
             queryWrapper.between(" Date(insertTime)", beginDate, endDate);
             List<Online> data = this.list(queryWrapper);
             Vector<Online> result = new Vector<>();
-            //游戏名称
-            if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString("gameCode"))) {
-                //游戏进行解析
+            // 游戏名称
+            if (StringUtils.isNotBlank(statsListParam.getQueryObject().getString(GAME_CODE))) {
+                // 游戏进行解析
                 for (Online online : data) {
                     if (online.getGameInfo() == null) {
                         continue;
@@ -74,7 +75,7 @@ public class OnlineService extends BaseStatsService<Online, OnlineMapper> {
                     if (game == null) {
                         continue;
                     }
-                    JSONObject room = game.getJSONObject(statsListParam.getQueryObject().getString("gameCode"));
+                    JSONObject room = game.getJSONObject(statsListParam.getQueryObject().getString(GAME_CODE));
                     if (room == null) {
                         continue;
                     }
@@ -91,12 +92,13 @@ public class OnlineService extends BaseStatsService<Online, OnlineMapper> {
             statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(result)));
             statsListResult.setTotalRow(null);
             statsListResult.setCount(result.size());
-            statsListResult.setLineData(getECharts(data));
+            statsListResult.setLineData(eCharts(data));
         } catch (Exception e) {
             statsListResult.setCode(2);
             statsListResult.setMsg("查询结果异常，请联系开发人员！");
             LOGGER.error(ExceptionUtils.getStackTrace(e));
         }
+
         return statsListResult;
     }
 
@@ -105,20 +107,20 @@ public class OnlineService extends BaseStatsService<Online, OnlineMapper> {
      *
      * @param data 查找数据
      */
-    private JSONObject getECharts(List<Online> data) {
+    private JSONObject eCharts(List<Online> data) {
         JSONObject lineData = new JSONObject();
-        //xAxis 点数据
+        // xAxis 点数据
         JSONArray xAxis = new JSONArray();
-        //点数：144个
+        // 点数：144个
         for (int i = 0; i < Y_AXIS; i++) {
             int val = i * 10;
             int x = val % 60, y = val / 60;
             xAxis.add(String.format("%02d:%02d", y, x));
         }
         lineData.put("xAxis", xAxis);
-        //series 线集合 {name:string,data:array,smooth:false}
+        // series 线集合 {name:string,data:array,smooth:false}
         JSONArray series = new JSONArray();
-        //数据点进行换算
+        // 数据点进行换算
         DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm");
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         Map<String, int[]> cache = new HashMap<>(16);
@@ -126,7 +128,7 @@ public class OnlineService extends BaseStatsService<Online, OnlineMapper> {
         {
             String time = format.format(point.getTimes());
             String[] val = time.split(":");
-            //获取当前key值
+            // 获取当前key值
             int key = (Integer.parseInt(val[0]) * 60 + Integer.parseInt(val[1])) / 10;
             String day = dateFormat.format(point.getTimes());
             Integer online = point.getOnline();

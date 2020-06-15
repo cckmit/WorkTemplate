@@ -47,7 +47,7 @@ public class ConfigAdContentController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdContentService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_content");
+            this.persieServerUtils.refreshTable("config_ad_content");
         }
         return postResult;
     }
@@ -57,7 +57,7 @@ public class ConfigAdContentController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdContentService.put(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_content");
+            this.persieServerUtils.refreshTable("config_ad_content");
         }
         return postResult;
     }
@@ -67,7 +67,7 @@ public class ConfigAdContentController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult postResult = this.configAdContentService.delete(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_content");
+            this.persieServerUtils.refreshTable("config_ad_content");
         }
         return postResult;
     }
@@ -92,7 +92,7 @@ public class ConfigAdContentController implements BaseCrudController {
     public PostResult uploadImageUrlByUpload(@RequestBody String requestParam) {
         PostResult postResult = this.configAdContentService.uploadImageUrlByUpload(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_content");
+            this.persieServerUtils.refreshTable("config_ad_content");
         }
         return postResult;
     }

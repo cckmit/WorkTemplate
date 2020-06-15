@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author CC ccheng0725@outlook.com
  * @date 2020-05-07 15:36
@@ -38,7 +40,49 @@ public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdApp
             queryWrapper.like(StringUtils.isNotBlank(minVersion), "ddMinVersion", minVersion);
             String combinationId = queryObject.getString("combinationId");
             queryWrapper.eq(StringUtils.isNotBlank(combinationId), "ddCombinationId", combinationId);
+        }
+    }
 
+    @Override
+    protected void updateInsertEntity(String requestParam, ConfigAdApp entity) {
+        this.autoSetAdUnit(entity);
+        super.updateInsertEntity(requestParam, entity);
+    }
+
+    @Override
+    protected boolean update(String requestParam, ConfigAdApp entity, UpdateWrapper<ConfigAdApp> updateWrapper) {
+        this.autoSetAdUnit(entity);
+        updateWrapper.eq("ddAppId", entity.getAppId()).eq("ddMinVersion", entity.getMinVersion());
+        return this.update(entity, updateWrapper);
+    }
+
+    /**
+     * 从app配置模块自动更新广告内容
+     *
+     * @param entity ConfigAdApp
+     */
+    private void autoSetAdUnit(ConfigAdApp entity) {
+        WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, entity.getAppId());
+        if (StringUtils.isBlank(entity.getWxBannerUnit())) {
+            String banner = wxConfig.getBanner();
+            if (StringUtils.isNotBlank(banner) && StringUtils.contains(banner, "-")) {
+                banner = StringUtils.split(banner, "-")[1];
+            }
+            entity.setWxBannerUnit(banner);
+        }
+        if (StringUtils.isBlank(entity.getWxIntUint())) {
+            String intUnit = wxConfig.getScreen();
+            if (StringUtils.isNotBlank(intUnit) && StringUtils.contains(intUnit, "-")) {
+                intUnit = StringUtils.split(intUnit, "-")[1];
+            }
+            entity.setWxIntUint(intUnit);
+        }
+        if (StringUtils.isBlank(entity.getWxReVideoUnit())) {
+            String reVideo = wxConfig.getVideo();
+            if (StringUtils.isNotBlank(reVideo) && StringUtils.contains(reVideo, "-")) {
+                reVideo = StringUtils.split(reVideo, "-")[1];
+            }
+            entity.setWxReVideoUnit(reVideo);
         }
     }
 
@@ -52,6 +96,20 @@ public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdApp
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigAdApp> deleteWrapper) {
+        int count = 0;
+        if (StringUtils.isNotBlank(requestParam)) {
+            List<String> idList = JSONObject.parseArray(requestParam, String.class);
+            for (String appIdAndMinVersion : idList) {
+                String[] split = appIdAndMinVersion.split("-");
+                UpdateWrapper<ConfigAdApp> removeWrapper = new UpdateWrapper<>();
+                removeWrapper.eq("ddAppId", split[0]).eq("ddMinVersion", split[1]);
+                boolean remove = this.remove(removeWrapper);
+                if (remove) {
+                    count++;
+                }
+            }
+            return count == idList.size();
+        }
         return false;
     }
 
@@ -74,6 +132,8 @@ public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdApp
                 updateWrapper.set("ddWxBannerAllowedShow", status);
             } else if (StringUtils.equals("wxIntAllowedShow", switchColumn)) {
                 updateWrapper.set("ddWxIntAllowedShow", status);
+            } else if (StringUtils.equals("wxReVideoAllowedShow", switchColumn)) {
+                updateWrapper.set("ddWxReVideoAllowedShow", status);
             } else {
                 updateWrapper = null;
             }

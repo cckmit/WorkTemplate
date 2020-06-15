@@ -15,6 +15,11 @@ import java.time.LocalDate;
 @Data
 public class DataCollect implements Serializable {
 
+    /**
+     * 查询的开始和结束时间
+     */
+    public String beginTime;
+    public String endTime;
     @JSONField(format = "yyyy-MM-dd")
     private LocalDate wxDate;
     /*** 产品数量*/
@@ -33,7 +38,6 @@ public class DataCollect implements Serializable {
     private BigDecimal rechargeCount = new BigDecimal(0);
     /*** 视频总收入*/
     private BigDecimal videoIncomeCount;
-
     /*** banner总收入*/
     private BigDecimal bannerIncomeCount;
     /*** 买量支出*/
@@ -44,11 +48,5 @@ public class DataCollect implements Serializable {
     private Integer shareCount;
     /*** 分享率*/
     private BigDecimal shareRateCount;
-
-    /**
-     * 查询的开始和结束时间
-     */
-    public String beginTime;
-    public String endTime;
 
 }

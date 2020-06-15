@@ -47,7 +47,7 @@ public class ConfigAdPositionController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdPositionService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_position");
+            this.persieServerUtils.refreshTable("config_ad_position");
         }
         return postResult;
     }
@@ -57,7 +57,7 @@ public class ConfigAdPositionController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdPositionService.put(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_position");
+            this.persieServerUtils.refreshTable("config_ad_position");
         }
         return postResult;
     }
@@ -67,7 +67,7 @@ public class ConfigAdPositionController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult postResult = this.configAdPositionService.delete(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_position");
+            this.persieServerUtils.refreshTable("config_ad_position");
         }
         return postResult;
     }
@@ -82,7 +82,7 @@ public class ConfigAdPositionController implements BaseCrudController {
     public PostResult statusSwitch(@RequestBody String requestParam) {
         PostResult postResult = this.configAdPositionService.statusSwitch(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_position");
+            this.persieServerUtils.refreshTable("config_ad_position");
         }
         return postResult;
     }

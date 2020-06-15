@@ -50,7 +50,7 @@ public class WxGroupManagerController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.wxGroupManagerService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_confirm");
+            this.persieServerUtils.refreshTable("config_confirm");
         }
         return postResult;
     }
@@ -77,7 +77,7 @@ public class WxGroupManagerController implements BaseCrudController {
     public PostResult updateShowId(@RequestBody JSONObject jsonObject) {
         PostResult postResult = this.wxGroupManagerService.switchStatus(jsonObject);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_confirm");
+            this.persieServerUtils.refreshTable("config_confirm");
         }
         return postResult;
     }

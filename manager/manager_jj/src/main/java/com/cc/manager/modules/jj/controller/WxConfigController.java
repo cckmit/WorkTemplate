@@ -49,7 +49,7 @@ public class WxConfigController implements BaseCrudController {
         PostResult postResult = this.wxConfigService.post(requestParam);
         if (postResult.getCode() == 1) {
             this.persieServerUtils.refreshTable("wx_config");
-            postResult = this.persieServerUtils.refreshTable("app_config");
+            this.persieServerUtils.refreshTable("app_config");
         }
         return postResult;
     }
@@ -60,7 +60,6 @@ public class WxConfigController implements BaseCrudController {
         PostResult postResult = this.wxConfigService.put(requestParam);
         if (postResult.getCode() == 1) {
             this.persieServerUtils.refreshTable("wx_config");
-            postResult = this.persieServerUtils.refreshTable("app_config");
         }
         return postResult;
     }
@@ -71,7 +70,6 @@ public class WxConfigController implements BaseCrudController {
         PostResult deleteResult = this.wxConfigService.delete(requestParam);
         if (deleteResult.getCode() == 1) {
             this.persieServerUtils.refreshTable("wx_config");
-            deleteResult = this.persieServerUtils.refreshTable("app_config");
         }
         return deleteResult;
     }
@@ -94,7 +92,7 @@ public class WxConfigController implements BaseCrudController {
         //刷新业务表结构
         if (postResult.getCode() == 1) {
             this.persieServerUtils.refreshTable("wx_config");
-            postResult = this.persieServerUtils.refreshTable("app_config");
+            this.persieServerUtils.refreshTable("app_config");
         }
         return postResult;
     }

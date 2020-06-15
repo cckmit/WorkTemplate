@@ -31,7 +31,7 @@ public class CmTool {
     //
     // 十六进制字符串模板
     //
-    private static final String hexDigits[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
+    private static final String[] hexDigits = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 
     /**
      * 获取文件上一次编辑时间
@@ -510,7 +510,7 @@ public class CmTool {
                 index = tile.indexOf("=");
                 if (index > 0) {
                     key = tile.substring(0, index);
-                    value = tile.substring(index + 1, tile.length());
+                    value = tile.substring(index + 1);
                     value = trimExt(value);
                     map.put(key, value);
                 }
@@ -672,7 +672,7 @@ public class CmTool {
                 start = end + 1;
                 end = source.indexOf(tag, start);
                 if (end < 0) {
-                    lists.add(source.substring(start, source.length()));
+                    lists.add(source.substring(start));
                     break;
                 }
             } while (true);
@@ -782,7 +782,7 @@ public class CmTool {
      * 随机一个字符串
      */
     public static String createNonceStr() {
-        char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+        char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < 16; i++) {
             int index = new Random().nextInt(hexDigits.length);
@@ -813,7 +813,7 @@ public class CmTool {
      * @param b
      * @return
      */
-    private static String byteArrayToHexString(byte b[]) {
+    private static String byteArrayToHexString(byte[] b) {
         StringBuffer resultSb = new StringBuffer();
         for (int i = 0; i < b.length; i++) {
             resultSb.append(byteToHexString(b[i]));

@@ -8,6 +8,7 @@ import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.service.ConfigProgramService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class ConfigProgramController implements BaseCrudController {
 
     private ConfigProgramService configProgramService;
+    private PersieServerUtils persieServerUtils;
 
     @Override
     @GetMapping(value = "/id/{id}")
@@ -45,19 +47,31 @@ public class ConfigProgramController implements BaseCrudController {
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
-        return this.configProgramService.post(requestParam);
+        PostResult postResult = this.configProgramService.post(requestParam);
+        if (postResult.getCode() == 1) {
+            this.persieServerUtils.refreshTable("config_program");
+        }
+        return postResult;
     }
 
     @Override
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
-        return this.configProgramService.put(requestParam);
+        PostResult putResult = this.configProgramService.put(requestParam);
+        if (putResult.getCode() == 1) {
+            this.persieServerUtils.refreshTable("config_program");
+        }
+        return putResult;
     }
 
     @Override
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
-        return this.configProgramService.delete(requestParam);
+        PostResult deleteResult = this.configProgramService.delete(requestParam);
+        if (deleteResult.getCode() == 1) {
+            this.persieServerUtils.refreshTable("config_program");
+        }
+        return deleteResult;
     }
 
     @Override
@@ -69,5 +83,11 @@ public class ConfigProgramController implements BaseCrudController {
     public void setConfigProgramService(ConfigProgramService configProgramService) {
         this.configProgramService = configProgramService;
     }
+
+    @Autowired
+    public void setPersieServerUtils(PersieServerUtils persieServerUtils) {
+        this.persieServerUtils = persieServerUtils;
+    }
+
 }
 

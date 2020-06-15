@@ -51,7 +51,7 @@ public class GameSetController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.gameSetService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("gameset");
+            this.persieServerUtils.refreshTable("gameset");
         }
         return postResult;
     }
@@ -61,7 +61,7 @@ public class GameSetController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult putResult = this.gameSetService.put(requestParam);
         if (putResult.getCode() == 1) {
-            putResult = this.persieServerUtils.refreshTable("gameset");
+            this.persieServerUtils.refreshTable("gameset");
         }
         return putResult;
     }
@@ -71,7 +71,7 @@ public class GameSetController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult deleteResult = this.gameSetService.delete(requestParam);
         if (deleteResult.getCode() == 1) {
-            deleteResult = this.persieServerUtils.refreshTable("gameset");
+            this.persieServerUtils.refreshTable("gameset");
         }
         return deleteResult;
     }

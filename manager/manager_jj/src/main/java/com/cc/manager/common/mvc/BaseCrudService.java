@@ -179,8 +179,8 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
                 E entity = JSONObject.parseObject(requestParam, entityClass);
                 this.updateInsertEntity(requestParam, entity);
                 if (this.save(entity)) {
-                    // 给需要缓存的数据更新缓存
-                    this.updateCacheEntity(entity);
+                    // 为了维护数据统一性和能获取数据表的默认值，当前更新全部缓存
+                    this.updateAllCacheEntity(entityClass);
                 } else {
                     postResult.setCode(2);
                     postResult.setMsg("新增数据失败：插入数据库失败！");
@@ -188,9 +188,11 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
             } catch (JSONException e) {
                 postResult.setCode(2);
                 postResult.setMsg("新增数据失败：提交参数解析异常！");
+                LOGGER.error(ExceptionUtils.getStackTrace(e));
             } catch (DataAccessException e) {
                 postResult.setCode(2);
                 postResult.setMsg("新增数据失败：插入数据库异常！");
+                LOGGER.error(ExceptionUtils.getStackTrace(e));
             }
         } else {
             postResult.setCode(2);
@@ -222,8 +224,8 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
                 E entity = JSONObject.parseObject(requestParam, entityClass);
                 UpdateWrapper<E> updateWrapper = new UpdateWrapper<>();
                 if (this.update(requestParam, entity, updateWrapper)) {
-                    // 给需要缓存的数据更新缓存
-                    this.updateCacheEntity(entity);
+                    // 为了维护数据统一性和能获取数据表的默认值，当前更新全部缓存
+                    this.updateAllCacheEntity(entityClass);
                 } else {
                     postResult.setCode(2);
                     postResult.setMsg("更新数据失败：更新数据库失败！");
@@ -231,9 +233,11 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
             } catch (JSONException e) {
                 postResult.setCode(2);
                 postResult.setMsg("更新数据失败：提交参数解析异常！");
+                LOGGER.error(ExceptionUtils.getStackTrace(e));
             } catch (DataAccessException e) {
                 postResult.setCode(2);
                 postResult.setMsg("更新数据失败：更新数据库异常！");
+                LOGGER.error(ExceptionUtils.getStackTrace(e));
             }
         } else {
             postResult.setCode(2);
@@ -257,7 +261,7 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
     }
 
     /**
-     * 删除数据，当前删除方法暂时只适合务理删除，如果需要逻辑删除，请通过更新逻辑处理或者自定义方法删除
+     * 删除数据，由于删除逻辑较为敏感，必须自行实现
      *
      * @param requestParam 根据条件删除数据
      * @return 提交结果
@@ -303,10 +307,9 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
      */
     public JSONObject getSelectArray(Class<E> clazz, String requestParam) {
         JSONArray selectOptionArray = new JSONArray();
-        // 如果传入的从数据库查询标识，先从数据库更新整个缓存，再返回给客户端
-        if (StringUtils.equals("serverDb", requestParam)) {
-            this.updateAllCacheEntity(clazz);
-        }
+        // 先更新整个缓存
+        this.updateAllCacheEntity(clazz);
+        // 再从缓存中获取
         List<E> list = this.getCacheEntityList(clazz);
         list.forEach(entity -> {
             JSONObject option = new JSONObject();
@@ -409,20 +412,6 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
     }
 
     /**
-     * 更新自定义了缓存key的数据对象缓存
-     *
-     * @param entity 数据对象
-     */
-    @SuppressWarnings("unchecked")
-    private void updateCacheEntity(E entity) {
-        if (!StringUtils.equals(BaseCrudEntity.NO_CACHE, entity.getCacheKey())) {
-            CrudEntityCache<E> entityCache = this.getEntityCache((Class<E>) entity.getClass());
-            entityCache.entityCacheMap.put(entity.getCacheKey(), entity);
-            entityCache.entityKeyList.add(entity.getCacheKey());
-        }
-    }
-
-    /**
      * 更新全部缓存
      */
     private CrudEntityCache<E> updateAllCacheEntity(Class<E> clazz) {
@@ -472,6 +461,10 @@ public abstract class BaseCrudService<E extends BaseCrudEntity<E>, M extends Bas
 
     @Override
     public E getOne(Wrapper<E> queryWrapper, boolean throwEx) {
+        List<E> list = this.list(queryWrapper);
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
         return null;
     }
 

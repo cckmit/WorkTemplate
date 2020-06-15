@@ -46,7 +46,7 @@ public class ConfigAdAppController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdAppService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_app");
+            this.persieServerUtils.refreshTable("config_ad_app");
         }
         return postResult;
     }
@@ -56,7 +56,7 @@ public class ConfigAdAppController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdAppService.put(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_app");
+            this.persieServerUtils.refreshTable("config_ad_app");
         }
         return postResult;
     }
@@ -66,7 +66,7 @@ public class ConfigAdAppController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult postResult = this.configAdAppService.delete(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_app");
+            this.persieServerUtils.refreshTable("config_ad_app");
         }
         return postResult;
     }
@@ -78,10 +78,10 @@ public class ConfigAdAppController implements BaseCrudController {
     }
 
     @PutMapping("/switchStatus")
-    public PostResult switchStatus(@RequestBody String requestParam){
+    public PostResult switchStatus(@RequestBody String requestParam) {
         PostResult postResult = this.configAdAppService.switchStatus(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_app");
+            this.persieServerUtils.refreshTable("config_ad_app");
         }
         return postResult;
     }

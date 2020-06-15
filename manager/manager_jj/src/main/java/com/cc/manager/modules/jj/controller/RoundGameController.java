@@ -50,7 +50,7 @@ public class RoundGameController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.roundGameService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("round_game");
+            this.persieServerUtils.refreshTable("round_game");
         }
         return postResult;
     }
@@ -60,7 +60,7 @@ public class RoundGameController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult putResult = this.roundGameService.put(requestParam);
         if (putResult.getCode() == 1) {
-            putResult = this.persieServerUtils.refreshTable("round_game");
+            this.persieServerUtils.refreshTable("round_game");
         }
         return putResult;
     }
@@ -70,7 +70,7 @@ public class RoundGameController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult deleteResult = this.roundGameService.delete(requestParam);
         if (deleteResult.getCode() == 1) {
-            deleteResult = this.persieServerUtils.refreshTable("round_game");
+            this.persieServerUtils.refreshTable("round_game");
         }
         return deleteResult;
     }

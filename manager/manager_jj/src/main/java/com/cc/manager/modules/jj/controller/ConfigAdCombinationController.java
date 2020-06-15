@@ -47,7 +47,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdCombinationService.post(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -57,7 +57,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdCombinationService.put(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -67,7 +67,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult postResult = this.configAdCombinationService.delete(requestParam);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -90,7 +90,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     }
 
     @GetMapping(value = "/getAdCombinationTable/{id}")
-    public JSONObject getAdCombinationTable(@PathVariable String id){
+    public JSONObject getAdCombinationTable(@PathVariable String id) {
         return this.configAdCombinationService.getAdCombinationTable(id);
     }
 
@@ -104,7 +104,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult addAdPosition(@RequestBody JSONObject addAdPositionObject) {
         PostResult postResult = this.configAdCombinationService.addPosition(addAdPositionObject);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -119,7 +119,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult deleteAdPosition(@RequestBody JSONObject deleteAdPositionsObject) {
         PostResult postResult = this.configAdCombinationService.deleteAdPosition(deleteAdPositionsObject);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -134,7 +134,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult updateAdStrategy(@RequestBody JSONObject updateStrategyObject) {
         PostResult postResult = this.configAdCombinationService.updateAdStrategy(updateStrategyObject);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -149,7 +149,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult addAdSpace(@RequestBody JSONObject addAdSpaceObject) {
         PostResult postResult = this.configAdCombinationService.addAdSpace(addAdSpaceObject);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -164,7 +164,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult deleteAdSpace(@RequestBody JSONObject deleteAdSpacesObject) {
         PostResult postResult = this.configAdCombinationService.deleteAdSpace(deleteAdSpacesObject);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -179,7 +179,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult addAdContent(@RequestBody JSONObject addAdContentObject) {
         PostResult postResult = this.configAdCombinationService.addAdContent(addAdContentObject);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -194,7 +194,7 @@ public class ConfigAdCombinationController implements BaseCrudController {
     public PostResult deleteAdContent(@RequestBody JSONObject deleteAdContentsObject) {
         PostResult postResult = this.configAdCombinationService.deleteAdContent(deleteAdContentsObject);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }
@@ -202,14 +202,14 @@ public class ConfigAdCombinationController implements BaseCrudController {
     /**
      * 保存广告位序号
      *
-     * @param saveAdContentIndexObject 数据保存对象
+     * @param saveAdContentOrderNumObject 数据保存对象
      * @return 删除结果
      */
-    @PostMapping(value = "/saveAdContentIndex")
-    public PostResult saveAdContentIndex(@RequestBody JSONObject saveAdContentIndexObject) {
-        PostResult postResult = this.configAdCombinationService.saveAdContentIndex(saveAdContentIndexObject);
+    @PostMapping(value = "/saveAdContentOrderNum")
+    public PostResult saveAdContentOrderNum(@RequestBody JSONObject saveAdContentOrderNumObject) {
+        PostResult postResult = this.configAdCombinationService.saveAdContentOrderNum(saveAdContentOrderNumObject);
         if (postResult.getCode() == 1) {
-            postResult = this.persieServerUtils.refreshTable("config_ad_combination");
+            this.persieServerUtils.refreshTable("config_ad_combination");
         }
         return postResult;
     }

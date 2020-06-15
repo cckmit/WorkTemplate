@@ -48,7 +48,7 @@ public class ConfigProgramService extends BaseCrudService<ConfigProgram, ConfigP
     @Override
     protected void rebuildSelectedList(CrudPageParam crudPageParam, List<ConfigProgram> entityList) {
         for (ConfigProgram configProgram : entityList) {
-            String ddAppId = configProgram.getDdAppId();
+            String ddAppId = configProgram.getAppId();
             WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, ddAppId);
             if (wxConfig != null) {
                 configProgram.setProductName(wxConfig.getProductName());
@@ -68,14 +68,28 @@ public class ConfigProgramService extends BaseCrudService<ConfigProgram, ConfigP
 
     @Override
     protected boolean update(String requestParam, ConfigProgram entity, UpdateWrapper<ConfigProgram> updateWrapper) {
-        updateWrapper.eq("ddAppId", entity.getDdAppId());
-        updateWrapper.eq("ddMinVer", entity.getDdMinVer());
+        updateWrapper.eq("ddAppId", entity.getAppId());
+        updateWrapper.eq("ddMinVer", entity.getMinVersion());
         return this.update(entity, updateWrapper);
 
     }
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigProgram> deleteWrapper) {
+        int count = 0;
+        if (StringUtils.isNotBlank(requestParam)) {
+            List<String> idList = JSONObject.parseArray(requestParam, String.class);
+            for (String appIdAndMinVersion : idList) {
+                String[] split = appIdAndMinVersion.split("-");
+                UpdateWrapper<ConfigProgram> removeWrapper = new UpdateWrapper<>();
+                removeWrapper.eq("ddAppId", split[0]).eq("ddMinVer", split[1]);
+                boolean remove = this.remove(removeWrapper);
+                if (remove) {
+                    count++;
+                }
+            }
+            return count == idList.size();
+        }
         return false;
     }
 

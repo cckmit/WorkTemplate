@@ -1,5 +1,7 @@
 package com.cc.manager;
 
+import com.alibaba.fastjson.JSONObject;
+import com.cc.manager.common.result.PostResult;
 import com.cc.manager.common.utils.RedisUtil;
 import com.cc.manager.modules.jj.entity.AllCost;
 import com.cc.manager.modules.jj.entity.Recharge;
@@ -8,12 +10,17 @@ import com.cc.manager.modules.jj.service.AllCostService;
 import com.cc.manager.modules.jj.service.RechargeService;
 import com.cc.manager.modules.jj.service.RoundExtService;
 import com.cc.manager.modules.jj.service.UserInfoService;
+import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 class ManagerJjApplicationTests {
@@ -30,7 +37,8 @@ class ManagerJjApplicationTests {
     RoundExtService roundExtService;
     @Autowired
     private RedisUtil redisUtil;
-
+    @Autowired
+    private PersieServerUtils persieServerUtils;
     @Test
     void contextLoads() {
     }
@@ -46,8 +54,9 @@ class ManagerJjApplicationTests {
       //  AllCost allCost = allCostService.selectRemainAmount("oSn_Lw88gelVi7jYCijJUAArmMIs", parse);
 //        BigDecimal i = RechargeService.selectUserCashOut("oSn_Lw88gelVi7jYCijJUAArmMIs","2020-02-05");
       //  System.out.println(allCost.toString());
-        boolean save = RechargeService.save(null);
-        System.out.println(save);
+        PostResult postResult = new PostResult();
+       // postResult = this.persieServerUtils.refreshTable("app_config");
+     //   System.out.println(postResult.toString());
     }
 
     @Test
@@ -55,6 +64,7 @@ class ManagerJjApplicationTests {
 
         Integer coin = (Integer) redisUtil.hashGet("user-oxDM75DNVEcHIT0eHnL-QYCMv8sY", "coin");
         System.out.println(coin.toString());
+
 //        UserInfo userInfo = this.userInfoService.getById("oSn_Lw5rxqPXgC3b_M0heLW5wzbA");
 //        System.out.println(userInfo.toString()
 
