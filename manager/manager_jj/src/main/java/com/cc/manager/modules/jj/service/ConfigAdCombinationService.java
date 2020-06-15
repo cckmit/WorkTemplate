@@ -39,6 +39,10 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigAdCombination> deleteWrapper) {
+        if (StringUtils.isNotBlank(requestParam)) {
+            List<String> idList = JSONObject.parseArray(requestParam, String.class);
+            return this.removeByIds(idList);
+        }
         return false;
     }
 
