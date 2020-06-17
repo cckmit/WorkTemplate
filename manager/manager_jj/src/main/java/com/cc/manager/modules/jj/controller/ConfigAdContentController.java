@@ -46,9 +46,9 @@ public class ConfigAdContentController implements BaseCrudController {
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdContentService.post(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_content");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_content");
+//        }
         return postResult;
     }
 
@@ -56,9 +56,9 @@ public class ConfigAdContentController implements BaseCrudController {
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdContentService.put(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_content");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_content");
+//        }
         return postResult;
     }
 
@@ -66,9 +66,9 @@ public class ConfigAdContentController implements BaseCrudController {
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
         PostResult postResult = this.configAdContentService.delete(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_content");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_content");
+//        }
         return postResult;
     }
 

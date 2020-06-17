@@ -23,6 +23,12 @@ public class ConfigAdContent implements BaseCrudEntity<ConfigAdContent> {
     @TableField(value = "ddAdType", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
     private int adType;
 
+    @TableField(value = "ddTargetAppId", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
+    private String targetAppId;
+
+    @TableField(value = "ddTargetAppName", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
+    private String targetAppName;
+
     @TableField(value = "ddWeight")
     private int weight = 1;
 
@@ -32,38 +38,11 @@ public class ConfigAdContent implements BaseCrudEntity<ConfigAdContent> {
     @TableField(value = "ddVideoUrl")
     private String videoUrl;
 
-    @TableField(value = "ddTargetAppId", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String targetAppId;
-
-    @TableField(value = "ddTargetAppName", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String targetAppName;
+    @TableField(value = "ddExtraParam")
+    private String extraParam;
 
     @TableField(value = "ddTargetAppDesc")
     private String targetAppDesc;
-
-    @TableField(value = "ddTargetAppType")
-    private int targetAppType;
-
-    @TableField(value = "ddTargetEnvVersion")
-    private String targetEnvVersion;
-
-    @TableField(value = "ddTargetAppPage")
-    private String targetAppPage;
-
-    @TableField(value = "ddPromoteAppId", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String promoteAppId;
-
-    @TableField(value = "ddPromoteAppName", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String promoteAppName;
-
-    @TableField(value = "ddPromoteAppType")
-    private int promoteAppType;
-
-    @TableField(value = "ddPromoteEnvVersion")
-    private String promoteEnvVersion;
-
-    @TableField(value = "ddPromoteAppPage")
-    private String promoteAppPage;
 
     @JSONField(format = "yyyy-MM-dd HH:mm")
     @TableField(value = "updateTime", fill = FieldFill.INSERT_UPDATE)

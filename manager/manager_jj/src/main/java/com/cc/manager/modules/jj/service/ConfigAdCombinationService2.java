@@ -20,12 +20,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * TODO
+ *
  * @author CC ccheng0725@outlook.com
- * @date 2020-05-07 15:35
+ * @date 2020-06-15 20:35
  */
 @Service
 @DS("jj")
-public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombination, ConfigAdCombinationMapper> {
+public class ConfigAdCombinationService2 extends BaseCrudService<ConfigAdCombination, ConfigAdCombinationMapper> {
 
     private ConfigAdPositionService configAdPositionService;
     private ConfigAdSpaceService configAdSpaceService;
@@ -34,8 +36,9 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<ConfigAdCombination> queryWrapper) {
-        queryWrapper.eq("ddType",1);
+        queryWrapper.eq("ddType",2);
     }
+
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigAdCombination> deleteWrapper) {
@@ -76,8 +79,8 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
         returnObject.put("code", 2);
 
         ConfigAdCombination configAdCombination = this.getById(adCombination);
-        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getCombinationJson())) {
-            JSONArray combinationArray = JSONArray.parseArray(configAdCombination.getCombinationJson());
+        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getPositionIds())) {
+            JSONArray combinationArray = JSONArray.parseArray(configAdCombination.getPositionIds());
             JSONArray returnPositionArray = new JSONArray();
             int id = 1;
             for (int i = 0; i < combinationArray.size(); i++) {
@@ -93,9 +96,7 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
                 resultPositionObject.put("positionId", positionId);
                 resultPositionObject.put("name", configAdPosition.getCacheValue());
                 resultPositionObject.put("adType", configAdPosition.getAdTypeNames());
-                String configAdStrategy = this.configAdStrategyService.getCacheValue(ConfigAdStrategy.class, positionObject.getString("strategyId"));
-                resultPositionObject.put("strategyId", configAdStrategy);
-                resultPositionObject.put("strategyValue", positionObject.getString("strategyValue"));
+
 
                 // 解析广告位数据
                 JSONArray spaceArray = positionObject.getJSONArray("spaces");
@@ -114,26 +115,9 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
                     returnSpaceObject.put("spaceId", spaceId);
                     returnSpaceObject.put("name", configAdSpace.getCacheValue());
                     returnSpaceObject.put("adType", configAdSpace.getAdTypeName());
+                    returnSpaceObject.put("orderNum", j + 1);
 
-                    JSONArray contentArray = spaceObject.getJSONArray("contentIds");
-                    JSONArray returnContentArray = new JSONArray();
-                    for (int k = 0; k < contentArray.size(); k++) {
-                        id++;
-                        String contentId = contentArray.getString(k);
-                        ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId);
 
-                        JSONObject returnContentObject = new JSONObject();
-                        returnContentObject.put("id", id);
-                        returnContentObject.put("combinationId", adCombination);
-                        returnContentObject.put("positionId", positionId);
-                        returnContentObject.put("spaceId", spaceId);
-                        returnContentObject.put("contentId", contentId);
-                        returnContentObject.put("name", configAdContent.getCacheValue());
-                        returnContentObject.put("adType", configAdContent.getAdTypeName());
-                        returnContentObject.put("orderNum", k + 1);
-                        returnContentArray.add(returnContentObject);
-                    }
-                    returnSpaceObject.put("children", returnContentArray);
                     returnSpaceArray.add(returnSpaceObject);
                 }
                 resultPositionObject.put("children", returnSpaceArray);
@@ -144,7 +128,66 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
         }
         return returnObject;
     }
+    public JSONObject getAdCombinationIconPool(String adCombination) {
+        JSONObject returnObject = new JSONObject();
+        returnObject.put("code", 2);
 
+        ConfigAdCombination configAdCombination = this.getById(adCombination);
+        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getContentIds())) {
+            JSONArray iconPoolArray = JSONArray.parseArray(configAdCombination.getContentIds());
+            JSONArray returnContentArray = new JSONArray();
+            int id = 1;
+            for (int k = 0; k < iconPoolArray.size(); k++) {
+                id++;
+                String contentId = iconPoolArray.getString(k);
+                ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId);
+
+                JSONObject returnContentObject = new JSONObject();
+                returnContentObject.put("id", id);
+                returnContentObject.put("combinationId", adCombination);
+                returnContentObject.put("operator", "addAdPool");
+                returnContentObject.put("contentId", contentId);
+                returnContentObject.put("name", configAdContent.getCacheValue());
+                returnContentObject.put("adType", configAdContent.getAdTypeName());
+                returnContentObject.put("orderNum", k + 1);
+                returnContentArray.add(returnContentObject);
+            }
+            returnObject.put("data", returnContentArray);
+            returnObject.put("code", 1);
+        }
+        return returnObject;
+    }
+
+
+    public JSONObject getAdCombinationBannerPool(String adCombination) {
+        JSONObject returnObject = new JSONObject();
+        returnObject.put("code", 2);
+
+        ConfigAdCombination configAdCombination = this.getById(adCombination);
+        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getContentIds())) {
+            JSONArray bannerPoolArray = JSONArray.parseArray(configAdCombination.getContentIds());
+            JSONArray returnContentArray = new JSONArray();
+            int id = 1;
+            for (int k = 0; k < bannerPoolArray.size(); k++) {
+                id++;
+                String contentId = bannerPoolArray.getString(k);
+                ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId);
+
+                JSONObject returnContentObject = new JSONObject();
+                returnContentObject.put("id", id);
+                returnContentObject.put("combinationId", adCombination);
+                returnContentObject.put("operator", "addAdPool");
+                returnContentObject.put("contentId", contentId);
+                returnContentObject.put("name", configAdContent.getCacheValue());
+                returnContentObject.put("adType", configAdContent.getAdTypeName());
+                returnContentObject.put("orderNum", k + 1);
+                returnContentArray.add(returnContentObject);
+            }
+            returnObject.put("data", returnContentArray);
+            returnObject.put("code", 1);
+        }
+        return returnObject;
+    }
     /**
      * 新增广告位置
      *
@@ -161,13 +204,10 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
             addPositionIdList.remove(positionObject.getInteger("positionId"));
         }
 
-
         // 如果不存在已配置的广告位置，新增广告配置
         addPositionIdList.forEach(addPositionId -> {
             JSONObject adPositionObject = new JSONObject();
             adPositionObject.put("positionId", addPositionId);
-            adPositionObject.put("strategyId", 0);
-            adPositionObject.put("strategyValue", "");
             adPositionObject.put("spaces", new JSONArray());
             combinationArray.add(adPositionObject);
         });
@@ -175,7 +215,8 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(addPositionObject.getInteger("id"));
-        configAdCombination.setCombinationJson(combinationArray.toJSONString());
+        configAdCombination.setType(2);
+        configAdCombination.setPositionIds(combinationArray.toJSONString());
         this.updateById(configAdCombination);
         return postResult;
     }
@@ -197,36 +238,12 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(deleteAdPositionsObject.getInteger("id"));
-        configAdCombination.setCombinationJson(combinationArray.toJSONString());
+        configAdCombination.setType(2);
+        configAdCombination.setPositionIds(combinationArray.toJSONString());
         this.updateById(configAdCombination);
         return new PostResult();
     }
 
-    /**
-     * 更新广告位置策略
-     * {"positionId":"1","strategyId":"4","id":"1","strategyValue":""}
-     *
-     * @param updateStrategyObject 更新数据对象
-     * @return 更新结果
-     */
-    public PostResult updateAdStrategy(@RequestBody JSONObject updateStrategyObject) {
-        JSONArray combinationArray = this.getAdCombinationArray(updateStrategyObject.getString("id"));
-        for (int i = 0; i < combinationArray.size(); i++) {
-            JSONObject positionObject = combinationArray.getJSONObject(i);
-            if (StringUtils.equals(positionObject.getString("positionId"), updateStrategyObject.getString("positionId"))) {
-                positionObject.put("strategyId", updateStrategyObject.getInteger("strategyId"));
-                positionObject.put("strategyValue", updateStrategyObject.getString("strategyValue"));
-                break;
-            }
-        }
-
-        // 保存数据对象
-        ConfigAdCombination configAdCombination = new ConfigAdCombination();
-        configAdCombination.setId(updateStrategyObject.getInteger("id"));
-        configAdCombination.setCombinationJson(combinationArray.toJSONString());
-        this.updateById(configAdCombination);
-        return new PostResult();
-    }
 
     /**
      * 新增广告位
@@ -244,15 +261,10 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
             String positionId = positionObject.getString("positionId");
             if (StringUtils.equals(positionId, addAdSpaceObject.getString("positionId"))) {
                 JSONArray spaceArray = positionObject.getJSONArray("spaces");
-                for (int j = 0; j < spaceArray.size(); j++) {
-                    JSONObject spaceObject = spaceArray.getJSONObject(j);
-                    addSpaceIdList.remove(spaceObject.getInteger("spaceId"));
-                }
 
                 addSpaceIdList.forEach(addSpaceId -> {
                     JSONObject spaceObject = new JSONObject();
                     spaceObject.put("spaceId", addSpaceId);
-                    spaceObject.put("contentIds", new JSONArray());
                     spaceArray.add(spaceObject);
                 });
                 break;
@@ -262,7 +274,8 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(addAdSpaceObject.getInteger("id"));
-        configAdCombination.setCombinationJson(combinationArray.toJSONString());
+        configAdCombination.setType(2);
+        configAdCombination.setPositionIds(combinationArray.toJSONString());
         this.updateById(configAdCombination);
         return postResult;
     }
@@ -292,7 +305,8 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(deleteAdSpacesObject.getInteger("id"));
-        configAdCombination.setCombinationJson(combinationArray.toJSONString());
+        configAdCombination.setType(2);
+        configAdCombination.setPositionIds(combinationArray.toJSONString());
         this.updateById(configAdCombination);
         return new PostResult();
     }
@@ -335,7 +349,8 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(addAdContentObject.getInteger("id"));
-        configAdCombination.setCombinationJson(combinationArray.toJSONString());
+        configAdCombination.setType(2);
+        configAdCombination.setPositionIds(combinationArray.toJSONString());
         this.updateById(configAdCombination);
         return new PostResult();
     }
@@ -386,7 +401,8 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(saveAdContentOrderNumObject.getInteger("id"));
-        configAdCombination.setCombinationJson(combinationArray.toJSONString());
+        configAdCombination.setType(2);
+        configAdCombination.setContentIds(combinationArray.toJSONString());
         this.updateById(configAdCombination);
         return new PostResult();
     }
@@ -423,7 +439,8 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(deleteAdContentsObject.getInteger("id"));
-        configAdCombination.setCombinationJson(combinationArray.toJSONString());
+        configAdCombination.setType(2);
+        configAdCombination.setContentIds(combinationArray.toJSONString());
         this.updateById(configAdCombination);
         return new PostResult();
     }
@@ -434,8 +451,8 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
      */
     private JSONArray getAdCombinationArray(String id) {
         ConfigAdCombination configAdCombination = this.getById(id);
-        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getCombinationJson())) {
-            return JSONArray.parseArray(configAdCombination.getCombinationJson());
+        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getContentIds())) {
+            return JSONArray.parseArray(configAdCombination.getContentIds());
         }
         return new JSONArray();
     }
@@ -459,5 +476,6 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
     public void setConfigAdStrategyService(ConfigAdStrategyService configAdStrategyService) {
         this.configAdStrategyService = configAdStrategyService;
     }
+
 
 }

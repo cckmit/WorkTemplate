@@ -144,7 +144,7 @@ public class AdValueService extends BaseStatsService<AdValue, AdValueMapper> {
         if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
             LocalDateTime localDateTime = LocalDateTime.now();
             String currentDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            beginDate = endDate = currentDate = "20200508";
+            beginDate = endDate = currentDate;
         }
 
         // 如果汇总方式为空，默认按日分组，即取数据值前8位

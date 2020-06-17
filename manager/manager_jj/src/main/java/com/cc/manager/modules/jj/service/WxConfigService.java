@@ -117,7 +117,7 @@ public class WxConfigService extends BaseCrudService<WxConfig, WxConfigMapper> {
         } else if (entity.getProgramType() == 2) {
             programTypeName = "公众号";
         }
-        entity.setShowName(platformName + "-" + programTypeName + "-" + entity.getProductName());
+        entity.setShowName(platformName + "-" + programTypeName + "-" + entity.getProductName() + "-" + entity.getId());
 
     }
 

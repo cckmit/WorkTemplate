@@ -132,9 +132,9 @@ public class AdValueWxAdUnitService extends BaseStatsService<AdValueWxAdUnit, Ad
         }
         // 如果查询日期为空，赋默认日期为当日
         if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
-            LocalDateTime localDateTime = LocalDateTime.now();
+            LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
             String currentDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            beginDate = endDate = currentDate = "20200510";
+            beginDate = endDate = currentDate;
         }
 
         queryObject.put("beginDate", beginDate);

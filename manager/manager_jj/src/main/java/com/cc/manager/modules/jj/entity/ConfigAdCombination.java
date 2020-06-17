@@ -21,17 +21,40 @@ public class ConfigAdCombination implements BaseCrudEntity<ConfigAdCombination> 
      */
     @TableId(value = "ddId", type = IdType.AUTO)
     private int id;
+
     /**
      * 名称
      */
     @TableField(value = "ddName", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
     private String name;
+
     /**
-     * 配置Json
+     * 类型
+     */
+    @TableField(value = "ddType")
+    private int type;
+
+    /**
+     * 旧的广告合集配置json
      */
     @JSONField(serialize = false)
     @TableField(value = "ddJson", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
     private String combinationJson;
+
+    /**
+     * 新广告合集配置方式
+     */
+    @JSONField(serialize = false)
+    @TableField(value = "ddPositionIds")
+    private String positionIds;
+
+    /**
+     * 新广告合集-banner广告池
+     */
+    @JSONField(serialize = false)
+    @TableField(value = "ddContentIds")
+    private String contentIds;
+
     /**
      * 数据更新时间
      */
