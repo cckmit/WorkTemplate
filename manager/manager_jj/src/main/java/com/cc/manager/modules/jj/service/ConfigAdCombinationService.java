@@ -34,7 +34,12 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<ConfigAdCombination> queryWrapper) {
-        queryWrapper.eq("ddType",1);
+        queryWrapper.eq("ddType", 1);
+    }
+
+    @Override
+    protected void updateInsertEntity(String requestParam, ConfigAdCombination entity) {
+        entity.setType(1);
     }
 
     @Override
@@ -160,7 +165,6 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
             JSONObject positionObject = combinationArray.getJSONObject(i);
             addPositionIdList.remove(positionObject.getInteger("positionId"));
         }
-
 
         // 如果不存在已配置的广告位置，新增广告配置
         addPositionIdList.forEach(addPositionId -> {

@@ -72,6 +72,10 @@ public class ConfigAdContentService extends BaseCrudService<ConfigAdContent, Con
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigAdContent> deleteWrapper) {
+        if (StringUtils.isNotBlank(requestParam)) {
+            List<String> idList = JSONObject.parseArray(requestParam, String.class);
+            return this.removeByIds(idList);
+        }
         return false;
     }
 

@@ -51,6 +51,13 @@ public class ConfigAdPositionService extends BaseCrudService<ConfigAdPosition, C
     }
 
     @Override
+    protected boolean update(String requestParam, ConfigAdPosition entity, UpdateWrapper<ConfigAdPosition> updateWrapper) {
+        entity.setAdTypes(StringUtils.strip(entity.getAdTypes(), "[]"));
+        // 更新数据
+        return this.updateById(entity);
+    }
+
+    @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigAdPosition> deleteWrapper) {
         return false;
     }

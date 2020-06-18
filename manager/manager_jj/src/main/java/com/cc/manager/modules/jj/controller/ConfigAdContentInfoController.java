@@ -8,7 +8,6 @@ import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.entity.ConfigAdContentInfo;
-import com.cc.manager.modules.jj.entity.ConfigAdType;
 import com.cc.manager.modules.jj.service.ConfigAdContentInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

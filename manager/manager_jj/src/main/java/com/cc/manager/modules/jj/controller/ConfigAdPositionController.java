@@ -46,9 +46,9 @@ public class ConfigAdPositionController implements BaseCrudController {
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdPositionService.post(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_position");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_position");
+//        }
         return postResult;
     }
 
@@ -56,9 +56,9 @@ public class ConfigAdPositionController implements BaseCrudController {
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdPositionService.put(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_position");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_position");
+//        }
         return postResult;
     }
 

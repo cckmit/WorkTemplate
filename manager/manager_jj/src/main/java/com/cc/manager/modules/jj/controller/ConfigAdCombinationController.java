@@ -46,9 +46,9 @@ public class ConfigAdCombinationController implements BaseCrudController {
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdCombinationService.post(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_combination");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_combination");
+//        }
         return postResult;
     }
 

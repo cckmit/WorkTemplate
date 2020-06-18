@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @TableName(schema = "persie", value = "config_ad_content_info")
 public class ConfigAdContentInfo implements BaseCrudEntity<ConfigAdContentInfo> {
 
-    @TableId(value = "ddTargetAppId",type = IdType.INPUT)
+    @TableId(value = "ddTargetAppId", type = IdType.INPUT)
     private String targetAppId;
 
     @TableField(value = "ddTargetAppType")
@@ -58,7 +58,7 @@ public class ConfigAdContentInfo implements BaseCrudEntity<ConfigAdContentInfo> 
     @Override
     @JSONField(serialize = false, deserialize = false)
     public String getCacheValue() {
-        return this.targetAppId+"-"+this.targetAppName;
+        return this.targetAppId + "-" + this.targetAppName;
     }
 
 }

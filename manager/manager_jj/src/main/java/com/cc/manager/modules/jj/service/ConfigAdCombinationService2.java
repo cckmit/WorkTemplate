@@ -9,19 +9,22 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.modules.jj.entity.*;
+import com.cc.manager.modules.jj.entity.ConfigAdCombination;
+import com.cc.manager.modules.jj.entity.ConfigAdContent;
+import com.cc.manager.modules.jj.entity.ConfigAdPosition;
 import com.cc.manager.modules.jj.mapper.ConfigAdCombinationMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * TODO
- *
  * @author CC ccheng0725@outlook.com
  * @date 2020-06-15 20:35
  */
@@ -29,16 +32,27 @@ import java.util.stream.Collectors;
 @DS("jj")
 public class ConfigAdCombinationService2 extends BaseCrudService<ConfigAdCombination, ConfigAdCombinationMapper> {
 
+    private static final String BANNER_TYPE = "1";
+    private static final String INIT_TYPE = "3";
+    private static final String ICON_TYPE = "4";
     private ConfigAdPositionService configAdPositionService;
-    private ConfigAdSpaceService configAdSpaceService;
     private ConfigAdContentService configAdContentService;
-    private ConfigAdStrategyService configAdStrategyService;
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<ConfigAdCombination> queryWrapper) {
-        queryWrapper.eq("ddType",2);
+        queryWrapper.eq("ddType", 2);
     }
 
+    @Override
+    protected void updateInsertEntity(String requestParam, ConfigAdCombination entity) {
+        entity.setType(2);
+        entity.setPositionIds(new JSONArray().toJSONString());
+        JSONObject contentIdsObject = new JSONObject();
+        contentIdsObject.put(BANNER_TYPE, new JSONArray().toJSONString());
+        contentIdsObject.put(INIT_TYPE, new JSONArray().toJSONString());
+        contentIdsObject.put(ICON_TYPE, new JSONArray().toJSONString());
+        entity.setContentIds(contentIdsObject.toJSONString());
+    }
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigAdCombination> deleteWrapper) {
@@ -50,7 +64,7 @@ public class ConfigAdCombinationService2 extends BaseCrudService<ConfigAdCombina
     }
 
     /**
-     * 只修改名称
+     * 修改名称
      *
      * @param requestParam 修改参数
      * @return 修改结果
@@ -69,125 +83,96 @@ public class ConfigAdCombinationService2 extends BaseCrudService<ConfigAdCombina
     }
 
     /**
-     * 获取广告合计树形表Json，在方法中，return开头的变量表示是放置到返回值中的变量
+     * 获取广告位置显示表
      *
      * @param adCombination 广告合集ID
-     * @return 广告合计树形表Json
+     * @return 广告位置JSONObject
      */
-    public JSONObject getAdCombinationTable(String adCombination) {
+    public JSONObject getAdPositionTable(String adCombination) {
         JSONObject returnObject = new JSONObject();
         returnObject.put("code", 2);
-
         ConfigAdCombination configAdCombination = this.getById(adCombination);
         if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getPositionIds())) {
-            JSONArray combinationArray = JSONArray.parseArray(configAdCombination.getPositionIds());
+            JSONArray positionArray = JSONArray.parseArray(configAdCombination.getPositionIds());
             JSONArray returnPositionArray = new JSONArray();
-            int id = 1;
-            for (int i = 0; i < combinationArray.size(); i++) {
-                id++;
-                JSONObject positionObject = combinationArray.getJSONObject(i);
-                String positionId = positionObject.getString("positionId");
-                ConfigAdPosition configAdPosition = this.configAdPositionService.getCacheEntity(ConfigAdPosition.class, positionId);
-
+            for (Object positionId : positionArray) {
+                ConfigAdPosition configAdPosition = this.configAdPositionService.getCacheEntity(ConfigAdPosition.class, positionId.toString());
                 JSONObject resultPositionObject = new JSONObject();
-                resultPositionObject.put("id", id);
-                resultPositionObject.put("operator", "addAdSpace");
-                resultPositionObject.put("combinationId", adCombination);
-                resultPositionObject.put("positionId", positionId);
-                resultPositionObject.put("name", configAdPosition.getCacheValue());
-                resultPositionObject.put("adType", configAdPosition.getAdTypeNames());
-
-
-                // 解析广告位数据
-                JSONArray spaceArray = positionObject.getJSONArray("spaces");
-                JSONArray returnSpaceArray = new JSONArray();
-                for (int j = 0; j < spaceArray.size(); j++) {
-                    id++;
-                    JSONObject spaceObject = spaceArray.getJSONObject(j);
-                    String spaceId = spaceObject.getString("spaceId");
-                    ConfigAdSpace configAdSpace = this.configAdSpaceService.getCacheEntity(ConfigAdSpace.class, spaceId);
-
-                    JSONObject returnSpaceObject = new JSONObject();
-                    returnSpaceObject.put("id", id);
-                    returnSpaceObject.put("operator", "addAdContent");
-                    returnSpaceObject.put("combinationId", adCombination);
-                    returnSpaceObject.put("positionId", positionId);
-                    returnSpaceObject.put("spaceId", spaceId);
-                    returnSpaceObject.put("name", configAdSpace.getCacheValue());
-                    returnSpaceObject.put("adType", configAdSpace.getAdTypeName());
-                    returnSpaceObject.put("orderNum", j + 1);
-
-
-                    returnSpaceArray.add(returnSpaceObject);
-                }
-                resultPositionObject.put("children", returnSpaceArray);
+                resultPositionObject.put("id", positionId.toString());
+                resultPositionObject.put("name", configAdPosition.getName());
+                resultPositionObject.put("adTypeNames", configAdPosition.getAdTypeNames());
                 returnPositionArray.add(resultPositionObject);
             }
             returnObject.put("data", returnPositionArray);
             returnObject.put("code", 1);
-        }
-        return returnObject;
-    }
-    public JSONObject getAdCombinationIconPool(String adCombination) {
-        JSONObject returnObject = new JSONObject();
-        returnObject.put("code", 2);
-
-        ConfigAdCombination configAdCombination = this.getById(adCombination);
-        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getContentIds())) {
-            JSONArray iconPoolArray = JSONArray.parseArray(configAdCombination.getContentIds());
-            JSONArray returnContentArray = new JSONArray();
-            int id = 1;
-            for (int k = 0; k < iconPoolArray.size(); k++) {
-                id++;
-                String contentId = iconPoolArray.getString(k);
-                ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId);
-
-                JSONObject returnContentObject = new JSONObject();
-                returnContentObject.put("id", id);
-                returnContentObject.put("combinationId", adCombination);
-                returnContentObject.put("operator", "addAdPool");
-                returnContentObject.put("contentId", contentId);
-                returnContentObject.put("name", configAdContent.getCacheValue());
-                returnContentObject.put("adType", configAdContent.getAdTypeName());
-                returnContentObject.put("orderNum", k + 1);
-                returnContentArray.add(returnContentObject);
-            }
-            returnObject.put("data", returnContentArray);
+        } else {
+            returnObject.put("data", new JSONArray());
             returnObject.put("code", 1);
         }
         return returnObject;
     }
 
-
-    public JSONObject getAdCombinationBannerPool(String adCombination) {
+    /**
+     * 获取广告内容显示表
+     *
+     * @param adCombination 广告合集ID
+     * @return 广告内容JSONObject
+     */
+    public JSONObject getAdContentTable(String adCombination) {
         JSONObject returnObject = new JSONObject();
-        returnObject.put("code", 2);
-
         ConfigAdCombination configAdCombination = this.getById(adCombination);
         if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getContentIds())) {
-            JSONArray bannerPoolArray = JSONArray.parseArray(configAdCombination.getContentIds());
-            JSONArray returnContentArray = new JSONArray();
-            int id = 1;
-            for (int k = 0; k < bannerPoolArray.size(); k++) {
-                id++;
-                String contentId = bannerPoolArray.getString(k);
-                ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId);
-
-                JSONObject returnContentObject = new JSONObject();
-                returnContentObject.put("id", id);
-                returnContentObject.put("combinationId", adCombination);
-                returnContentObject.put("operator", "addAdPool");
-                returnContentObject.put("contentId", contentId);
-                returnContentObject.put("name", configAdContent.getCacheValue());
-                returnContentObject.put("adType", configAdContent.getAdTypeName());
-                returnContentObject.put("orderNum", k + 1);
-                returnContentArray.add(returnContentObject);
+            JSONObject contentObject = JSON.parseObject(configAdCombination.getContentIds());
+            JSONArray bannerList = JSONArray.parseArray(contentObject.getString(BANNER_TYPE));
+            JSONArray initList = JSONArray.parseArray(contentObject.getString(INIT_TYPE));
+            JSONArray iconList = JSONArray.parseArray(contentObject.getString(ICON_TYPE));
+            JSONArray returnPositionArray = new JSONArray();
+            for (int i = 0; i < bannerList.size(); i++) {
+                Object contentId = bannerList.get(i);
+                ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId.toString());
+                JSONObject resultPositionObject = new JSONObject();
+                resultPositionObject.put("id", contentId.toString());
+                resultPositionObject.put("name", configAdContent.getAdTypeName());
+                resultPositionObject.put("index", i + 1);
+                resultPositionObject.put("targetAppId", configAdContent.getTargetAppId());
+                resultPositionObject.put("targetAppName", configAdContent.getTargetAppName());
+                resultPositionObject.put("imageUrl", configAdContent.getImageUrl());
+                returnPositionArray.add(resultPositionObject);
             }
-            returnObject.put("data", returnContentArray);
+            for (int i = 0; i < initList.size(); i++) {
+                Object contentId = initList.get(i);
+                ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId.toString());
+                JSONObject resultPositionObject = new JSONObject();
+                resultPositionObject.put("id", contentId.toString());
+                resultPositionObject.put("name", configAdContent.getAdTypeName());
+                resultPositionObject.put("index", i + 1);
+                resultPositionObject.put("targetAppId", configAdContent.getTargetAppId());
+                resultPositionObject.put("targetAppName", configAdContent.getTargetAppName());
+                resultPositionObject.put("imageUrl", configAdContent.getImageUrl());
+                returnPositionArray.add(resultPositionObject);
+            }
+            for (int i = 0; i < iconList.size(); i++) {
+                Object contentId = iconList.get(i);
+                ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId.toString());
+                JSONObject resultPositionObject = new JSONObject();
+                resultPositionObject.put("id", contentId.toString());
+                resultPositionObject.put("name", configAdContent.getAdTypeName());
+                resultPositionObject.put("index", i + 1);
+                resultPositionObject.put("targetAppId", configAdContent.getTargetAppId());
+                resultPositionObject.put("targetAppName", configAdContent.getTargetAppName());
+                resultPositionObject.put("imageUrl", configAdContent.getImageUrl());
+                returnPositionArray.add(resultPositionObject);
+            }
+            returnObject.put("data", returnPositionArray);
+            returnObject.put("code", 1);
+        } else {
+            returnObject.put("data", new JSONArray());
             returnObject.put("code", 1);
         }
+
         return returnObject;
     }
+
     /**
      * 新增广告位置
      *
@@ -196,119 +181,25 @@ public class ConfigAdCombinationService2 extends BaseCrudService<ConfigAdCombina
      */
     public PostResult addPosition(JSONObject addPositionObject) {
         PostResult postResult = new PostResult();
-        JSONArray combinationArray = this.getAdCombinationArray(addPositionObject.getString("id"));
+        JSONArray positionIdsArray = this.getAdPositionIdsArray(addPositionObject.getString("id"));
         List<Integer> addPositionIdList = JSON.parseArray(addPositionObject.getString("positionIds"), Integer.class);
-
-        for (int i = 0; i < combinationArray.size(); i++) {
-            JSONObject positionObject = combinationArray.getJSONObject(i);
-            addPositionIdList.remove(positionObject.getInteger("positionId"));
+        for (int i = positionIdsArray.size() - 1; i >= 0; i--) {
+            for (Integer integer : addPositionIdList) {
+                if (StringUtils.equals(integer.toString(), positionIdsArray.get(i).toString())) {
+                    postResult.setCode(2);
+                    postResult.setMsg("广告配置配置重复");
+                    return postResult;
+                }
+            }
         }
-
-        // 如果不存在已配置的广告位置，新增广告配置
-        addPositionIdList.forEach(addPositionId -> {
-            JSONObject adPositionObject = new JSONObject();
-            adPositionObject.put("positionId", addPositionId);
-            adPositionObject.put("spaces", new JSONArray());
-            combinationArray.add(adPositionObject);
-        });
-
+        positionIdsArray.addAll(addPositionIdList);
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(addPositionObject.getInteger("id"));
         configAdCombination.setType(2);
-        configAdCombination.setPositionIds(combinationArray.toJSONString());
+        configAdCombination.setPositionIds(positionIdsArray.toJSONString());
         this.updateById(configAdCombination);
         return postResult;
-    }
-
-    /**
-     * 批量删除广告位置
-     * {"id":"1","positionId":1}
-     *
-     * @param deleteAdPositionsObject 批量删除广告位置
-     * @return 新增结果
-     */
-    public PostResult deleteAdPosition(@RequestBody JSONObject deleteAdPositionsObject) {
-        JSONArray combinationArray = this.getAdCombinationArray(deleteAdPositionsObject.getString("id"));
-        combinationArray.removeIf(obj -> {
-            JSONObject positionObject = (JSONObject) obj;
-            return StringUtils.equals(positionObject.getString("positionId"), deleteAdPositionsObject.getString("positionId"));
-        });
-
-        // 保存数据对象
-        ConfigAdCombination configAdCombination = new ConfigAdCombination();
-        configAdCombination.setId(deleteAdPositionsObject.getInteger("id"));
-        configAdCombination.setType(2);
-        configAdCombination.setPositionIds(combinationArray.toJSONString());
-        this.updateById(configAdCombination);
-        return new PostResult();
-    }
-
-
-    /**
-     * 新增广告位
-     * {"spaceId":1,"positionId":"1","id":"1"}
-     *
-     * @param addAdSpaceObject 新增数据对象
-     * @return 新增结果
-     */
-    public PostResult addAdSpace(@RequestBody JSONObject addAdSpaceObject) {
-        PostResult postResult = new PostResult();
-        JSONArray combinationArray = this.getAdCombinationArray(addAdSpaceObject.getString("id"));
-        List<Integer> addSpaceIdList = JSON.parseArray(addAdSpaceObject.getString("spaceIds"), Integer.class);
-        for (int i = 0; i < combinationArray.size(); i++) {
-            JSONObject positionObject = combinationArray.getJSONObject(i);
-            String positionId = positionObject.getString("positionId");
-            if (StringUtils.equals(positionId, addAdSpaceObject.getString("positionId"))) {
-                JSONArray spaceArray = positionObject.getJSONArray("spaces");
-
-                addSpaceIdList.forEach(addSpaceId -> {
-                    JSONObject spaceObject = new JSONObject();
-                    spaceObject.put("spaceId", addSpaceId);
-                    spaceArray.add(spaceObject);
-                });
-                break;
-            }
-        }
-
-        // 保存数据对象
-        ConfigAdCombination configAdCombination = new ConfigAdCombination();
-        configAdCombination.setId(addAdSpaceObject.getInteger("id"));
-        configAdCombination.setType(2);
-        configAdCombination.setPositionIds(combinationArray.toJSONString());
-        this.updateById(configAdCombination);
-        return postResult;
-    }
-
-    /**
-     * 删除广告位
-     * {"positionId":"1","deleteSpaceIdArray":[],"id":"1"}
-     *
-     * @param deleteAdSpacesObject 删除数据
-     * @return 删除结果
-     */
-    public PostResult deleteAdSpace(JSONObject deleteAdSpacesObject) {
-        JSONArray combinationArray = this.getAdCombinationArray(deleteAdSpacesObject.getString("id"));
-        for (int i = 0; i < combinationArray.size(); i++) {
-            JSONObject positionObject = combinationArray.getJSONObject(i);
-            String positionId = positionObject.getString("positionId");
-            if (StringUtils.equals(positionId, deleteAdSpacesObject.getString("positionId"))) {
-                JSONArray spaceArray = positionObject.getJSONArray("spaces");
-                spaceArray.removeIf(obj -> {
-                    JSONObject spaceObject = (JSONObject) obj;
-                    return StringUtils.equals(spaceObject.getString("spaceId"), deleteAdSpacesObject.getString("spaceId"));
-                });
-                break;
-            }
-        }
-
-        // 保存数据对象
-        ConfigAdCombination configAdCombination = new ConfigAdCombination();
-        configAdCombination.setId(deleteAdSpacesObject.getInteger("id"));
-        configAdCombination.setType(2);
-        configAdCombination.setPositionIds(combinationArray.toJSONString());
-        this.updateById(configAdCombination);
-        return new PostResult();
     }
 
     /**
@@ -320,141 +211,244 @@ public class ConfigAdCombinationService2 extends BaseCrudService<ConfigAdCombina
      */
     public PostResult addAdContent(JSONObject addAdContentObject) {
         // 解析出要添加的广告内容ID
-        JSONArray combinationArray = this.getAdCombinationArray(addAdContentObject.getString("id"));
+        JSONObject contentIdsObject = this.getAdContentIdsObject(addAdContentObject.getString("id"));
         List<Integer> newContentIdList = JSONArray.parseArray(addAdContentObject.getString("contentIds"), Integer.class);
-
-        combinationArrayForEach:
-        for (int i = 0; i < combinationArray.size(); i++) {
-            JSONObject positionObject = combinationArray.getJSONObject(i);
-            String positionId = positionObject.getString("positionId");
-            if (StringUtils.equals(positionId, addAdContentObject.getString("positionId"))) {
-                JSONArray spaceArray = positionObject.getJSONArray("spaces");
-                for (int j = 0; j < spaceArray.size(); j++) {
-                    JSONObject spaceObject = spaceArray.getJSONObject(j);
-                    String spaceId = spaceObject.getString("spaceId");
-                    if (StringUtils.equals(spaceId, addAdContentObject.getString("spaceId"))) {
-                        List<Integer> contentIdList = JSONArray.parseArray(spaceObject.getString("contentIds"), Integer.class);
-                        for (int newContentId : newContentIdList) {
-                            if (!contentIdList.contains(newContentId)) {
-                                contentIdList.add(newContentId);
-                            }
-                        }
-                        spaceObject.put("contentIds", JSONArray.parseArray(JSON.toJSONString(contentIdList)));
-                        break combinationArrayForEach;
-                    }
-                }
+        for (Integer contentId : newContentIdList) {
+            ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId.toString());
+            int adType = configAdContent.getAdType();
+            if (adType == 1) {
+                String banner = contentIdsObject.getString(BANNER_TYPE);
+                JSONArray bannerList = JSONArray.parseArray(banner);
+                bannerList.add(contentId);
+                contentIdsObject.put(BANNER_TYPE, bannerList);
+            }
+            if (adType == 3) {
+                String init = contentIdsObject.getString(INIT_TYPE);
+                JSONArray initList = JSONArray.parseArray(init);
+                initList.add(contentId);
+                contentIdsObject.put(INIT_TYPE, initList);
+            }
+            if (adType == 4) {
+                String icon = contentIdsObject.getString(ICON_TYPE);
+                JSONArray iconList = JSONArray.parseArray(icon);
+                iconList.add(contentId);
+                contentIdsObject.put(ICON_TYPE, iconList);
             }
         }
-
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(addAdContentObject.getInteger("id"));
         configAdCombination.setType(2);
-        configAdCombination.setPositionIds(combinationArray.toJSONString());
+        configAdCombination.setContentIds(contentIdsObject.toJSONString());
         this.updateById(configAdCombination);
         return new PostResult();
     }
 
     /**
-     * <p>保存广告内容序号</p></br>
-     * <p>{"spaceId":"2","contentIndexArray":[{"contentId":"1","showIndex":0},{"contentId":"5","showIndex":1}],"positionId":"2","id":"5"}</p>
+     * 批量删除广告位置
+     * {"id":"1","positionId":1}
      *
-     * @param saveAdContentOrderNumObject 保存数据对象
-     * @return 保存结果
+     * @param deleteAdPositionsObject 批量删除广告位置
+     * @return 新增结果
      */
-    public PostResult saveAdContentOrderNum(JSONObject saveAdContentOrderNumObject) {
-        Map<String, LinkedHashMap<Integer, Integer>> map = new HashMap<>();
-        JSONArray contentOrderNumArray = saveAdContentOrderNumObject.getJSONArray("adContentOrderNumArray");
-        for (int i = 0; i < contentOrderNumArray.size(); i++) {
-            JSONObject indexObject = contentOrderNumArray.getJSONObject(i);
-            String key = indexObject.getString("positionId") + "_" + indexObject.getString("spaceId");
-            LinkedHashMap<Integer, Integer> contentIndexMap = map.get(key);
-            if (contentIndexMap == null) {
-                contentIndexMap = new LinkedHashMap<>();
-            }
-            contentIndexMap.put(indexObject.getInteger("contentId"), indexObject.getInteger("orderNum"));
-            map.put(key, contentIndexMap);
-        }
-
-        // 对当前所有广告位进行排序
-        JSONArray combinationArray = this.getAdCombinationArray(saveAdContentOrderNumObject.getString("id"));
-        for (int i = 0; i < combinationArray.size(); i++) {
-            JSONObject positionObject = combinationArray.getJSONObject(i);
-            String positionId = positionObject.getString("positionId");
-            // 解析广告位数据
-            JSONArray spaceArray = positionObject.getJSONArray("spaces");
-            JSONArray returnSpaceArray = new JSONArray();
-            for (int j = 0; j < spaceArray.size(); j++) {
-                JSONObject spaceObject = spaceArray.getJSONObject(j);
-                String spaceId = spaceObject.getString("spaceId");
-                LinkedHashMap<Integer, Integer> contentOrderNumMap = map.get(positionId + "_" + spaceId);
-                if (contentOrderNumMap != null) {
-                    LinkedHashMap<Integer, Integer> sortedContentOrderNumMap = new LinkedHashMap<>();
-                    // 排序
-                    contentOrderNumMap.entrySet().stream().sorted(Map.Entry.comparingByValue())
-                            .collect(Collectors.toList()).forEach(ele -> sortedContentOrderNumMap.put(ele.getKey(), ele.getValue()));
-                    spaceObject.put("contentIds", JSON.parseArray(JSON.toJSONString(sortedContentOrderNumMap.keySet())));
+    public PostResult deleteAdPosition(@RequestBody JSONObject deleteAdPositionsObject) {
+        JSONArray positionArray = this.getAdPositionIdsArray(deleteAdPositionsObject.getString("id"));
+        JSONArray positionIds = JSONArray.parseArray(deleteAdPositionsObject.getString("positionIds"));
+        for (Object positionId : positionIds) {
+            for (int i = positionArray.size() - 1; i >= 0; i--) {
+                if (StringUtils.equals(positionArray.get(i).toString(), positionId.toString())) {
+                    positionArray.remove(i);
                 }
             }
         }
-
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
-        configAdCombination.setId(saveAdContentOrderNumObject.getInteger("id"));
+        configAdCombination.setId(deleteAdPositionsObject.getInteger("id"));
         configAdCombination.setType(2);
-        configAdCombination.setContentIds(combinationArray.toJSONString());
+        configAdCombination.setPositionIds(positionArray.toJSONString());
         this.updateById(configAdCombination);
         return new PostResult();
     }
 
     /**
      * 批量删除广告内容
-     * {"spaceId":"1","positionId":"1","deleteContentIdArray":["10","2"],"id":"1"}
+     * {"positionId":"1","deleteContentIdArray":["10","2"],"id":"1"}
      *
      * @param deleteAdContentsObject 删除数据对象
      * @return 删除结果
      */
     public PostResult deleteAdContent(JSONObject deleteAdContentsObject) {
-        JSONArray combinationArray = this.getAdCombinationArray(deleteAdContentsObject.getString("id"));
-        combinationArrayForEach:
-        for (int i = 0; i < combinationArray.size(); i++) {
-            JSONObject positionObject = combinationArray.getJSONObject(i);
-            String positionId = positionObject.getString("positionId");
-            if (StringUtils.equals(positionId, deleteAdContentsObject.getString("positionId"))) {
-                JSONArray spaceArray = positionObject.getJSONArray("spaces");
-                for (int j = 0; j < spaceArray.size(); j++) {
-                    JSONObject spaceObject = spaceArray.getJSONObject(j);
-                    String spaceId = spaceObject.getString("spaceId");
-                    if (StringUtils.equals(spaceId, deleteAdContentsObject.getString("spaceId"))) {
-                        JSONArray contentArray = spaceObject.getJSONArray("contentIds");
-                        contentArray.removeIf(contentId ->
-                                StringUtils.equals(String.valueOf(contentId), deleteAdContentsObject.getString("contentId"))
-                        );
-                        break combinationArrayForEach;
-                    }
+        JSONObject contentIdsObject = this.getAdContentIdsObject(deleteAdContentsObject.getString("id"));
+        String contentId = deleteAdContentsObject.getString("contentId");
+        ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId);
+        int adType = configAdContent.getAdType();
+        if (adType == Integer.parseInt(BANNER_TYPE)) {
+            JSONArray bannerList = JSONArray.parseArray(contentIdsObject.getString(BANNER_TYPE));
+            for (int i = bannerList.size() - 1; i >= 0; i--) {
+                if (StringUtils.equals(bannerList.get(i).toString(), contentId)) {
+                    bannerList.remove(i);
                 }
             }
+            contentIdsObject.put(BANNER_TYPE, bannerList);
         }
-
+        if (adType == Integer.parseInt(INIT_TYPE)) {
+            JSONArray initList = JSONArray.parseArray(contentIdsObject.getString(INIT_TYPE));
+            for (int i = initList.size() - 1; i >= 0; i--) {
+                if (StringUtils.equals(initList.get(i).toString(), contentId)) {
+                    initList.remove(i);
+                }
+            }
+            contentIdsObject.put(INIT_TYPE, initList);
+        }
+        if (adType == Integer.parseInt(ICON_TYPE)) {
+            JSONArray iconList = JSONArray.parseArray(contentIdsObject.getString(ICON_TYPE));
+            for (int i = iconList.size() - 1; i >= 0; i--) {
+                if (StringUtils.equals(iconList.get(i).toString(), contentId)) {
+                    iconList.remove(i);
+                }
+            }
+            contentIdsObject.put(ICON_TYPE, iconList);
+        }
         // 保存数据对象
         ConfigAdCombination configAdCombination = new ConfigAdCombination();
         configAdCombination.setId(deleteAdContentsObject.getInteger("id"));
         configAdCombination.setType(2);
-        configAdCombination.setContentIds(combinationArray.toJSONString());
+        configAdCombination.setContentIds(contentIdsObject.toJSONString());
+        this.updateById(configAdCombination);
+        return new PostResult();
+    }
+
+    /**
+     * 复制广告位置内容
+     *
+     * @param combinationIdObject combinationIdObject
+     * @return 复制结果
+     */
+    public PostResult copyPosition(JSONObject combinationIdObject) {
+        PostResult postResult = new PostResult();
+        postResult.setMsg("复制成功，请注意查看");
+        int copyCount = 0;
+        JSONArray positionIdsArray = this.getAdPositionIdsArray(combinationIdObject.getString("id"));
+        JSONArray combinationIdList = JSONArray.parseArray(combinationIdObject.getString("combinationIdList"));
+        for (Object combinationId : combinationIdList) {
+            UpdateWrapper<ConfigAdCombination> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("ddId", combinationId);
+            updateWrapper.set("ddPositionIds", positionIdsArray.toJSONString());
+            boolean update = this.update(updateWrapper);
+            if (update) {
+                copyCount = copyCount + 1;
+            }
+        }
+        if (copyCount != combinationIdList.size()) {
+            postResult.setCode(2);
+            postResult.setMsg("复制失败！");
+        }
+        return postResult;
+    }
+
+    /**
+     * 复制广告池内容
+     *
+     * @param combinationIdObject combinationIdObject
+     * @return 复制结果
+     */
+    public PostResult copyContent(JSONObject combinationIdObject) {
+        PostResult postResult = new PostResult();
+        int copyCount = 0;
+        JSONObject contentIdsObject = this.getAdContentIdsObject(combinationIdObject.getString("id"));
+        JSONArray combinationIdList = JSONArray.parseArray(combinationIdObject.getString("combinationIdList"));
+        for (Object combinationId : combinationIdList) {
+            UpdateWrapper<ConfigAdCombination> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("ddId", combinationId);
+            updateWrapper.set("ddContentIds", contentIdsObject.toJSONString());
+            boolean update = this.update(updateWrapper);
+            if (update) {
+                copyCount = copyCount + 1;
+            }
+        }
+        if (copyCount != combinationIdList.size()) {
+            postResult.setCode(2);
+            postResult.setMsg("复制失败！");
+        }
+        return postResult;
+    }
+
+    /**
+     * 保存广告内容序号
+     *
+     * @param saveAdContentOrderNumObject 保存数据对象
+     * @return 保存结果
+     */
+    public PostResult saveAdContentOrderNum(JSONObject saveAdContentOrderNumObject) {
+        JSONObject contentIdsObject = this.getAdContentIdsObject(saveAdContentOrderNumObject.getString("id"));
+        Map<String, String> bannerMap = new LinkedHashMap<>(16);
+        Map<String, String> initMap = new LinkedHashMap<>(16);
+        Map<String, String> iconMap = new LinkedHashMap<>(16);
+        JSONArray contentOrderNumArray = saveAdContentOrderNumObject.getJSONArray("adContentOrderNumArray");
+        for (int i = 0; i < contentOrderNumArray.size(); i++) {
+            JSONObject contentObject = contentOrderNumArray.getJSONObject(i);
+            String contentId = contentObject.getString("id");
+            String index = contentObject.getString("index");
+            ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId);
+            if (configAdContent.getAdType() == 1) {
+                bannerMap.put(index, contentId);
+            } else if (configAdContent.getAdType() == 3) {
+                initMap.put(index, contentId);
+            } else if (configAdContent.getAdType() == 4) {
+                iconMap.put(index, contentId);
+            }
+        }
+        LinkedHashMap<String, String> sortedContentOrderBannerMap = new LinkedHashMap<>();
+        // banner排序
+        bannerMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toList()).forEach(ele -> sortedContentOrderBannerMap.put(ele.getKey(), ele.getValue()));
+        System.out.println(JSON.toJSONString(sortedContentOrderBannerMap.values()));
+        contentIdsObject.put(BANNER_TYPE, JSON.toJSONString(sortedContentOrderBannerMap.values()));
+        LinkedHashMap<String, String> sortedContentOrderInitMap = new LinkedHashMap<>();
+        // init排序
+        initMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toList()).forEach(ele -> sortedContentOrderInitMap.put(ele.getKey(), ele.getValue()));
+        System.out.println(JSON.toJSONString(sortedContentOrderInitMap.values()));
+        contentIdsObject.put(INIT_TYPE, JSON.toJSONString(sortedContentOrderInitMap.values()));
+
+        LinkedHashMap<String, String> sortedContentOrderIconMap = new LinkedHashMap<>();
+        // icon排序
+        iconMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toList()).forEach(ele -> sortedContentOrderIconMap.put(ele.getKey(), ele.getValue()));
+        System.out.println(JSON.toJSONString(sortedContentOrderIconMap.values()));
+        contentIdsObject.put(ICON_TYPE, JSON.toJSONString(sortedContentOrderIconMap.values()));
+
+        // 保存数据对象
+        ConfigAdCombination configAdCombination = new ConfigAdCombination();
+        configAdCombination.setId(saveAdContentOrderNumObject.getInteger("id"));
+        configAdCombination.setType(2);
+        configAdCombination.setContentIds(contentIdsObject.toJSONString());
         this.updateById(configAdCombination);
         return new PostResult();
     }
 
     /**
      * @param id 广告合集ID
-     * @return 广告合集数组
+     * @return 广告位置数组
      */
-    private JSONArray getAdCombinationArray(String id) {
+    private JSONArray getAdPositionIdsArray(String id) {
         ConfigAdCombination configAdCombination = this.getById(id);
-        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getContentIds())) {
-            return JSONArray.parseArray(configAdCombination.getContentIds());
+        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getPositionIds())) {
+            return JSONArray.parseArray(configAdCombination.getPositionIds());
         }
         return new JSONArray();
+    }
+
+    /**
+     * @param id 广告合集ID
+     * @return 广告内容数组
+     */
+    private JSONObject getAdContentIdsObject(String id) {
+        ConfigAdCombination configAdCombination = this.getById(id);
+        if (Objects.nonNull(configAdCombination) && StringUtils.isNotBlank(configAdCombination.getContentIds())) {
+            return JSON.parseObject(configAdCombination.getContentIds());
+        }
+        return new JSONObject();
     }
 
     @Autowired
@@ -463,19 +457,8 @@ public class ConfigAdCombinationService2 extends BaseCrudService<ConfigAdCombina
     }
 
     @Autowired
-    public void setConfigAdSpaceService(ConfigAdSpaceService configAdSpaceService) {
-        this.configAdSpaceService = configAdSpaceService;
-    }
-
-    @Autowired
     public void setConfigAdContentService(ConfigAdContentService configAdContentService) {
         this.configAdContentService = configAdContentService;
     }
-
-    @Autowired
-    public void setConfigAdStrategyService(ConfigAdStrategyService configAdStrategyService) {
-        this.configAdStrategyService = configAdStrategyService;
-    }
-
 
 }

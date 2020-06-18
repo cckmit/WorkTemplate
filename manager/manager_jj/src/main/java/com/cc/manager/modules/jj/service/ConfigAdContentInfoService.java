@@ -11,6 +11,8 @@ import com.cc.manager.modules.jj.mapper.ConfigAdContentInfoMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author cf
  * @since 2020-06-16
@@ -18,7 +20,6 @@ import org.springframework.stereotype.Service;
 @Service
 @DS("jj")
 public class ConfigAdContentInfoService extends BaseCrudService<ConfigAdContentInfo, ConfigAdContentInfoMapper> {
-
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<ConfigAdContentInfo> queryWrapper) {
@@ -31,6 +32,10 @@ public class ConfigAdContentInfoService extends BaseCrudService<ConfigAdContentI
 
     @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigAdContentInfo> deleteWrapper) {
+        if (StringUtils.isNotBlank(requestParam)) {
+            List<String> idList = JSONObject.parseArray(requestParam, String.class);
+            return this.removeByIds(idList);
+        }
         return false;
     }
 

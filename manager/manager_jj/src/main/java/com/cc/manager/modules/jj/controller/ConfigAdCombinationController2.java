@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- *
  * @author CC ccheng0725@outlook.com
  * @date 2020-06-15 20:35
  */
@@ -47,9 +46,9 @@ public class ConfigAdCombinationController2 implements BaseCrudController {
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdCombinationService2.post(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_combination");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_combination");
+//        }
         return postResult;
     }
 
@@ -57,9 +56,9 @@ public class ConfigAdCombinationController2 implements BaseCrudController {
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdCombinationService2.put(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_combination");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_combination");
+//        }
         return postResult;
     }
 
@@ -67,9 +66,9 @@ public class ConfigAdCombinationController2 implements BaseCrudController {
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
         PostResult postResult = this.configAdCombinationService2.delete(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_combination");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_combination");
+//        }
         return postResult;
     }
 
@@ -90,17 +89,15 @@ public class ConfigAdCombinationController2 implements BaseCrudController {
         return this.configAdCombinationService2.updateName(requestParam);
     }
 
-    @GetMapping(value = "/getAdCombinationTable/{id}")
-    public JSONObject getAdCombinationTable(@PathVariable String id) {
-        return this.configAdCombinationService2.getAdCombinationTable(id);
+
+    @GetMapping(value = "/getAdPositionTable/{id}")
+    public JSONObject getAdPositionTable(@PathVariable String id) {
+        return this.configAdCombinationService2.getAdPositionTable(id);
     }
-    @GetMapping(value = "/getAdCombinationBannerPool/{id}")
-    public JSONObject getAdCombinationBannerPool(@PathVariable String id) {
-        return this.configAdCombinationService2.getAdCombinationBannerPool(id);
-    }
-    @GetMapping(value = "/getAdCombinationIconPool/{id}")
-    public JSONObject getAdCombinationIconPool(@PathVariable String id) {
-        return this.configAdCombinationService2.getAdCombinationIconPool(id);
+
+    @GetMapping(value = "/getAdContentTable/{id}")
+    public JSONObject getAdContentTable(@PathVariable String id) {
+        return this.configAdCombinationService2.getAdContentTable(id);
     }
 
     /**
@@ -114,6 +111,21 @@ public class ConfigAdCombinationController2 implements BaseCrudController {
         PostResult postResult = this.configAdCombinationService2.addPosition(addAdPositionObject);
 //        if (postResult.getCode() == 1) {
 //             this.persieServerUtils.refreshTable("config_ad_combination");
+//        }
+        return postResult;
+    }
+
+    /**
+     * 新增广告内容
+     *
+     * @param addAdContentObject 新增数据对象
+     * @return 新增结果
+     */
+    @PostMapping(value = "/addAdContent")
+    public PostResult addAdContent(@RequestBody JSONObject addAdContentObject) {
+        PostResult postResult = this.configAdCombinationService2.addAdContent(addAdContentObject);
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_combination");
 //        }
         return postResult;
     }
@@ -133,52 +145,6 @@ public class ConfigAdCombinationController2 implements BaseCrudController {
         return postResult;
     }
 
-
-    /**
-     * 新增广告位
-     *
-     * @param addAdSpaceObject 新增数据对象
-     * @return 新增结果
-     */
-    @PostMapping(value = "/addAdSpace")
-    public PostResult addAdSpace(@RequestBody JSONObject addAdSpaceObject) {
-        PostResult postResult = this.configAdCombinationService2.addAdSpace(addAdSpaceObject);
-//        if (postResult.getCode() == 1) {
-//            this.persieServerUtils.refreshTable("config_ad_combination");
-//        }
-        return postResult;
-    }
-
-    /**
-     * 批量删除广告位
-     *
-     * @param deleteAdSpacesObject 新增数据对象
-     * @return 新增结果
-     */
-    @DeleteMapping(value = "/deleteAdSpace")
-    public PostResult deleteAdSpace(@RequestBody JSONObject deleteAdSpacesObject) {
-        PostResult postResult = this.configAdCombinationService2.deleteAdSpace(deleteAdSpacesObject);
-//        if (postResult.getCode() == 1) {
-//            this.persieServerUtils.refreshTable("config_ad_combination");
-//        }
-        return postResult;
-    }
-
-    /**
-     * 新增广告内容
-     *
-     * @param addAdContentObject 新增数据对象
-     * @return 新增结果
-     */
-    @PostMapping(value = "/addAdContent")
-    public PostResult addAdContent(@RequestBody JSONObject addAdContentObject) {
-        PostResult postResult = this.configAdCombinationService2.addAdContent(addAdContentObject);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_combination");
-        }
-        return postResult;
-    }
-
     /**
      * 批量删除广告位
      *
@@ -188,9 +154,9 @@ public class ConfigAdCombinationController2 implements BaseCrudController {
     @DeleteMapping(value = "/deleteAdContent")
     public PostResult deleteAdContent(@RequestBody JSONObject deleteAdContentsObject) {
         PostResult postResult = this.configAdCombinationService2.deleteAdContent(deleteAdContentsObject);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_combination");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_combination");
+//        }
         return postResult;
     }
 
@@ -203,9 +169,26 @@ public class ConfigAdCombinationController2 implements BaseCrudController {
     @PostMapping(value = "/saveAdContentOrderNum")
     public PostResult saveAdContentOrderNum(@RequestBody JSONObject saveAdContentOrderNumObject) {
         PostResult postResult = this.configAdCombinationService2.saveAdContentOrderNum(saveAdContentOrderNumObject);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_combination");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_combination");
+//        }
+        return postResult;
+    }
+
+    @PostMapping(value = "/copyPosition")
+    public PostResult copyPosition(@RequestBody JSONObject combinationIdObject) {
+        PostResult postResult = this.configAdCombinationService2.copyPosition(combinationIdObject);
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_combination");
+//        }
+        return postResult;
+    }
+    @PostMapping(value = "/copyContent")
+    public PostResult copyContent(@RequestBody JSONObject combinationIdObject) {
+        PostResult postResult = this.configAdCombinationService2.copyContent(combinationIdObject);
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_combination");
+//        }
         return postResult;
     }
 
