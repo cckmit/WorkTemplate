@@ -8,32 +8,29 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 广告组合
+ * 广告内容合集
  *
- * @author CC ccheng0725@outlook.com
- * @date 2020-03-13 16:59
+ * @author cf
+ * @since 2020-06-19
  */
 @Data
-@TableName(schema = "persie", value = "config_ad_combination")
-public class ConfigAdCombination implements BaseCrudEntity<ConfigAdCombination> {
-    /**
-     * 自增ID
-     */
+@TableName(schema = "persie", value = "config_ad_content_pool")
+public class ConfigAdContentPool implements BaseCrudEntity<ConfigAdContentPool> {
+
     @TableId(value = "ddId", type = IdType.AUTO)
     private int id;
 
     /**
-     * 名称
+     * 广告内容合集名称
      */
-    @TableField(value = "ddName", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
+    @TableField("ddName")
     private String name;
 
     /**
-     * 旧的广告合集配置json
+     * 广告内容合集
      */
-    @JSONField(serialize = false)
-    @TableField(value = "ddJson", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
-    private String combinationJson;
+    @TableField("ddContentIds")
+    private String contentIds;
 
     /**
      * 数据更新时间
@@ -43,15 +40,12 @@ public class ConfigAdCombination implements BaseCrudEntity<ConfigAdCombination> 
     private LocalDateTime updateTime;
 
     @Override
-    @JSONField(serialize = false, deserialize = false)
     public String getCacheKey() {
         return String.valueOf(this.id);
     }
 
     @Override
-    @JSONField(serialize = false, deserialize = false)
     public String getCacheValue() {
         return this.id + "-" + this.name;
     }
-
 }

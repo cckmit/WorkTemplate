@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/jj/configAdCombination2")
+@RequestMapping(value = "/jj/configAdCombination3")
 public class ConfigAdCombinationController2 implements BaseCrudController {
 
     private ConfigAdCombinationService2 configAdCombinationService2;

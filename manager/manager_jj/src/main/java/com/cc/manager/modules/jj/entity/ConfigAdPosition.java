@@ -23,6 +23,9 @@ public class ConfigAdPosition implements BaseCrudEntity<ConfigAdPosition> {
     @TableField(value = "ddName", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
     private String name;
 
+    @TableField(value = "ddMinVersion")
+    private String minVersion;
+
     @TableField(value = "ddAdTypes", insertStrategy = FieldStrategy.NOT_EMPTY, updateStrategy = FieldStrategy.NOT_EMPTY)
     private String adTypes;
 

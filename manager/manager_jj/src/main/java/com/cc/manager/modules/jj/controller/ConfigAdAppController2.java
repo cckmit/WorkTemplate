@@ -6,7 +6,7 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.modules.jj.service.ConfigAdAppService;
+import com.cc.manager.modules.jj.service.ConfigAdAppService2;
 import com.cc.manager.modules.jj.utils.PersieServerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.*;
  */
 @CrossOrigin
 @RestController
-@RequestMapping(value = "/jj/configAdApp")
-public class ConfigAdAppController implements BaseCrudController {
+@RequestMapping(value = "/jj/configAdApp2")
+public class ConfigAdAppController2 implements BaseCrudController {
 
-    private ConfigAdAppService configAdAppService;
+    private ConfigAdAppService2 configAdAppService;
     private PersieServerUtils persieServerUtils;
 
     @Override
@@ -45,9 +45,9 @@ public class ConfigAdAppController implements BaseCrudController {
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdAppService.post(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_app");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_app");
+//        }
         return postResult;
     }
 
@@ -55,9 +55,9 @@ public class ConfigAdAppController implements BaseCrudController {
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdAppService.put(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_app");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_app");
+//        }
         return postResult;
     }
 
@@ -87,7 +87,7 @@ public class ConfigAdAppController implements BaseCrudController {
     }
 
     @Autowired
-    public void setConfigAdAppService(ConfigAdAppService configAdAppService) {
+    public void setConfigAdAppService(ConfigAdAppService2 configAdAppService) {
         this.configAdAppService = configAdAppService;
     }
 

@@ -8,8 +8,7 @@ import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.jj.entity.ConfigAdApp;
-import com.cc.manager.modules.jj.entity.ConfigAdCombination;
-import com.cc.manager.modules.jj.entity.ConfigAdStrategy;
+import com.cc.manager.modules.jj.entity.ConfigAdContentPool;
 import com.cc.manager.modules.jj.entity.WxConfig;
 import com.cc.manager.modules.jj.mapper.ConfigAdAppMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -24,15 +23,14 @@ import java.util.List;
  */
 @Service
 @DS("jj")
-public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdAppMapper> {
+public class ConfigAdAppService2 extends BaseCrudService<ConfigAdApp, ConfigAdAppMapper> {
 
     private WxConfigService wxConfigService;
-    private ConfigAdCombinationService configAdCombinationService;
-    private ConfigAdStrategyService configAdStrategyService;
+    private ConfigAdContentPoolService configAdContentPoolService;
 
     @Override
     protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<ConfigAdApp> queryWrapper) {
-        queryWrapper.lt("ddMinVersion", "4.0.0");
+        queryWrapper.ge("ddMinVersion", "4.0.0");
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
             JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
             String appId = queryObject.getString("appId");
@@ -63,35 +61,35 @@ public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdApp
      */
     private void autoSetAdUnit(ConfigAdApp entity) {
         WxConfig wxConfig = this.wxConfigService.getCacheEntity(WxConfig.class, entity.getAppId());
-        if (StringUtils.isBlank(entity.getWxBannerUnit())) {
-            String banner = wxConfig.getBanner();
-            if (StringUtils.isNotBlank(banner) && StringUtils.contains(banner, "-")) {
-                banner = StringUtils.split(banner, "-")[1];
+        if (wxConfig != null) {
+            if (StringUtils.isBlank(entity.getWxBannerUnit())) {
+                String banner = wxConfig.getBanner();
+                if (StringUtils.isNotBlank(banner) && StringUtils.contains(banner, "-")) {
+                    banner = StringUtils.split(banner, "-")[1];
+                }
+                entity.setWxBannerUnit(banner);
             }
-            entity.setWxBannerUnit(banner);
-        }
-        if (StringUtils.isBlank(entity.getWxIntUint())) {
-            String intUnit = wxConfig.getScreen();
-            if (StringUtils.isNotBlank(intUnit) && StringUtils.contains(intUnit, "-")) {
-                intUnit = StringUtils.split(intUnit, "-")[1];
+            if (StringUtils.isBlank(entity.getWxIntUint())) {
+                String intUnit = wxConfig.getScreen();
+                if (StringUtils.isNotBlank(intUnit) && StringUtils.contains(intUnit, "-")) {
+                    intUnit = StringUtils.split(intUnit, "-")[1];
+                }
+                entity.setWxIntUint(intUnit);
             }
-            entity.setWxIntUint(intUnit);
-        }
-        if (StringUtils.isBlank(entity.getWxReVideoUnit())) {
-            String reVideo = wxConfig.getVideo();
-            if (StringUtils.isNotBlank(reVideo) && StringUtils.contains(reVideo, "-")) {
-                reVideo = StringUtils.split(reVideo, "-")[1];
+            if (StringUtils.isBlank(entity.getWxReVideoUnit())) {
+                String reVideo = wxConfig.getVideo();
+                if (StringUtils.isNotBlank(reVideo) && StringUtils.contains(reVideo, "-")) {
+                    reVideo = StringUtils.split(reVideo, "-")[1];
+                }
+                entity.setWxReVideoUnit(reVideo);
             }
-            entity.setWxReVideoUnit(reVideo);
         }
     }
 
     @Override
     protected void rebuildSelectedEntity(ConfigAdApp entity) {
         entity.setAppName(this.wxConfigService.getCacheValue(WxConfig.class, entity.getAppId()));
-        entity.setCombinationName(this.configAdCombinationService.getCacheValue(ConfigAdCombination.class, String.valueOf(entity.getCombinationId())));
-        entity.setWxBannerStrategyName(this.configAdStrategyService.getCacheValue(ConfigAdStrategy.class, String.valueOf(entity.getWxBannerStrategyId())));
-        entity.setWxIntStrategyName(this.configAdStrategyService.getCacheValue(ConfigAdStrategy.class, String.valueOf(entity.getWxIntStrategyId())));
+        entity.setContentPoolName(this.configAdContentPoolService.getCacheValue(ConfigAdContentPool.class, String.valueOf(entity.getContentPoolId())));
     }
 
     @Override
@@ -157,13 +155,8 @@ public class ConfigAdAppService extends BaseCrudService<ConfigAdApp, ConfigAdApp
     }
 
     @Autowired
-    public void setConfigAdCombinationService(ConfigAdCombinationService configAdCombinationService) {
-        this.configAdCombinationService = configAdCombinationService;
-    }
-
-    @Autowired
-    public void setConfigAdStrategyService(ConfigAdStrategyService configAdStrategyService) {
-        this.configAdStrategyService = configAdStrategyService;
+    public void setConfigAdContentPoolService(ConfigAdContentPoolService configAdContentPoolService) {
+        this.configAdContentPoolService = configAdContentPoolService;
     }
 
 }

@@ -1,5 +1,7 @@
 package com.cc.manager;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.common.utils.RedisUtil;
@@ -57,6 +59,9 @@ class ManagerJjApplicationTests {
         PostResult postResult = new PostResult();
        // postResult = this.persieServerUtils.refreshTable("app_config");
      //   System.out.println(postResult.toString());
+        JSONArray contentIdsArray = JSON.parseArray("[{\"targetAppName\":\"剑荡仙途\",\"imageUrl\":\"https://res.qinyougames.com/images/ad_icon_96_jian.png\",\"name\":\"自有—Icon\",\"index\":4,\"id\":\"96\",\"targetAppId\":\"wx341a6234c7ded95b\"},{\"targetAppName\":\"西游女儿国\",\"imageUrl\":\"https://res.qinyougames.com/images/ad_icon_99_xi.png\",\"name\":\"自有—Icon\",\"index\":5,\"id\":\"99\",\"targetAppId\":\"wx58e5f17198811b65\"}]");
+        System.out.println(contentIdsArray);
+
     }
 
     @Test

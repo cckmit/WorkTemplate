@@ -28,6 +28,9 @@ public class ConfigAdApp implements BaseCrudEntity<ConfigAdApp> {
     @TableField(value = "ddCombinationId")
     private int combinationId;
 
+    @TableField(value = "ddContentPoolId")
+    private int contentPoolId;
+
     @TableField(value = "ddAllowedShow")
     private boolean allowedShow;
 
@@ -78,6 +81,11 @@ public class ConfigAdApp implements BaseCrudEntity<ConfigAdApp> {
      */
     @TableField(exist = false)
     private String combinationName;
+    /**
+     * 广告内容池ID
+     */
+    @TableField(exist = false)
+    private String contentPoolName;
     /**
      * 微信Banner广告策略
      */

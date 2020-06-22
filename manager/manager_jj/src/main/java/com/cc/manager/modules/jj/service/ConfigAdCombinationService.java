@@ -39,7 +39,6 @@ public class ConfigAdCombinationService extends BaseCrudService<ConfigAdCombinat
 
     @Override
     protected void updateInsertEntity(String requestParam, ConfigAdCombination entity) {
-        entity.setType(1);
     }
 
     @Override
