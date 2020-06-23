@@ -236,7 +236,7 @@ public class ConfigAdContentPoolService extends BaseCrudService<ConfigAdContentP
      */
     private void changeMap(Map<String, Integer> changeMap, JSONArray list) {
         for (int i = 0; i < list.size(); i++) {
-            changeMap.put(String.valueOf(i + 1), (Integer) list.get(i));
+            changeMap.put(String.valueOf(i + 1), Integer.parseInt(list.get(i).toString()));
         }
     }
 
@@ -282,15 +282,15 @@ public class ConfigAdContentPoolService extends BaseCrudService<ConfigAdContentP
             return postResult;
         }
         JSONObject contentIdsObject = this.getAdContentIdsObject(saveAdContentOrderNumObject.getString("id"));
-        Map<String, String> bannerMap = new LinkedHashMap<>(16);
-        Map<String, String> initMap = new LinkedHashMap<>(16);
-        Map<String, String> iconMap = new LinkedHashMap<>(16);
+        Map<String, Integer> bannerMap = new LinkedHashMap<>(16);
+        Map<String, Integer> initMap = new LinkedHashMap<>(16);
+        Map<String, Integer> iconMap = new LinkedHashMap<>(16);
         JSONArray contentOrderNumArray = saveAdContentOrderNumObject.getJSONArray(adContentOrderNumArray);
         for (int i = 0; i < contentOrderNumArray.size(); i++) {
             JSONObject contentObject = contentOrderNumArray.getJSONObject(i);
-            String contentId = contentObject.getString("id");
+            Integer contentId = contentObject.getInteger("id");
             String index = contentObject.getString("index");
-            ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId);
+            ConfigAdContent configAdContent = this.configAdContentService.getCacheEntity(ConfigAdContent.class, contentId.toString());
             if (configAdContent.getAdType() == Integer.parseInt(BANNER_TYPE)) {
                 bannerMap.put(index, contentId);
             } else if (configAdContent.getAdType() == Integer.parseInt(INIT_TYPE)) {
@@ -299,32 +299,24 @@ public class ConfigAdContentPoolService extends BaseCrudService<ConfigAdContentP
                 iconMap.put(index, contentId);
             }
         }
-        LinkedHashMap<String, String> sortedContentOrderBannerMap = new LinkedHashMap<>();
-        // banner排序
-        bannerMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toList()).forEach(ele -> sortedContentOrderBannerMap.put(ele.getKey(), ele.getValue()));
-
-        contentIdsObject.put(BANNER_TYPE, JSON.toJSONString(sortedContentOrderBannerMap.values()));
-
-        LinkedHashMap<String, String> sortedContentOrderInitMap = new LinkedHashMap<>();
-        // init排序
-        initMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toList()).forEach(ele -> sortedContentOrderInitMap.put(ele.getKey(), ele.getValue()));
-
-        contentIdsObject.put(INIT_TYPE, JSON.toJSONString(sortedContentOrderInitMap.values()));
-
-        LinkedHashMap<String, String> sortedContentOrderIconMap = new LinkedHashMap<>();
-        // icon排序
-        iconMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toList()).forEach(ele -> sortedContentOrderIconMap.put(ele.getKey(), ele.getValue()));
-
-        contentIdsObject.put(ICON_TYPE, JSON.toJSONString(sortedContentOrderIconMap.values()));
+        saveContentIndex(contentIdsObject, bannerMap, BANNER_TYPE);
+        saveContentIndex(contentIdsObject, initMap, INIT_TYPE);
+        saveContentIndex(contentIdsObject, iconMap, ICON_TYPE);
         // 保存数据对象
         ConfigAdContentPool configAdContentPool = new ConfigAdContentPool();
         configAdContentPool.setId(saveAdContentOrderNumObject.getInteger("id"));
         configAdContentPool.setContentIds(contentIdsObject.toJSONString());
         this.updateById(configAdContentPool);
         return new PostResult();
+    }
+
+    private void saveContentIndex(JSONObject contentIdsObject, Map<String, Integer> bannerMap, String type) {
+        LinkedHashMap<String, Integer> sortedContentOrderMap = new LinkedHashMap<>();
+        // 排序
+        bannerMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toList()).forEach(ele -> sortedContentOrderMap.put(ele.getKey(), ele.getValue()));
+
+        contentIdsObject.put(type, sortedContentOrderMap.values());
     }
 
     /**

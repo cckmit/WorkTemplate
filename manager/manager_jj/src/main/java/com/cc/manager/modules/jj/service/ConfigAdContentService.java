@@ -36,8 +36,6 @@ public class ConfigAdContentService extends BaseCrudService<ConfigAdContent, Con
             queryWrapper.eq(StringUtils.isNotBlank(adType), "ddAdType", adType);
             String targetAppId = queryObject.getString("targetAppId");
             queryWrapper.like(StringUtils.isNotBlank(targetAppId), "ddTargetAppId", targetAppId);
-            String promoteAppId = queryObject.getString("promoteAppId");
-            queryWrapper.like(StringUtils.isNotBlank(promoteAppId), "ddPromoteAppId", promoteAppId);
         }
     }
 

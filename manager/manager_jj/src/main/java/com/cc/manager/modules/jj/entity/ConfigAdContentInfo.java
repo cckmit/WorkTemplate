@@ -24,6 +24,9 @@ public class ConfigAdContentInfo implements BaseCrudEntity<ConfigAdContentInfo> 
     @TableField(value = "ddTargetAppName")
     private String targetAppName;
 
+    @TableField(value = "ddExtraParam")
+    private String extraParam;
+
     @TableField(value = "ddTargetEnvVersion")
     private String targetEnvVersion;
 

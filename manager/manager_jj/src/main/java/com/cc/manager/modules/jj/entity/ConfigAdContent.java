@@ -38,9 +38,6 @@ public class ConfigAdContent implements BaseCrudEntity<ConfigAdContent> {
     @TableField(value = "ddVideoUrl")
     private String videoUrl;
 
-    @TableField(value = "ddExtraParam")
-    private String extraParam;
-
     @TableField(value = "ddTargetAppDesc")
     private String targetAppDesc;
 

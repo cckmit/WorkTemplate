@@ -37,8 +37,8 @@ public class ConfigAdAppService2 extends BaseCrudService<ConfigAdApp, ConfigAdAp
             queryWrapper.eq(StringUtils.isNotBlank(appId), "ddAppId", appId);
             String minVersion = queryObject.getString("minVersion");
             queryWrapper.like(StringUtils.isNotBlank(minVersion), "ddMinVersion", minVersion);
-            String combinationId = queryObject.getString("combinationId");
-            queryWrapper.eq(StringUtils.isNotBlank(combinationId), "ddCombinationId", combinationId);
+            String contentPoolId = queryObject.getString("contentPoolId");
+            queryWrapper.eq(StringUtils.isNotBlank(contentPoolId), "ddContentPoolId", contentPoolId);
         }
     }
 

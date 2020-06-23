@@ -81,9 +81,9 @@ public class ConfigAdPositionController implements BaseCrudController {
     @PutMapping("/statusSwitch")
     public PostResult statusSwitch(@RequestBody String requestParam) {
         PostResult postResult = this.configAdPositionService.statusSwitch(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_position");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_position");
+//        }
         return postResult;
     }
 

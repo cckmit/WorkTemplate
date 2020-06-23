@@ -65,9 +65,9 @@ public class ConfigAdAppController2 implements BaseCrudController {
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
         PostResult postResult = this.configAdAppService.delete(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_app");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_app");
+//        }
         return postResult;
     }
 

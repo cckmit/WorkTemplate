@@ -45,9 +45,9 @@ public class ConfigAdAppController implements BaseCrudController {
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configAdAppService.post(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_app");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_app");
+//        }
         return postResult;
     }
 
@@ -55,9 +55,9 @@ public class ConfigAdAppController implements BaseCrudController {
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.configAdAppService.put(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_ad_app");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("config_ad_app");
+//        }
         return postResult;
     }
 
