@@ -10,11 +10,11 @@
  * @param {String} selectId 下拉框ID
  * @param {String} moduleName 所属模块名称
  * @param {String} page 查询功能页面
- * @param {String} level 查询级别：windowCache-window对象种的缓存、serverCache-服务器缓存、serverDb-从服务器数据库查询
+ * @param {String} level 查询级别：windowCache-window对象种的缓存、serverDb-服务器缓存、serverDb-从服务器数据库查询
  */
 function renderNormalSelect(selectId, moduleName, page, level) {
     const selectOption = localStorage.getItem("select-option" + moduleName + '-' + page);
-    // 如果缓存种有，根据当前级别查询
+    // 如果缓存中有，根据当前级别查询
     if (selectOption) {
         if ('serverDb' === level) {
             getSelectOptionByAjax(selectId, moduleName, page, level);
@@ -22,7 +22,7 @@ function renderNormalSelect(selectId, moduleName, page, level) {
             renderSelect(selectId, selectOption);
         }
     } else {
-        getSelectOptionByAjax(selectId, moduleName, page, 'serverCache');
+        getSelectOptionByAjax(selectId, moduleName, page, 'serverDb');
     }
 }
 
@@ -31,7 +31,7 @@ function renderNormalSelect(selectId, moduleName, page, level) {
  * @param {String} selectId 下拉框ID
  * @param {String} moduleName 所属模块名称
  * @param {String} page 查询功能页面
- * @param {String} level 查询级别：windowCache-window对象种的缓存、serverCache-服务器缓存、serverDb-从服务器数据库查询
+ * @param {String} level 查询级别：windowCache-window对象中的缓存、serverDb-从服务器数据库查询
  */
 function getSelectOptionByAjax(selectId, moduleName, page, level) {
     $.ajax({

@@ -164,7 +164,6 @@
             }
 
             layui.jquery('.login-out').on("click", () => {
-                console.log(window.module.system.server+"------")
                 layAjax({
                     url: window.module.system.server + "authc/logout",
                     type: 'GET',

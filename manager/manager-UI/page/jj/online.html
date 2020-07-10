@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>在线统计</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 查询表单 -->
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">时间范围</label>
+                        <div class="layui-input-inline">
+                            <input type="text" class="layui-input" id="times" name="times" placeholder=" - ">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">游戏名称</label>
+                        <div class="layui-input-inline">
+                            <select id="gameIdSelect" name="gameCode" lay-search=""></select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    </div>
+
+                </div>
+            </form>
+            <div class="layui-card-body">
+                <div id="Notice" style="width: 1400px;height:400px;"></div>
+            </div>
+            <!-- Table表头 -->
+            <script type="text/html" id="crudTableBar">
+            </script>
+
+            <!-- Table -->
+            <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
+
+            <!-- 行内按钮 -->
+            <script type="text/html" id="crudRowBar">
+                <a class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="layui-icon">&#xe642;</i>编辑</a>
+                <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="copy"><i class="layui-icon">&#xe61f;</i>复制</a>   
+            </script>
+
+            <!-- 行内表单 -->
+            <script type="text/html" id="switchStatus">
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                    {{ d.status ? 'checked' : '' }}>
+            </script>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
+    <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
+    <script src="../../js/lay-module/echarts/echarts.js"></script>
+    <script>
+        let object = this;
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置
+        const currentPage = {
+            module: window.module.jj,
+            page: 'jj/online'
+        }
+        // 渲染全部动态查询框
+        function renderAllSelect(level) {
+            //搜索框内容
+            renderNormalSelect('gameIdSelect', 'jj', 'games', level);
+        }
+        // 表单数据查询渲染
+        layui.use(['form', 'table', 'layer', 'laydate'], function () {
+            $ = layui.jquery, form = layui.form, layer = layui.layer, laydate = layui.laydate, table = layui.table;
+            table.render({
+                elem: '#crudTableId',
+                url: currentPage.module.server + currentPage.page + '/getPage',
+                toolbar: '#crudTableBar',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    { type: 'checkbox', fixed: 'left' },
+                    { field: 'times', width: 200, title: '时间', sort: true, align: 'center' },
+                    { field: 'online', width: 180, title: '在线人数', sort: true, align: 'center' },
+                    { field: 'buzyRoom', width: 180, title: '游戏房间数', sort: true, align: 'center' },
+                    { field: 'idleRoom', width: 180, title: '剩余房间数', sort: true, align: 'center' },
+                    { field: 'gameInfo', width: 400, title: '游戏信息', sort: true, align: 'center' },
+                    { field: 'insertTime', width: 200, title: '插入时间', sort: true, align: 'center' }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-80',
+                done: function (res, curr, count) {
+                    //当前第一才进行加载
+                    if (curr === 1) {
+                        let lineData = res['lineData'];
+                        let seriesData = lineData['series'];
+                        let series = [];
+                        let legend = [];
+                        let selected = {};
+                        for (let i = 0; i < seriesData.length; i++) {
+                            let data = seriesData[i];
+                            selected[data.name] = !data.smooth;
+                            legend.push(data.name);
+                            series.push({
+                                name: data.name,
+                                type: 'line',//线性
+                                data: data.data,
+                                smooth: data.smooth,//曲线 默认折线
+                            });
+                        }
+                        if (object.notice) {
+                            object.notice.clear();
+                        }
+                        object.notice = echarts.init(document.getElementById('Notice'));
+                        let data = { //加载数据图表
+                            title: {
+                                text: '在线人数统计'
+                            },
+                            dataZoom: [{
+                                type: "inside"
+                            }],
+                            tooltip: {
+                                trigger: 'axis'//悬浮显示对比
+                            },
+                            toolbox: {
+                                feature: {
+                                    saveAsImage: {}//保存图片下载
+                                }
+                            },
+                            xAxis: {
+                                type: 'category',
+                                boundaryGap: false,//从起点开始
+                                data: lineData['xAxis']
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: series,
+                            legend: { data: legend, selected: selected }
+                        };
+                        console.log('option data:', data);
+                        object.notice.setOption(data);
+                        window.onresize = function () {//用于使echarts自适应高度和宽度
+                            object.notice && object.notice.resize();
+                        };
+                    }
+                }
+            });
+
+            // 日期范围选择框渲染
+            laydate.render({
+                elem: '#times',
+                format: 'yyyy-MM-dd',
+                range: '~'
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

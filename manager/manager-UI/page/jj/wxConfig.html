@@ -19,7 +19,7 @@
                 lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">APPID</label>
+                        <label class="layui-form-label">产品名称</label>
                         <div class="layui-input-inline">
                             <select id="appIdSelect" name="id" lay-search=""> </select>
                         </div>
@@ -243,7 +243,7 @@
             module: window.module.jj,
             page: 'jj/wxConfig'
         }
-        
+
         // 渲染全部动态查询框
         function renderAllSelect(level) {
             renderNormalSelect('appIdSelect', 'jj', 'wxConfig', level);

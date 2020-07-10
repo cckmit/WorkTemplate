@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>用户明细来源-活跃</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <!-- 查询表单 -->
+            <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">时间</label>
+                        <div class="layui-input-inline">
+                            <input class="layui-input" id="times" name="times" placeholder=" - " type="text">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">产品名称</label>
+                        <div class="layui-input-inline">
+                            <select id="appIdSelect" name="appId" lay-search=""> </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">App类型</label>
+                        <div class="layui-input-inline">
+                            <select name="appType" id="appType">
+                                <option value="">全部</option>
+                                <option value="tt">头条</option>
+                                <option value="watermelon">西瓜视频</option>
+                                <option value="tikTok">抖音</option>
+                                <option value="ttExtreme">头条极速版</option>
+                                <option value="tikTokExtreme">抖音极速版</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="data-search-btn"
+                            lay-filter="data-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Table表头 -->
+            <script type="text/html" id="crudTableBar">
+            </script>
+
+            <!-- Table -->
+            <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
+
+            <!-- 行内按钮 -->
+            <script type="text/html" id="crudRowBar">
+            </script>
+
+            <!-- 行内表单 -->
+            <script type="text/html" id="switchStatus">
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                    {{ d.status ? 'checked' : '' }}>
+            </script>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            </div>
+        </div>
+    </form>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js" charset="utf-8"></script>
+    <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-form-verify.js" charset="utf-8"></script>
+    <script src="../../js/tt-dataFormat.js" charset="utf-8"></script>
+    <script>
+        // 当前页面所属模块，使用之前请先在lay-config.js中配置
+        const currentPage = {
+            module: window.module.jj,
+            page: 'tt/ttDailyValue'
+        }
+
+        // 渲染全部动态查询框
+        function renderAllSelect(level) {
+            renderNormalSelect('appIdSelect', 'jj', 'jjAndFcAppConfig', level);
+        }
+
+        // 表单数据查询渲染
+        layui.use(['form', 'table', 'layer', 'laydate'], function () {
+            const $ = layui.jquery, form = layui.form, layer = layui.layer, laydate = layui.laydate, table = layui.table;
+            let relation = {};
+            $.ajax({
+                url: currentPage.module.server + 'tt/ttValueMapping/getPage?page=1&limit=30',
+                headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                     for (var i = 0; i < result.data.length; i++) {  //循环LIST
+                        var obj = result.data[i];//获取LIST里面的对象
+                        let groupByKey, groupByValue;
+                          for (var key in obj) {
+                             if (key == "groupByKey")
+                                 groupByKey= obj[key];
+                             if (key == "groupByValue")
+                                 groupByValue = obj[key];
+                         }
+                         relation[groupByKey] = groupByValue;
+                    }
+                    // console.log("我是relation:" + JSON.stringify(relation));
+                }
+            });
+            table.render({
+                elem: '#crudTableId',
+                url: currentPage.module.server + currentPage.page + '/getPage',
+                toolbar: '#crudTableBar',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    { field: 'dateNum', width: 120, title: '日期', sort: true },
+                    { field: 'appId', width: 160, title: 'AppID', sort: true },
+                    { field: 'appName', width: 160, title: 'App名称', sort: true },
+                    {
+                        field: 'appType', width: 120, title: '来源App类型', sort: true,
+                        templet: (d) => {
+                            switch (d.appType) {
+                                case 'tt': return '今日头条'; break;
+                                case 'tikTok': return '抖音'; break;
+                                case 'watermelon': return '西瓜视频'; break;
+                                case 'ttExtreme': return '今日头条极速版'; break;
+                                case 'tikTokExtreme': return '抖音极速版'; break;
+                                default: return '未知平台';
+                            }
+                        }
+                    },
+                    {
+                        field: 'activeUsers', width: 100, title: '搜索', sort: true,
+                        templet: (d) => {
+                            return searchDataFormat(d.activeUsers, relation);
+                        }
+                    },
+                      {
+                        field: 'activeUsers', width: 100, title: '搜索', sort: true
+                    },
+                    {
+                        field: 'activeUsers', width: 100, title: '发现', sort: true,
+                        templet: (d) => {
+                            return findDataFormat(d.activeUsers, relation);
+                        }
+                    },
+                    {
+                        field: 'activeUsers', width: 100, title: '游戏盒子', sort: true,
+                        templet: (d) => {
+                            return gameBoxDataFormat(d.activeUsers, relation);
+                        }
+                    },
+                    {
+                        field: 'activeUsers', width: 100, title: '其他', sort: true,
+                        templet: (d) => {
+                            return otherDataFormat(d.activeUsers, relation);
+                        }
+                    },
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-80'
+            });
+
+            // 日期范围选择框渲染
+            laydate.render({
+                elem: '#times',
+                format: 'yyyy-MM-dd',
+                range: '~'
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

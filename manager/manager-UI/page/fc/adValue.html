@@ -35,25 +35,25 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">运营产品</label>
                         <div class="layui-input-inline">
-                            <select id="appIdSelect" name="productAppId" lay-search=""> </select>
+                            <select id="productAppId" name="productAppId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">推广产品</label>
                         <div class="layui-input-inline">
-                            <select id="targetAppSelect" name="targetAppId" lay-search=""> </select>
+                            <select id="targetAppId" name="targetAppId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">广告位置</label>
                         <div class="layui-input-inline">
-                            <select id="adPositionSelect" name="adPositionId" lay-search=""> </select>
+                            <select id="adPositionId" name="adPositionId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
                         <label class="layui-form-label">广告位</label>
                         <div class="layui-input-inline">
-                            <select id="adSpaceSelect" name="adSpaceId" lay-search=""> </select>
+                            <select id="adSpaceId" name="adSpaceId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -124,9 +124,9 @@
         }
 
         function renderAllSelect(level) {
-            renderNormalSelect('appIdSelect', 'jj', 'wxConfig', level);
-            renderNormalSelect('adPositionSelect', 'jj', 'configAdPosition', level);
-            renderNormalSelect('adSpaceSelect', 'jj', 'configAdSpace', level);
+            renderNormalSelect('productAppId', 'jj', 'wxConfig', level);
+            renderNormalSelect('adPositionId', 'jj', 'configAdPosition', level);
+            renderNormalSelect('adSpaceId', 'jj', 'configAdSpace', level);
             $.ajax({
                 url: window.module.jj.server + "jj/configAdContent/getTargetAppArray/",
                 headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
@@ -151,7 +151,7 @@
                         }
                     }
                     selectOption = selectOption.join('');
-                    renderSelect("targetAppSelect", selectOption);
+                    renderSelect("targetAppId", selectOption);
                 }
             });
         }
@@ -160,7 +160,8 @@
          * 构建查询表单对象
          */
         function buildQueryFormObject(data) {
-            console.log('data -> ', data, data.timeValue);
+            console.log('8888 -> ', data);
+             console.log('targetAppId ',   data.targetAppId);
             let formObject = {};
             // 拼接查询时间，格式位yyyy-MM-dd，长度为10
             const queryDate = data.timeValue.substring(0, 10);

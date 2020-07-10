@@ -18,7 +18,7 @@
             <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">App</label>
+                        <label class="layui-form-label">产品名称</label>
                         <div class="layui-input-inline">
                             <select id="appIdSelect" name="appId" lay-search=""> </select>
                         </div>
@@ -48,6 +48,7 @@
             <script type="text/html" id="crudTableBar">
                 <div class="layui-btn-container">
                     <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="remove"><i class="layui-icon">&#xe640;</i> 批量删除 </button>                
                 </div>
             </script>
 
@@ -62,17 +63,22 @@
 
             <!-- 行内表单 -->
             <script type="text/html" id="switchAllowedShow">
-                <input type="checkbox" name="allowedShow" value="{{d.appId + '-' + d.minVersion}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                <input type="checkbox" name="allowedShow" value="{{d.appId + '~' + d.minVersion}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
                     {{ d.allowedShow === true ? 'checked' : '' }}>
             </script>
             <script type="text/html" id="switchWxBannerAllowedShow">
-                <input type="checkbox" name="wxBannerAllowedShow" value="{{d.appId + '-' + d.minVersion}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                <input type="checkbox" name="wxBannerAllowedShow" value="{{d.appId + '~' + d.minVersion}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
                     {{ d.wxBannerAllowedShow === true ? 'checked' : '' }}>
             </script>
             <script type="text/html" id="switchWxIntAllowedShow">
-                <input type="checkbox" name="wxIntAllowedShow" value="{{d.appId + '-' + d.minVersion}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                <input type="checkbox" name="wxIntAllowedShow" value="{{d.appId + '~' + d.minVersion}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
                     {{ d.wxIntAllowedShow === true ? 'checked' : '' }}>
             </script>
+            <script type="text/html" id="switchWxReVideoAllowedShow">
+                <input type="checkbox" name="wxReVideoAllowedShow" value="{{d.appId + '~' + d.minVersion}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
+                    {{ d.wxReVideoAllowedShow === true ? 'checked' : '' }}>
+             </script>
+
         </div>
     </div>
 
@@ -114,7 +120,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">Banner-间隔</label>
             <div class="layui-input-block">
-                <input type="text" name="wxBannerTime" placeholder=" Banner-间隔" value="" class="layui-input"
+                <input type="text" name="wxBannerTime" lay-verify="number" placeholder=" Banner-间隔" value="" class="layui-input"
                     autocomplete="off">
             </div>
         </div>
@@ -221,6 +227,7 @@
                     icon: 'layui-icon-tips'
                 }],
                 cols: [[
+                    { type: "checkbox", width: 50, align: "center" },
                     { field: 'appId', width: 160, title: 'AppId' },
                     { field: 'appName', width: 120, title: 'App名称' },
                     { field: 'minVersion', width: 90, title: '最低版本', align: "center" },
@@ -236,9 +243,9 @@
                     { field: 'wxIntStrategyId', width: 140, title: '插屏-策略', align: "center" },
                     { field: 'wxIntStrategyValue', width: 160, title: '插屏-策略配置' },
                     { field: 'wxReVideoUnit', width: 180, title: '激励视频-Unit', hide: true },
-                    { field: 'wxReVideoAllowedShow', width: 100, title: '激励视频-运营', align: "center", templet: '#switchWxReVideoAllowedShow' },
+                    { field: 'wxReVideoAllowedShow', width: 120, title: '激励视频-运营', align: "center", templet: '#switchWxReVideoAllowedShow' },
                     { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true },
-                    { field: 'operator', title: '操作', minWidth: 150, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                    { field: 'operator', title: '操作', minWidth: 180, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
                 ]],
                 limits: [10, 20, 30, 50, 100],
                 limit: 30,
@@ -246,13 +253,13 @@
                 page: true,
                 event: true,
                 size: 'sm',
-                height: 'full-20'
+                height: 'full-80'
             });
 
             // 有效性状态切换
             form.on('switch(switchStatus)', function (obj) {
                 console.log(this.value + ' ' + this.name + '：' + obj.elem.checked, JSON.stringify(obj.othis));
-                const appInfo = this.value.split('-');
+                const appInfo = this.value.split('~');
                 $.ajax({
                     url: currentPage.module.server + currentPage.page + '/switchStatus',
                     data: JSON.stringify({ appId: appInfo[0], minVersion: appInfo[1], switchColumn: this.name, status: obj.elem.checked }),

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>系统用户管理</title>
+    <title>广告位置配置</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -82,6 +82,19 @@
             </div>
         </div>
         <div class="layui-form-item">
+            <label class="layui-form-label required">最低支持版本</label>
+            <div class="layui-input-block">
+                <input type="text" name="minVersion" lay-verify="required" lay-reqtext="最低支持版本不能为空"
+                    placeholder=" 请输入版本号" value="" class="layui-input" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">广告类型</label>
+            <div class="layui-input-block" id="formAdTypeDiv">
+            </div>
+        </div>
+        <div class="layui-form-item">
             <label class="layui-form-label">允许运营</label>
             <div class="layui-input-block">
                 <input type="checkbox" name="allowedOperation" lay-skin="switch" lay-text="是|否" value="true">
@@ -111,6 +124,7 @@
     <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script src="../../js/lay-crud.js" charset="utf-8"></script>
     <script src="../../js/lay-util-select.js" charset="utf-8"></script>
+    <script src="../../js/lay-ajax.js" charset="utf-8"></script>
     <script>
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
@@ -118,10 +132,23 @@
             page: 'jj/configAdPosition'
         }
 
+        const adTypesStart = 'adTypes-';
         function renderAllSelect(level) {
             renderNormalSelect('idSelect', 'jj', 'configAdPosition', level);
+            layAjax({
+                url: currentPage.module.server + "jj/configAdType/getSelectArray/" + level,
+                type: 'GET',
+                async: false
+            }, (data) => {
+                let selectOption = [];
+                data.forEach((val, index, arr) => {
+                    selectOption.push('<input type="checkbox" name="' + adTypesStart + val.key + '" title="' + val.value + '">');
+                });
+                selectOption = selectOption.join('');
+                $('#formAdTypeDiv').empty();
+                $('#formAdTypeDiv').append(selectOption);
+            });
         }
-
         // 表单数据查询渲染
         layui.use(['form', 'table', 'layer'], function () {
             $ = layui.jquery, form = layui.form, layer = layui.layer, table = layui.table;
@@ -138,10 +165,11 @@
                 cols: [[
                     { type: "checkbox", width: 50, align: "center" },
                     { field: 'id', width: 80, title: 'ID', align: "center", sort: true },
-                    { field: 'name', width: 200, title: '名称' },
-                    { field: 'adTypeNames', width: 300, title: '广告类型名称' },
-                    { field: 'allowedOperation', width: 160, title: '允许运营', align: "center", templet: '#switchAllowedOperation' },
-                    { field: 'showWxAd', width: 160, title: '微信广告', align: "center", templet: '#switchShowWxAd' },
+                    { field: 'name', width: 160, title: '名称' },
+                    { field: 'minVersion', width: 120, title: '最低支持版本' },
+                    { field: 'adTypeNames', width: 260, title: '广告类型名称' },
+                    { field: 'allowedOperation', width: 140, title: '允许运营', align: "center", templet: '#switchAllowedOperation' },
+                    { field: 'showWxAd', width: 140, title: '微信广告', align: "center", templet: '#switchShowWxAd' },
                     { field: 'showWxReVideoAd', width: 160, title: '微信激励视频广告', align: "center", templet: '#switchShowWxReVideoAd' },
                     { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true },
                     { title: '操作', minWidth: 150, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
@@ -173,6 +201,28 @@
             });
 
         });
+
+        function rebuildEditData(editData, type) {
+            if (type === 'edit' && editData.adTypes) {
+                let adTypes = editData.adTypes;
+                let adTypesArray = adTypes.split(",");
+                adTypesArray.forEach((val, ind, arr) => {
+                    editData[adTypesStart + val] = true;
+                });
+            }
+        }
+
+        function rebuildSubmitData(data) {
+            let adTypesArray = [];
+            for (let name in data) {
+                if (name.startsWith(adTypesStart)) {
+                    adTypesArray.push(Number.parseInt(name.substring(adTypesStart.length)));
+                    data[name] = null;
+                }
+            }
+            data.adTypes = adTypesArray;
+            return data;
+        }
 
     </script>
 

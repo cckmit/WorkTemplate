@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>广告合集配置</title>
+    <link rel="stylesheet" href="../../lib/layui-v2.5.6/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../css/public.css" media="all">
+    <style>
+        .layui-btn:not(.layui-btn-lg):not(.layui-btn-sm):not(.layui-btn-xs) {
+            height: 34px;
+            line-height: 34px;
+            padding: 0 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layuimini-container">
+        <div class="layuimini-main">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-xs12 layui-col-md6">
+                    <!-- 查询表单 -->
+                    <form class="layui-form layui-form-pane" action="" id="data-search-form"
+                        lay-filter="data-search-form">
+                    </form>
+
+                    <!-- Table表头 -->
+                    <script type="text/html" id="crudTableBar">
+                        <div class="layui-btn-container">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
+                        </div>
+                    </script>
+
+                    <!-- Table -->
+                    <table class="layui-hide" id="crudTableId" lay-filter="crudTableFilter"></table>
+
+                    <!-- 行内按钮 -->
+                    <script type="text/html" id="crudRowBar">
+                        <a class="layui-btn layui-btn-xs data-count-edit" lay-event="getAdCombination">合集<i class="layui-icon">&#xe65b;</i></a>
+                        <a class="layui-btn layui-btn-xs data-count-edit" lay-event="getAdPool">广告池<i class="layui-icon">&#xe65b;</i></a>
+                    </script>
+                </div>
+
+                <div class="layui-col-xs12 layui-col-md6">
+                    <input id="currentCombinationId" class="layui-hide">
+                    <!-- Table表头 -->
+                    <script type="text/html" id="combinationTableBar">
+                        <div class="layui-btn-container">
+                            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="expandAll"><i class="layui-icon">&#xe625;</i> 展开全部 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="foldAll"><i class="layui-icon">&#xe623;</i> 折叠全部 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="addAdPosition"><i class="layui-icon">&#xe654;</i> 新增广告位置 </button>
+                            <button class="layui-btn layui-btn-sm" lay-event="saveAdContentIndex"><i class="layui-icon">&#xe605;</i> 保存广告位序号 </button>
+
+                        </div>
+                    </script>
+
+                    <!-- Table -->
+                    <table id="combination-table" class="layui-table" lay-filter="combination-table"></table>
+
+                    <!-- 行内按钮 -->
+                    <script type="text/html" id="combinationRowBar">
+                        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="addChild"><i class="layui-icon">&#xe61f;</i>新增</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除</a>
+                    </script>
+                </div>
+
+                <div class="layui-col-xs12 layui-col-md6">
+                    <input id="currentCombinationPool" class="layui-hide">
+                    <!-- Table表头 -->
+                    <script type="text/html" id="combinationTablePoolBar">
+                        <div class="layui-btn-container">
+                            <button class="layui-btn layui-btn-sm layui-btn-warm" lay-event="expandAll"><i class="layui-icon">&#xe625;</i> 展开全部 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="foldAll"><i class="layui-icon">&#xe623;</i> 折叠全部 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="bannerPool"><i class="layui-icon">&#xe654;</i> Banner广告池 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="iconPool"><i class="layui-icon">&#xe654;</i> Icon广告池 </button>
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="initPool"><i class="layui-icon">&#xe654;</i> 插屏广告池 </button>
+                            <button class="layui-btn layui-btn-sm" lay-event="saveAdContentIndex"><i class="layui-icon">&#xe605;</i> 保存广告位序号 </button>
+
+                        </div>
+                    </script>
+
+                    <!-- Table -->
+                    <table id="combination-table" class="layui-table" lay-filter="combination-table"></table>
+
+                    <!-- 行内按钮 -->
+                    <script type="text/html" id="combinationRowBar">
+                        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="addChild"><i class="layui-icon">&#xe61f;</i>新增</a>
+                        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i>删除</a>
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 广告合集新增表单 -->
+    <form id="crudFormId" class="layui-form layuimini-form layui-hide" lay-filter="crudFormFilter">
+        <div class="layui-form-item">
+            <label class="layui-form-label">ID</label>
+            <div class="layui-input-block">
+                <input type="text" id="id" name="id" class="layui-input" autocomplete="off" disabled
+                    placeholder="保存成功后自动生成">
+            </div>
+        </div>
+        <div class="layui-form-item ">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+                <input type="text" id="name" name="name" class="layui-input" autocomplete="off" lay-verify="required">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button id="crudSaveBtnId" class="layui-btn layui-btn-normal layui-hide" lay-submit
+                    lay-filter="crudSaveBtnFilter">确认保存</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- 新增广告位置 -->
+    <div id="selectPosition" class="layui-hide">
+        <form class="layui-form layui-form-pane" action="" id="position-search-form" lay-filter="position-search-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">广告位置</label>
+                    <div class="layui-input-inline">
+                        <select id="formAdPositionSelect" name="id" lay-search=""> </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="position-search-btn"
+                        lay-filter="position-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    <button type="button" class="layui-btn layui-btn-primary" id="position-search-reset"
+                        lay-filter="position-search-reset"><i class="layui-icon">&#xe666;</i>重置</button>
+                </div>
+            </div>
+        </form>
+        <!-- Table -->
+        <table id="selectPositionTable" lay-filter="selectPositionTableFilter"></table>
+    </div>
+
+    <!-- 新增广告位 -->
+    <div id="selectSpace" class="layui-hide">
+        <form class="layui-form layui-form-pane" action="" id="space-search-form" lay-filter="space-search-form">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">广告位</label>
+                    <div class="layui-input-inline">
+                        <select id="formAdSpaceSelect" name="id" lay-search=""> </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">广告类型</label>
+                    <div class="layui-input-inline">
+                        <select id="formAdSpaceTypeSelect" name="adType" lay-search=""> </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button type="submit" class="layui-btn layui-btn-warm" lay-submit id="space-search-btn"
+                        lay-filter="space-search-btn"><i class="layui-icon">&#xe615;</i> 搜 索</button>
+                    <button type="button" class="layui-btn layui-btn-primary" id="space-search-reset"
+                        lay-filter="space-search-reset"><i class="layui-icon">&#xe666;</i>重置</button>
+                </div>
+            </div>
+        </form>
+        <!-- Table -->
+        <table id="selectSpaceTable" lay-filter="selectSpaceTableFilter"></table>
+    </div>
+
+    <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
+    <script src="../../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+    <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-util-select.js" charset="utf-8"></script>
+    <script src="../../js/lay-ajax.js" charset="utf-8"></script>
+    <script>
+        const currentPage = {
+            module: window.module.jj,
+            page: 'jj/configAdCombination2'
+        }
+        const currentPageUrl = currentPage.module.server + currentPage.page;
+
+        let combinationId;
+        // 存储修改过的广告内容序号
+        let adContentOrderNumArray = [];
+
+        let treeTable;
+        layui.use(['table', 'form', 'layer', 'treeTable'], function () {
+            $ = layui.jquery, table = layui.table, form = layui.form, layer = layui.layer, treeTable = layui.treeTable;
+
+            const level = 'windowCache';
+            // 广告位置
+            renderNormalSelect('formAdPositionSelect', 'jj', 'configAdPosition', level);
+            // 广告位
+            renderNormalSelect('formAdSpaceSelect', 'jj', 'configAdSpace', level);
+            renderNormalSelect('formAdSpaceTypeSelect', 'jj', 'configAdType', level);
+            // 广告内容
+            renderNormalSelect('formAdContentTypeSelect', 'jj', 'configAdType', level);
+            renderNormalSelect('formAdContentTargetAppSelect', 'jj', 'wxConfig', level);
+            renderNormalSelect('formAdContentPromoteAppSelect', 'jj', 'wxConfig', level);
+            // 广告策略
+            renderNormalSelect('formAdStrategySelect', 'jj', 'configAdStrategy', level);
+
+            // 渲染广告合集列表
+            table.render({
+                elem: '#crudTableId',
+                url: currentPageUrl + '/getPage',
+                toolbar: '#crudTableBar',
+                cols: [[
+                    { type: "checkbox", align: "center", fixed: 'left' },
+                    { field: 'id', title: 'ID', width: 60, align: "center", sort: true },
+                    { field: 'name', width: 160, title: '名称', edit: 'text' },
+                    { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true },
+                    { field: 'operator', title: '操作', minWidth: 60, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-45'
+            });
+
+            // 监听广告合集单元格编辑
+            table.on('edit(crudTableFilter)', function (obj) {
+                var value = obj.value, data = obj.data;
+                layAjax({
+                    url: currentPage.module.server + currentPage.page + "/updateName",
+                    type: 'POST',
+                    data: JSON.stringify({ id: data.id, name: value }),
+                    async: false
+                });
+            });
+
+            table.render({
+                elem: '#selectPositionTable',
+                id: 'selectPositionTable',
+                url: currentPage.module.server + 'jj/configAdPosition/getPage',
+                cols: [[
+                    { type: "checkbox", width: 50, align: "center" },
+                    { field: 'id', width: 80, title: 'ID', align: "center", sort: true },
+                    { field: 'name', width: 200, title: '名称' },
+                    { field: 'adTypeNames', width: 200, title: '广告类型名称' },
+                    {
+                        field: 'allowedOperation', width: 80, title: '允许运营', align: "center", templet: (d) => {
+                            return d.allowedOperation === 'true' ? '是' : '否';
+                        }
+                    },
+                    {
+                        field: 'showWxAd', width: 80, title: '微信广告', align: "center", templet: (d) => {
+                            return d.allowedOperation === 'true' ? '是' : '否';
+                        }
+                    },
+                    {
+                        field: 'showWxReVideoAd', width: 80, title: '微信激励视频广告', align: "center", templet: (d) => {
+                            return d.allowedOperation === 'true' ? '是' : '否';
+                        }
+                    },
+                    { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-170'
+            });
+
+            // 监听查询表单搜索操作
+            form.on('submit(position-search-btn)', (data) => {
+                table.reload('selectPositionTable', {
+                    page: { curr: 1 },
+                    where: { queryData: JSON.stringify(data.field) }
+                });
+                return false;
+            });
+
+            table.render({
+                elem: '#selectSpaceTable',
+                id: 'selectSpaceTable',
+                url: currentPage.module.server + 'jj/configAdSpace/getPage',
+                cols: [[
+                    { type: "checkbox", width: 50, align: "center" },
+                    { field: 'id', width: 80, title: 'ID', align: "center", sort: true },
+                    { field: 'name', width: 200, title: '名称' },
+                    { field: 'adTypeNames', width: 200, title: '广告类型名称' },
+                    {
+                        field: 'allowedOperation', width: 80, title: '允许运营', align: "center", templet: (d) => {
+                            return d.allowedOperation === 'true' ? '是' : '否';
+                        }
+                    },
+                    {
+                        field: 'showWxAd', width: 80, title: '微信广告', align: "center", templet: (d) => {
+                            return d.allowedOperation === 'true' ? '是' : '否';
+                        }
+                    },
+                    {
+                        field: 'showWxReVideoAd', width: 80, title: '微信激励视频广告', align: "center", templet: (d) => {
+                            return d.allowedOperation === 'true' ? '是' : '否';
+                        }
+                    },
+                    { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true }
+                ]],
+                limits: [10, 20, 30, 50, 100],
+                limit: 30,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-170'
+            });
+
+            // 监听查询表单搜索操作
+            form.on('submit(space-search-btn)', (data) => {
+                table.reload('selectSpaceTable', {
+                    page: { curr: 1 },
+                    where: { queryData: JSON.stringify(data.field) }
+                });
+                return false;
+            });
+
+        });
+
+        function otherToolEvent(obj) {
+            if (obj.event === 'getAdCombination') {
+                getAdCombination(obj.data.id);
+                $("#currentCombinationId").val(obj.data.id);
+            } else if (obj.event === 'getAdPool') {
+                console.log("进入广告池")
+                combinationId = obj.data.id;
+                getAdCombinationBannerPool(obj.data.id);
+                $("#currentCombinationPool").val(obj.data.id);
+
+            }
+            return false;
+        }
+
+        function getAdCombinationBannerPool(id) {
+            layAjax({
+                url: currentPage.module.server + currentPage.page + "/getAdCombinationBannerPool/" + id,
+                type: 'GET',
+                async: false
+            }, (data) => {
+                adCombinationePoolRender(data);
+            });
+        }
+        function getAdCombinationIconPool(id) {
+            layAjax({
+                url: currentPage.module.server + currentPage.page + "/getAdCombinationIconPool/" + id,
+                type: 'GET',
+                async: false
+            }, (data) => {
+                adCombinationePoolRender(data);
+            });
+        }
+        function getAdCombinationInitPool(id) {
+            layAjax({
+                url: currentPage.module.server + currentPage.page + "/getAdCombinationInitPool/" + id,
+                type: 'GET',
+                async: false
+            }, (data) => {
+                adCombinationePoolRender(data);
+            });
+        }
+
+        function getAdCombination(id) {
+            adContentOrderNumArray = [];
+            layAjax({
+                url: currentPage.module.server + currentPage.page + "/getAdCombinationTable/" + id,
+                type: 'GET',
+                async: false
+            }, (data) => {
+                adCombinationRender(data);
+            });
+        }
+        function adCombinationePoolRender(data) {
+            console.log("有没有进入菜单树显示")
+            let adCombinationTreeTable = treeTable.render({
+                elem: '#combination-table',
+                id: 'combinationTable',
+                toolbar: '#combinationTablePoolBar',
+                data: data,
+                tree: {
+                    iconIndex: 1,    // 折叠图标显示在第几列
+                    isPidData: true,  // 是否是pid形式数据
+                    arrowType: 'arrow2',   // 自定义箭头风格
+                    getIcon: (d) => {  // 自定义图标
+                        // 如果有子菜单，显示为文件夹
+                        if (d.children) {
+                            return '<i class="ew-tree-icon ew-tree-icon-folder"></i>';
+                        } else {
+                            return '<i class="ew-tree-icon ew-tree-icon-file"></i>';
+                        }
+                    }
+                },
+                cols: [[
+                    { type: "checkbox", align: "center", fixed: 'left' },
+                    { field: 'name', width: 230, title: '名称', fixed: 'left' },
+                    { field: 'adType', width: 220, title: '类型' },
+                    { field: 'orderNum', width: 50, title: '排序', align: 'center', edit: 'number' },
+                    { field: 'operator', title: '操作', width: 180, toolbar: '#combinationRowBar', align: "center", fixed: 'right' }
+                ]],
+                limit: Number.MAX_VALUE,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-45'
+            });
+
+            treeTable.on('toolbar(combination-table)', (obj) => {
+                switch (obj.event) {
+                    case 'expandAll':
+                        adCombinationTreeTable.expandAll();
+                        break;
+                    case 'foldAll':
+                        adCombinationTreeTable.foldAll();
+                        break;
+                    case 'addAdPosition':
+                        // TAB菜单直接添加内容了，然后用户自行编辑
+                        addChild('addAdPosition', { combinationId: $("#currentCombinationId").val() });
+                        break;
+                    case 'saveAdContentIndex':
+                        saveAdContentIndex();
+                        break;
+                    case 'bannerPool':
+                      getAdCombinationBannerPool(combinationId);
+                        break;
+                    case 'iconPool':
+                        getAdCombinationIconPool(combinationId);
+                        break;
+                    case 'initPool':
+                        getAdCombinationInitPool(combinationId);
+                        break;
+                    default: break;
+                }
+            });
+
+            //监听工具条
+            treeTable.on('tool(combination-table)', (obj) => {
+                console.log("addChild---" + JSON.stringify(obj.data))
+                switch (obj.event) {
+                    case 'addChild':
+                        if (obj.data.operator === "addAdContent") {
+                            layer.msg("广告位无下级内容！", { icon: 0, time: 2000 });
+                        } else if (obj.data.operator) {
+                            addChild(obj.data.operator, obj.data);
+                        }
+                        break;
+                    case 'delete':
+                        let deleteUri;
+                        let detelteData = { id: obj.data.combinationId };
+                        let confirmMsg;
+                        if (obj.data.operator) {
+                            if (obj.data.operator === 'addAdSpace') {
+                                deleteUri = '/deleteAdPosition';
+                                detelteData.positionId = obj.data.positionId;
+                                confirmMsg = '真的删除广告位置【' + obj.data.name + '】么，会同时删除配置的广告位?';
+                            } else if (obj.data.operator === 'addAdContent') {
+                                deleteUri = '/deleteAdSpace';
+                                detelteData.positionId = obj.data.positionId;
+                                detelteData.spaceId = obj.data.spaceId;
+                                confirmMsg = '真的删除广告位【' + obj.data.name + '】?';
+                            }
+                        }
+                        layer.confirm(confirmMsg, (index) => {
+                            layer.close(index);
+                            layAjax({
+                                url: currentPage.module.server + currentPage.page + deleteUri,
+                                data: JSON.stringify(detelteData),
+                                type: 'DELETE',
+                                async: false
+                            }, (data) => {
+                                getAdCombination(obj.data.combinationId);
+                            });
+                        });
+                        break;
+                    default: break;
+                }
+            });
+
+            function saveAdContentIndex() {
+                const selectedData = adCombinationTreeTable.checkStatus(false);
+                if (selectedData.length === 0) {
+                    layer.msg('请至少选择一个广告位进行保存！', { icon: 0, time: 2000 });
+                } else {
+                    // 要求至少全选一个广告位才会保存下面全部的广告内容
+                    let id = selectedData[0].combinationId;
+                    let selectedSpaceId = [];
+                    let adContentOrderNumArray = [];
+                    selectedData.forEach((val, index, arr) => {
+                        // operator===addAdContent表示选中了广告位
+                        if (val.operator === 'addAdContent') {
+                            selectedSpaceId.push(val.spaceId);
+                        }
+                        // operator为空表示是广告内容数据
+                        if (!val.operator && selectedSpaceId.indexOf(val.spaceId) > -1) {
+                            adContentOrderNumArray.push({ positionId: val.positionId, spaceId: val.spaceId, contentId: val.contentId, orderNum: val.orderNum });
+                        }
+                    });
+
+                    if (selectedSpaceId.length === 0) {
+                        layer.msg('请至少选择一个广告位进行保存！', { icon: 0, time: 2000 });
+                    } else {
+                        layAjax({
+                            url: currentPage.module.server + currentPage.page + "/saveAdContentOrderNum",
+                            data: JSON.stringify({ id: id, adContentOrderNumArray: adContentOrderNumArray }),
+                            type: 'POST',
+                            async: false
+                        }, () => {
+                            getAdCombination(id);
+                        });
+                    }
+                }
+            }
+
+            treeTable.on('edit(combination-table)', (obj) => {
+                // 修改排序只对广告内容生效
+                if (!obj.data.operator) {
+                    const indexObject = {
+                        positionId: obj.data.positionId,
+                        spaceIds: obj.data.spaceId,
+                        contentId: obj.data.contentId,
+                        [obj.field]: obj.value
+                    }
+                    adContentOrderNumArray.push(indexObject);
+                }
+            });
+
+            function addChild(operator, data) {
+                switch (operator) {
+                    case 'addAdPosition':
+                        $('#selectPosition').removeClass('layui-hide').addClass('layui-show');
+                        const positionIndex = layer.open({
+                            type: 1,
+                            title: '选择广告位置',
+                            maxmin: true,
+                            area: ['60%', '100%'],
+                            content: $('#selectPosition'),
+                            btn: ['确定', '取消'],
+                            btnAlign: 'c',
+                            success: (layero, index) => { },
+                            yes: () => {
+                                let addAdPositionArray = [];
+                                const checkedData = table.checkStatus('selectPositionTable').data;
+                                checkedData.forEach((val, ind, arr) => {
+                                    addAdPositionArray.push(val.id);
+                                });
+                                layAjax({
+                                    url: currentPage.module.server + currentPage.page + "/addAdPosition",
+                                    data: JSON.stringify({ id: data.combinationId, positionIds: addAdPositionArray }),
+                                    type: 'POST',
+                                    async: false
+                                }, () => {
+                                    layer.close(positionIndex);
+                                    getAdCombination(data.combinationId);
+                                });
+                            },
+                            cancle: () => { console.log('cancle?'); },
+                            end: () => { $('#selectPosition').removeClass('layui-show').addClass('layui-hide'); }
+                        });
+                        $(window).on("resize", function () {
+                            layer.full(positionIndex);
+                        });
+                        break;
+                    case 'addAdSpace':
+                        $('#selectSpace').removeClass('layui-hide').addClass('layui-show');
+                        const spaceIndex = layer.open({
+                            type: 1,
+                            title: '选择广告位',
+                            maxmin: true,
+                            area: ['60%', '100%'],
+                            content: $('#selectSpace'),
+                            btn: ['确定', '取消'],
+                            btnAlign: 'c',
+                            success: (layero, index) => { },
+                            yes: () => {
+                                let addAdSpaceArray = [];
+                                const checkedData = table.checkStatus('selectSpaceTable').data;
+                                checkedData.forEach((val, ind, arr) => {
+                                    addAdSpaceArray.push(val.id);
+                                });
+                                layAjax({
+                                    url: currentPage.module.server + currentPage.page + "/addAdSpace",
+                                    data: JSON.stringify({ id: data.combinationId, positionId: data.positionId, spaceIds: addAdSpaceArray }),
+                                    type: 'POST',
+                                    async: false
+                                }, () => {
+                                    layer.close(spaceIndex);
+                                    getAdCombination(data.combinationId);
+                                    return false;
+                                });
+                            },
+                            cancle: () => { console.log('cancle?'); },
+                            end: () => { $('#selectSpace').removeClass('layui-show').addClass('layui-hide'); }
+                        });
+                        $(window).on("resize", function () { layer.full(spaceIndex); });
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        }
+
+        function adCombinationRender(data) {
+            console.log("有没有进入菜单树显示")
+            let adCombinationTreeTable = treeTable.render({
+                elem: '#combination-table',
+                id: 'combinationTable',
+                toolbar: '#combinationTableBar',
+                data: data,
+                tree: {
+                    iconIndex: 1,    // 折叠图标显示在第几列
+                    isPidData: true,  // 是否是pid形式数据
+                    arrowType: 'arrow2',   // 自定义箭头风格
+                    getIcon: (d) => {  // 自定义图标
+                        // 如果有子菜单，显示为文件夹
+                        if (d.children) {
+                            return '<i class="ew-tree-icon ew-tree-icon-folder"></i>';
+                        } else {
+                            return '<i class="ew-tree-icon ew-tree-icon-file"></i>';
+                        }
+                    }
+                },
+                cols: [[
+                    { type: "checkbox", align: "center", fixed: 'left' },
+                    { field: 'name', width: 230, title: '名称', fixed: 'left' },
+                    { field: 'adType', width: 220, title: '类型' },
+                    { field: 'orderNum', width: 50, title: '排序', align: 'center', edit: 'number' },
+                    { field: 'operator', title: '操作', width: 180, toolbar: '#combinationRowBar', align: "center", fixed: 'right' }
+                ]],
+                limit: Number.MAX_VALUE,
+                loading: true,
+                page: true,
+                event: true,
+                size: 'sm',
+                height: 'full-45'
+            });
+
+            treeTable.on('toolbar(combination-table)', (obj) => {
+                switch (obj.event) {
+                    case 'expandAll':
+                        adCombinationTreeTable.expandAll();
+                        break;
+                    case 'foldAll':
+                        adCombinationTreeTable.foldAll();
+                        break;
+                    case 'addAdPosition':
+                        // TAB菜单直接添加内容了，然后用户自行编辑
+                        addChild('addAdPosition', { combinationId: $("#currentCombinationId").val() });
+                        break;
+                    case 'saveAdContentIndex':
+                        saveAdContentIndex();
+                        break;
+                    default: break;
+                }
+            });
+
+            //监听工具条
+            treeTable.on('tool(combination-table)', (obj) => {
+                console.log("addChild---" + JSON.stringify(obj.data))
+                switch (obj.event) {
+                    case 'addChild':
+                        if (obj.data.operator === "addAdContent") {
+                            layer.msg("广告位无下级内容！", { icon: 0, time: 2000 });
+                        } else if (obj.data.operator) {
+                            addChild(obj.data.operator, obj.data);
+                        }
+                        break;
+                    case 'delete':
+                        let deleteUri;
+                        let detelteData = { id: obj.data.combinationId };
+                        let confirmMsg;
+                        if (obj.data.operator) {
+                            if (obj.data.operator === 'addAdSpace') {
+                                deleteUri = '/deleteAdPosition';
+                                detelteData.positionId = obj.data.positionId;
+                                confirmMsg = '真的删除广告位置【' + obj.data.name + '】么，会同时删除配置的广告位?';
+                            } else if (obj.data.operator === 'addAdContent') {
+                                deleteUri = '/deleteAdSpace';
+                                detelteData.positionId = obj.data.positionId;
+                                detelteData.spaceId = obj.data.spaceId;
+                                confirmMsg = '真的删除广告位【' + obj.data.name + '】?';
+                            }
+                        }
+                        layer.confirm(confirmMsg, (index) => {
+                            layer.close(index);
+                            layAjax({
+                                url: currentPage.module.server + currentPage.page + deleteUri,
+                                data: JSON.stringify(detelteData),
+                                type: 'DELETE',
+                                async: false
+                            }, (data) => {
+                                getAdCombination(obj.data.combinationId);
+                            });
+                        });
+                        break;
+                    default: break;
+                }
+            });
+
+            function saveAdContentIndex() {
+                const selectedData = adCombinationTreeTable.checkStatus(false);
+                if (selectedData.length === 0) {
+                    layer.msg('请至少选择一个广告位进行保存！', { icon: 0, time: 2000 });
+                } else {
+                    // 要求至少全选一个广告位才会保存下面全部的广告内容
+                    let id = selectedData[0].combinationId;
+                    let selectedSpaceId = [];
+                    let adContentOrderNumArray = [];
+                    selectedData.forEach((val, index, arr) => {
+                        // operator===addAdContent表示选中了广告位
+                        if (val.operator === 'addAdContent') {
+                            selectedSpaceId.push(val.spaceId);
+                        }
+                        // operator为空表示是广告内容数据
+                        if (!val.operator && selectedSpaceId.indexOf(val.spaceId) > -1) {
+                            adContentOrderNumArray.push({ positionId: val.positionId, spaceId: val.spaceId, contentId: val.contentId, orderNum: val.orderNum });
+                        }
+                    });
+
+                    if (selectedSpaceId.length === 0) {
+                        layer.msg('请至少选择一个广告位进行保存！', { icon: 0, time: 2000 });
+                    } else {
+                        layAjax({
+                            url: currentPage.module.server + currentPage.page + "/saveAdContentOrderNum",
+                            data: JSON.stringify({ id: id, adContentOrderNumArray: adContentOrderNumArray }),
+                            type: 'POST',
+                            async: false
+                        }, () => {
+                            getAdCombination(id);
+                        });
+                    }
+                }
+            }
+
+            treeTable.on('edit(combination-table)', (obj) => {
+                // 修改排序只对广告内容生效
+                if (!obj.data.operator) {
+                    const indexObject = {
+                        positionId: obj.data.positionId,
+                        spaceIds: obj.data.spaceId,
+                        contentId: obj.data.contentId,
+                        [obj.field]: obj.value
+                    }
+                    adContentOrderNumArray.push(indexObject);
+                }
+            });
+
+            function addChild(operator, data) {
+                switch (operator) {
+                    case 'addAdPosition':
+                        $('#selectPosition').removeClass('layui-hide').addClass('layui-show');
+                        const positionIndex = layer.open({
+                            type: 1,
+                            title: '选择广告位置',
+                            maxmin: true,
+                            area: ['60%', '100%'],
+                            content: $('#selectPosition'),
+                            btn: ['确定', '取消'],
+                            btnAlign: 'c',
+                            success: (layero, index) => { },
+                            yes: () => {
+                                let addAdPositionArray = [];
+                                const checkedData = table.checkStatus('selectPositionTable').data;
+                                checkedData.forEach((val, ind, arr) => {
+                                    addAdPositionArray.push(val.id);
+                                });
+                                layAjax({
+                                    url: currentPage.module.server + currentPage.page + "/addAdPosition",
+                                    data: JSON.stringify({ id: data.combinationId, positionIds: addAdPositionArray }),
+                                    type: 'POST',
+                                    async: false
+                                }, () => {
+                                    layer.close(positionIndex);
+                                    getAdCombination(data.combinationId);
+                                });
+                            },
+                            cancle: () => { console.log('cancle?'); },
+                            end: () => { $('#selectPosition').removeClass('layui-show').addClass('layui-hide'); }
+                        });
+                        $(window).on("resize", function () {
+                            layer.full(positionIndex);
+                        });
+                        break;
+                    case 'addAdSpace':
+                        $('#selectSpace').removeClass('layui-hide').addClass('layui-show');
+                        const spaceIndex = layer.open({
+                            type: 1,
+                            title: '选择广告位',
+                            maxmin: true,
+                            area: ['60%', '100%'],
+                            content: $('#selectSpace'),
+                            btn: ['确定', '取消'],
+                            btnAlign: 'c',
+                            success: (layero, index) => { },
+                            yes: () => {
+                                let addAdSpaceArray = [];
+                                const checkedData = table.checkStatus('selectSpaceTable').data;
+                                checkedData.forEach((val, ind, arr) => {
+                                    addAdSpaceArray.push(val.id);
+                                });
+                                layAjax({
+                                    url: currentPage.module.server + currentPage.page + "/addAdSpace",
+                                    data: JSON.stringify({ id: data.combinationId, positionId: data.positionId, spaceIds: addAdSpaceArray }),
+                                    type: 'POST',
+                                    async: false
+                                }, () => {
+                                    layer.close(spaceIndex);
+                                    getAdCombination(data.combinationId);
+                                    return false;
+                                });
+                            },
+                            cancle: () => { console.log('cancle?'); },
+                            end: () => { $('#selectSpace').removeClass('layui-show').addClass('layui-hide'); }
+                        });
+                        $(window).on("resize", function () { layer.full(spaceIndex); });
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        }
+    </script>
+</body>
+
+</html>

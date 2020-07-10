@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>系统用户管理</title>
+    <title>广告内容配置</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -27,12 +27,6 @@
                         <label class="layui-form-label">推广App</label>
                         <div class="layui-input-inline">
                             <select id="targetAppSelect" name="targetAppId" lay-search=""> </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">中转App</label>
-                        <div class="layui-input-inline">
-                            <select id="promoteAppSelect" name="promoteAppId" lay-search=""> </select>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -66,10 +60,26 @@
                 <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="switchStatus"
                     {{ d.status ? 'checked' : '' }}>
             </script>
+
+            <script>
+                function show_detail(t) {
+                    var img_show = null;
+                    $('td img').hover(function () {
+                        var img = "<img class='img_msg' src='" + $(this).attr('src') + "' style='width:130px;' />";
+                        img_show = layer.tips(img, this, {
+                            tips: [2, 'rgba(0,0,0,0)']
+                            , area: ['160px']
+                        });
+                    }, function () {
+                        layer.close(img_show);
+                    });
+                    $('td img').attr('style', 'width:80px;height:20px');
+                }
+            </script>
             <script type="text/html" id="imgShow">
-                {{#  if(d.imageUrl != null){ }}
-                <a href="{{ d.imageUrl }}" target="_blank " title="点击查看">
-                    <img src="{{ d.imageUrl }}"></a>
+                {{#  if(d.imageUrl){ }}
+                <a onmouseover="show_detail(this)">
+                    <img id="img" style='width:80px;height:20px;'src="{{ d.imageUrl }}"></a>
                 {{#  } else { }}
                 {{""}}
                 {{#  } }}
@@ -95,24 +105,10 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">图片地址</label>
+            <label class="layui-form-label">推广AppId</label>
             <div class="layui-input-block">
-                <input type="text" name="imageUrl" placeholder=" 请输入推广图片地址" value="" class="layui-input"
-                    autocomplete="off">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">视频地址</label>
-            <div class="layui-input-block">
-                <input type="text" name="videoUrl" placeholder=" 请输入视频地址" value="" class="layui-input"
-                    autocomplete="off">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label required">推广AppId</label>
-            <div class="layui-input-block">
-                <input type="text" name="targetAppId" lay-verify="required" lay-reqtext="推广AppId不能为空"
-                    placeholder=" 请输入推广AppId" value="" class="layui-input" autocomplete="off">
+                <select id="targetAppFormSelect" name="targetAppId" lay-search="" lay-verify="required"
+                    lay-reqtext="推广AppId不能为空" placeholder=" 请输入推广AppId"></select>
             </div>
         </div>
         <div class="layui-form-item">
@@ -129,73 +125,24 @@
                     autocomplete="off">
             </div>
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">推广App类型</label>
+        <div class="layui-form-item ">
+            <label class="layui-form-label">权重</label>
             <div class="layui-input-block">
-                <select name="targetAppType" placeholder=" 请选择推广App类型" class="layui-input" autocomplete="off"
-                    lay-search="">
-                    <option value="1" selected>小游戏</option>
-                    <option value="2">小程序</option>
-                </select>
+                <input type="text" id="weight" name="weight" class="layui-input" autocomplete="off"
+                    lay-verify="integer">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">推广App版本</label>
+            <label class="layui-form-label">图片地址</label>
             <div class="layui-input-block">
-                <select name="targetEnvVersion" placeholder=" 请选择推广App版本" class="layui-input" autocomplete="off"
-                    lay-search="">
-                    <option value="develop">开发版</option>
-                    <option value="trial">体验版</option>
-                    <option value="release" selected>正式版</option>
-                </select>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">推广App页面</label>
-            <div class="layui-input-block">
-                <input type="text" name="targetAppPage" placeholder=" 请输入推广App页面" value="" class="layui-input"
+                <input type="text" name="imageUrl" placeholder=" 请输入推广图片地址" value="" class="layui-input"
                     autocomplete="off">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label required">中转AppId</label>
+            <label class="layui-form-label">视频地址</label>
             <div class="layui-input-block">
-                <input type="text" name="promoteAppId" lay-verify="required" lay-reqtext="中转AppId不能为空"
-                    placeholder=" 请输入中转AppId" value="" class="layui-input" autocomplete="off">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label required">中转App名称</label>
-            <div class="layui-input-block">
-                <input type="text" name="promoteAppName" lay-verify="required" lay-reqtext="中转App名称不能为空"
-                    placeholder=" 请输入中转App名称" value="" class="layui-input" autocomplete="off">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">中转App类型</label>
-            <div class="layui-input-block">
-                <select name="promoteAppType" placeholder=" 请选择中转App类型" class="layui-input" autocomplete="off"
-                    lay-search="">
-                    <option value="1" selected>小游戏</option>
-                    <option value="2">小程序</option>
-                </select>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">中转App版本</label>
-            <div class="layui-input-block">
-                <select name="promoteEnvVersion" placeholder=" 请选择中转App版本" class="layui-input" autocomplete="off"
-                    lay-search="">
-                    <option value="develop">开发版</option>
-                    <option value="trial">体验版</option>
-                    <option value="release" selected>正式版</option>
-                </select>
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">中转App页面</label>
-            <div class="layui-input-block">
-                <input type="text" name="promoteAppPage" placeholder=" 请输入中转App页面" value="" class="layui-input"
+                <input type="text" name="videoUrl" placeholder=" 请输入视频地址" value="" class="layui-input"
                     autocomplete="off">
             </div>
         </div>
@@ -220,8 +167,9 @@
 
         function renderAllSelect(level) {
             renderNormalSelect('adTypeSelect', 'jj', 'configAdType', level);
-            renderNormalSelect('targetAppSelect', 'jj', 'wxConfig', level);
-            renderNormalSelect('promoteAppSelect', 'jj', 'wxConfig', level);
+            renderNormalSelect('adTypeFormSelect', 'jj', 'configAdType', level);
+            renderNormalSelect('targetAppSelect', 'jj', 'configAdContentInfo', level);
+            renderNormalSelect('targetAppFormSelect', 'jj', 'configAdContentInfo', level);
         }
 
         // 表单数据查询渲染
@@ -241,36 +189,11 @@
                     { field: 'aaa', type: "checkbox", width: 50, align: "center" },
                     { field: 'id', width: 60, title: 'ID', align: "center", sort: true },
                     { field: 'adTypeName', width: 120, title: '类型' },
+                    { field: 'weight', width: 120, title: '权重' },
                     { field: 'targetAppName', width: 160, title: '推广App名称' },
-                    {
-                        field: 'targetEnvVersion', width: 120, title: '推广App版本', align: "center", templet: (d) => {
-                            let targetEnvVersionName = '未知';
-                            if (d.targetEnvVersion === 'develop') {
-                                targetEnvVersionName = '开发版';
-                            } else if (d.targetEnvVersion === 'trial') {
-                                targetEnvVersionName = '体验版';
-                            } else if (d.targetEnvVersion === 'release') {
-                                targetEnvVersionName = '正式版';
-                            }
-                            return targetEnvVersionName;
-                        }
-                    },
+                    { field: 'targetAppDesc', width: 160, title: '推广App描述' },
                     { field: 'imageUrl', width: 160, title: '图片', align: 'center', templet: '#imgShow' },
-                    { field: 'videoUrl', width: 120, title: '视频地址' },
-                    { field: 'promoteAppName', width: 160, title: '中转App名称' },
-                    {
-                        field: 'promoteEnvVersion', width: 120, title: '中转App版本', align: "center", templet: (d) => {
-                            let promoteEnvVersionName = '未知';
-                            if (d.promoteEnvVersion === 'develop') {
-                                promoteEnvVersionName = '开发版';
-                            } else if (d.promoteEnvVersion === 'trial') {
-                                promoteEnvVersionName = '体验版';
-                            } else if (d.promoteEnvVersion === 'release') {
-                                promoteEnvVersionName = '正式版';
-                            }
-                            return promoteEnvVersionName;
-                        }
-                    },
+                    { field: 'videoUrl', width: 160, title: '视频地址' },
                     { field: 'updateTime', width: 140, title: '数据更新时间', align: "center", sort: true },
                     { field: 'operator', title: '操作', minWidth: 150, toolbar: '#crudRowBar', align: "center", fixed: 'right' }
                 ]],
@@ -298,6 +221,15 @@
                         layer.msg(result.msg, { icon: result.code, time: 2000 });
                     }
                 });
+            });
+
+            // 自定义验证规则
+            form.verify({
+                integer: [
+                    /^[1-9]\d*$/,
+                    '权重限制必须为正整数！'
+                ]
+
             });
 
         });

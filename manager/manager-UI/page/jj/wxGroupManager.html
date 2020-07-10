@@ -23,8 +23,8 @@
             <!-- Table表头 -->
             <script type="text/html" id="crudTableBar">
                 <div class="layui-btn-container">
-                   <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
-                   <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
                 </div>
             </script>
 
@@ -93,7 +93,7 @@
         <div class="layui-form-item ">
             <label class="layui-form-label">微信群备注</label>
             <div class="layui-input-block">
-                <input type="text" name="ddDescribe" autocomplete="off" class="layui-input">
+                <input type="text" name="describe" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item ">
@@ -147,7 +147,7 @@
                     { field: 'wxGroupManager', width: 180, title: '群管理员', sort: true },
                     { field: 'wxGroupName', width: 120, title: '微信群名', sort: true },
                     { field: 'createTime', width: 180, title: '创建时间', sort: true },
-                    { field: 'ddDescribe', width: 120, title: '微信群备注', sort: true },
+                    { field: 'describe', width: 120, title: '微信群备注', sort: true },
                     { field: 'ddYes', width: 200, title: '微信群二维码地址', sort: true },
                     { field: 'ddNo', width: 200, title: '客服二维码', sort: true },
                     { field: 'updateQrCodeTime', width: 180, title: '最新上传时间', sort: true },
@@ -167,8 +167,7 @@
             laydate.render({
                 elem: '#createTime',
                 type: 'datetime',
-                format: 'yyyy/MM/dd HH:mm',
-                 range: '~'
+                format: 'yyyy/MM/dd HH:mm'
             });
 
             //有效性状态切换

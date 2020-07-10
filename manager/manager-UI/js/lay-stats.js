@@ -86,9 +86,9 @@ layui.use(['table', 'form', 'layer'], () => {
             if (obj.data.haveDetail) {
                 // 查询表单重新赋值
                 let formObject = buildQueryFormObject(obj.data);
+                console.log('formObject ', formObject);
                 // 查询表单渲染
                 for (let key in formObject) {
-                    console.log('')
                     $('#' + key).val(formObject[key]);
                 }
                 $('#groupType').val(detailGroupBy);
@@ -176,7 +176,7 @@ layui.use(['table', 'form', 'layer'], () => {
         // const existRebuildFunction = typeof rebuildTableOption !== "undefined" && rebuildTableOption !== null;
         // existRebuildFunction && rebuildTableOption(tableOption);
         // console.log('tableOption -> ', tableOption)
-        console.log(JSON.stringify(tableOption.data))
+        //console.log(JSON.stringify(tableOption.data))
         table.render(tableOption);
     }
 

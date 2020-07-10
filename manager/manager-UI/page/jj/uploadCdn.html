@@ -124,7 +124,7 @@
         layui.use(['table', 'form', 'layer', 'upload'], () => {
             const $ = layui.jquery, layer = layui.layer, form = layui.form, table = layui.table, upload = layui.upload;
             $.ajax({
-                url: window.module.jj.server + "/jj/wxConfig/getSelectArray/serverCache",
+                url: window.module.jj.server + "/jj/wxConfig/getSelectArray/serverDb",
                 headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                 type: 'GET',
                 dataType: "json",

@@ -49,7 +49,7 @@ layui.define(["jquery", "miniMenu", "element", "miniTab", "miniTheme"], function
                 dataType: "json",
                 async: false,
                 success: (result) => {
-                    if (result) {
+                    if (result && result.code === 1) {
                         miniAdmin.renderLogo(result.logoInfo);
                         miniAdmin.renderClear(options.clearUrl);
                         miniAdmin.renderHome(result.homeInfo);

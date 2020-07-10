@@ -118,6 +118,7 @@
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-ajax.js" charset="utf-8"></script>
     <script>
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
@@ -126,55 +127,25 @@
         }
 
         const roleStart = 'role-';
-
         function renderAllSelect(level) {
-            console.log(currentPage.module.server + "sys/role/getSelectArray/" + level)
-            $.ajax({
+            layAjax({
                 url: currentPage.module.server + "sys/role/getSelectArray/" + level,
                 type: 'GET',
-                dataType: "json",
-                success: (result) => {
-                    let selectOption = [];
-                    if (result && result.code === 1) {
-                        result.data.forEach((val, index, arr) => {
-                            selectOption.push('<input type="checkbox" name="' + roleStart + val.key + '" title="' + val.value + '">');
-                        });
-                    }
-                    selectOption = selectOption.join('');
-                    $('#formRoleDiv').empty();
-                    $('#formRoleDiv').append(selectOption);
-                }
+                async: false
+            }, (data) => {
+                let selectOption = [];
+                data.forEach((val, index, arr) => {
+                    selectOption.push('<input type="checkbox" name="' + roleStart + val.key + '" title="' + val.value + '">');
+                });
+                selectOption = selectOption.join('');
+                $('#formRoleDiv').empty();
+                $('#formRoleDiv').append(selectOption);
             });
         }
 
         // 表单数据查询渲染
         layui.use(['form', 'table', 'layer'], function () {
             $ = layui.jquery, form = layui.form, layer = layui.layer, table = layui.table;
-
-            // 监听查询表单搜索操作
-            form.on('submit(data-search-btn1)', (data) => {
-                console.log('begin Query');
-                $.ajax({
-                    url: currentPage.module.server + currentPage.page + '/getPage?page=1&limit=30',
-                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
-                    type: 'GET',
-                    dataType: "json",
-                    async: false,
-                    success: (result) => {
-                        console.log(result);
-                    },
-                    error: (XMLHttpRequest, textStatus) => {
-                        console.log('error.XMLHttpRequest -> ', JSON.stringify(XMLHttpRequest));
-                        console.log('error.textStatus -> ', textStatus);
-                        layer.msg('Ajax Error -> 请求服务器异常，请联系管理员！', { icon: 2, time: 2000 });
-                    },
-                    complete: (XMLHttpRequest, textStatus) => {
-                        console.log('complete.XMLHttpRequest -> ', JSON.stringify(XMLHttpRequest));
-                        console.log('complete.textStatus -> ', textStatus);
-                        return false;
-                    }
-                });
-            });
 
             table.render({
                 elem: '#crudTableId',
@@ -207,18 +178,11 @@
 
             // 有效性状态切换
             form.on('switch(switchStatus)', function (obj) {
-                console.log(this.value + ' ' + this.name + '：' + obj.elem.checked, JSON.stringify(obj.othis));
-                $.ajax({
+                layAjax({
                     url: currentPage.module.server + currentPage.page,
                     data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
-                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
-                    dataType: "json",
-                    async: false,
-                    success: function (result) {
-                        console.log(JSON.stringify(result));
-                        layer.msg(result.msg, { icon: result.code, time: 2000 });
-                    }
+                    async: false
                 });
             });
 
@@ -230,7 +194,6 @@
                 roleIdArray.forEach((val, ind, arr) => {
                     editData[roleStart + val] = true;
                 });
-                console.log(JSON.stringify(editData))
             }
         }
 

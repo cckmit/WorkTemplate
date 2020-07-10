@@ -164,6 +164,11 @@
                             result.data.forEach(function (val, index, arr) {
                                 allGameSets.push(val);
                             });
+                            for (let i = 0; i < allGameSets.length; i++) {
+                                let val = allGameSets[i];
+                                let context = { name: val.value, value: val.key, selected: false };
+                                selectData.push(context);
+                            }
                         }
                     },
                     error: function () {
@@ -212,8 +217,6 @@
          * @param type
          */
         function rebuildEditData(editData, type) {
-            // const $ = layui.$, form = layui.form, layer = layui.layer;
-            // console.log("editData.gameSetContent--" + editData.gameSetContent)
             // 编辑游戏合集内容
             if (type === 'edit' || type === 'copy') {
                 let newGameSets = [];

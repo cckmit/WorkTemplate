@@ -68,6 +68,39 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
                 }
             }
                 break;
+            case 'remove': {
+                const data = table.checkStatus('crudTableId').data, dataLength = data.length;
+                if (dataLength === 0) {
+                    layer.msg('批量删除，请至少选择一行！', { icon: 0, time: 2000 });
+                } else {
+                    layer.confirm('真的删除选中的' + dataLength + '行么?', (index) => {
+                        layer.close(index);
+                        let deleteIdArray = [];
+                        data.forEach((val, ind, arr) => {
+                            console.log("appid" + val.appId + "----" + val.minVersion)
+                            deleteIdArray.push(val.appId + "-" + val.minVersion);
+                        });
+                        del(deleteIdArray);
+                    });
+                }
+            }
+                break;
+            case 'deleteContentInfo': {
+                const data = table.checkStatus('crudTableId').data, dataLength = data.length;
+                if (dataLength === 0) {
+                    layer.msg('批量删除，请至少选择一行！', { icon: 0, time: 2000 });
+                } else {
+                    layer.confirm('真的删除选中的' + dataLength + '行么?', (index) => {
+                        layer.close(index);
+                        let deleteIdArray = [];
+                        data.forEach((val, ind, arr) => {
+                            deleteIdArray.push(val.targetAppId);
+                        });
+                        del(deleteIdArray);
+                    });
+                }
+            }
+                break;
             default: {
                 const data = table.checkStatus('crudTableId').data, dataLength = data.length;
                 if (dataLength === 0) {
@@ -149,11 +182,28 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
                         dataType: "json",
                         async: false,
                         success: function (result) {
-                            parent.layer.msg(result.msg, { icon: result.code, time: 2000 });
-                            if (result.code === 1) {
-                                layer.close(index);
-                                tableReload(form.val('data-search-form'));
-                                return false;
+                            const msg = result.msg ? result.msg : ((ajaxOption.type.toUpperCase() === 'GET') ? '查询成功！' : '操作成功！');
+                            const msgOption = { icon: result.code < 0 ? 0 : result.code, time: 2000 };
+                            parent.layer.msg(msg, msgOption);
+                            switch (result.code) {
+                                // -2 表示当前访问没有权限，弹出提示即可
+                                case -2:
+                                // 2 表示请求正常，但是业务逻辑提示失败，弹出提示即可
+                                case 2:
+                                default:
+                                    break;
+                                // -1 表示未登录，2秒后跳转登录页面
+                                case -1:
+                                    setTimeout(() => {
+                                        window.location = '/manager/login.html';
+                                    }, 2000);
+                                    break;
+                                // 1 表示成功，执行成功回调
+                                case 1:
+                                    layer.close(index);
+                                    tableReload(form.val('data-search-form'));
+                                    return false;
+                                    break;
                             }
                         }
                     });
@@ -187,9 +237,26 @@ layui.use(['table', 'form', 'layer', 'element'], () => {
             dataType: "json",
             async: false,
             success: function (result) {
-                layer.msg(result.msg, { icon: result.code, time: 2000 });
-                if (result.code === 1) {
-                    tableReload(form.val('data-search-form'));
+                const msg = result.msg ? result.msg : ((ajaxOption.type.toUpperCase() === 'GET') ? '查询成功！' : '操作成功！');
+                const msgOption = { icon: result.code < 0 ? 0 : result.code, time: 2000 };
+                layer.msg(msg, msgOption);
+                switch (result.code) {
+                    // -2 表示当前访问没有权限，弹出提示即可
+                    case -2:
+                    // 2 表示请求正常，但是业务逻辑提示失败，弹出提示即可
+                    case 2:
+                    default:
+                        break;
+                    // -1 表示未登录，2秒后跳转登录页面
+                    case -1:
+                        layer.close(index);
+                        tableReload(form.val('data-search-form'));
+                        return false;
+                        break;
+                    // 1 表示成功，执行成功回调
+                    case 1:
+                        tableReload(form.val('data-search-form'));
+                        break;
                 }
             }
         });

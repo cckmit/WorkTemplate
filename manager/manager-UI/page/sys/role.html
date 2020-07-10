@@ -108,6 +108,7 @@
     <script src="../../lib/layui-v2.5.6/layui.js" charset="utf-8"></script>
     <script src="../../js/lay-config.js" charset="utf-8"></script>
     <script src="../../js/lay-crud.js" charset="utf-8"></script>
+    <script src="../../js/lay-ajax.js" charset="utf-8"></script>
     <script>
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
@@ -149,34 +150,26 @@
 
             // 行内编辑监听
             table.on('edit(currentTableFilter)', (obj) => {
-                $.ajax({
+                layAjax({
                     url: currentPage.module.server + currentPage.page,
                     data: JSON.stringify({ id: obj.data.id, roleName: obj.data.roleName }),
-                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
-                    dataType: "json",
-                    async: false,
-                    success: function (result) {
-                        layer.msg(result.msg, { icon: result.code });
-                        if (result.code === 1) {
-                            parent.layer.close(parent.layer.getFrameIndex(window.name));
-                        }
-                    }
+                    async: false
+                }, (data) => {
+                    parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    return false;
                 });
             });
 
             // 有效性状态切换
             form.on('switch(switchStatus)', function (obj) {
-                $.ajax({
+                layAjax({
                     url: currentPage.module.server + currentPage.page,
                     data: JSON.stringify({ id: this.value, status: obj.elem.checked }),
-                    headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                     type: 'PUT',
-                    dataType: "json",
-                    async: false,
-                    success: function (result) {
-                        layer.msg(result.msg, { icon: result.code, time: 2000 });
-                    }
+                    async: false
+                }, (data) => {
+                    return false;
                 });
             });
 
@@ -190,17 +183,13 @@
                     // 递归获取菜单树中的角色ID
                     menuIds = [];
                     getMenuIds(checkedTreeData);
-                    $.ajax({
+                    layAjax({
                         url: currentPage.module.server + currentPage.page + '/updateMenuIds',
                         data: JSON.stringify({ id: id, menuIds: menuIds }),
-                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
                         type: 'PUT',
-                        dataType: "json",
-                        async: false,
-                        success: function (result) {
-                            layer.msg(result.msg, { icon: result.code, time: 2000 });
-                            return false;
-                        }
+                        async: false
+                    }, (data) => {
+                        return false;
                     });
                 }
             });
@@ -230,24 +219,22 @@
                 } else {
                     $('#menu-add-child').removeClass('layui-btn-disabled');
                     $('#menuTree').removeClass('layui-hide').addClass('layui-show');
-                    $.ajax({
+                    layAjax({
                         url: currentPage.module.server + currentPage.page + '/id/' + obj.data.id,
                         type: 'GET',
-                        headers: { 'Content-Type': 'application/json;charset=utf8', 'JSESSIONID': window.localStorage.getItem('JSESSIONID') },
-                        dataType: "json",
-                        async: false,
-                        success: (result) => {
-                            let treeData = [];
-                            treeData.push(result.data.menuTreeJson);
-                            tree.render({
-                                id: 'menuTree',
-                                elem: '#menuTree',
-                                data: treeData,
-                                showLine: true,
-                                showCheckbox: true,
-                                oncheck: (obj) => { }
-                            });
-                        }
+                        async: false
+                    }, (data) => {
+                        let treeData = [];
+                        treeData.push(data.menuTreeJson);
+                        tree.render({
+                            id: 'menuTree',
+                            elem: '#menuTree',
+                            data: treeData,
+                            showLine: true,
+                            showCheckbox: true,
+                            onlyIconControl: true,
+                            oncheck: (obj) => { }
+                        });
                     });
                 }
             }

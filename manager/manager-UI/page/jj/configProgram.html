@@ -18,7 +18,7 @@
             <form class="layui-form layui-form-pane" action="" id="data-search-form" lay-filter="data-search-form">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">APPID</label>
+                        <label class="layui-form-label">产品名称</label>
                         <div class="layui-input-inline">
                             <select id="appIdSelect" name="id" lay-search=""> </select>
                         </div>
@@ -36,7 +36,7 @@
             <script type="text/html" id="crudTableBar">
                 <div class="layui-btn-container">
                     <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon">&#xe654;</i> 新增 </button>
-                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="remove"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
                 </div>
             </script>
 
@@ -62,13 +62,13 @@
         <div class="layui-form-item ">
             <label class="layui-form-label">APPID</label>
             <div class="layui-input-block">
-                <select id="appIdSelectEdit" name="ddAppId" lay-search=""> </select>
+                <select id="appIdSelectEdit" name="appId" lay-search=""> </select>
             </div>
         </div>
         <div class="layui-form-item ">
             <label class="layui-form-label">版本号</label>
             <div class="layui-input-block">
-                <input type="text" name="ddMinVer" lay-verify="required" autocomplete="off" class="layui-input ">
+                <input type="text" name="minVersion" lay-verify="required" autocomplete="off" class="layui-input ">
             </div>
         </div>
         <div class="layui-form-item ">
@@ -126,9 +126,9 @@
                 }],
                 cols: [[
                     { type: 'checkbox', fixed: 'left' },
-                    { field: 'ddAppId', width: 180, title: 'AppId', sort: true },
+                    { field: 'appId', width: 180, title: 'AppId', sort: true },
                     { field: 'productName', width: 120, title: '产品名称', sort: true },
-                    { field: 'ddMinVer', width: 180, title: '最低版本号', sort: true },
+                    { field: 'minVersion', width: 180, title: '最低版本号', sort: true },
                     {
                         field: 'programType', width: 150, title: '类型', sort: true,
                         templet: (d) => {

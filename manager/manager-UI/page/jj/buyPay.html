@@ -24,7 +24,7 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">APPID</label>
+                        <label class="layui-form-label">产品名称</label>
                         <div class="layui-input-inline">
                             <select id="appIdSelect" name="id" lay-search=""> </select>
                         </div>
@@ -35,11 +35,16 @@
                     </div>
                 </div>
             </form>
-
+            <div class="layui-upload">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" id="selectBuyPayData"><i
+                        class="layui-icon">&#xe681;</i> 导入数据 </button>
+                <button class="layui-btn layui-btn-sm" id="uploadBuyPayData"><i class="layui-icon">&#xe62f;</i>
+                    开始上传 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-warm" id="exportModel" οnclick="exportModel()"><i
+                        class="layui-icon">&#xe67d;</i> 模板导出 </button>
+            </div>
             <!-- Table表头 -->
             <script type="text/html" id="crudTableBar">
-                <button class="layui-btn layui-btn-sm layui-btn-normal" id="selectBuyPayData"><i class="layui-icon">&#xe681;</i> 导入数据 </button>
-                <button class="layui-btn layui-btn-sm" id="uploadBuyPayData"><i class="layui-icon">&#xe62f;</i> 开始上传 </button>
                 <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete"><i class="layui-icon">&#xe640;</i> 批量删除 </button>
             </script>
 
@@ -153,14 +158,15 @@
                 page: true,
                 event: true,
                 size: 'sm',
-                height: 'full-80'
+                height: 'full-120'
             });
             laydate.render({
                 elem: '#times',
                 format: 'yyyy-MM-dd',
                 range: '~'
             });
-            //选完文件后不自动上传
+
+            // 选完文件后不自动上传
             upload.render({
                 elem: '#selectBuyPayData',
                 url: currentPage.module.server + currentPage.page + '/uploadExcel',
@@ -173,11 +179,22 @@
                 done: function (result) {
                     if (result.code === 1) {
                         layer.msg('导入成功', { icon: result.code, time: 2000 });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
                     } else {
                         layer.msg('导入失败，请检查数据格式后重新上传', { icon: result.code, time: 2000 });
                     }
 
                 }
+            });
+
+            // 导出买量模板
+            $("#exportModel").click(function () {
+                layer.confirm('是否需要导出模板文件', function (index) {
+                    window.location.href = currentPage.module.server + currentPage.page + '/exportModel';
+                    layer.close(index);
+                });
             });
 
         });

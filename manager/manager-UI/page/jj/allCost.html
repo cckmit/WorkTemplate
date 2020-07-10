@@ -119,6 +119,7 @@
     <script src="../../js/lay-crud.js" charset="utf-8"></script>
     <script src="../../js/lay-util-select.js" charset="utf-8"></script>
     <script src="../../js/lay-util-form-verify.js" charset="utf-8"></script>
+    <script src="../../js/lay-ajax.js" charset="utf-8"></script>
     <script>
         // 当前页面所属模块，使用之前请先在lay-config.js中配置
         const currentPage = {
@@ -162,21 +163,15 @@
             });
             layui.form.render("select");
 
-            $.ajax({
-                type: "get",
-                dataType: "json",
-                url: currentPage.module.server + 'jj/games/getSelectArray/111',
-                success: (res) => {
-                    if (res.data.length > 0) {
-                        res.data.forEach(function (val, index, arr) {
-                            gameCodes[val.key] = val.value;
-                        });
-                    }
-                },
-                error: function () {
-                    alert("查询失败")
-                }
-            })
+            layAjax({
+                url: window.module.jj.server + "jj/games/getSelectArray/serverDb",
+                type: 'GET',
+                async: false
+            }, (data) => {
+                data.forEach(function (val, index, arr) {
+                    gameCodes[val.key] = val.value;
+                });
+            });
             table.render({
                 elem: '#crudTableId',
                 url: currentPage.module.server + currentPage.page + '/getPage',
@@ -228,7 +223,7 @@
                                 case "video":
                                     return `剩余${key - 1}次`;
                                 case "relive": {
-                                    if (d.ddtype === 'coin') {
+                                    if (d.ddType === 'coin') {
                                         if (key < 1000) {
                                             return `第${key}次复活`;
                                         } else {
