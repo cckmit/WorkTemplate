@@ -3,6 +3,7 @@ package com.cc.manager;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.http.HttpUtil;
+import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cc.manager.common.result.PostResult;
@@ -22,8 +23,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @SpringBootTest
 class ManagerJjApplicationTests {
@@ -60,7 +60,13 @@ class ManagerJjApplicationTests {
         //  System.out.println(allCost.toString());
         // postResult = this.persieServerUtils.refreshTable("app_config");
         //   System.out.println(postResult.toString());
-        FileReader fileReader = new FileReader("TableFakeUser.txt");
+
+        Map<String, String> map = new HashMap<>();
+        map.put("2","10");
+        String json = JSONUtils.toJSONString(map);
+        System.out.println("json:"+json);
+        System.out.println("8888888888888888888888");
+      /*  FileReader fileReader = new FileReader("TableFakeUser.txt");
         System.out.println("我是文本内容"+fileReader.readString());
         JSONObject jsonObject = JSONObject.parseObject(fileReader.readString());
         JSONArray list = jsonObject.getJSONArray("list");
@@ -69,7 +75,7 @@ class ManagerJjApplicationTests {
             String url = "https://tennishead.gamesmvp.com/head/"+head+".png";
             long size = HttpUtil.downloadFile(url, FileUtil.file("e:/picture/"));
             System.out.println("Download size: " + size);
-        }
+        }*/
 //        String url = "https://tennishead.gamesmvp.com/head/r1101000415.png";
 //        //将文件下载后保存在E盘，返回结果为下载文件大小
 //        long size = HttpUtil.downloadFile(url, FileUtil.file("e:/picture/"));
@@ -94,7 +100,6 @@ class ManagerJjApplicationTests {
 
     @Test
     public void getUserInfo() throws Exception {
-
 
 //      Integer coin = (Integer) redisUtil.hashGet("user-oxDM75DNVEcHIT0eHnL-QYCMv8sY", "coin");
 //      System.out.println(coin.toString());

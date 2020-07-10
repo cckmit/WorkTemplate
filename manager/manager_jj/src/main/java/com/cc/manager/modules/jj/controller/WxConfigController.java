@@ -47,10 +47,10 @@ public class WxConfigController implements BaseCrudController {
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.wxConfigService.post(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("wx_config");
-            this.persieServerUtils.refreshTable("app_config");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("wx_config");
+//            this.persieServerUtils.refreshTable("app_config");
+//        }
         return postResult;
     }
 
@@ -58,9 +58,9 @@ public class WxConfigController implements BaseCrudController {
     @PutMapping
     public PostResult put(@RequestBody String requestParam) {
         PostResult postResult = this.wxConfigService.put(requestParam);
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("wx_config");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("wx_config");
+//        }
         return postResult;
     }
 
@@ -68,9 +68,9 @@ public class WxConfigController implements BaseCrudController {
     @DeleteMapping
     public PostResult delete(@RequestBody String requestParam) {
         PostResult deleteResult = this.wxConfigService.delete(requestParam);
-        if (deleteResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("wx_config");
-        }
+//        if (deleteResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("wx_config");
+//        }
         return deleteResult;
     }
 
@@ -90,10 +90,10 @@ public class WxConfigController implements BaseCrudController {
     public PostResult refreshResource(@RequestBody JSONArray parameter) {
         PostResult postResult = wxConfigService.refreshResource(parameter);
         //刷新业务表结构
-        if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("wx_config");
-            this.persieServerUtils.refreshTable("app_config");
-        }
+//        if (postResult.getCode() == 1) {
+//            this.persieServerUtils.refreshTable("wx_config");
+//            this.persieServerUtils.refreshTable("app_config");
+//        }
         return postResult;
     }
 

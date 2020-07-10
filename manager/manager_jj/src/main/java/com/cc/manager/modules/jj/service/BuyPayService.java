@@ -88,7 +88,6 @@ public class BuyPayService extends BaseCrudService<BuyPay, BuyPayMapper> {
      */
     public int insertExcel(JSONObject record) {
         String context = record.getString("context");
-        System.out.println("context :" + context);
         context = context.substring(1, context.length() - 1);
         try {
             JSONArray param = new JSONArray(Collections.singletonList(context));

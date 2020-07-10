@@ -1,5 +1,6 @@
 package com.cc.manager.modules.jj.service;
 
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
@@ -17,6 +18,7 @@ import java.util.List;
  * @date 2020-06-03 12:10
  */
 @Service
+@DS("jj")
 public class ConfigStatusService extends BaseCrudService<ConfigStatus, ConfigStatusMapper> {
 
     @Override

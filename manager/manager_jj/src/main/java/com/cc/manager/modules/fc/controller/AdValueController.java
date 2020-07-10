@@ -24,7 +24,7 @@ public class AdValueController implements BaseStatsController {
     @Override
     @GetMapping(value = "/getPage")
     public StatsListResult getPage(StatsListParam statsListParam) {
-        return this.adValueService.getPage(statsListParam);
+        return this.adValueService.getList(statsListParam);
     }
 
     @Autowired

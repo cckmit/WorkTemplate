@@ -58,6 +58,13 @@ public class ConfigAdPositionService extends BaseCrudService<ConfigAdPosition, C
     }
 
     @Override
+    protected void updateInsertEntity(String requestParam, ConfigAdPosition entity) {
+        if (StringUtils.isNotBlank(entity.getAdTypes())) {
+            entity.setAdTypes(StringUtils.strip(entity.getAdTypes(), "[]"));
+        }
+    }
+
+    @Override
     protected boolean delete(String requestParam, UpdateWrapper<ConfigAdPosition> deleteWrapper) {
         return false;
     }

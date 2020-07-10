@@ -1,22 +1,15 @@
 package com.cc.manager.modules.fc.service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.entity.MinitjWx;
-import com.cc.manager.modules.jj.entity.WxGroupHistory;
+import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
 import com.cc.manager.modules.jj.service.JjAndFcAppConfigService;
-import com.cc.manager.modules.tt.entity.TtDailyAdValue;
-import com.cc.manager.modules.tt.service.TtDailyAdValueService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author cf
@@ -35,72 +27,11 @@ import java.util.Objects;
  */
 @Service
 @DS("fc")
-public class WxAddDataDetailService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WxAddDataDetailService.class);
+public class CopyWxAddDataDetailService extends BaseStatsService<MinitjWx, MinitjWxMapper> {
+
     private JjAndFcAppConfigService jjAndFcAppConfigService;
-    private MinitjWxService minitjWxService;
-    private TtDailyAdValueService ttDailyAdValueService;
 
-    /**
-     * 查询产品数据，重写默认的分页查询方法
-     * TODO 当前查询暂不分页
-     *
-     * @param statsListParam 查询参数
-     * @return 查询结果
-     */
-    public StatsListResult getPage(StatsListParam statsListParam) {
-        StatsListResult statsListResult = new StatsListResult();
-        // 判断请求参数是否为空，并进行初始化
-        if (StringUtils.isNotBlank(statsListParam.getQueryData())) {
-            statsListParam.setQueryObject(JSONObject.parseObject(statsListParam.getQueryData()));
-        }
-        if (Objects.isNull(statsListParam.getQueryObject())) {
-            statsListParam.setQueryObject(new JSONObject());
-        }
-        // 初始化查询的起止日期
-        this.updateBeginAndEndDate(statsListParam);
-        String appId = statsListParam.getQueryObject().getString("appId");
-        String beginDate = statsListParam.getQueryObject().getString("beginDate");
-        String endDate = statsListParam.getQueryObject().getString("endDate");
-        try {
-
-            // 查询返回结果
-            List<MinitjWx> minitjWxList = new ArrayList<>();
-
-            // 根据查询类型判断，0表示小游戏，1表示小程序，为空表示全部
-            String appType = statsListParam.getQueryObject().getString("appType");
-            if (StringUtils.isNotBlank(appType)) {
-                QueryWrapper<TtDailyAdValue> queryWrapper = new QueryWrapper<>();
-                queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
-                queryWrapper.eq( "wx_app_type", appType);
-                queryWrapper.between("wx_date", beginDate, endDate);
-                List<TtDailyAdValue> ttAdValueList = ttDailyAdValueService.list(queryWrapper);
-                ArrayList<MinitjWx> list = new ArrayList<>();
-                for (TtDailyAdValue ttDailyAdValue : ttAdValueList) {
-                    MinitjWx minitjWx = new MinitjWx();
-                    BeanUtils.copyProperties(ttDailyAdValue,minitjWx);
-                    list.add(minitjWx);
-                }
-                minitjWxList.addAll(list);
-            } else {
-                List<MinitjWx> wxAdValueList = this.minitjWxService.list(appId, beginDate, endDate);
-                if (Objects.nonNull(wxAdValueList)) {
-                    this.rebuildStatsListResult(statsListParam, wxAdValueList, statsListResult);
-                    minitjWxList.addAll(wxAdValueList);
-                }
-            }
-            // TODO 先不进行分组
-            statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(minitjWxList)));
-            statsListResult.setTotalRow(null);
-            statsListResult.setCount(minitjWxList.size());
-        } catch (Exception e) {
-            statsListResult.setCode(2);
-            statsListResult.setMsg("查询结果异常，请联系开发人员！");
-            LOGGER.error(ExceptionUtils.getStackTrace(e));
-        }
-        return statsListResult;
-    }
-
+    @Override
     protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<MinitjWx> queryWrapper, StatsListResult statsListResult) {
 
         // 初始化查询的起止日期
@@ -113,7 +44,7 @@ public class WxAddDataDetailService {
         queryWrapper.orderBy(true, false, "wx_date");
     }
 
-
+    @Override
     protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
         List<MinitjWx> newEntityList = new ArrayList<>();
         for (MinitjWx minitjWx : entityList) {
@@ -177,16 +108,6 @@ public class WxAddDataDetailService {
     @Autowired
     public void setJjAndFcAppConfigService(JjAndFcAppConfigService jjAndFcAppConfigService) {
         this.jjAndFcAppConfigService = jjAndFcAppConfigService;
-    }
-
-    @Autowired
-    public void setMinitjWxService(MinitjWxService minitjWxService) {
-        this.minitjWxService = minitjWxService;
-    }
-
-    @Autowired
-    public void setTtDailyAdValueService(TtDailyAdValueService ttDailyAdValueService) {
-        this.ttDailyAdValueService = ttDailyAdValueService;
     }
 
 }

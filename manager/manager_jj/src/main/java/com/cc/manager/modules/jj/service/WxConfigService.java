@@ -129,9 +129,9 @@ public class WxConfigService extends BaseCrudService<WxConfig, WxConfigMapper> {
         appConfig.setDdProgram(entity.getProgramType());
         appConfig.setDdTime(LocalDateTime.now());
         boolean saveResult = appConfigService.save(appConfig);
-        if (saveResult) {
-            this.persieServerUtils.refreshTable("app_config");
-        }
+//        if (saveResult) {
+//            this.persieServerUtils.refreshTable("app_config");
+//        }
     }
 
     @Override
