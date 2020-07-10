@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.entity.MinitjWx;
-import com.cc.manager.modules.jj.entity.WxGroupHistory;
 import com.cc.manager.modules.jj.service.JjAndFcAppConfigService;
 import com.cc.manager.modules.tt.entity.TtDailyAdValue;
 import com.cc.manager.modules.tt.service.TtDailyAdValueService;
@@ -22,8 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,13 +69,13 @@ public class WxAddDataDetailService {
             if (StringUtils.isNotBlank(appType)) {
                 QueryWrapper<TtDailyAdValue> queryWrapper = new QueryWrapper<>();
                 queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
-                queryWrapper.eq( "wx_app_type", appType);
+                queryWrapper.eq("wx_app_type", appType);
                 queryWrapper.between("wx_date", beginDate, endDate);
                 List<TtDailyAdValue> ttAdValueList = ttDailyAdValueService.list(queryWrapper);
                 ArrayList<MinitjWx> list = new ArrayList<>();
                 for (TtDailyAdValue ttDailyAdValue : ttAdValueList) {
                     MinitjWx minitjWx = new MinitjWx();
-                    BeanUtils.copyProperties(ttDailyAdValue,minitjWx);
+                    BeanUtils.copyProperties(ttDailyAdValue, minitjWx);
                     list.add(minitjWx);
                 }
                 minitjWxList.addAll(list);
@@ -167,8 +164,8 @@ public class WxAddDataDetailService {
             endDate = timeRangeArray[1].trim();
         }
         if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
-            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
-            endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
+            //beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+            beginDate = endDate = "2020-06-29";
         }
         statsListParam.getQueryObject().put("beginDate", beginDate);
         statsListParam.getQueryObject().put("endDate", endDate);
