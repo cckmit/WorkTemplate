@@ -9,10 +9,7 @@ import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.modules.jj.config.CmTool;
 import com.cc.manager.modules.jj.config.Config;
-import com.cc.manager.modules.jj.config.SignatureAlgorithm;
-import com.cc.manager.modules.jj.config.XMLHandler;
 import com.cc.manager.modules.jj.entity.AllCost;
 import com.cc.manager.modules.jj.entity.Recharge;
 import com.cc.manager.modules.jj.entity.UserApp;
@@ -26,9 +23,10 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-import static com.cc.manager.modules.jj.config.CmTool.createNonceStr;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 提现审核

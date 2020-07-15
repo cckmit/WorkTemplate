@@ -1,13 +1,17 @@
 package com.cc.manager.modules.tt.service;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
-import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
+import com.cc.manager.common.result.PostResult;
 import com.cc.manager.common.utils.ReadExcel;
 import com.cc.manager.modules.jj.config.JjConfig;
 import com.cc.manager.modules.tt.entity.TtValueMapping;
@@ -18,8 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.time.LocalDateTime;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -27,6 +33,7 @@ import java.util.*;
  * @since 2020-07-09
  */
 @Service
+@DS("fc")
 public class TtValueMappingService extends BaseCrudService<TtValueMapping, TtValueMappingMapper> {
 
     private JjConfig jjConfig;
@@ -117,7 +124,7 @@ public class TtValueMappingService extends BaseCrudService<TtValueMapping, TtVal
     @Override
     public boolean saveOrUpdate(TtValueMapping entity) {
         String groupByKey = entity.getGroupByKey();
-        entity.setInsertTime(LocalDateTime.now());
+        entity.setInsertTime(new Date());
         QueryWrapper<TtValueMapping> ttDailyValueQueryWrapper = new QueryWrapper<>();
         ttDailyValueQueryWrapper.eq("groupByKey", groupByKey);
         TtValueMapping tableContent = this.getOne(ttDailyValueQueryWrapper);
@@ -129,6 +136,35 @@ public class TtValueMappingService extends BaseCrudService<TtValueMapping, TtVal
         } else {
             return this.save(entity);
         }
+    }
+
+    /**
+     * 导出映射关系
+     *
+     * @param response response
+     */
+    public PostResult getTtValueMapping(HttpServletResponse response) {
+        PostResult postResult = new PostResult();
+        List<TtValueMapping> list = this.list();
+        List rows = CollUtil.newArrayList(list);
+        try {
+            ExcelWriter writer = ExcelUtil.getWriter(true);
+            //自定义标题别名
+            writer.addHeaderAlias("groupByKey", "编号");
+            writer.addHeaderAlias("groupByValue", "对应展示名称");
+            writer.addHeaderAlias("insertTime", "数据更新时间");
+            writer.write(rows, true);
+            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
+            String nameDecode = new String(("映射关系.xlsx").getBytes("gb2312"), "ISO8859-1");
+            response.setHeader("Content-Disposition", "attachment;filename=" + nameDecode);
+            ServletOutputStream out = response.getOutputStream();
+            writer.flush(out, true);
+        } catch (IOException e) {
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            postResult.setCode(2);
+            postResult.setMsg("导出失败");
+        }
+        return postResult;
     }
 
     @Autowired

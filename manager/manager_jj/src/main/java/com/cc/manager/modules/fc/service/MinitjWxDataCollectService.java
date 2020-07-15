@@ -218,7 +218,7 @@ public class MinitjWxDataCollectService {
                 collect.setRechargeCount(dataCollect.getRechargeCount() != null ? dataCollect.getRechargeCount() : new BigDecimal(0));
                 collect.setRevenueCount(collect.getRevenueCount().add(dataCollect.getRevenueCount() != null ? dataCollect.getRevenueCount() : new BigDecimal(0)));
             } else {
-                dataCollectMap.put(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(dataCollect.getWxDate()),dataCollect);
+                dataCollectMap.put(DateTimeFormatter.ofPattern("yyyy-MM-dd").format(dataCollect.getWxDate()), dataCollect);
             }
         });
         return new ArrayList<>(dataCollectMap.values());

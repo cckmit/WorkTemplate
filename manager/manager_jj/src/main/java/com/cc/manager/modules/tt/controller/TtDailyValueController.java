@@ -10,7 +10,6 @@ import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.tt.service.TtDailyValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author cf
@@ -27,10 +26,7 @@ public class TtDailyValueController implements BaseCrudController {
     public PostResult getData(@RequestBody JSONObject jsonObject) {
         return this.ttDailyValueService.getData(jsonObject);
     }
-//    @PostMapping(value = "/getAdData")
-//    public PostResult getAddData(@RequestBody JSONObject jsonObject) {
-//        return this.ttDailyValueService.getAdData(jsonObject);
-//    }
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(String id) {

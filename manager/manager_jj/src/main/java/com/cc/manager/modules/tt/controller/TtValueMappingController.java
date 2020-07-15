@@ -7,11 +7,12 @@ import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.CrudPageResult;
 import com.cc.manager.common.result.PostResult;
-import com.cc.manager.modules.tt.service.TtDailyValueService;
 import com.cc.manager.modules.tt.service.TtValueMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author cf
@@ -33,7 +34,14 @@ public class TtValueMappingController implements BaseCrudController {
     @PostMapping(value = "/uploadExcel")
     public JSONObject uploadExcel(@RequestParam("file") MultipartFile file) {
         return this.ttValueMappingService.uploadExcel(file);
+    }
 
+    /**
+     * 导出Excel映射关系
+     */
+    @GetMapping(value = "/exportMapping")
+    public PostResult getTtValueMapping(HttpServletResponse response) {
+        return this.ttValueMappingService.getTtValueMapping(response);
     }
 
     @Override
@@ -78,5 +86,6 @@ public class TtValueMappingController implements BaseCrudController {
     public void setTtValueMappingService(TtValueMappingService ttValueMappingService) {
         this.ttValueMappingService = ttValueMappingService;
     }
+
 }
 

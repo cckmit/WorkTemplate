@@ -1,12 +1,6 @@
 package com.cc.manager;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.file.FileReader;
-import cn.hutool.http.HttpUtil;
 import com.alibaba.druid.support.json.JSONUtils;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.cc.manager.common.result.PostResult;
 import com.cc.manager.common.utils.RedisUtil;
 import com.cc.manager.modules.jj.mapper.UserAppMapper;
 import com.cc.manager.modules.jj.service.AllCostService;
@@ -18,12 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootTest
 class ManagerJjApplicationTests {
@@ -62,9 +52,9 @@ class ManagerJjApplicationTests {
         //   System.out.println(postResult.toString());
 
         Map<String, String> map = new HashMap<>();
-        map.put("2","10");
+        map.put("2", "10");
         String json = JSONUtils.toJSONString(map);
-        System.out.println("json:"+json);
+        System.out.println("json:" + json);
         System.out.println("8888888888888888888888");
       /*  FileReader fileReader = new FileReader("TableFakeUser.txt");
         System.out.println("我是文本内容"+fileReader.readString());

@@ -6,14 +6,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.cc.manager.common.mvc.BaseCrudEntity;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author cf
  * @since 2020-07-09
  */
 @Data
-@TableName(schema = "persie_value", value = "tt_value_mapping")
+@TableName(schema = "tt_data_analysis", value = "value_mapping")
 public class TtValueMapping implements BaseCrudEntity<TtValueMapping> {
 
     private static final long serialVersionUID = 1L;
@@ -34,5 +34,6 @@ public class TtValueMapping implements BaseCrudEntity<TtValueMapping> {
      * 数据更新时间
      */
     @TableField("insertTime")
-    private LocalDateTime insertTime;
+    private Date insertTime;
+
 }

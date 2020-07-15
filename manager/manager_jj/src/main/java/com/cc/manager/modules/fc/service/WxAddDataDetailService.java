@@ -10,7 +10,9 @@ import com.cc.manager.common.result.StatsListResult;
 import com.cc.manager.modules.fc.entity.MinitjWx;
 import com.cc.manager.modules.jj.service.JjAndFcAppConfigService;
 import com.cc.manager.modules.tt.entity.TtDailyAdValue;
+import com.cc.manager.modules.tt.entity.TtDailyValue;
 import com.cc.manager.modules.tt.service.TtDailyAdValueService;
+import com.cc.manager.modules.tt.service.TtDailyValueService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -21,26 +23,27 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * @author cf
- * @since 2020-05-13
+ * @since 2020-07-10
  */
 @Service
 @DS("fc")
 public class WxAddDataDetailService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WxAddDataDetailService.class);
+
     private JjAndFcAppConfigService jjAndFcAppConfigService;
     private MinitjWxService minitjWxService;
     private TtDailyAdValueService ttDailyAdValueService;
+    private TtDailyValueService ttDailyValueService;
 
     /**
      * 查询产品数据，重写默认的分页查询方法
-     * TODO 当前查询暂不分页
      *
      * @param statsListParam 查询参数
      * @return 查询结果
@@ -59,34 +62,40 @@ public class WxAddDataDetailService {
         String appId = statsListParam.getQueryObject().getString("appId");
         String beginDate = statsListParam.getQueryObject().getString("beginDate");
         String endDate = statsListParam.getQueryObject().getString("endDate");
+        //获取当前日期活跃用户map
+        Map<String, String> mapTtDailyValue = new HashMap<>(16);
+        mapTtDailyValue(mapTtDailyValue, beginDate, endDate);
         try {
-
             // 查询返回结果
             List<MinitjWx> minitjWxList = new ArrayList<>();
-
-            // 根据查询类型判断，0表示小游戏，1表示小程序，为空表示全部
+            // App类型下拉框
             String appType = statsListParam.getQueryObject().getString("appType");
-            if (StringUtils.isNotBlank(appType)) {
-                QueryWrapper<TtDailyAdValue> queryWrapper = new QueryWrapper<>();
-                queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
-                queryWrapper.eq("wx_app_type", appType);
-                queryWrapper.between("wx_date", beginDate, endDate);
+            Boolean belongTt;
+            belongTt = belongAppType(appId);
+            QueryWrapper<TtDailyAdValue> queryWrapper = new QueryWrapper<>();
+            queryWrapper.between("dateValue", beginDate, endDate);
+            if (StringUtils.isNotBlank(appType) || belongTt) {
+                queryWrapper.eq(StringUtils.isNotBlank(appId), "appId", appId);
+                queryWrapper.eq(StringUtils.isNotBlank(appType), "appType", appType);
                 List<TtDailyAdValue> ttAdValueList = ttDailyAdValueService.list(queryWrapper);
                 ArrayList<MinitjWx> list = new ArrayList<>();
-                for (TtDailyAdValue ttDailyAdValue : ttAdValueList) {
-                    MinitjWx minitjWx = new MinitjWx();
-                    BeanUtils.copyProperties(ttDailyAdValue, minitjWx);
-                    list.add(minitjWx);
-                }
+                convertMinitjWx(mapTtDailyValue, ttAdValueList, list);
+                this.rebuildStatsListResult(list);
                 minitjWxList.addAll(list);
-            } else {
+            } else if (StringUtils.isNotBlank(appId) && !belongTt) {
                 List<MinitjWx> wxAdValueList = this.minitjWxService.list(appId, beginDate, endDate);
-                if (Objects.nonNull(wxAdValueList)) {
-                    this.rebuildStatsListResult(statsListParam, wxAdValueList, statsListResult);
-                    minitjWxList.addAll(wxAdValueList);
-                }
+                this.rebuildStatsListResult(wxAdValueList);
+                minitjWxList.addAll(wxAdValueList);
+            } else {
+                List<TtDailyAdValue> ttAdValueList = ttDailyAdValueService.list(queryWrapper);
+                ArrayList<MinitjWx> list = new ArrayList<>();
+                convertMinitjWx(mapTtDailyValue, ttAdValueList, list);
+                List<MinitjWx> wxAdValueList = this.minitjWxService.list(appId, beginDate, endDate);
+                this.rebuildStatsListResult(wxAdValueList);
+                this.rebuildStatsListResult(list);
+                minitjWxList.addAll(wxAdValueList);
+                minitjWxList.addAll(list);
             }
-            // TODO 先不进行分组
             statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(minitjWxList)));
             statsListResult.setTotalRow(null);
             statsListResult.setCount(minitjWxList.size());
@@ -98,56 +107,100 @@ public class WxAddDataDetailService {
         return statsListResult;
     }
 
-    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<MinitjWx> queryWrapper, StatsListResult statsListResult) {
-
-        // 初始化查询的起止日期
-        this.updateBeginAndEndDate(statsListParam);
-        String beginDate = statsListParam.getQueryObject().getString("beginDate");
-        String endDate = statsListParam.getQueryObject().getString("endDate");
-        String appId = statsListParam.getQueryObject().getString("appId");
-        queryWrapper.between("DATE(wx_date)", beginDate, endDate);
-        queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
-        queryWrapper.orderBy(true, false, "wx_date");
+    /**
+     * 转化TtDailyAdValue为MinitjWx展示
+     *
+     * @param mapTtDailyValue mapTtDailyValue
+     * @param ttAdValueList   ttAdValueList
+     * @param list            list
+     */
+    private void convertMinitjWx(Map<String, String> mapTtDailyValue, List<TtDailyAdValue> ttAdValueList, ArrayList<MinitjWx> list) {
+        for (TtDailyAdValue ttDailyAdValue : ttAdValueList) {
+            String formatDate = ttDailyAdValue.getWxDate().format(DateTimeFormatter.BASIC_ISO_DATE);
+            String activeUsers = mapTtDailyValue.get(formatDate + "-" + ttDailyAdValue.getWxAppId() + "-" + ttDailyAdValue.getWxAppType());
+            Map activeUsersMap = JSON.parseObject(activeUsers);
+            int activeUser = 0;
+            if (activeUsersMap != null) {
+                for (Object mapData : activeUsersMap.values()) {
+                    activeUser = activeUser + Integer.parseInt(mapData.toString());
+                }
+            }
+            MinitjWx minitjWx = new MinitjWx();
+            BeanUtils.copyProperties(ttDailyAdValue, minitjWx);
+            minitjWx.setWxActive(activeUser);
+            list.add(minitjWx);
+        }
     }
 
-
-    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
-        List<MinitjWx> newEntityList = new ArrayList<>();
-        for (MinitjWx minitjWx : entityList) {
-            // 获取街机和FC的全部app信息
-            LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
-            JSONObject appObject = getAllAppMap.get(minitjWx.getWxAppId());
-            if (appObject == null) {
-                continue;
-            } else {
-                // 设置data产品信息
-                minitjWx.setProgramType(Integer.parseInt(appObject.getString("programType")));
-                minitjWx.setProductName(appObject.getString("name"));
-                minitjWx.setDdAppPlatform(appObject.getString("platform"));
-            }
-            //设置广告收益
-            minitjWx.setAdRevenue(minitjWx.getWxBannerIncome().add(minitjWx.getWxVideoIncome()));
-            //设置VideoECPM
-            if (minitjWx.getWxVideoShow() != 0) {
-                minitjWx.setVideoECPM((minitjWx.getWxVideoIncome().divide(new BigDecimal(minitjWx.getWxVideoShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            } else {
-                minitjWx.setVideoECPM(new BigDecimal(0));
-            }
-            //设置BannerECPM
-            if (minitjWx.getWxBannerShow() != 0) {
-                minitjWx.setBannerECPM((minitjWx.getWxBannerIncome().divide(new BigDecimal(minitjWx.getWxBannerShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            } else {
-                minitjWx.setBannerECPM(new BigDecimal(0));
-            }
-            //设置总收入
-            minitjWx.setRevenueCount(minitjWx.getAdRevenue());
-            newEntityList.add(minitjWx);
+    /**
+     * 查询活跃用户数据
+     *
+     * @param mapTtDailyValue mapTtDailyValue
+     * @param beginDate       beginDate
+     * @param endDate         endDate
+     */
+    private void mapTtDailyValue(Map<String, String> mapTtDailyValue, String beginDate, String endDate) {
+        QueryWrapper<TtDailyValue> queryTtDailyValue = new QueryWrapper<>();
+        List<TtDailyValue> ttDailyValues = ttDailyValueService.list(queryTtDailyValue.between("dateNum", beginDate.replace("-", ""), endDate.replace("-", "")));
+        for (TtDailyValue ttDailyValue : ttDailyValues) {
+            mapTtDailyValue.put(ttDailyValue.getDateNum() + "-" + ttDailyValue.getAppId() + "-" + ttDailyValue.getAppType(), ttDailyValue.getActiveUsers());
         }
-        entityList.clear();
-        entityList.addAll(newEntityList);
-        return null;
+    }
+
+    /**
+     * appID平台来源状态
+     *
+     * @param appId appId
+     * @return Boolean
+     */
+    private Boolean belongAppType(String appId) {
+        if (StringUtils.isBlank(appId)) {
+            return false;
+        } else {
+            LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
+            return "tt".equals(getAllAppMap.get(appId).getString("platform"));
+        }
+    }
+
+    protected void rebuildStatsListResult(List<MinitjWx> entityList) {
+        if (entityList != null) {
+            List<MinitjWx> newEntityList = new ArrayList<>();
+            for (MinitjWx minitjWx : entityList) {
+                // 获取街机和FC的全部app信息
+                LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
+                JSONObject appObject = getAllAppMap.get(minitjWx.getWxAppId());
+                if (appObject == null) {
+                    continue;
+                } else {
+                    // 设置data产品信息
+                    minitjWx.setProgramType(Integer.parseInt(appObject.getString("programType")));
+                    minitjWx.setProductName(appObject.getString("name"));
+                    minitjWx.setDdAppPlatform(appObject.getString("platform"));
+                }
+                //设置广告收益
+                minitjWx.setAdRevenue(minitjWx.getWxBannerIncome().add(minitjWx.getWxVideoIncome()).add(minitjWx.getWxIntIncome()));
+                //设置VideoECPM
+                if (minitjWx.getWxVideoShow() != 0) {
+                    minitjWx.setVideoECPM((minitjWx.getWxVideoIncome().divide(new BigDecimal(minitjWx.getWxVideoShow()),
+                            5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
+                }
+                //设置BannerECPM
+                if (minitjWx.getWxBannerShow() != 0) {
+                    minitjWx.setBannerECPM((minitjWx.getWxBannerIncome().divide(new BigDecimal(minitjWx.getWxBannerShow()),
+                            5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
+                }
+                //设置插屏ECPM
+                if (minitjWx.getWxIntShow() != 0) {
+                    minitjWx.setIntECPM((minitjWx.getWxIntIncome().divide(new BigDecimal(minitjWx.getWxIntShow()),
+                            5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
+                }
+                //设置总收入
+                minitjWx.setRevenueCount(minitjWx.getAdRevenue());
+                newEntityList.add(minitjWx);
+            }
+            entityList.clear();
+            entityList.addAll(newEntityList);
+        }
     }
 
     /**
@@ -164,8 +217,8 @@ public class WxAddDataDetailService {
             endDate = timeRangeArray[1].trim();
         }
         if (StringUtils.isBlank(beginDate) || StringUtils.isBlank(endDate)) {
-            //beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
-            beginDate = endDate = "2020-06-29";
+            beginDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(2));
+            endDate = DateTimeFormatter.ofPattern("yyyy-MM-dd").format(LocalDate.now().minusDays(1));
         }
         statsListParam.getQueryObject().put("beginDate", beginDate);
         statsListParam.getQueryObject().put("endDate", endDate);
@@ -184,6 +237,11 @@ public class WxAddDataDetailService {
     @Autowired
     public void setTtDailyAdValueService(TtDailyAdValueService ttDailyAdValueService) {
         this.ttDailyAdValueService = ttDailyAdValueService;
+    }
+
+    @Autowired
+    public void setTtDailyValueService(TtDailyValueService ttDailyValueService) {
+        this.ttDailyValueService = ttDailyValueService;
     }
 
 }

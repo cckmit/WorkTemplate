@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 
 /**
  * @author: CF
- * @date 2020/7/8 11:24
+ * @date 2020/7/8
  */
 @Data
-@TableName(schema = "persie_value", value = "tt_daily_value")
+@TableName(schema = "tt_data_analysis", value = "daily_value")
 public class TtDailyValue implements BaseCrudEntity<TtDailyValue> {
 
     private static final long serialVersionUID = 1L;
@@ -70,4 +70,5 @@ public class TtDailyValue implements BaseCrudEntity<TtDailyValue> {
      */
     @TableField("insertTime")
     private LocalDateTime insertTime;
+
 }

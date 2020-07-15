@@ -171,7 +171,11 @@ public class MinitjWx extends BaseStatsEntity<MinitjWx> {
 
     @TableField(exist = false)
     private String ddAppPlatform;
-
+    /**
+     * app类型
+     */
+    @TableField(exist = false)
+    private String wxAppType;
     /**
      * 充值收入
      */
@@ -194,15 +198,36 @@ public class MinitjWx extends BaseStatsEntity<MinitjWx> {
     @TableField(exist = false)
     private BigDecimal wxAdNewPrice = new BigDecimal(0);
     /**
-     *
+     * videoECPM
      */
     @TableField(exist = false)
-    private BigDecimal videoECPM;
+    private BigDecimal videoECPM = new BigDecimal(0);
     /**
-     *
+     * bannerECPM
      */
     @TableField(exist = false)
-    private BigDecimal bannerECPM;
+    private BigDecimal bannerECPM = new BigDecimal(0);
+
+    @TableField(exist = false)
+    private BigDecimal intECPM = new BigDecimal(0);
+
+    /**
+     * 插屏曝光
+     */
+    @TableField(exist = false)
+    private int wxIntShow = 0;
+
+    /**
+     * 插屏点击率
+     */
+    @TableField(exist = false)
+    private BigDecimal wxIntClickrate = new BigDecimal(0);
+
+    /**
+     * 插屏收入
+     */
+    @TableField(exist = false)
+    private BigDecimal wxIntIncome = new BigDecimal(0);
     /**
      * 新增用户来源展示字段-- 任务栏-我的小程序
      */

@@ -183,6 +183,7 @@ public class ConfigAdCombinationController2 implements BaseCrudController {
 //        }
         return postResult;
     }
+
     @PostMapping(value = "/copyContent")
     public PostResult copyContent(@RequestBody JSONObject combinationIdObject) {
         PostResult postResult = this.configAdCombinationService2.copyContent(combinationIdObject);

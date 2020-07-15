@@ -26,6 +26,7 @@ public class TtDailyAdValueController implements BaseCrudController {
     public PostResult getAddData(@RequestBody JSONObject jsonObject) {
         return this.ttDailyAdValueService.getAdData(jsonObject);
     }
+
     @Override
     @GetMapping(value = "/id/{id}")
     public CrudObjectResult getObjectById(String id) {
@@ -68,5 +69,6 @@ public class TtDailyAdValueController implements BaseCrudController {
     public void setTtDailyAdValueService(TtDailyAdValueService ttDailyAdValueService) {
         this.ttDailyAdValueService = ttDailyAdValueService;
     }
+
 }
 
