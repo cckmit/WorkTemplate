@@ -1,82 +1,66 @@
 package com.cc.manager.modules.fc.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
-import com.cc.manager.modules.fc.entity.MinitjWx;
-import com.cc.manager.modules.fc.mapper.MinitjWxMapper;
+import com.cc.manager.modules.fc.entity.TtAdClipboard;
+import com.cc.manager.modules.fc.mapper.TtAdClipboardMapper;
 import com.cc.manager.modules.jj.service.JjAndFcAppConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
+ * 头条剪切板广告数据
+ *
  * @author cf
- * @since 2020-05-13
+ * @since 2020-07-21
  */
 @Service
-@DS("fc")
-public class WxAddDataDetailService extends BaseStatsService<MinitjWx, MinitjWxMapper> {
+public class TtAdClipboardService extends BaseStatsService<TtAdClipboard, TtAdClipboardMapper> {
 
     private JjAndFcAppConfigService jjAndFcAppConfigService;
 
     @Override
-    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<MinitjWx> queryWrapper, StatsListResult statsListResult) {
-
+    protected void updateGetListWrapper(StatsListParam statsListParam, QueryWrapper<TtAdClipboard> queryWrapper, StatsListResult statsListResult) {
         // 初始化查询的起止日期
         this.updateBeginAndEndDate(statsListParam);
         String beginDate = statsListParam.getQueryObject().getString("beginDate");
         String endDate = statsListParam.getQueryObject().getString("endDate");
         String appId = statsListParam.getQueryObject().getString("appId");
-        queryWrapper.between("DATE(wx_date)", beginDate, endDate);
-        queryWrapper.eq(StringUtils.isNotBlank(appId), "wx_appid", appId);
-        queryWrapper.orderBy(true, false, "wx_date");
+        queryWrapper.ge("date_val", Integer.parseInt(beginDate.replace("-", "").trim()));
+        queryWrapper.le("date_val", Integer.parseInt(endDate.replace("-", "").trim()));
+        queryWrapper.eq(StringUtils.isNotBlank(appId), "app_id", appId);
+        queryWrapper.orderBy(true, false, "date_val");
     }
 
     @Override
-    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<MinitjWx> entityList, StatsListResult statsListResult) {
-        List<MinitjWx> newEntityList = new ArrayList<>();
-        for (MinitjWx minitjWx : entityList) {
-            // 获取街机和FC的全部app信息
+    protected JSONObject rebuildStatsListResult(StatsListParam statsListParam, List<TtAdClipboard> entityList, StatsListResult statsListResult) {
+        LinkedHashMap<String, TtAdClipboard> ttAdClipboardMap = new LinkedHashMap<>();
+        for (TtAdClipboard ttAdClipboard : entityList) {
             LinkedHashMap<String, JSONObject> getAllAppMap = this.jjAndFcAppConfigService.getAllAppMap();
-            JSONObject appObject = getAllAppMap.get(minitjWx.getWxAppId());
-            if (appObject == null) {
-                continue;
+            JSONObject appObject = getAllAppMap.get(ttAdClipboard.getAppId());
+            if (appObject != null) {
+                ttAdClipboard.setProductName(appObject.getString("name"));
+            }
+            TtAdClipboard adClipboard = ttAdClipboardMap.get(ttAdClipboard.getDateVal() + "-" + ttAdClipboard.getAppId() + "-" + ttAdClipboard.getVersion() + "-" + ttAdClipboard.getAdType() + "-" + ttAdClipboard.getAdStatus());
+            if (adClipboard != null) {
+                adClipboard.setCounts(adClipboard.getCounts()+ttAdClipboard.getCounts());
             } else {
-                // 设置data产品信息
-                minitjWx.setProgramType(Integer.parseInt(appObject.getString("programType")));
-                minitjWx.setProductName(appObject.getString("name"));
-                minitjWx.setDdAppPlatform(appObject.getString("platform"));
+                ttAdClipboardMap.put(ttAdClipboard.getDateVal() + "-" + ttAdClipboard.getAppId() + "-" + ttAdClipboard.getVersion() + "-" + ttAdClipboard.getAdType() + "-" + ttAdClipboard.getAdStatus(), ttAdClipboard);
             }
-            //设置广告收益
-            minitjWx.setAdRevenue(minitjWx.getWxBannerIncome().add(minitjWx.getWxVideoIncome()));
-            //设置VideoECPM
-            if (minitjWx.getWxVideoShow() != 0) {
-                minitjWx.setVideoECPM((minitjWx.getWxVideoIncome().divide(new BigDecimal(minitjWx.getWxVideoShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            }
-            //设置BannerECPM
-            if (minitjWx.getWxBannerShow() != 0) {
-                minitjWx.setBannerECPM((minitjWx.getWxBannerIncome().divide(new BigDecimal(minitjWx.getWxBannerShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            }
-            //设置总收入
-            minitjWx.setRevenueCount(minitjWx.getAdRevenue());
-            newEntityList.add(minitjWx);
         }
+        Collection<TtAdClipboard> values = ttAdClipboardMap.values();
         entityList.clear();
-        entityList.addAll(newEntityList);
+        entityList.addAll(values);
         return null;
     }
 

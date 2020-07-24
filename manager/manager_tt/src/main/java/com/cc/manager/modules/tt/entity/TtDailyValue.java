@@ -3,8 +3,9 @@ package com.cc.manager.modules.tt.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cc.manager.common.mvc.BaseCrudEntity;
+import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
@@ -12,9 +13,10 @@ import java.time.LocalDateTime;
  * @author: CF
  * @date 2020/7/8
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @TableName(schema = "tt_data_analysis", value = "daily_value")
-public class TtDailyValue implements BaseCrudEntity<TtDailyValue> {
+public class TtDailyValue extends BaseStatsEntity<TtDailyValue> {
 
     private static final long serialVersionUID = 1L;
 
@@ -70,5 +72,8 @@ public class TtDailyValue implements BaseCrudEntity<TtDailyValue> {
      */
     @TableField("insertTime")
     private LocalDateTime insertTime;
+
+    @TableField(exist = false)
+    private boolean haveDetail = false;
 
 }

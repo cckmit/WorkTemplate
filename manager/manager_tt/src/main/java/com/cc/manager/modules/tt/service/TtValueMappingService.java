@@ -13,7 +13,7 @@ import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.common.utils.ReadExcel;
-import com.cc.manager.modules.jj.config.JjConfig;
+import com.cc.manager.modules.tt.config.TtConfig;
 import com.cc.manager.modules.tt.entity.TtValueMapping;
 import com.cc.manager.modules.tt.mapper.TtValueMappingMapper;
 import org.apache.commons.io.FileUtils;
@@ -33,10 +33,10 @@ import java.util.*;
  * @since 2020-07-09
  */
 @Service
-@DS("fc")
+@DS("tt")
 public class TtValueMappingService extends BaseCrudService<TtValueMapping, TtValueMappingMapper> {
 
-    private JjConfig jjConfig;
+    private TtConfig ttConfig;
 
     /**
      * 导入映射关系
@@ -47,7 +47,7 @@ public class TtValueMappingService extends BaseCrudService<TtValueMapping, TtVal
         JSONObject jsonObject = new JSONObject();
         Integer insertResult = 1;
         try {
-            String readPath = jjConfig.getExcelSave();
+            String readPath = ttConfig.getExcelSave();
             String originalFilename = file.getOriginalFilename();
             File saveFile = new File(readPath, Objects.requireNonNull(originalFilename));
             FileUtils.copyInputStreamToFile(file.getInputStream(), saveFile);
@@ -168,8 +168,8 @@ public class TtValueMappingService extends BaseCrudService<TtValueMapping, TtVal
     }
 
     @Autowired
-    public void setJjConfig(JjConfig jjConfig) {
-        this.jjConfig = jjConfig;
+    public void setTtConfig(TtConfig ttConfig) {
+        this.ttConfig = ttConfig;
     }
 
     @Override

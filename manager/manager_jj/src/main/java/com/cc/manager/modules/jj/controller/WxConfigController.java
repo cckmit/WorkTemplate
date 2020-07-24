@@ -43,6 +43,12 @@ public class WxConfigController implements BaseCrudController {
         return this.wxConfigService.getPage(crudPageParam);
     }
 
+
+    @GetMapping(value = "/getAll/{requestParam}")
+    public JSONObject getAll(@PathVariable String requestParam) {
+        return this.wxConfigService.getAll();
+    }
+
     @Override
     @PostMapping
     public PostResult post(@RequestBody String requestParam) {

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName(schema = "tt_data_analysis", value = "daily_ad_value")
-public class TtDailyAdValue implements BaseCrudEntity<TtDailyAdValue> {
+public class QqDailyAdValue implements BaseCrudEntity<QqDailyAdValue> {
 
     private static final long serialVersionUID = 1L;
 
@@ -44,13 +44,19 @@ public class TtDailyAdValue implements BaseCrudEntity<TtDailyAdValue> {
      * 活跃人数
      */
     @TableField(exist = false)
-    private String wxActive;
+    private int wxActive;
 
     /**
      * 视频曝光
      */
     @TableField("videoShow")
     private int wxVideoShow = 0;
+
+    /**
+     * 视频点击次数
+     */
+    @TableField("videoClickCount")
+    private int wxVideoClickCount = 0;
 
     /**
      * 视频点击率
@@ -71,6 +77,12 @@ public class TtDailyAdValue implements BaseCrudEntity<TtDailyAdValue> {
     private int wxBannerShow = 0;
 
     /**
+     * banner点击次数
+     */
+    @TableField("bannerClickCount")
+    private int wxBannerClickCount = 0;
+
+    /**
      * banner点击率
      */
     @TableField("bannerClickRate")
@@ -89,6 +101,12 @@ public class TtDailyAdValue implements BaseCrudEntity<TtDailyAdValue> {
     private int wxIntShow = 0;
 
     /**
+     * banner点击次数
+     */
+    @TableField("intClickCount")
+    private int wxIntClickCount = 0;
+
+    /**
      * 插屏点击率
      */
     @TableField("intClickRate")
@@ -102,6 +120,40 @@ public class TtDailyAdValue implements BaseCrudEntity<TtDailyAdValue> {
 
     @TableField("insertTime")
     private LocalDateTime insertTime;
+
+    /**
+     * 产品类型
+     */
+    @TableField(exist = false)
+    private Integer programType;
+    /**
+     * 产品名称
+     */
+    @TableField(exist = false)
+    private String productName;
+
+    @TableField(exist = false)
+    private String ddAppPlatform;
+
+    /**
+     * 广告收入
+     */
+    @TableField(exist = false)
+    private BigDecimal adRevenue = new BigDecimal(0);
+
+    /**
+     * videoECPM
+     */
+    @TableField(exist = false)
+    private BigDecimal videoECPM = new BigDecimal(0);
+    /**
+     * bannerECPM
+     */
+    @TableField(exist = false)
+    private BigDecimal bannerECPM = new BigDecimal(0);
+
+    @TableField(exist = false)
+    private BigDecimal intECPM = new BigDecimal(0);
 
     /**
      * 总收入

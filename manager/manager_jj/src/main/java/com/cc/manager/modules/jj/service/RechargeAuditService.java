@@ -9,7 +9,10 @@ import com.cc.manager.common.mvc.BaseStatsService;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
+import com.cc.manager.modules.jj.config.CmTool;
 import com.cc.manager.modules.jj.config.Config;
+import com.cc.manager.modules.jj.config.SignatureAlgorithm;
+import com.cc.manager.modules.jj.config.XMLHandler;
 import com.cc.manager.modules.jj.entity.AllCost;
 import com.cc.manager.modules.jj.entity.Recharge;
 import com.cc.manager.modules.jj.entity.UserApp;
@@ -23,10 +26,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
+import static com.cc.manager.modules.jj.config.CmTool.createNonceStr;
 
 /**
  * 提现审核
@@ -201,33 +203,33 @@ public class RechargeAuditService extends BaseStatsService<Recharge, RechargeMap
      * @return 提现结果
      */
     private Map<String, String> recharge(String orderId, int amount, WxConfig wxConfig, String openid, String desc, String ip) {
-//        Map<String, String> signMap = new HashMap<>();
-//        signMap.put("mch_appid", wxConfig.getId());
-//        signMap.put("mchid", wxConfig.getDdMchId());
-//        if (StringUtils.isNotBlank(config.getDEVICE_INFO())) {
-//            signMap.put("device_info", config.getDEVICE_INFO());
-//        }
-//        signMap.put("nonce_str", createNonceStr());
-//        signMap.put("partner_trade_no", orderId);
-//        signMap.put("openid", openid);
-//        signMap.put("check_name", "NO_CHECK");
-//        signMap.put("re_user_name", "default");
-//        signMap.put("amount", String.valueOf(amount));
-//        if (StringUtils.isNotBlank(desc)) {
-//            signMap.put("desc", desc);
-//        } else {
-//            signMap.put("desc", config.getDESC());
-//        }
-//        signMap.put("spbill_create_ip", ip);
-//        SignatureAlgorithm algorithm = new SignatureAlgorithm(wxConfig.getDdKey(), signMap);
-//        String xml = algorithm.getSignXml();
-//        try {
-//            String result = CmTool.sendHttps(xml, config.getTRANSFERS_URL(), RechargeService.class.getResource("/").getPath() + "static/" + wxConfig.getDdP12(), wxConfig.getDdP12Password());
-//            XMLHandler handler = XMLHandler.parse(result);
-//            return handler.getXmlMap();
-//        } catch (Exception e) {
-//            LOGGER.error(ExceptionUtils.getStackTrace(e));
-//        }
+        Map<String, String> signMap = new HashMap<>();
+        signMap.put("mch_appid", wxConfig.getId());
+        signMap.put("mchid", wxConfig.getDdMchId());
+        if (StringUtils.isNotBlank(config.getDEVICE_INFO())) {
+            signMap.put("device_info", config.getDEVICE_INFO());
+        }
+        signMap.put("nonce_str", createNonceStr());
+        signMap.put("partner_trade_no", orderId);
+        signMap.put("openid", openid);
+        signMap.put("check_name", "NO_CHECK");
+        signMap.put("re_user_name", "default");
+        signMap.put("amount", String.valueOf(amount));
+        if (StringUtils.isNotBlank(desc)) {
+            signMap.put("desc", desc);
+        } else {
+            signMap.put("desc", config.getDESC());
+        }
+        signMap.put("spbill_create_ip", ip);
+        SignatureAlgorithm algorithm = new SignatureAlgorithm(wxConfig.getDdKey(), signMap);
+        String xml = algorithm.getSignXml();
+        try {
+            String result = CmTool.sendHttps(xml, config.getTRANSFERS_URL(), RechargeService.class.getResource("/").getPath() + "static/" + wxConfig.getDdP12(), wxConfig.getDdP12Password());
+            XMLHandler handler = XMLHandler.parse(result);
+            return handler.getXmlMap();
+        } catch (Exception e) {
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+        }
         return null;
     }
 

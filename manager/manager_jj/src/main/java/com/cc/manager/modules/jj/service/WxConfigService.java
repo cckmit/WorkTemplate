@@ -193,6 +193,15 @@ public class WxConfigService extends BaseCrudService<WxConfig, WxConfigMapper> {
         return postResult;
     }
 
+    public JSONObject getAll() {
+        JSONArray dataArray = new JSONArray();
+        dataArray.addAll(this.list());
+        JSONObject resultObject = new JSONObject();
+        resultObject.put("code", 1);
+        resultObject.put("data", dataArray);
+        return resultObject;
+    }
+
     @Autowired
     public void setAppConfigService(AppConfigService appConfigService) {
         this.appConfigService = appConfigService;

@@ -17,10 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -83,7 +80,6 @@ public abstract class BaseStatsService<E extends BaseStatsEntity<E>, M extends B
         if (Objects.isNull(statsListParam.getQueryObject())) {
             statsListParam.setQueryObject(new JSONObject());
         }
-
         try {
             // 初始化查询wrapper
             QueryWrapper<E> queryWrapper = new QueryWrapper<>();
@@ -91,8 +87,19 @@ public abstract class BaseStatsService<E extends BaseStatsEntity<E>, M extends B
             List<E> entityList = this.list(queryWrapper);
             if (Objects.nonNull(entityList)) {
                 JSONObject totalRow = this.rebuildStatsListResult(statsListParam, entityList, statsListResult);
-                statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(entityList)));
+                int page = statsListParam.getPage();
+                int rows = statsListParam.getLimit();
+                List<E> sendData = new Vector<>();
+                for (int i = (page - 1) * rows; i < page * rows; i++)
+                {
+                    if (entityList.size() > i)
+                    {
+                        sendData.add(entityList.get(i));
+                    }
+                }
+                statsListResult.setData(JSONArray.parseArray(JSON.toJSONString(sendData)));
                 statsListResult.setTotalRow(totalRow);
+                statsListResult.setCount(entityList.size());
             }
         } catch (Exception e) {
             statsListResult.setCode(1);
@@ -152,6 +159,10 @@ public abstract class BaseStatsService<E extends BaseStatsEntity<E>, M extends B
 
     @Override
     public E getOne(Wrapper<E> queryWrapper, boolean throwEx) {
+        List<E> list = this.list(queryWrapper);
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
         return null;
     }
 
