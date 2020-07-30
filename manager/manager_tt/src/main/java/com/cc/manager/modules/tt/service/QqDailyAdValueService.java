@@ -1,9 +1,7 @@
 package com.cc.manager.modules.tt.service;
 
-import cn.hutool.core.util.NumberUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSONUtil;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.dynamic.datasource.annotation.DS;
@@ -13,10 +11,11 @@ import com.cc.manager.common.mvc.BaseCrudService;
 import com.cc.manager.common.result.CrudPageParam;
 import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.tt.config.TtConfig;
+import com.cc.manager.modules.tt.entity.QqDailyAdValue;
 import com.cc.manager.modules.tt.entity.TtDailyAdValue;
 import com.cc.manager.modules.tt.entity.TtDailyValue;
 import com.cc.manager.modules.tt.entity.WxConfig;
-import com.cc.manager.modules.tt.mapper.TtDailyAdValueMapper;
+import com.cc.manager.modules.tt.mapper.QqDailyAdValueMapper;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -33,11 +32,11 @@ import java.util.*;
 
 /**
  * @author cf
- * @since 2020-07-10
+ * @since 2020-07-27
  */
 @Service
 @DS("tt")
-public class QqDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDailyAdValueMapper> {
+public class QqDailyAdValueService extends BaseCrudService<QqDailyAdValue, QqDailyAdValueMapper> {
 
     private TtConfig ttConfig;
     private TtDailyValueService ttDailyValueService;
@@ -55,16 +54,65 @@ public class QqDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
         try {
             String appId = "1110459368";
 
-            //今日头条广告数据请求
+            //qq广告数据请求
             String qqAdRequest = String.format(ttConfig.getQqAdRequest(), appId);
 
             String adData = HttpRequest.post(ttConfig.getQqAdUrl()).header("Content-Type", "application/json").cookie("quid=b171a71b368c2be5d1d0529a309788b4; qticket=4d15da1407d8e14cc3e1acdefcda9a67").body("{\"ftimeBegin\":20200723,\"ftimeEnd\":20200723,\"appid\":\"1110459368\",\"needSubPosData\":0,\"channelType\":0}").execute().body();
 
             JSONArray data = JSONObject.parseObject(adData).getJSONObject("data").getJSONArray("AdDataDailyList");
+            Map<String, QqDailyAdValue> map = new HashMap<>(16);
             for (Object datum : data) {
-                System.out.println("我是data----"+datum.toString());
+                System.out.println("我是data----" + datum.toString());
+
+                JSONObject object = JSONObject.parseObject(datum.toString());
+                String productId = object.getString("appid");
+                String time = object.getString("ftime");
+                String adType = object.getString("adType");
+                if (StringUtils.equals("1", adType)) {
+                    QqDailyAdValue qqDailyAdValue = map.get(time + "-" + productId);
+                    if (qqDailyAdValue != null) {
+                        qqDailyAdValue.setWxBannerShow(Integer.parseInt(object.getString("exposure")));
+                        qqDailyAdValue.setWxBannerClickCount(Integer.parseInt(object.getString("click")));
+                        qqDailyAdValue.setWxBannerClickrate(new BigDecimal(object.getString("clickRate")).setScale(2, RoundingMode.HALF_UP));
+                        qqDailyAdValue.setWxBannerIncome(new BigDecimal(object.getString("revenue")).setScale(2, RoundingMode.HALF_UP));
+                        qqDailyAdValue.setBannerECPM(new BigDecimal(object.getString("cpm")).setScale(2, RoundingMode.HALF_UP));
+
+                    } else {
+                        QqDailyAdValue newDailyAdValue = new QqDailyAdValue();
+                        newDailyAdValue.setWxAppId(productId);
+                        newDailyAdValue.setWxDate(LocalDate.parse(time));
+                        newDailyAdValue.setWxBannerShow(Integer.parseInt(object.getString("exposure")));
+                        newDailyAdValue.setWxBannerClickCount(Integer.parseInt(object.getString("click")));
+                        newDailyAdValue.setWxBannerClickrate(new BigDecimal(object.getString("clickRate")).setScale(2, RoundingMode.HALF_UP));
+                        newDailyAdValue.setWxBannerIncome(new BigDecimal(object.getString("revenue")).setScale(2, RoundingMode.HALF_UP));
+                        newDailyAdValue.setBannerECPM(new BigDecimal(object.getString("cpm")).setScale(2, RoundingMode.HALF_UP));
+                        map.put(time + "-" + productId,newDailyAdValue);
+                    }
+                }
+                if (StringUtils.equals("2", adType)) {
+                    QqDailyAdValue qqDailyAdValue = map.get(time + "-" + productId);
+                    if (qqDailyAdValue != null) {
+                        qqDailyAdValue.setWxVideoShow(Integer.parseInt(object.getString("exposure")));
+                        qqDailyAdValue.setWxVideoClickCount(Integer.parseInt(object.getString("click")));
+                        qqDailyAdValue.setWxVideoClickrate(new BigDecimal(object.getString("clickRate")).setScale(2, RoundingMode.HALF_UP));
+                        qqDailyAdValue.setWxVideoIncome(new BigDecimal(object.getString("revenue")).setScale(2, RoundingMode.HALF_UP));
+                        qqDailyAdValue.setVideoECPM(new BigDecimal(object.getString("cpm")).setScale(2, RoundingMode.HALF_UP));
+
+                    } else {
+                        QqDailyAdValue newDailyAdValue = new QqDailyAdValue();
+                        newDailyAdValue.setWxAppId(productId);
+                        newDailyAdValue.setWxDate(LocalDate.parse(time));
+                        newDailyAdValue.setWxVideoShow(Integer.parseInt(object.getString("exposure")));
+                        newDailyAdValue.setWxVideoClickCount(Integer.parseInt(object.getString("click")));
+                        newDailyAdValue.setWxVideoClickrate(new BigDecimal(object.getString("clickRate")).setScale(2, RoundingMode.HALF_UP));
+                        newDailyAdValue.setWxVideoIncome(new BigDecimal(object.getString("revenue")).setScale(2, RoundingMode.HALF_UP));
+                        newDailyAdValue.setVideoECPM(new BigDecimal(object.getString("cpm")).setScale(2, RoundingMode.HALF_UP));
+                        map.put(time + "-" + productId,newDailyAdValue);
+
+                    }
+                }
             }
-            this.saveOrUpdateBatch(null);
+            this.saveOrUpdateBatch(map.values());
         } catch (Exception e) {
             LOGGER.error(ExceptionUtils.getStackTrace(e));
             postResult.setCode(2);
@@ -74,48 +122,8 @@ public class QqDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
         return postResult;
     }
 
-    /**
-     * 批量保存
-     *
-     * @param entityList entityList
-     * @param batchSize  batchSize
-     * @return 保存结果
-     */
     @Override
-    public boolean saveOrUpdateBatch(Collection<TtDailyAdValue> entityList, int batchSize) {
-        try {
-            for (TtDailyAdValue ttDailyAdValue : entityList) {
-                this.saveOrUpdate(ttDailyAdValue);
-            }
-        } catch (Exception e) {
-            LOGGER.error(ExceptionUtils.getStackTrace(e));
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean saveOrUpdate(TtDailyAdValue entity) {
-        LocalDate wxDate = entity.getWxDate();
-        String appId = entity.getWxAppId();
-        String appType = entity.getWxAppType();
-        entity.setInsertTime(LocalDateTime.now());
-        QueryWrapper<TtDailyAdValue> ttDailyAdValueQueryWrapper = new QueryWrapper<>();
-        ttDailyAdValueQueryWrapper.eq("dateValue", wxDate).eq("appId", appId).eq("appType", appType);
-        TtDailyAdValue tableContent = this.getOne(ttDailyAdValueQueryWrapper);
-        //数据存在更新，不存在则新增
-        if (tableContent != null) {
-            UpdateWrapper<TtDailyAdValue> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("dateValue", wxDate).eq("appId", appId).eq("appType", appType);
-            return this.update(entity, updateWrapper);
-        } else {
-            return this.save(entity);
-        }
-    }
-
-
-    @Override
-    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<TtDailyAdValue> queryWrapper) {
+    protected void updateGetPageWrapper(CrudPageParam crudPageParam, QueryWrapper<QqDailyAdValue> queryWrapper) {
         if (StringUtils.isNotBlank(crudPageParam.getQueryData())) {
             JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
             String times = queryObject.getString("times");
@@ -136,6 +144,51 @@ public class QqDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
 
     }
 
+    @Override
+    protected boolean delete(String requestParam, UpdateWrapper<QqDailyAdValue> deleteWrapper) {
+        return false;
+    }
+
+    /**
+     * 批量保存
+     *
+     * @param entityList entityList
+     * @param batchSize  batchSize
+     * @return 保存结果
+     */
+    @Override
+    public boolean saveOrUpdateBatch(Collection<QqDailyAdValue> entityList, int batchSize) {
+        try {
+            for (QqDailyAdValue qqDailyAdValue : entityList) {
+                this.saveOrUpdate(qqDailyAdValue);
+            }
+        } catch (Exception e) {
+            LOGGER.error(ExceptionUtils.getStackTrace(e));
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean saveOrUpdate(QqDailyAdValue entity) {
+        LocalDate wxDate = entity.getWxDate();
+        String appId = entity.getWxAppId();
+        String appType = entity.getWxAppType();
+        entity.setInsertTime(LocalDateTime.now());
+        QueryWrapper<QqDailyAdValue> qqDailyAdValueQueryWrapper = new QueryWrapper<>();
+        qqDailyAdValueQueryWrapper.eq("dateValue", wxDate).eq("appId", appId).eq("appType", appType);
+        QqDailyAdValue qqDailyAdValue = this.getOne(qqDailyAdValueQueryWrapper);
+        //数据存在更新，不存在则新增
+        if (qqDailyAdValue != null) {
+            UpdateWrapper<QqDailyAdValue> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("dateValue", wxDate).eq("appId", appId).eq("appType", appType);
+            return this.update(entity, updateWrapper);
+        } else {
+            return this.save(entity);
+        }
+    }
+
+
     /**
      * 重构分页查询结果，比如进行汇总复制计算等操作
      *
@@ -143,7 +196,7 @@ public class QqDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
      * @param entityList    查询数据对象列表
      */
     @Override
-    protected void rebuildSelectedList(CrudPageParam crudPageParam, List<TtDailyAdValue> entityList) {
+    protected void rebuildSelectedList(CrudPageParam crudPageParam, List<QqDailyAdValue> entityList) {
 
         Map<String, String> ttDailyValueMap = new HashMap<>(16);
         //查询ttDailyValueService拼接活跃用户数
@@ -157,112 +210,23 @@ public class QqDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
             JSONObject queryObject = JSONObject.parseObject(crudPageParam.getQueryData());
             List<TtDailyAdValue> newEntityList = new ArrayList<>();
             //对entityList参数处理
-            getNewEntityList(entityList, ttDailyValueMap, wxConfigHashMap, newEntityList);
+            //  getNewEntityList(entityList, ttDailyValueMap, wxConfigHashMap, newEntityList);
             Map<String, TtDailyAdValue> sumTtDailyAdValueMap = new LinkedHashMap<>(16);
             if (StringUtils.equals("tt", queryObject.getString("platform"))) {
                 //选择平台汇总进行数据求和
                 dealSumTtDailyAdValueMap(newEntityList, sumTtDailyAdValueMap);
                 List<TtDailyAdValue> ttDailyAdValueList = new ArrayList<>(sumTtDailyAdValueMap.values());
                 //对ttDailyAdValueList参数处理
-                dealTtDailyAdValueList(ttDailyAdValueList);
+                //  dealTtDailyAdValueList(ttDailyAdValueList);
                 entityList.clear();
-                entityList.addAll(ttDailyAdValueList);
+                // entityList.addAll(ttDailyAdValueList);
             } else {
                 entityList.clear();
-                entityList.addAll(newEntityList);
+                //    entityList.addAll(newEntityList);
             }
         }
     }
 
-    /**
-     * entityList参数处理
-     *
-     * @param entityList      entityList
-     * @param ttDailyValueMap ttDailyValueMap
-     * @param wxConfigHashMap wxConfigHashMap
-     * @param newEntityList   newEntityList
-     */
-    private void getNewEntityList(List<TtDailyAdValue> entityList, Map<String, String> ttDailyValueMap, HashMap<String, WxConfig> wxConfigHashMap, List<TtDailyAdValue> newEntityList) {
-        for (TtDailyAdValue ttDailyAdValue : entityList) {
-            //获取活跃用户数
-            int activeUser = getActiveUser(ttDailyValueMap, ttDailyAdValue);
-            ttDailyAdValue.setWxActive(activeUser);
-            // 获取街机app信息
-            WxConfig wxConfig = wxConfigHashMap.get(ttDailyAdValue.getWxAppId());
-            if (wxConfig == null) {
-                continue;
-            } else {
-                // 设置data产品信息
-                ttDailyAdValue.setProgramType(wxConfig.getProgramType());
-                ttDailyAdValue.setProductName(wxConfig.getProductName());
-                ttDailyAdValue.setDdAppPlatform(wxConfig.getDdAppPlatform());
-            }
-            //设置广告收益
-            ttDailyAdValue.setAdRevenue(ttDailyAdValue.getWxBannerIncome().add(ttDailyAdValue.getWxVideoIncome()).add(ttDailyAdValue.getWxIntIncome()));
-            //设置VideoECPM
-            if (ttDailyAdValue.getWxVideoShow() != 0) {
-                ttDailyAdValue.setVideoECPM((ttDailyAdValue.getWxVideoIncome().divide(new BigDecimal(ttDailyAdValue.getWxVideoShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            }
-            //设置BannerECPM
-            if (ttDailyAdValue.getWxBannerShow() != 0) {
-                ttDailyAdValue.setBannerECPM((ttDailyAdValue.getWxBannerIncome().divide(new BigDecimal(ttDailyAdValue.getWxBannerShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            }
-            //设置插屏ECPM
-            if (ttDailyAdValue.getWxIntShow() != 0) {
-                ttDailyAdValue.setIntECPM((ttDailyAdValue.getWxIntIncome().divide(new BigDecimal(ttDailyAdValue.getWxIntShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            }
-            //设置总收入
-            ttDailyAdValue.setRevenueCount(ttDailyAdValue.getAdRevenue());
-            newEntityList.add(ttDailyAdValue);
-        }
-    }
-
-    /**
-     * 汇总List参数处理
-     *
-     * @param ttDailyAdValueList ttDailyAdValueList
-     */
-    private void dealTtDailyAdValueList(List<TtDailyAdValue> ttDailyAdValueList) {
-        for (TtDailyAdValue ttDailyAdValue : ttDailyAdValueList) {
-            if (ttDailyAdValue.getWxVideoShow() != 0) {
-                ttDailyAdValue.setWxVideoClickrate(new BigDecimal(NumberUtil.div(ttDailyAdValue.getWxVideoClickCount() * 1000, ttDailyAdValue.getWxVideoShow() * 10, 2)));
-                ttDailyAdValue.setVideoECPM((ttDailyAdValue.getWxVideoIncome().divide(new BigDecimal(ttDailyAdValue.getWxVideoShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            }
-            if (ttDailyAdValue.getWxBannerShow() != 0) {
-                ttDailyAdValue.setWxBannerClickrate(new BigDecimal(NumberUtil.div(ttDailyAdValue.getWxBannerClickCount() * 1000, ttDailyAdValue.getWxBannerShow() * 10, 2)));
-                ttDailyAdValue.setBannerECPM((ttDailyAdValue.getWxBannerIncome().divide(new BigDecimal(ttDailyAdValue.getWxBannerShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            }
-            if (ttDailyAdValue.getWxIntShow() != 0) {
-                ttDailyAdValue.setWxIntClickrate(new BigDecimal(NumberUtil.div(ttDailyAdValue.getWxIntClickCount() * 1000, ttDailyAdValue.getWxIntShow() * 10, 2)));
-                ttDailyAdValue.setIntECPM((ttDailyAdValue.getWxIntIncome().divide(new BigDecimal(ttDailyAdValue.getWxIntShow()),
-                        5, RoundingMode.HALF_UP)).multiply(new BigDecimal(1000)));
-            }
-        }
-    }
-
-    /**
-     * 获取产品活跃用户数
-     *
-     * @param ttDailyValueMap ttDailyValueMap
-     * @param ttDailyAdValue  ttDailyAdValue
-     * @return activeUser
-     */
-    private int getActiveUser(Map<String, String> ttDailyValueMap, TtDailyAdValue ttDailyAdValue) {
-        String formatDate = ttDailyAdValue.getWxDate().format(DateTimeFormatter.BASIC_ISO_DATE);
-        Map activeUsersMap = JSON.parseObject(ttDailyValueMap.get(formatDate + "-" + ttDailyAdValue.getWxAppId() + "-" + ttDailyAdValue.getWxAppType()));
-        int activeUser = 0;
-        if (activeUsersMap != null) {
-            for (Object mapData : activeUsersMap.values()) {
-                activeUser = activeUser + Integer.parseInt(mapData.toString());
-            }
-        }
-        return activeUser;
-    }
 
     /**
      * 平台汇总进行数据求和
@@ -334,11 +298,6 @@ public class QqDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
         for (TtDailyValue ttDailyValue : ttDailyValues) {
             ttDailyValueMap.put(ttDailyValue.getDateNum() + "-" + ttDailyValue.getAppId() + "-" + ttDailyValue.getAppType(), ttDailyValue.getActiveUsers());
         }
-    }
-
-    @Override
-    protected boolean delete(String requestParam, UpdateWrapper<TtDailyAdValue> deleteWrapper) {
-        return false;
     }
 
     @Autowired

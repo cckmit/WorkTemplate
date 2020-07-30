@@ -25,5 +25,4 @@ public class StatsListParam implements Serializable {
      * 每页显示条数
      */
     private int limit;
-
 }

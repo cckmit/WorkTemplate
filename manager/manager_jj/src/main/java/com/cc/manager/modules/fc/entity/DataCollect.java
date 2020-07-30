@@ -22,6 +22,8 @@ public class DataCollect implements Serializable {
     public String endTime;
     @JSONField(format = "yyyy-MM-dd")
     private LocalDate wxDate;
+    /*** 平台类型*/
+    private String platformType = "街机";
     /*** 产品数量*/
     private Integer productCount;
     /*** 新增数量*/

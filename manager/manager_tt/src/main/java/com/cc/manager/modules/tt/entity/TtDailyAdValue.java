@@ -159,6 +159,6 @@ public class TtDailyAdValue implements BaseCrudEntity<TtDailyAdValue> {
      * 总收入
      */
     @TableField(exist = false)
-    private BigDecimal revenueCount;
+    private BigDecimal revenueCount = new BigDecimal(0);
 
 }

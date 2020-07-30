@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 
 /**
  * @author cf
- * @since 2020-07-10
+ * @since 2020-07-27
  */
 @Data
-@TableName(schema = "tt_data_analysis", value = "daily_ad_value")
+@TableName(schema = "qq_data_analysis", value = "daily_ad_value")
 public class QqDailyAdValue implements BaseCrudEntity<QqDailyAdValue> {
 
     private static final long serialVersionUID = 1L;

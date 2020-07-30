@@ -261,7 +261,7 @@ public class MinitjWxDataCollectService {
      * @return 计算后数据
      */
     private Map<String, DataCollect> countMinitWxData(Map<String, List<MinitjWx>> minitjListMap) {
-        Map<String, DataCollect> dataCollectMap = new HashMap<>(16);
+        Map<String, DataCollect> dataCollectMap = new TreeMap<>();
         // 循环map
         if (MapUtil.isNotEmpty(minitjListMap)) {
             for (String wxDate : minitjListMap.keySet()) {

@@ -76,4 +76,13 @@ public class TtDailyValue extends BaseStatsEntity<TtDailyValue> {
     @TableField(exist = false)
     private boolean haveDetail = false;
 
+    /*** 新增数量*/
+    @TableField(exist = false)
+    private Integer newCount = 0;
+    /*** 活跃数量*/
+    @TableField(exist = false)
+    private Integer activeCount = 0;
+    /*** 产品数量*/
+    @TableField(exist = false)
+    private Integer productCount = 0;
 }
