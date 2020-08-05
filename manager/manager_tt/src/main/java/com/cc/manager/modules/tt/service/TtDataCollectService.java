@@ -23,14 +23,13 @@ import java.util.*;
 import static com.cc.manager.common.mvc.BaseController.LOGGER;
 
 /**
- * 头条剪切板广告数据
+ * 头条街机数据汇总
  *
  * @author cf
  * @since 2020-07-21
  */
 @Service
 public class TtDataCollectService {
-
 
     private TtDailyValueService ttDailyValueService;
     private TtDailyAdValueService ttDailyAdValueService;
@@ -48,7 +47,6 @@ public class TtDataCollectService {
         this.updateBeginAndEndDate(statsListParam);
         String beginDate = statsListParam.getQueryObject().getString("beginDate");
         String endDate = statsListParam.getQueryObject().getString("endDate");
-
         List<TtDataCollect> dataCollects;
         try {
             Map<String, TtDataCollect> dataCollectMap = new TreeMap<>();
@@ -67,12 +65,20 @@ public class TtDataCollectService {
         return statsListResult;
     }
 
+    /**
+     * 常规数据与广告数据合并
+     *
+     * @param ttDailyAdValueMap ttDailyAdValueMap
+     * @param ttDailyValueMap   ttDailyValueMap
+     * @param dataCollectMap    dataCollectMap
+     * @return List
+     */
     @SneakyThrows
     private List<TtDataCollect> mergeValue(Map<String, TtDailyAdValue> ttDailyAdValueMap, Map<String, TtDailyValue> ttDailyValueMap, Map<String, TtDataCollect> dataCollectMap) {
-        Collection<TtDailyValue> values = ttDailyValueMap.values();
-        ArrayList<TtDailyValue> ttDailyValues = new ArrayList<>(values);
         SimpleDateFormat orFormat = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Collection<TtDailyValue> values = ttDailyValueMap.values();
+        ArrayList<TtDailyValue> ttDailyValues = new ArrayList<>(values);
         for (TtDailyValue ttDailyValue : ttDailyValues) {
             TtDataCollect dataCollect = new TtDataCollect();
             dataCollect.setWxDate(newFormat.format(orFormat.parse(ttDailyValue.getDateNum().toString())));
@@ -92,6 +98,13 @@ public class TtDataCollectService {
         return new ArrayList<>(dataCollectMap.values());
     }
 
+    /**
+     * 查询常规数据
+     *
+     * @param beginDate beginDate
+     * @param endDate   endDate
+     * @return Map
+     */
     private Map<String, TtDailyValue> queryDailyValueCount(String beginDate, String endDate) {
         QueryWrapper<TtDailyValue> ttDailyValueQueryWrapper = new QueryWrapper<>();
         ttDailyValueQueryWrapper.between("dateNum", beginDate.replace("-", "").trim(), endDate.replace("-", "").trim());
@@ -101,6 +114,12 @@ public class TtDataCollectService {
         return sumTtDailyValueMap;
     }
 
+    /**
+     * 按日对数据求和
+     *
+     * @param ttDailyValueList   ttDailyValueList
+     * @param sumTtDailyValueMap sumTtDailyValueMap
+     */
     private void dealSumTtDailyValueMap(List<TtDailyValue> ttDailyValueList, Map<String, TtDailyValue> sumTtDailyValueMap) {
         HashSet<String> appId = new HashSet<>();
         for (TtDailyValue ttDailyValue : ttDailyValueList) {
@@ -143,6 +162,13 @@ public class TtDataCollectService {
         return count;
     }
 
+    /**
+     * 查询广告数据
+     *
+     * @param beginDate beginDate
+     * @param endDate   endDate
+     * @return Map
+     */
     private Map<String, TtDailyAdValue> queryDailyAdValueCount(String beginDate, String endDate) {
         QueryWrapper<TtDailyAdValue> ttDailyAdValueQueryWrapper = new QueryWrapper<>();
         ttDailyAdValueQueryWrapper.between("dateValue", beginDate, endDate);

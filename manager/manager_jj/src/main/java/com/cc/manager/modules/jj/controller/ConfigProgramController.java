@@ -49,7 +49,7 @@ public class ConfigProgramController implements BaseCrudController {
     public PostResult post(@RequestBody String requestParam) {
         PostResult postResult = this.configProgramService.post(requestParam);
         if (postResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_program");
+            //this.persieServerUtils.refreshTable("config_program");
         }
         return postResult;
     }
@@ -59,7 +59,7 @@ public class ConfigProgramController implements BaseCrudController {
     public PostResult put(@RequestBody String requestParam) {
         PostResult putResult = this.configProgramService.put(requestParam);
         if (putResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_program");
+          //  this.persieServerUtils.refreshTable("config_program");
         }
         return putResult;
     }
@@ -69,7 +69,7 @@ public class ConfigProgramController implements BaseCrudController {
     public PostResult delete(@RequestBody String requestParam) {
         PostResult deleteResult = this.configProgramService.delete(requestParam);
         if (deleteResult.getCode() == 1) {
-            this.persieServerUtils.refreshTable("config_program");
+           // this.persieServerUtils.refreshTable("config_program");
         }
         return deleteResult;
     }
