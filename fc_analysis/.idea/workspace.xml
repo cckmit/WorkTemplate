@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="fc_analysis" />
+      <artifact name="fc_analysis:war" />
+      <artifact name="fc_analysis:war exploded" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="157dbbe6-4367-403a-9280-7e4cc954f162" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@localhost" type="feb32156:DbDataSourceImpl" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@localhost" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@localhost" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="persie_ad_value: schema" type="76f4a085:MysqlImplModel$Schema" />
+      </path>
+      <path>
+        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
+        <item name="@localhost" type="feb32156:DbDataSourceImpl" />
+        <item name="schemas" type="d4e8921:DatabaseStructure$FamilyGroup" />
+        <item name="persie_ad_value: schema" type="76f4a085:MysqlImplModel$Schema" />
+        <item name="wx_visit_page: table" type="285a2a93:MysqlImplModel$Table" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="mybatis-config" />
+        <option value="FxmlFile" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="dummy://restClient/response19.txt" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="MavenRunner">
+    <option name="skipTests" value="true" />
+  </component>
+  <component name="ProjectId" id="1YpYaxI9Ks0yVIm5LlHVEHPxc8f" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="mysql" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
+    <property name="create.test.in.the.same.root" value="true" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java/com/blazefire/task" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../fc_service" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.1534196" />
+    <property name="project.structure.side.proportion" value="0.25057736" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="com.blazefire.task" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Works\persie\server\fc_analysis\src\main\resources\mybatisMapper\second" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.blazefire.dao.second.model" />
+      <recent name="com.blazefire.service" />
+      <recent name="com.blazefire.dao.second.mapper" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Works\persie\server\fc_analysis\src\main\resources\mybatisMapper\second" />
+      <recent name="D:\Works\persie\server\fc_analysis\src\main\java\com\blazefire\service" />
+      <recent name="D:\Works\persie\server\fc_analysis\src\main\resources" />
+      <recent name="D:\Works\persie\server\fc_analysis\src\main\resources\mybatisMapper\primary" />
+      <recent name="D:\Works\persie\server\fc_analysis\src\main\resources\mybatis" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.blazefire.dao.second.model" />
+    </key>
+  </component>
+  <component name="RestClientSettings">
+    <option name="REQUEST_HISTORY">
+      <list>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="http://localhost:9999" />
+          <option name="urlPath" value="/fc_analysis/reAnalysis/execute" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Accept" />
+                <option name="value" value="*/*" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="Cache-Control" />
+                <option name="value" value="no-cache" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;type&quot;:&quot;ADPOS_GENERAL&quot;,&quot;startDate&quot;:&quot;2020-04-01&quot;,&quot;endDate&quot;:&quot;2020-04-08&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="http://localhost:9999" />
+          <option name="urlPath" value="/fc_analysis/reAnalysis/execute" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Accept" />
+                <option name="value" value="*/*" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="Cache-Control" />
+                <option name="value" value="no-cache" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{type:&quot;ADPOS_GENERAL&quot;,startDate:&quot;2020-04-01&quot;,endDate:&quot;2020-04-08&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="http://localhost:9999" />
+          <option name="urlPath" value="/fc_analysis/reAnalysis/execute" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Accept" />
+                <option name="value" value="*/*" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="Cache-Control" />
+                <option name="value" value="no-cache" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{type:&quot;ADPOS_GENERAL&quot;,startDate:&quot;2020-04-01&quot;,endDate:&quot;2020-04-08&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="http://localhost:9999" />
+          <option name="urlPath" value="/fc_analysis/reAnalysis/execute" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Accept" />
+                <option name="value" value="*/*" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="Cache-Control" />
+                <option name="value" value="no-cache" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parameters">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="hourNum" />
+                <option name="value" value="2020031809" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{type:&quot;ADPOS_GENERAL&quot;,startDate:&quot;2020-04-01&quot;,endDate:&quot;2020-04-08&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="GET" />
+          <option name="urlBase" value="http://localhost:9999" />
+          <option name="urlPath" value="/fc_service/adLogRefresh" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Accept" />
+                <option name="value" value="*/*" />
+              </KeyValuePair>
+              <KeyValuePair>
+                <option name="key" value="Cache-Control" />
+                <option name="value" value="no-cache" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parameters">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="hourNum" />
+                <option name="value" value="2020031809" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="textToSend" value="" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.ManagerApplication">
+    <configuration name="WxDataTaskTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="fc_analysis" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.blazefire.task.wx.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.blazefire.task" />
+      <option name="MAIN_CLASS_NAME" value="com.blazefire.task.WxDataTaskTest" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ManagerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="fc_analysis" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.blazefire.ManagerApplication" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Tomcat_8081" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat8_8081" ALTERNATIVE_JRE_ENABLED="false">
+      <option name="OPEN_IN_BROWSER_URL" value="http://localhost:9080/fc_analysis/index.html" />
+      <option name="UPDATE_ON_FRAME_DEACTIVATION" value="true" />
+      <option name="UPDATE_CLASSES_ON_FRAME_DEACTIVATION" value="true" />
+      <deployment>
+        <artifact name="fc_analysis">
+          <settings>
+            <option name="CONTEXT_PATH" value="/fc_analysis" />
+          </settings>
+        </artifact>
+      </deployment>
+      <server-settings>
+        <option name="BASE_DIRECTORY_NAME" value="Unnamed_fc_analysis" />
+        <option name="HTTP_PORT" value="9080" />
+      </server-settings>
+      <predefined_log_file enabled="true" id="Tomcat" />
+      <predefined_log_file enabled="true" id="Tomcat Catalina" />
+      <predefined_log_file id="Tomcat Manager" />
+      <predefined_log_file id="Tomcat Host Manager" />
+      <predefined_log_file id="Tomcat Localhost Access" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="60035" />
+      </RunnerSettings>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Cover">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Debug">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <ConfigurationWrapper VM_VAR="JAVA_OPTS" RunnerId="Run">
+        <option name="USE_ENV_VARIABLES" value="true" />
+        <STARTUP>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </STARTUP>
+        <SHUTDOWN>
+          <option name="USE_DEFAULT" value="true" />
+          <option name="SCRIPT" value="" />
+          <option name="VM_PARAMETERS" value="" />
+          <option name="PROGRAM_PARAMETERS" value="" />
+        </SHUTDOWN>
+      </ConfigurationWrapper>
+      <method v="2">
+        <option name="Make" enabled="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="fc_analysis" />
+        </option>
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="JUnit.WxDataTaskTest" />
+      <item itemvalue="Spring Boot.ManagerApplication" />
+      <item itemvalue="Tomcat Server.Tomcat_8081" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.WxDataTaskTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <option name="contentProportion" value="0.10492158" />
+          <treeState>
+            <expand>
+              <path>
+                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
+                <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
+              </path>
+            </expand>
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SpringBeansView">
+    <option name="showModules" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="157dbbe6-4367-403a-9280-7e4cc954f162" name="Default Changelist" comment="" />
+      <created>1583641069968</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1583641069968</updated>
+      <workItem from="1583641074684" duration="28739000" />
+      <workItem from="1583762772255" duration="21694000" />
+      <workItem from="1583853874287" duration="1396000" />
+      <workItem from="1583892567171" duration="571000" />
+      <workItem from="1583894165097" duration="11870000" />
+      <workItem from="1584003001525" duration="1153000" />
+      <workItem from="1584005646741" duration="3785000" />
+      <workItem from="1584081459956" duration="2685000" />
+      <workItem from="1584085627482" duration="2474000" />
+      <workItem from="1584187726410" duration="2736000" />
+      <workItem from="1584426936008" duration="3391000" />
+      <workItem from="1584440615576" duration="5122000" />
+      <workItem from="1584435159684" duration="14133000" />
+      <workItem from="1584516743693" duration="10581000" />
+      <workItem from="1584615477527" duration="3211000" />
+      <workItem from="1584620921596" duration="123000" />
+      <workItem from="1584677094299" duration="2667000" />
+      <workItem from="1585292642623" duration="28522000" />
+      <workItem from="1585495350604" duration="19843000" />
+      <workItem from="1585558832493" duration="813000" />
+      <workItem from="1585560197443" duration="71181000" />
+      <workItem from="1585788029271" duration="10350000" />
+      <workItem from="1585917162172" duration="6207000" />
+      <workItem from="1586223347795" duration="35802000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="553" y="160" key="#Inspections" timestamp="1583730848523">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="553" y="160" key="#Inspections/0.0.1920.999@0.0.1920.999" timestamp="1583730848523" />
+    <state x="553" y="160" key="#Project_Structure" timestamp="1585309572788">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="553" y="160" key="#Project_Structure/0.0.1920.999@0.0.1920.999" timestamp="1585309572788" />
+    <state x="416" y="157" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586315824386">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="416" y="157" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.999@0.0.1920.999" timestamp="1586315824386" />
+    <state x="626" y="301" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1585640009364">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="626" y="301" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.999@0.0.1920.999" timestamp="1585640009364" />
+    <state x="766" y="192" key="#com.intellij.ide.util.MemberChooser" timestamp="1586311531046">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="766" y="192" key="#com.intellij.ide.util.MemberChooser/0.0.1920.999@0.0.1920.999" timestamp="1586311531046" />
+    <state x="691" y="274" key="#com.intellij.ide.util.PackageChooserDialog" timestamp="1585309624224">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="691" y="274" key="#com.intellij.ide.util.PackageChooserDialog/0.0.1920.999@0.0.1920.999" timestamp="1585309624224" />
+    <state x="691" y="286" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1586315818999">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="691" y="286" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1920.999@0.0.1920.999" timestamp="1586315818999" />
+    <state x="554" y="161" key="#com.intellij.j2ee.appServerIntegrations.ApplicationServersConfigurable" timestamp="1583733030996">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="554" y="161" key="#com.intellij.j2ee.appServerIntegrations.ApplicationServersConfigurable/0.0.1920.999@0.0.1920.999" timestamp="1583733030996" />
+    <state x="728" y="357" width="463" height="293" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1586265731044">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="728" y="357" width="463" height="293" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.0.1920.999@0.0.1920.999" timestamp="1586265731044" />
+    <state x="701" y="327" key="#com.intellij.refactoring.move.moveInstanceMethod.MoveInstanceMethodDialog" timestamp="1585727536422">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="701" y="327" key="#com.intellij.refactoring.move.moveInstanceMethod.MoveInstanceMethodDialog/0.0.1920.999@0.0.1920.999" timestamp="1585727536422" />
+    <state x="391" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1585732827039">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="391" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.999@0.0.1920.999" timestamp="1585732827039" />
+    <state x="691" y="248" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1585706438495">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="691" y="248" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.999@0.0.1920.999" timestamp="1585706438495" />
+    <state x="650" y="298" key="FileChooserDialogImpl" timestamp="1586227136202">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="650" y="298" key="FileChooserDialogImpl/0.0.1920.999@0.0.1920.999" timestamp="1586227136202" />
+    <state width="1878" height="239" key="GridCell.Tab.0.bottom" timestamp="1586323259239">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.0.bottom/0.0.1920.999@0.0.1920.999" timestamp="1586323259239" />
+    <state width="1878" height="239" key="GridCell.Tab.0.center" timestamp="1586323259239">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.0.center/0.0.1920.999@0.0.1920.999" timestamp="1586323259239" />
+    <state width="1878" height="239" key="GridCell.Tab.0.left" timestamp="1586323259239">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.0.left/0.0.1920.999@0.0.1920.999" timestamp="1586323259239" />
+    <state width="1878" height="239" key="GridCell.Tab.0.right" timestamp="1586323259239">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.0.right/0.0.1920.999@0.0.1920.999" timestamp="1586323259239" />
+    <state width="1878" height="239" key="GridCell.Tab.1.bottom" timestamp="1586323259240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.1.bottom/0.0.1920.999@0.0.1920.999" timestamp="1586323259240" />
+    <state width="1878" height="239" key="GridCell.Tab.1.center" timestamp="1586323259240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.1.center/0.0.1920.999@0.0.1920.999" timestamp="1586323259240" />
+    <state width="1878" height="239" key="GridCell.Tab.1.left" timestamp="1586323259240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.1.left/0.0.1920.999@0.0.1920.999" timestamp="1586323259240" />
+    <state width="1878" height="239" key="GridCell.Tab.1.right" timestamp="1586323259240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.1.right/0.0.1920.999@0.0.1920.999" timestamp="1586323259240" />
+    <state width="1878" height="239" key="GridCell.Tab.2.bottom" timestamp="1586323259240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.2.bottom/0.0.1920.999@0.0.1920.999" timestamp="1586323259240" />
+    <state width="1878" height="239" key="GridCell.Tab.2.center" timestamp="1586323259240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.2.center/0.0.1920.999@0.0.1920.999" timestamp="1586323259240" />
+    <state width="1878" height="239" key="GridCell.Tab.2.left" timestamp="1586323259240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.2.left/0.0.1920.999@0.0.1920.999" timestamp="1586323259240" />
+    <state width="1878" height="239" key="GridCell.Tab.2.right" timestamp="1586323259240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1878" height="239" key="GridCell.Tab.2.right/0.0.1920.999@0.0.1920.999" timestamp="1586323259240" />
+    <state width="1654" height="290" key="GridCell.Tab.3.bottom" timestamp="1583904222241">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1654" height="290" key="GridCell.Tab.3.bottom/0.0.1920.999@0.0.1920.999" timestamp="1583904222241" />
+    <state width="1654" height="290" key="GridCell.Tab.3.center" timestamp="1583904222240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1654" height="290" key="GridCell.Tab.3.center/0.0.1920.999@0.0.1920.999" timestamp="1583904222240" />
+    <state width="1654" height="290" key="GridCell.Tab.3.left" timestamp="1583904222240">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1654" height="290" key="GridCell.Tab.3.left/0.0.1920.999@0.0.1920.999" timestamp="1583904222240" />
+    <state width="1654" height="290" key="GridCell.Tab.3.right" timestamp="1583904222241">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="1654" height="290" key="GridCell.Tab.3.right/0.0.1920.999@0.0.1920.999" timestamp="1583904222241" />
+    <state x="773" y="433" key="ReplaceDuplicatesPrompt" timestamp="1585727634289">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="773" y="433" key="ReplaceDuplicatesPrompt/0.0.1920.999@0.0.1920.999" timestamp="1585727634289" />
+    <state x="650" y="148" width="1058" height="716" key="SettingsEditor" timestamp="1586253362495">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="650" y="148" width="1058" height="716" key="SettingsEditor/0.0.1920.999@0.0.1920.999" timestamp="1586253362495" />
+    <state width="966" height="506" key="XDebugger.FullValuePopup" timestamp="1586322154806">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="966" height="506" key="XDebugger.FullValuePopup/0.0.1920.999@0.0.1920.999" timestamp="1586322154806" />
+    <state x="768" y="276" key="chooseDestDirectoryDialog" timestamp="1585309264147">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="768" y="276" key="chooseDestDirectoryDialog/0.0.1920.999@0.0.1920.999" timestamp="1585309264147" />
+    <state x="676" y="76" width="584" height="845" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog" timestamp="1585751066621">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="676" y="76" width="584" height="845" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog/0.0.1920.999@0.0.1920.999" timestamp="1585751066621" />
+    <state x="403" y="132" key="com.intellij.javaee.MapExternalResourceDialog" timestamp="1583736183688">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="403" y="132" key="com.intellij.javaee.MapExternalResourceDialog/0.0.1920.999@0.0.1920.999" timestamp="1583736183688" />
+    <state x="731" y="207" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1585309653389">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="731" y="207" key="com.intellij.testIntegration.createTest.CreateTestDialog/0.0.1920.999@0.0.1920.999" timestamp="1585309653389" />
+    <state x="93" y="93" width="1733" height="812" key="dock-window-1" timestamp="1585711452552">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="93" y="93" width="1733" height="812" key="dock-window-1/0.0.1920.999@0.0.1920.999" timestamp="1585711452552" />
+    <state x="691" y="252" width="544" height="502" key="extract.method.dialog" timestamp="1585727620454">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="691" y="252" width="544" height="502" key="extract.method.dialog/0.0.1920.999@0.0.1920.999" timestamp="1585727620454" />
+    <state x="646" y="259" width="804" height="606" key="find.popup" timestamp="1586324562711">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="646" y="259" width="804" height="606" key="find.popup/0.0.1920.999@0.0.1920.999" timestamp="1586324562711" />
+    <state width="300" height="198" key="javadoc.popup.new" timestamp="1586324577577">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state width="300" height="198" key="javadoc.popup.new/0.0.1920.999@0.0.1920.999" timestamp="1586324577577" />
+    <state x="621" y="234" key="run.anything.popup" timestamp="1585754429668">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="621" y="234" key="run.anything.popup/0.0.1920.999@0.0.1920.999" timestamp="1585754429668" />
+    <state x="680" y="273" width="672" height="678" key="search.everywhere.popup" timestamp="1586278220613">
+      <screen x="0" y="0" width="1920" height="999" />
+    </state>
+    <state x="680" y="273" width="672" height="678" key="search.everywhere.popup/0.0.1920.999@0.0.1920.999" timestamp="1586278220613" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/blazefire/task/wx/WxAdDataTask.java</url>
+          <line>61</line>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/blazefire/task/wx/WxAdDataTask.java</url>
+          <line>103</line>
+          <option name="timeStamp" value="85" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/fc_analysis$com_blazefire_service_in_fc_analysis.ic" NAME="com.blazefire.service in fc_analysis Coverage Results" MODIFIED="1585493002100" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.blazefire.service.*</FILTER>
+    </SUITE>
+  </component>
+  <component name="ideajad">
+    <property name="annotate" value="false" />
+    <property name="annotateFully" value="false" />
+    <property name="braces" value="false" />
+    <property name="clear" value="false" />
+    <property name="confirmNavigationTriggeredDecompile" value="true" />
+    <property name="dead" value="true" />
+    <property name="defaultInitializers" value="false" />
+    <property name="dissassemblerOnly" value="false" />
+    <property name="fieldsFirst" value="true" />
+    <property name="fileExtension" value="java" />
+    <property name="fullyQualifiedNames" value="false" />
+    <property name="indentation" value="4" />
+    <property name="intRadix" value="10" />
+    <property name="lineNumbersAsComments" value="true" />
+    <property name="longRadix" value="10" />
+    <property name="maxStringLength" value="64" />
+    <property name="nocast" value="false" />
+    <property name="noclass" value="false" />
+    <property name="nocode" value="false" />
+    <property name="noconv" value="false" />
+    <property name="noctor" value="false" />
+    <property name="nodos" value="false" />
+    <property name="nofd" value="false" />
+    <property name="noinner" value="false" />
+    <property name="nolvt" value="false" />
+    <property name="nonlb" value="false" />
+    <property name="outputDirectory" value="" />
+    <property name="packFields" value="3" />
+    <property name="packImports" value="7" />
+    <property name="prefixNumericalClasses" value="_cls" />
+    <property name="prefixNumericalFields" value="_fld" />
+    <property name="prefixNumericalLocals" value="_lcl" />
+    <property name="prefixNumericalMethods" value="_mth" />
+    <property name="prefixNumericalParameters" value="_prm" />
+    <property name="prefixUnusedExceptions" value="_ex" />
+    <property name="readonly" value="false" />
+    <property name="safe" value="false" />
+    <property name="sort" value="false" />
+    <property name="spaceAfterKeyword" value="false" />
+    <property name="splitStringsAtNewline" value="false" />
+    <property name="useTabs" value="false" />
+  </component>
+</project>
