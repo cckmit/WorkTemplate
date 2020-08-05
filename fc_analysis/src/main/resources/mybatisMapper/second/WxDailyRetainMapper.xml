@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxDailyRetainMapper">
+
+    <insert id="insert" parameterType="com.blazefire.dao.second.model.WxDailyRetain">
+        INSERT INTO persie_value.wx_daily_retain (appId,
+                                                  refDate,
+                                                  dataType,
+                                                  day0,
+                                                  day1,
+                                                  day2,
+                                                  day3,
+                                                  day4,
+                                                  day5,
+                                                  day6,
+                                                  day7,
+                                                  day14,
+                                                  day30,
+                                                  insertTime)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refDate, jdbcType=VARCHAR},
+                #{dataType, jdbcType=VARCHAR},
+                #{day0, jdbcType=INTEGER},
+                #{day1, jdbcType=INTEGER},
+                #{day2, jdbcType=INTEGER},
+                #{day3, jdbcType=INTEGER},
+                #{day4, jdbcType=INTEGER},
+                #{day5, jdbcType=INTEGER},
+                #{day6, jdbcType=INTEGER},
+                #{day7, jdbcType=INTEGER},
+                #{day14, jdbcType=INTEGER},
+                #{day30, jdbcType=INTEGER},
+                NOW())
+    </insert>
+
+    <delete id="delete" parameterType="com.blazefire.dao.second.model.WxDailyRetain">
+        DELETE
+        FROM persie_value.wx_daily_retain
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refDate = #{refDate, jdbcType=VARCHAR}
+          AND dataType = #{dataType, jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

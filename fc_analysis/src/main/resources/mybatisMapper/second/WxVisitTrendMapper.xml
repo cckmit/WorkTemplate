@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxVisitTrendMapper">
+
+    <insert id="insertDaily" parameterType="com.blazefire.dao.second.model.WxVisitTrend">
+        INSERT INTO persie_value.wx_daily_visit_trend (appId,
+                                                       refDate,
+                                                       sessionCnt,
+                                                       visitPv,
+                                                       visitUv,
+                                                       visitUvNew,
+                                                       stayTimeUv,
+                                                       stayTimeSession,
+                                                       visitDepth,
+                                                       insertTime)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refDate, jdbcType=VARCHAR},
+                #{sessionCnt, jdbcType=INTEGER},
+                #{visitPv, jdbcType=INTEGER},
+                #{visitUv, jdbcType=INTEGER},
+                #{visitUvNew, jdbcType=INTEGER},
+                #{stayTimeUv, jdbcType=DOUBLE},
+                #{stayTimeSession, jdbcType=DOUBLE},
+                #{visitDepth, jdbcType=DOUBLE},
+                NOW())
+    </insert>
+
+    <insert id="insertMonthly" parameterType="com.blazefire.dao.second.model.WxVisitTrend">
+        INSERT INTO persie_value.wx_monthly_visit_trend (appId,
+                                                         refMonth,
+                                                         sessionCnt,
+                                                         visitPv,
+                                                         visitUv,
+                                                         visitUvNew,
+                                                         stayTimeUv,
+                                                         stayTimeSession,
+                                                         visitDepth,
+                                                         insertTime)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refDate, jdbcType=VARCHAR},
+                #{sessionCnt, jdbcType=INTEGER},
+                #{visitPv, jdbcType=INTEGER},
+                #{visitUv, jdbcType=INTEGER},
+                #{visitUvNew, jdbcType=INTEGER},
+                #{stayTimeUv, jdbcType=DOUBLE},
+                #{stayTimeSession, jdbcType=DOUBLE},
+                #{visitDepth, jdbcType=DOUBLE},
+                NOW())
+    </insert>
+
+    <insert id="insertWeekly" parameterType="com.blazefire.dao.second.model.WxVisitTrend">
+        INSERT INTO wx_weekly_visit_trend (appId,
+                                           refWeek,
+                                           sessionCnt,
+                                           visitPv,
+                                           visitUv,
+                                           visitUvNew,
+                                           stayTimeUv,
+                                           stayTimeSession,
+                                           visitDepth,
+                                           insertTime)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refDate, jdbcType=VARCHAR},
+                #{sessionCnt, jdbcType=INTEGER},
+                #{visitPv, jdbcType=INTEGER},
+                #{visitUv, jdbcType=INTEGER},
+                #{visitUvNew, jdbcType=INTEGER},
+                #{stayTimeUv, jdbcType=DOUBLE},
+                #{stayTimeSession, jdbcType=DOUBLE},
+                #{visitDepth, jdbcType=DOUBLE},
+                NOW())
+    </insert>
+
+    <delete id="deleteDaily" parameterType="com.blazefire.dao.second.model.WxVisitTrend">
+        DELETE
+        FROM wx_daily_visit_trend
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refDate = #{refDate, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteMonthly" parameterType="com.blazefire.dao.second.model.WxVisitTrend">
+        DELETE
+        FROM wx_monthly_visit_trend
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refMonth = #{refDate, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteWeekly" parameterType="com.blazefire.dao.second.model.WxVisitTrend">
+        DELETE
+        FROM wx_weekly_visit_trend
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refWeek = #{refDate, jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

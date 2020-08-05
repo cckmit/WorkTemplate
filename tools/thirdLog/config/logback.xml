@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <property name="LOG_HOME" value="/logs/analysis_ext"/>
+    <!-- 控制台输出日志 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} -
+                %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- 行为输出日志 (文件大小策略进行文件输出，超过指定大小对文件备份) -->
+    <appender name="exception"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}\exceptionLog\exception.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}\exceptionLog\exception_%d{yyyyMMdd}.%i.log.zip
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>200MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} -%msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="exceptionLog" level="DEBUG" additivity="false">
+        <appender-ref ref="exception"/>
+    </logger>
+    <!-- 行为输出日志 (文件大小策略进行文件输出，超过指定大小对文件备份) -->
+    <appender name="SQLError"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}\SQLErrorLog\SQLError.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}\SQLErrorLog\SQLError_%d{yyyyMMdd}.%i.log.zip
+            </fileNamePattern>
+            <maxHistory>7</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>200MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} -%msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="SQLErrorLog" level="DEBUG" additivity="false">
+        <appender-ref ref="SQLError"/>
+    </logger>
+    <!-- 行为输出日志 (文件大小策略进行文件输出，超过指定大小对文件备份) -->
+    <appender name="stdouts"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}\stdoutsLog\stdouts.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}\stdoutsLog\stdouts_%d{yyyyMMdd}.%i.log.zip
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>200MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+
+        <encoder>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} -%msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="stdoutsLog" level="DEBUG" additivity="false">
+        <appender-ref ref="stdouts"/>
+    </logger>
+
+</configuration>  

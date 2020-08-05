@@ -1,0 +1,19 @@
+server:
+  port: 8010
+  servlet:
+    context-path: /file-system
+spring:
+  application:
+    name: file-system
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+persion:
+  srcPath: {"third":"/data/logs/logic/third","third2":"/data/logs/logic2/third","adLog":"/data/logs/logic/ad_log","adLog2":"/data/logs/logic2/ad_log"}
+  zipPath: /path/
+  uploadFilePath: /data/res.qinyougames.com/persieRes/
+  upload: d:/upload/normal
+  domain: http://192.168.1.126:8888/upload/
+  uploadJson: {"share":"/data/res.qinyougames.com/persieRes/","public":"/data/tomcat8/apache-public/webapps/public/mui_wxoa_debug/","public-config":"/data/tomcat8/apache-public/webapps/public/mui_wxoa_debug/","qr":"/data/res.qinyougames.com/images/qrcode/","game":"/data/res.qinyougames.com/images/","host-share":"https://res.qinyougames.com/persieRes/",
+               "host-public":"https://res.qinyougames.com/public/mui_wxoa_debug/","host-qr":"https://res.qinyougames.com/images/qrcode/"}

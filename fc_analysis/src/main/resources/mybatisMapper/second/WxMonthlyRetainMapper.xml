@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxMonthlyRetainMapper">
+
+    <insert id="insert" parameterType="com.blazefire.dao.second.model.WxMonthlyRetain">
+        INSERT INTO persie_value.wx_monthly_retain (appId,
+                                                    refMonth,
+                                                    dataType,
+                                                    month0,
+                                                    month1,
+                                                    month2,
+                                                    month3,
+                                                    month4,
+                                                    month5,
+                                                    month6,
+                                                    month7,
+                                                    insertTime)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refMonth, jdbcType=VARCHAR},
+                #{dataType, jdbcType=VARCHAR},
+                #{month0, jdbcType=INTEGER},
+                #{month1, jdbcType=INTEGER},
+                #{month2, jdbcType=INTEGER},
+                #{month3, jdbcType=INTEGER},
+                #{month4, jdbcType=INTEGER},
+                #{month5, jdbcType=INTEGER},
+                #{month6, jdbcType=INTEGER},
+                #{month7, jdbcType=INTEGER},
+                NOW())
+    </insert>
+
+    <delete id="delete" parameterType="com.blazefire.dao.second.model.WxMonthlyRetain">
+        DELETE
+        FROM persie_value.wx_monthly_retain
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refMonth = #{refMonth, jdbcType=VARCHAR}
+          AND dataType = #{dataType, jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

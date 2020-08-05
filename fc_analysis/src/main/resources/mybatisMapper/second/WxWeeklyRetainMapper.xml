@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxWeeklyRetainMapper">
+
+    <insert id="insert" parameterType="com.blazefire.dao.second.model.WxWeeklyRetain">
+        INSERT INTO persie_value.wx_weekly_retain (appId,
+                                                   refWeek,
+                                                   dataType,
+                                                   week0,
+                                                   week1,
+                                                   week2,
+                                                   week3,
+                                                   week4,
+                                                   week5,
+                                                   week6,
+                                                   week7,
+                                                   insertTime)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refWeek, jdbcType=VARCHAR},
+                #{dataType, jdbcType=VARCHAR},
+                #{week0, jdbcType=INTEGER},
+                #{week1, jdbcType=INTEGER},
+                #{week2, jdbcType=INTEGER},
+                #{week3, jdbcType=INTEGER},
+                #{week4, jdbcType=INTEGER},
+                #{week5, jdbcType=INTEGER},
+                #{week6, jdbcType=INTEGER},
+                #{week7, jdbcType=INTEGER},
+                NOW())
+    </insert>
+
+    <delete id="delete" parameterType="com.blazefire.dao.second.model.WxWeeklyRetain">
+        DELETE
+        FROM persie_value.wx_weekly_retain
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refDate = #{refDate, jdbcType=VARCHAR}
+          AND dataType = #{dataType, jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

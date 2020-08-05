@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxAdValueMapper">
+
+    <insert id="insertAdposGeneral" parameterType="java.util.List">
+        INSERT INTO persie_value.ad_value_wx_adpos (
+        date,
+        appId,
+        appSource,
+        reqSuccCount,
+        exposureCount,
+        exposureRate,
+        clickCount,
+        clickRate,
+        income,
+        ecpm,
+        slotId,
+        insertTime)
+        VALUES
+        <foreach collection="adValueWxList" item="value" index="index" separator=",">
+            (
+            #{value.date, jdbcType=VARCHAR},
+            #{value.appId, jdbcType=VARCHAR},
+            #{value.appSource, jdbcType=VARCHAR},
+            #{value.reqSuccCount, jdbcType=INTEGER},
+            #{value.exposureCount, jdbcType=INTEGER},
+            #{value.exposureRate, jdbcType=DECIMAL},
+            #{value.clickCount, jdbcType=INTEGER},
+            #{value.clickRate, jdbcType=DECIMAL},
+            #{value.income, jdbcType=INTEGER},
+            #{value.ecpm, jdbcType=DECIMAL},
+            #{value.slotId, jdbcType=VARCHAR},
+            NOW()
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insertAdunitGeneral" parameterType="java.util.List">
+        INSERT INTO persie_value.ad_value_wx_adunit (
+        date,
+        appId,
+        appSource,
+        adUnitId,
+        adUnitName,
+        reqSuccCount,
+        exposureCount,
+        exposureRate,
+        clickCount,
+        clickRate,
+        income,
+        ecpm,
+        slotId,
+        insertTime)
+        VALUES
+        <foreach collection="adValueWxList" item="value" index="index" separator=",">
+            (
+            #{value.date, jdbcType=VARCHAR},
+            #{value.appId, jdbcType=VARCHAR},
+            #{value.appSource, jdbcType=VARCHAR},
+            #{value.adUnitId, jdbcType=VARCHAR},
+            #{value.adUnitName, jdbcType=VARCHAR},
+            #{value.reqSuccCount, jdbcType=INTEGER},
+            #{value.exposureCount, jdbcType=INTEGER},
+            #{value.exposureRate, jdbcType=DECIMAL},
+            #{value.clickCount, jdbcType=INTEGER},
+            #{value.clickRate, jdbcType=DECIMAL},
+            #{value.income, jdbcType=INTEGER},
+            #{value.ecpm, jdbcType=DECIMAL},
+            #{value.slotId, jdbcType=VARCHAR},
+            NOW()
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteAdposGeneral" parameterType="com.blazefire.dao.second.model.AdValueWx">
+        DELETE
+        FROM ad_value_wx_adpos
+        WHERE date = #{date, jdbcType=VARCHAR}
+          AND appId = #{appId, jdbcType=VARCHAR}
+          AND slotId = #{slotId, jdbcType=VARCHAR}
+    </delete>
+
+    <delete id="deleteAdunitGeneral" parameterType="com.blazefire.dao.second.model.AdValueWx">
+        DELETE
+        FROM ad_value_wx_adunit
+        WHERE date = #{date, jdbcType=VARCHAR}
+          AND appId = #{appId, jdbcType=VARCHAR}
+          AND slotId = #{slotId, jdbcType=VARCHAR}
+    </delete>
+
+    <select id="queryAdValueWx" resultType="com.blazefire.dao.second.model.AdValueWx">
+        SELECT date,
+               appId,
+               adUnitId,
+               adUnitName,
+               reqSuccCount,
+               exposureCount,
+               exposureRate,
+               clickCount,
+               clickRate,
+               income,
+               ecpm,
+               slotId
+        FROM persie_value.ad_value_wx_adunit
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND DATE BETWEEN #{beginDate, jdbcType=VARCHAR} AND #{endDate, jdbcType=VARCHAR}
+    </select>
+
+</mapper>

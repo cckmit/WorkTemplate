@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxNoticeMapper">
+
+    <insert id="insert" parameterType="com.blazefire.dao.second.model.WxNotice">
+        insert into persie_value.wx_notice(appId,
+                                           noticeId,
+                                           create_time,
+                                           title,
+                                           is_marked,
+                                           content,
+                                           save_time)
+        values (#{appId, jdbcType=VARCHAR},
+                #{noticeId, jdbcType=VARCHAR},
+                #{createTime, jdbcType=INTEGER},
+                #{title, jdbcType=VARCHAR},
+                #{isMarked, jdbcType=BOOLEAN},
+                #{content, jdbcType=VARCHAR},
+                now())
+        ON DUPLICATE KEY UPDATE save_time = now()
+    </insert>
+
+    <select id="select" parameterType="java.lang.String" resultType="com.blazefire.dao.second.model.WxNotice">
+        select appId, noticeId
+        from persie_value.wx_notice
+        where noticeId = #{noticeId, jdbcType=VARCHAR}
+    </select>
+
+</mapper>
