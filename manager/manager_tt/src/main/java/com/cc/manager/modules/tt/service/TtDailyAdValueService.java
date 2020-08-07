@@ -10,9 +10,10 @@ import com.baomidou.dynamic.datasource.annotation.DS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cc.manager.common.mvc.BaseCrudService;
+import com.cc.manager.common.result.CrudObjectResult;
 import com.cc.manager.common.result.CrudPageParam;
-import com.cc.manager.common.result.PostResult;
 import com.cc.manager.modules.tt.config.TtConfig;
+import com.cc.manager.modules.tt.entity.TransferData;
 import com.cc.manager.modules.tt.entity.TtDailyAdValue;
 import com.cc.manager.modules.tt.entity.TtDailyValue;
 import com.cc.manager.modules.tt.entity.WxConfig;
@@ -30,6 +31,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author cf
@@ -39,12 +43,13 @@ import java.util.*;
 @DS("tt")
 public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDailyAdValueMapper> {
 
+    private static ConcurrentHashMap<String, String> TIME_CACHE_MAP = new ConcurrentHashMap<>();
     private TtConfig ttConfig;
     private TtDailyValueService ttDailyValueService;
 
     @SneakyThrows
-    public PostResult getAdData(JSONObject jsonObject) {
-        PostResult postResult = new PostResult();
+    public CrudObjectResult getAdData(JSONObject jsonObject, ConcurrentHashMap<String, TransferData> exportMap) {
+        CrudObjectResult postResult = new CrudObjectResult();
         String[] timeSplit = jsonObject.getString("times").split("~");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date startDate = simpleDateFormat.parse(timeSplit[0] + " 00:00:00");
@@ -54,30 +59,36 @@ public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
         ArrayList<String> appIdLists = new ArrayList<>();
         getAppIdLists(sessionId, appIdLists);
         try {
+            // 用线程池来执行
+            ExecutorService executorService = Executors.newFixedThreadPool(16);
             for (String appId : appIdLists) {
-                //今日头条广告数据请求
-                String ttBannerUrl = String.format(ttConfig.getTtBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                String ttVideoUrl = String.format(ttConfig.getTtVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                String ttIntUrl = String.format(ttConfig.getTtIntUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                //今日头条极速版广告数据请求
-                String ttExtremeVideoUrl = String.format(ttConfig.getTtExtremeVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                String ttExtremeBannerUrl = String.format(ttConfig.getTtExtremeBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                //抖音广告数据请求参数
-                String tikTokVideoUrl = String.format(ttConfig.getTikTokVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                //抖音极速版广告数据请求参数
-                String tikTokExtremeVideoUrl = String.format(ttConfig.getTikTokExtremeVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                //西瓜视频广告数据请求参数
-                String watermelonVideoUrl = String.format(ttConfig.getWatermelonVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                String watermelonBannerUrl = String.format(ttConfig.getWatermelonBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                //解析不同平台数据
-                Map<String, TtDailyAdValue> ttDailyAdValueMap = new HashMap<>(16);
-                getAdValue(appId, "tt", ttDailyAdValueMap, ttBannerUrl, ttVideoUrl, ttIntUrl, sessionId);
-                getAdValue(appId, "watermelon", ttDailyAdValueMap, watermelonBannerUrl, watermelonVideoUrl, "", sessionId);
-                getAdValue(appId, "tikTok", ttDailyAdValueMap, "", tikTokVideoUrl, "", sessionId);
-                getAdValue(appId, "ttExtreme", ttDailyAdValueMap, ttExtremeBannerUrl, ttExtremeVideoUrl, "", sessionId);
-                getAdValue(appId, "tikTokExtreme", ttDailyAdValueMap, "", tikTokExtremeVideoUrl, "", sessionId);
-                this.saveOrUpdateBatch(new ArrayList<>(ttDailyAdValueMap.values()));
+                executorService.submit(() -> {
+                    //今日头条广告数据请求
+                    String ttBannerUrl = String.format(ttConfig.getTtBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                    String ttVideoUrl = String.format(ttConfig.getTtVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                    String ttIntUrl = String.format(ttConfig.getTtIntUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                    //今日头条极速版广告数据请求
+                    String ttExtremeVideoUrl = String.format(ttConfig.getTtExtremeVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                    String ttExtremeBannerUrl = String.format(ttConfig.getTtExtremeBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                    //抖音广告数据请求参数
+                    String tikTokVideoUrl = String.format(ttConfig.getTikTokVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                    //抖音极速版广告数据请求参数
+                    String tikTokExtremeVideoUrl = String.format(ttConfig.getTikTokExtremeVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                    //西瓜视频广告数据请求参数
+                    String watermelonVideoUrl = String.format(ttConfig.getWatermelonVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                    String watermelonBannerUrl = String.format(ttConfig.getWatermelonBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                    //解析不同平台数据
+                    Map<String, TtDailyAdValue> ttDailyAdValueMap = new HashMap<>(16);
+                    getAdValue(appId, "tt", ttDailyAdValueMap, ttBannerUrl, ttVideoUrl, ttIntUrl, sessionId, exportMap);
+                    getAdValue(appId, "watermelon", ttDailyAdValueMap, watermelonBannerUrl, watermelonVideoUrl, "", sessionId, null);
+                    getAdValue(appId, "tikTok", ttDailyAdValueMap, "", tikTokVideoUrl, "", sessionId, null);
+                    getAdValue(appId, "ttExtreme", ttDailyAdValueMap, ttExtremeBannerUrl, ttExtremeVideoUrl, "", sessionId, null);
+                    getAdValue(appId, "tikTokExtreme", ttDailyAdValueMap, "", tikTokExtremeVideoUrl, "", sessionId, null);
+                    this.saveOrUpdateBatch(new ArrayList<>(ttDailyAdValueMap.values()));
+                });
             }
+            TIME_CACHE_MAP.put("time", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
+            postResult.setData(JSON.parseObject(JSON.toJSONString(TIME_CACHE_MAP)));
         } catch (Exception e) {
             LOGGER.error(ExceptionUtils.getStackTrace(e));
             postResult.setCode(2);
@@ -87,13 +98,13 @@ public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
         return postResult;
     }
 
-    private void getAdValue(String appId, String appType, Map<String, TtDailyAdValue> ttDailyAdValueMap, String ttBannerUrl, String ttVideoUrl, String ttIntUrl, String sessionId) {
+    private void getAdValue(String appId, String appType, Map<String, TtDailyAdValue> ttDailyAdValueMap, String ttBannerUrl, String ttVideoUrl, String ttIntUrl, String sessionId, Map<String, TransferData> exportMap) {
         //不同平台拉取数据返回信息
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         //Banner数据处理
-        getAdValueBanner(appId, appType, ttDailyAdValueMap, ttBannerUrl, sessionId, fmt);
+        getAdValueBanner(appId, appType, ttDailyAdValueMap, ttBannerUrl, sessionId, fmt, exportMap);
         //视频数据处理
-        getAdValueVideo(appId, appType, ttDailyAdValueMap, ttVideoUrl, sessionId, fmt);
+        getAdValueVideo(appId, appType, ttDailyAdValueMap, ttVideoUrl, sessionId, fmt, exportMap);
         //插屏数据处理
         getAdValueInt(appId, appType, ttDailyAdValueMap, ttIntUrl, sessionId, fmt);
     }
@@ -132,7 +143,7 @@ public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
         }
     }
 
-    private void getAdValueVideo(String appId, String appType, Map<String, TtDailyAdValue> ttDailyAdValueMap, String ttVideoUrl, String sessionId, DateTimeFormatter fmt) {
+    private void getAdValueVideo(String appId, String appType, Map<String, TtDailyAdValue> ttDailyAdValueMap, String ttVideoUrl, String sessionId, DateTimeFormatter fmt, Map<String, TransferData> exportMap) {
         if (StringUtils.isNotBlank(ttVideoUrl)) {
             String ttVideoBody = HttpRequest.get(ttVideoUrl).header("Content-Type", "application/json").cookie("sdessionid=" + sessionId).execute().body();
             JSONArray videoData = JSONObject.parseObject(ttVideoBody).getJSONArray("data");
@@ -159,13 +170,23 @@ public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
                         ttDailyAdValue.setWxVideoClickCount(datumObject.getInteger("click"));
                         ttDailyAdValue.setWxVideoShow(datumObject.getInteger("show"));
                         ttDailyAdValueMap.put(datumObject.getString("date") + "-" + appType, ttDailyAdValue);
+                        if (exportMap != null) {
+                            TransferData transferData = exportMap.get(ttDailyAdValue.getWxAppId() + "-" + ttDailyAdValue.getWxDate().toString().replace("-", "").trim());
+                            if (transferData != null) {
+                                transferData.setSpExposure(ttDailyAdValue.getWxVideoShow());
+                                transferData.setSpClicksNum(ttDailyAdValue.getWxVideoClickCount());
+                                transferData.setSpClicksRate(ttDailyAdValue.getWxVideoClickrate().toString());
+                                transferData.setSpIncome(ttDailyAdValue.getWxVideoIncome().toString());
+                            }
+                        }
+
                     }
                 }
             }
         }
     }
 
-    private void getAdValueBanner(String appId, String appType, Map<String, TtDailyAdValue> ttDailyAdValueMap, String ttBannerUrl, String sessionId, DateTimeFormatter fmt) {
+    private void getAdValueBanner(String appId, String appType, Map<String, TtDailyAdValue> ttDailyAdValueMap, String ttBannerUrl, String sessionId, DateTimeFormatter fmt, Map<String, TransferData> exportMap) {
         if (StringUtils.isNotBlank(ttBannerUrl)) {
             String ttBannerBody = HttpRequest.get(ttBannerUrl).header("Content-Type", "application/json").cookie("sdessionid=" + sessionId).execute().body();
             JSONArray bannerData = JSONObject.parseObject(ttBannerBody).getJSONArray("data");
@@ -183,6 +204,15 @@ public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
                     ttDailyAdValue.setWxBannerClickCount(datumObject.getInteger("click"));
                     ttDailyAdValue.setWxBannerShow(datumObject.getInteger("show"));
                     ttDailyAdValueMap.put(datumObject.getString("date") + "-" + appType, ttDailyAdValue);
+                    if (exportMap != null) {
+                        TransferData transferData = exportMap.get(ttDailyAdValue.getWxAppId() + "-" + ttDailyAdValue.getWxDate().toString().replace("-", "").trim());
+                        if (transferData != null) {
+                            transferData.setBnExposure(ttDailyAdValue.getWxBannerShow());
+                            transferData.setBnClicksNum(ttDailyAdValue.getWxBannerClickCount());
+                            transferData.setBnClicksRate(ttDailyAdValue.getWxBannerClickrate().toString());
+                            transferData.setSpIncome(ttDailyAdValue.getWxBannerIncome().toString());
+                        }
+                    }
                 }
             }
         }

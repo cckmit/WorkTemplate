@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.cc.manager.common.result.StatsListParam;
 import com.cc.manager.common.result.StatsListResult;
+import com.cc.manager.modules.tt.entity.TtMessageNotice;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;

@@ -3,12 +3,391 @@
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
       <artifact name="fc_analysis" />
-      <artifact name="fc_analysis:war" />
-      <artifact name="fc_analysis:war exploded" />
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="157dbbe6-4367-403a-9280-7e4cc954f162" name="Default Changelist" comment="" />
+    <list default="true" id="157dbbe6-4367-403a-9280-7e4cc954f162" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__cn_hutool_hutool_all_5_2_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_findbugs_jsr305_3_0_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_errorprone_error_prone_annotations_2_3_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_failureaccess_1_0_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_28_2_jre.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_listenablefuture_9999_0_empty_to_avoid_conflict_with_guava.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_j2objc_j2objc_annotations_1_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_thetransactioncompany_cors_filter_2_9.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_thetransactioncompany_java_property_utils_1_13.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_lettuce_lettuce_core_5_2_2_RELEASE.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_buffer_4_1_45_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_codec_4_1_45_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_common_4_1_45_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_handler_4_1_45_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_resolver_4_1_45_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_netty_netty_transport_4_1_45_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__io_projectreactor_reactor_core_3_3_3_RELEASE.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_pool2_2_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_checkerframework_checker_qual_2_10_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_reactivestreams_reactive_streams_1_0_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_data_redis_2_2_5_RELEASE.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_data_spring_data_commons_2_2_5_RELEASE.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_data_spring_data_keyvalue_2_2_5_RELEASE.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_data_spring_data_redis_2_2_5_RELEASE.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_support_5_2_4_RELEASE.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_oxm_5_2_4_RELEASE.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__redis_clients_jedis_3_2_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/FcAnalysisApplication.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/ServletInitializer.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/config/BaseConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/config/PrimaryDataBaseConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/config/ProjectServletListener.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/config/SecondDataBaseConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/config/WxConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/AdValueMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/TtAdClipboardMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxAdValueMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxDailyRetainMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxDailySummaryMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxMonthlyRetainMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxNoticeMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxUserPortraitMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxVisitDistributionMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxVisitPageMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxVisitTrendMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/mapper/WxWeeklyRetainMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/AdValue.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/AdValueUser.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/AdValueWx.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/TtAdClipboard.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/WxDailyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/WxDailySummary.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/WxMonthlyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/WxNotice.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/WxUserPortrait.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/WxVisitDistribution.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/WxVisitPage.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/WxVisitTrend.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/dao/second/model/WxWeeklyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/AdValueService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/AppInfoService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/OpcDataService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/entity/AppInfo.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/entity/WxAppAccessToken.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/tt/TtAdClipboardService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxAdValueService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxDailyRetainService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxDailySummaryService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxMonthlyRetainService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxNoticeService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxUserPortraitService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxVisitDistributionService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxVisitPageService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxVisitTrendService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/service/wx/WxWeeklyRetainService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/servlet/BaseFilter.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/servlet/BaseServlet.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/servlet/OpcDataServlet.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/servlet/WxDataReAnalysisServlet.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/servlet/WxNoticeServlet.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/WxDataTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/ad/AdLogAnalysisTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/ad/AdUserAnalysisTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/tt/ClipboardAd.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxAdDataTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetDailyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetDailySummary.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetDailyVisitTrend.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetMonthlyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetMonthlyVisitTrend.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetUserPortrait.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetVisitDistribution.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetVisitPage.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetWeeklyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/task/wx/WxGetWeeklyVisitTrend.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/com/blazefire/utils/WxNoticeUtil.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/generator/secondConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/logback-spring.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/mybatis-config.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/AdValueMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/TtAdClipboardMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxAdValueMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxDailyRetainMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxDailySummaryMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxMonthlyRetainMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxNoticeMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxUserPortraitMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxVisitDistributionMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxVisitPageMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxVisitTrendMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/mybatisMapper/second/WxWeeklyRetainMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/classes/wx.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/HikariCP-3.4.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/checker-qual-2.10.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/classmate-1.5.1.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/commons-io-2.6.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/commons-lang3-3.9.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/commons-pool2-2.7.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/cors-filter-2.9.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/druid-1.1.20.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/druid-spring-boot-starter-1.1.20.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/error_prone_annotations-2.3.4.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/failureaccess-1.0.1.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/fastjson-1.2.59.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/guava-28.2-jre.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/hibernate-validator-6.0.18.Final.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/hutool-all-5.2.4.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/j2objc-annotations-1.3.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jackson-annotations-2.10.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jackson-core-2.10.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jackson-databind-2.10.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jackson-datatype-jdk8-2.10.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jackson-datatype-jsr310-2.10.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jackson-module-parameter-names-2.10.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jakarta.annotation-api-1.3.5.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jakarta.validation-api-2.0.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/java-property-utils-1.13.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jboss-logging-3.4.1.Final.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jedis-3.2.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jsr305-3.0.2.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/jul-to-slf4j-1.7.30.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/lettuce-core-5.2.2.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/log4j-api-2.12.1.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/log4j-to-slf4j-2.12.1.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/logback-classic-1.2.3.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/logback-core-1.2.3.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/lombok-1.18.12.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/mybatis-3.5.3.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/mybatis-spring-2.0.3.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/mybatis-spring-boot-autoconfigure-2.1.1.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/mybatis-spring-boot-starter-2.1.1.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/mysql-connector-java-8.0.19.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/netty-buffer-4.1.45.Final.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/netty-codec-4.1.45.Final.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/netty-common-4.1.45.Final.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/netty-handler-4.1.45.Final.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/netty-resolver-4.1.45.Final.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/netty-transport-4.1.45.Final.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/reactive-streams-1.0.3.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/reactor-core-3.3.3.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/slf4j-api-1.7.30.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/snakeyaml-1.25.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-aop-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-beans-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-boot-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-boot-autoconfigure-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-boot-starter-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-boot-starter-data-redis-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-boot-starter-jdbc-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-boot-starter-json-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-boot-starter-logging-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-boot-starter-validation-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-boot-starter-web-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-context-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-context-support-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-core-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-data-commons-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-data-keyvalue-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-data-redis-2.2.5.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-expression-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-jcl-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-jdbc-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-oxm-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-tx-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-web-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/fc_analysis/WEB-INF/lib/spring-webmvc-5.2.4.RELEASE.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/FcAnalysisApplication.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/ServletInitializer.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/config/BaseConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/config/PrimaryDataBaseConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/config/ProjectServletListener.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/config/SecondDataBaseConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/config/WxConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/AdValueMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/TtAdClipboardMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxAdValueMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxDailyRetainMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxDailySummaryMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxMonthlyRetainMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxNoticeMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxUserPortraitMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxVisitDistributionMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxVisitPageMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxVisitTrendMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/mapper/WxWeeklyRetainMapper.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/AdValue.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/AdValueUser.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/AdValueWx.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/TtAdClipboard.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/WxDailyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/WxDailySummary.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/WxMonthlyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/WxNotice.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/WxUserPortrait.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/WxVisitDistribution.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/WxVisitPage.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/WxVisitTrend.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/dao/second/model/WxWeeklyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/AdValueService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/AppInfoService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/OpcDataService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/entity/AppInfo.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/entity/WxAppAccessToken.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/tt/TtAdClipboardService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxAdValueService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxDailyRetainService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxDailySummaryService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxMonthlyRetainService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxNoticeService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxUserPortraitService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxVisitDistributionService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxVisitPageService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxVisitTrendService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/service/wx/WxWeeklyRetainService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/servlet/BaseFilter.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/servlet/BaseServlet.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/servlet/OpcDataServlet.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/servlet/WxDataReAnalysisServlet.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/servlet/WxNoticeServlet.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/WxDataTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/ad/AdLogAnalysisTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/ad/AdUserAnalysisTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/tt/ClipboardAd.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxAdDataTask.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetDailyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetDailySummary.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetDailyVisitTrend.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetMonthlyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetMonthlyVisitTrend.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetUserPortrait.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetVisitDistribution.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetVisitPage.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetWeeklyRetain.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/task/wx/WxGetWeeklyVisitTrend.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/com/blazefire/utils/WxNoticeUtil.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/generator/secondConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/logback-spring.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/mybatis-config.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/AdValueMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/TtAdClipboardMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxAdValueMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxDailyRetainMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxDailySummaryMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxMonthlyRetainMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxNoticeMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxUserPortraitMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxVisitDistributionMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxVisitPageMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxVisitTrendMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/mybatisMapper/second/WxWeeklyRetainMapper.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/classes/wx.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/target/test-classes/WxDataReAnalysis.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/fc_analysis.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/fc_analysis.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/fc_analysis_war.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/fc_analysis_war_exploded.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/05ffcba3-a263-40b7-9c68-7c8a04167338.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_2_3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_2_3.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_2_3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_2_3.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_druid_1_1_20.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_druid_1_1_20.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_druid_spring_boot_starter_1_1_20.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_druid_spring_boot_starter_1_1_20.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_fastjson_1_2_59.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_alibaba_fastjson_1_2_59.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_classmate_1_5_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_classmate_1_5_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_10_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_10_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_10_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_10_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_10_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_10_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jdk8_2_10_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jdk8_2_10_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jsr310_2_10_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jsr310_2_10_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_parameter_names_2_10_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_parameter_names_2_10_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_jayway_jsonpath_json_path_2_4_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_jayway_jsonpath_json_path_2_4_0.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_vaadin_external_google_android_json_0_0_20131108_vaadin1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_vaadin_external_google_android_json_0_0_20131108_vaadin1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_zaxxer_HikariCP_3_4_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_zaxxer_HikariCP_3_4_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_6.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__commons_io_commons_io_2_6.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_activation_jakarta_activation_api_1_2_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_activation_jakarta_activation_api_1_2_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_annotation_jakarta_annotation_api_1_3_5.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_annotation_jakarta_annotation_api_1_3_5.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_validation_jakarta_validation_api_2_0_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_validation_jakarta_validation_api_2_0_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_xml_bind_jakarta_xml_bind_api_2_3_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_xml_bind_jakarta_xml_bind_api_2_3_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_8_0_19.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_8_0_19.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_1_10_8.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_1_10_8.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_agent_1_10_8.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_agent_1_10_8.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_minidev_accessors_smart_1_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_minidev_accessors_smart_1_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_minidev_json_smart_2_3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_minidev_json_smart_2_3.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_9.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_9.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_12_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_12_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_to_slf4j_2_12_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_to_slf4j_2_12_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_core_9_0_31.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_core_9_0_31.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_el_9_0_31.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_el_9_0_31.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_websocket_9_0_31.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_websocket_9_0_31.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_0.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_assertj_assertj_core_3_13_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_assertj_assertj_core_3_13_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_2_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_2_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_validator_hibernate_validator_6_0_18_Final.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_validator_hibernate_validator_6_0_18_Final.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_logging_jboss_logging_3_4_1_Final.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_logging_jboss_logging_3_4_1_Final.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_5_5_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_5_5_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_5_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_5_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_engine_5_5_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_engine_5_5_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_params_5_5_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_params_5_5_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_5_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_5_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_engine_1_5_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_engine_1_5_2.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_core_3_1_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_core_3_1_0.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_junit_jupiter_3_1_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_junit_jupiter_3_1_0.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_mybatis_3_5_3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_mybatis_3_5_3.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_mybatis_spring_2_0_3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_mybatis_spring_2_0_3.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_spring_boot_mybatis_spring_boot_autoconfigure_2_1_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_spring_boot_mybatis_spring_boot_autoconfigure_2_1_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_spring_boot_mybatis_spring_boot_starter_2_1_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mybatis_spring_boot_mybatis_spring_boot_starter_2_1_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_objenesis_objenesis_2_6.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_objenesis_objenesis_2_6.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_asm_asm_5_0_4.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_asm_asm_5_0_4.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_skyscreamer_jsonassert_1_5_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_skyscreamer_jsonassert_1_5_0.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_jul_to_slf4j_1_7_30.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_jul_to_slf4j_1_7_30.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_30.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_30.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_autoconfigure_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_autoconfigure_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_jdbc_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_jdbc_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_json_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_json_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_logging_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_logging_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_test_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_test_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_tomcat_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_tomcat_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_validation_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_validation_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_web_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_web_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_test_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_test_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_test_autoconfigure_2_2_5_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_test_autoconfigure_2_2_5_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jcl_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jcl_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jdbc_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jdbc_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_test_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_test_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_tx_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_tx_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_webmvc_5_2_4_RELEASE.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_webmvc_5_2_4_RELEASE.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_xmlunit_xmlunit_core_2_6_3.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_xmlunit_xmlunit_core_2_6_3.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_25.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_25.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fc_analysis.iml" beforeDir="false" afterPath="$PROJECT_DIR$/fc_analysis.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_sys/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_sys/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/common/mvc/BaseStatsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/common/mvc/BaseStatsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/config/TtConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/config/TtConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/controller/TtDailyAdValueController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/controller/TtDailyAdValueController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/controller/TtDailyValueController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/controller/TtDailyValueController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/entity/QqDailyValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/entity/QqDailyValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/entity/TtAdClipboard.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/entity/TtAdClipboard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/entity/TtDailyValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/entity/TtDailyValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/entity/TtDataCollect.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/entity/TtDataCollect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/service/TtDailyAdValueService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/service/TtDailyAdValueService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/service/TtDailyValueService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/java/com/cc/manager/modules/tt/service/TtDailyValueService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/main/resources/module-tt.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/main/resources/module-tt.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../manager/manager_tt/src/test/java/com/cc/manager/tt/manager_tt/ManagerTtApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/../manager/manager_tt/src/test/java/com/cc/manager/tt/manager_tt/ManagerTtApplicationTests.java" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -62,8 +441,8 @@
       </list>
     </option>
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="dummy://restClient/response19.txt" root0="SKIP_INSPECTION" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
@@ -73,6 +452,13 @@
     <option name="CUSTOM_FILTER" />
   </component>
   <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="localRepository" value="E:\Tool\Maven\apache-maven-3.5.2\repository" />
+        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+        <option name="userSettingsFile" value="E:\Tool\Maven\apache-maven-3.5.2\conf\settings.xml" />
+      </MavenGeneralSettings>
+    </option>
     <option name="importingSettings">
       <MavenImportingSettings>
         <option name="importAutomatically" value="true" />
@@ -83,6 +469,7 @@
     <option name="skipTests" value="true" />
   </component>
   <component name="ProjectId" id="1YpYaxI9Ks0yVIm5LlHVEHPxc8f" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -96,6 +483,7 @@
     <property name="RequestMappingsPanelWidth0" value="75" />
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
@@ -109,10 +497,11 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.1534196" />
     <property name="project.structure.side.proportion" value="0.25057736" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
+    <property name="settings.editor.selected.configurable" value="spring.boot" />
+    <property name="show.run.dashboard.notification" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
@@ -274,7 +663,19 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.ManagerApplication">
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Tomcat Server.Tomcat_8081">
     <configuration name="WxDataTaskTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="fc_analysis" />
       <extension name="coverage">
@@ -288,6 +689,13 @@
       <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="class" />
       <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FcAnalysisApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="fc_analysis" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.blazefire.FcAnalysisApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -380,6 +788,7 @@
     <list>
       <item itemvalue="JUnit.WxDataTaskTest" />
       <item itemvalue="Spring Boot.ManagerApplication" />
+      <item itemvalue="Spring Boot.FcAnalysisApplication" />
       <item itemvalue="Tomcat Server.Tomcat_8081" />
     </list>
     <recent_temporary>
@@ -387,24 +796,6 @@
         <item itemvalue="JUnit.WxDataTaskTest" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <option name="contentProportion" value="0.10492158" />
-          <treeState>
-            <expand>
-              <path>
-                <item name="services root" type="e789fda9:ObjectUtils$Sentinel" />
-                <item name="Tomcat Server" type="7427dc5b:ServiceModel$ServiceGroupNode" />
-              </path>
-            </expand>
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
   </component>
   <component name="SpringBeansView">
     <option name="showModules" value="false" />
@@ -443,11 +834,28 @@
       <workItem from="1585788029271" duration="10350000" />
       <workItem from="1585917162172" duration="6207000" />
       <workItem from="1586223347795" duration="35802000" />
+      <workItem from="1596631317878" duration="956000" />
+      <workItem from="1596632451461" duration="137000" />
+      <workItem from="1596677886902" duration="6190000" />
+      <workItem from="1596787819438" duration="149000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="WindowStateProjectService">
     <state x="553" y="160" key="#Inspections" timestamp="1583730848523">
@@ -628,9 +1036,29 @@
           <option name="timeStamp" value="76" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/blazefire/servlet/WxNoticeServlet.java</url>
+          <line>80</line>
+          <option name="timeStamp" value="90" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/blazefire/servlet/WxNoticeServlet.java</url>
+          <line>71</line>
+          <option name="timeStamp" value="91" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/blazefire/task/wx/WxAdDataTask.java</url>
-          <line>103</line>
-          <option name="timeStamp" value="85" />
+          <line>50</line>
+          <option name="timeStamp" value="94" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/blazefire/servlet/WxDataReAnalysisServlet.java</url>
+          <line>67</line>
+          <option name="timeStamp" value="95" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/blazefire/servlet/WxDataReAnalysisServlet.java</url>
+          <line>71</line>
+          <option name="timeStamp" value="96" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

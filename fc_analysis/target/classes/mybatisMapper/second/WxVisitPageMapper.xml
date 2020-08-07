@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxVisitPageMapper">
+
+    <insert id="insert" parameterType="com.blazefire.dao.second.model.WxVisitPage">
+        INSERT INTO persie_value.wx_visit_page (appId,
+                                                refDate,
+                                                pagePath,
+                                                pageVisitPv,
+                                                pageVisitUv,
+                                                pageStaytimePv,
+                                                entrypagePv,
+                                                exitpagePv,
+                                                pageSharePv,
+                                                pageShareUv,
+                                                insertTime)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refDate, jdbcType=VARCHAR},
+                #{pagePath, jdbcType=VARCHAR},
+                #{pageVisitPv, jdbcType=INTEGER},
+                #{pageVisitUv, jdbcType=INTEGER},
+                #{pageStaytimePv, jdbcType=DOUBLE},
+                #{entrypagePv, jdbcType=INTEGER},
+                #{exitpagePv, jdbcType=INTEGER},
+                #{pageSharePv, jdbcType=INTEGER},
+                #{pageShareUv, jdbcType=INTEGER},
+                NOW())
+    </insert>
+
+    <delete id="delete" parameterType="com.blazefire.dao.second.model.WxVisitPage">
+        DELETE
+        FROM persie_value.wx_visit_page
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refDate = #{refDate, jdbcType=VARCHAR}
+          AND pagePath = #{pagePath, jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

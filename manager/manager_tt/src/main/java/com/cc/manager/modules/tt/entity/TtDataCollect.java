@@ -1,5 +1,6 @@
 package com.cc.manager.modules.tt.entity;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.cc.manager.common.mvc.BaseStatsEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

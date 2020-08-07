@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxUserPortraitMapper">
+
+    <insert id="insert" parameterType="com.blazefire.dao.second.model.WxUserPortrait">
+        INSERT INTO persie_value.wx_user_portrait (appId,
+                                                   refDate,
+                                                   dateType,
+                                                   dataType,
+                                                   portraitType,
+                                                   portraitValue,
+                                                   insertDate)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refDate, jdbcType=VARCHAR},
+                #{dateType, jdbcType=INTEGER},
+                #{dataType, jdbcType=VARCHAR},
+                #{portraitType, jdbcType=VARCHAR},
+                #{portraitValue, jdbcType=CLOB},
+                NOW())
+    </insert>
+
+    <delete id="delete" parameterType="com.blazefire.dao.second.model.WxUserPortrait">
+        DELETE
+        FROM persie_value.wx_user_portrait
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refDate = #{refDate, jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

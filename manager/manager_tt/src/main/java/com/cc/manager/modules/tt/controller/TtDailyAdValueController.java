@@ -22,10 +22,10 @@ public class TtDailyAdValueController implements BaseCrudController {
 
     private TtDailyAdValueService ttDailyAdValueService;
 
-    @PostMapping(value = "/getAdData")
-    public PostResult getAddData(@RequestBody JSONObject jsonObject) {
+  /*  @PostMapping(value = "/getAdData")
+    public CrudObjectResult getAddData(@RequestBody JSONObject jsonObject) {
         return this.ttDailyAdValueService.getAdData(jsonObject);
-    }
+    }*/
 
     @Override
     @GetMapping(value = "/id/{id}")

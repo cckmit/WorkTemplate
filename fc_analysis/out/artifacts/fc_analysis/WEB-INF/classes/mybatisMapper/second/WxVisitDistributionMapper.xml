@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxVisitDistributionMapper">
+
+    <insert id="insert" parameterType="com.blazefire.dao.second.model.WxVisitDistribution">
+        INSERT INTO persie_value.wx_visit_distribution (appId,
+                                                        refDate,
+                                                        accessType,
+                                                        accessValue,
+                                                        insertTime)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refDate, jdbcType=VARCHAR},
+                #{accessType, jdbcType=VARCHAR},
+                #{accessValue, jdbcType=CLOB},
+                NOW())
+    </insert>
+
+    <delete id="delete" parameterType="com.blazefire.dao.second.model.WxVisitDistribution">
+        DELETE
+        FROM persie_value.wx_visit_distribution
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refDate = #{refDate, jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

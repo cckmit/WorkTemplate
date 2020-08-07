@@ -1,0 +1,58 @@
+server:
+  port: 9999
+  servlet:
+    context-path: /fc_analysis
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    primary:
+      filters: stat
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/persie?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: 1989725
+      minIdle: 1
+      initial-size: 2
+      max-active: 300
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 200
+    second:
+      filters: stat
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://192.168.1.151:3306/persie_value?characterEncoding=utf-8&mysqlEncoding=utf8mb4&serverTimezone=Asia/Shanghai&useSSL=true&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: 1989725
+      minIdle: 1
+      initial-size: 2
+      max-active: 300
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: false
+      max-pool-prepared-statement-per-connection-size: 200
+config:
+  adLogSaveDir: d:/usr/logs/persieService/ad_log
+  adLogSaveDir2: d:/usr/logs/persieService2/ad_log
+  desKey1: whatdingyuead
+  desKey2: iamsorryppdin
+  serverId: 10
+  userTableSingleLimit: 99999
+  noticeUrlJson: {"wxe542224e124c1e16":"http://localhost:11150/FishDayManager/wxCollect","wx43c5f69 309937ec3":"http://localhost:11150/FishManager/wxCollect"}
+  appInfoUrl: http://129.211.133.15:10088/persieMiniServer/getAppInfo
+  logDownloadUrl: http://129.211.119.249:10088/file-system/ToolsController/ZipTools
+  #logDownloadUrl: http://localhost:8010/file_system/ToolsController/ZipTools
+  logDownloadUrl2: http://129.211.133.15:10088/file-system/ToolsController/ZipTools
+  wxNoticeUrl: https://sms2.blazefire.com/smsv2.php?tag=33&t1={0}&h1={1}&h2={2}&h3={3}
+logging:
+  config: classpath:logback-spring.xml

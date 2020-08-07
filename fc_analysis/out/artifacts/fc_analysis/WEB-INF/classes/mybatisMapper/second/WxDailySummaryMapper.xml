@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.blazefire.dao.second.mapper.WxDailySummaryMapper">
+
+    <insert id="insert" parameterType="com.blazefire.dao.second.model.WxDailySummary">
+        INSERT INTO persie_value.wx_daily_summary (appId,
+                                                   refDate,
+                                                   visitTotal,
+                                                   sharePv,
+                                                   shareUv,
+                                                   insertTime)
+        VALUES (#{appId, jdbcType=VARCHAR},
+                #{refDate, jdbcType=VARCHAR},
+                #{visitTotal, jdbcType=INTEGER},
+                #{sharePv, jdbcType=INTEGER},
+                #{shareUv, jdbcType=INTEGER},
+                NOW())
+    </insert>
+
+    <delete id="delete" parameterType="com.blazefire.dao.second.model.WxDailySummary">
+        DELETE
+        FROM persie_value.wx_daily_summary
+        WHERE appId = #{appId, jdbcType=VARCHAR}
+          AND refDate = #{refDate, jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

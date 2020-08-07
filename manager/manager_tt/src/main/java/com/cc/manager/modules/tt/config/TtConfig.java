@@ -84,6 +84,8 @@ public class TtConfig {
     @Value("${watermelonBannerUrl}")
     private String watermelonBannerUrl;
 
+    @Value("${messageNoticeUrl}")
+    private String messageNoticeUrl;
     /**
      * excel上传地址
      */
