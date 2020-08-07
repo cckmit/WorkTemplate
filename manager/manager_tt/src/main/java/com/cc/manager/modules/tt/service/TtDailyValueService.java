@@ -32,8 +32,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author CF
@@ -52,18 +50,14 @@ public class TtDailyValueService extends BaseStatsService<TtDailyValue, TtDailyV
         CrudObjectResult postResult = new CrudObjectResult();
         ConcurrentHashMap<String, TransferData> exportMap = new ConcurrentHashMap<>();
 
-        CrudObjectResult data = this.getData(jsonObject, exportMap);
-        CrudObjectResult adData =new CrudObjectResult();
-        if (data.getCode() == 1) {
-             adData = this.ttDailyAdValueService.getAdData(jsonObject, exportMap);
-        }
-
+        this.getData(jsonObject, exportMap);
+        this.ttDailyAdValueService.getAdData(jsonObject, exportMap);
         //处理传输数据并发送
         ArrayList<TransferData> transferDataList = new ArrayList<>(exportMap.values());
         for (TransferData transferData : transferDataList) {
             String activeUsers = transferData.getActiveUsers();
             Map activeUserMap = (Map) JSON.parse(activeUsers);
-            Integer activeUser = 0;
+            int activeUser = 0;
             for (Object mapKey : activeUserMap.keySet()) {
                 QueryWrapper<TtValueMapping> queryWrapper = new QueryWrapper<>();
                 TtValueMapping groupByKey = this.ttValueMappingService.getOne(queryWrapper.eq("groupByKey", mapKey));
@@ -74,11 +68,10 @@ public class TtDailyValueService extends BaseStatsService<TtDailyValue, TtDailyV
             transferData.setActiveUserNum(activeUser);
         }
         System.out.println("list打印开始--" + transferDataList + "--打印结束");
-        if (data.getCode() != 1 || adData.getCode() != 1) {
-            postResult.setCode(2);
-            postResult.setMsg("数据拉取失败,请联系管理员分析日志！");
-        }
-
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("data",transferDataList);
+      //  String resMessage = HttpRequest.post("http://192.168.1.123:20002/externalEngineer/yesterday/task").header("Content-Type", "application/json").body(jsonObject1.toJSONString()).execute().body();
+      //  System.out.println("返回值:"+resMessage);
         return postResult;
     }
 
@@ -93,38 +86,37 @@ public class TtDailyValueService extends BaseStatsService<TtDailyValue, TtDailyV
         ArrayList<String> appIdLists = new ArrayList<>();
         getAppIdLists(sessionId, appIdLists);
         try {
-
             for (String appId : appIdLists) {
-                    //今日头条数据请求参数
-                    String tt = String.format(ttConfig.getTtRequest(), startTime / 1000, endTime / 1000);
-                    String ttNew = String.format(ttConfig.getTtNewRequest(), startTime / 1000, endTime / 1000);
-                    String ttActive = String.format(ttConfig.getTtActiveRequest(), startTime / 1000, endTime / 1000);
-                    //西瓜视频数据请求参数
-                    String watermelon = String.format(ttConfig.getWatermelonRequest(), startTime / 1000, endTime / 1000);
-                    String watermelonNew = String.format(ttConfig.getWatermelonNewRequest(), startTime / 1000, endTime / 1000);
-                    String watermelonActive = String.format(ttConfig.getWatermelonActiveRequest(), startTime / 1000, endTime / 1000);
-                    //抖音数据请求参数
-                    String tikTok = String.format(ttConfig.getTikTokRequest(), startTime / 1000, endTime / 1000);
-                    String tikTokNew = String.format(ttConfig.getTikTokNewRequest(), startTime / 1000, endTime / 1000);
-                    String tikTokActive = String.format(ttConfig.getTikTokActiveRequest(), startTime / 1000, endTime / 1000);
-                    //今日头条极速版数据请求参数
-                    String ttExtreme = String.format(ttConfig.getTtExtremeRequest(), startTime / 1000, endTime / 1000);
-                    String ttExtremeNew = String.format(ttConfig.getTtExtremeNewRequest(), startTime / 1000, endTime / 1000);
-                    String ttExtremeActive = String.format(ttConfig.getTtExtremeActiveRequest(), startTime / 1000, endTime / 1000);
-                    //抖音极速版数据请求参数
-                    String tikTokExtreme = String.format(ttConfig.getTikTokExtremeRequest(), startTime / 1000, endTime / 1000);
-                    String tikTokExtremeNew = String.format(ttConfig.getTikTokExtremeNewRequest(), startTime / 1000, endTime / 1000);
-                    String tikTokExtremeActive = String.format(ttConfig.getTikTokExtremeActiveRequest(), startTime / 1000, endTime / 1000);
+                //今日头条数据请求参数
+                String tt = String.format(ttConfig.getTtRequest(), startTime / 1000, endTime / 1000);
+                String ttNew = String.format(ttConfig.getTtNewRequest(), startTime / 1000, endTime / 1000);
+                String ttActive = String.format(ttConfig.getTtActiveRequest(), startTime / 1000, endTime / 1000);
+                //西瓜视频数据请求参数
+                String watermelon = String.format(ttConfig.getWatermelonRequest(), startTime / 1000, endTime / 1000);
+                String watermelonNew = String.format(ttConfig.getWatermelonNewRequest(), startTime / 1000, endTime / 1000);
+                String watermelonActive = String.format(ttConfig.getWatermelonActiveRequest(), startTime / 1000, endTime / 1000);
+                //抖音数据请求参数
+                String tikTok = String.format(ttConfig.getTikTokRequest(), startTime / 1000, endTime / 1000);
+                String tikTokNew = String.format(ttConfig.getTikTokNewRequest(), startTime / 1000, endTime / 1000);
+                String tikTokActive = String.format(ttConfig.getTikTokActiveRequest(), startTime / 1000, endTime / 1000);
+                //今日头条极速版数据请求参数
+                String ttExtreme = String.format(ttConfig.getTtExtremeRequest(), startTime / 1000, endTime / 1000);
+                String ttExtremeNew = String.format(ttConfig.getTtExtremeNewRequest(), startTime / 1000, endTime / 1000);
+                String ttExtremeActive = String.format(ttConfig.getTtExtremeActiveRequest(), startTime / 1000, endTime / 1000);
+                //抖音极速版数据请求参数
+                String tikTokExtreme = String.format(ttConfig.getTikTokExtremeRequest(), startTime / 1000, endTime / 1000);
+                String tikTokExtremeNew = String.format(ttConfig.getTikTokExtremeNewRequest(), startTime / 1000, endTime / 1000);
+                String tikTokExtremeActive = String.format(ttConfig.getTikTokExtremeActiveRequest(), startTime / 1000, endTime / 1000);
 
-                    String url = String.format(ttConfig.getUrl(), appId);
-                    Map<String, TtDailyValue> ttDailyValueMap = new HashMap<>(16);
-                    getTtDailyValues(appId, "tt", tt, ttNew, ttActive, url, ttDailyValueMap, sessionId, exportMap);
-                    getTtDailyValues(appId, "ttExtreme", ttExtreme, ttExtremeNew, ttExtremeActive, url, ttDailyValueMap, sessionId, null);
-                    getTtDailyValues(appId, "watermelon", watermelon, watermelonNew, watermelonActive, url, ttDailyValueMap, sessionId, null);
-                    getTtDailyValues(appId, "tikTok", tikTok, tikTokNew, tikTokActive, url, ttDailyValueMap, sessionId, null);
-                    getTtDailyValues(appId, "tikTokExtreme", tikTokExtreme, tikTokExtremeNew, tikTokExtremeActive, url, ttDailyValueMap, sessionId, null);
+                String url = String.format(ttConfig.getUrl(), appId);
+                Map<String, TtDailyValue> ttDailyValueMap = new HashMap<>(16);
+                getTtDailyValues(appId, "tt", tt, ttNew, ttActive, url, ttDailyValueMap, sessionId, exportMap);
+                getTtDailyValues(appId, "ttExtreme", ttExtreme, ttExtremeNew, ttExtremeActive, url, ttDailyValueMap, sessionId, null);
+                getTtDailyValues(appId, "watermelon", watermelon, watermelonNew, watermelonActive, url, ttDailyValueMap, sessionId, null);
+                getTtDailyValues(appId, "tikTok", tikTok, tikTokNew, tikTokActive, url, ttDailyValueMap, sessionId, null);
+                getTtDailyValues(appId, "tikTokExtreme", tikTokExtreme, tikTokExtremeNew, tikTokExtremeActive, url, ttDailyValueMap, sessionId, null);
 
-                    this.saveOrUpdateBatch(new ArrayList<>(ttDailyValueMap.values()));
+                this.saveOrUpdateBatch(new ArrayList<>(ttDailyValueMap.values()));
             }
 
             TIME_CACHE_MAP.put("time", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));

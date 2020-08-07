@@ -26,10 +26,10 @@ public class TtDailyValueController implements BaseStatsController {
     @PostMapping(value = "/getData")
     public CrudObjectResult getData(@RequestBody JSONObject jsonObject) {
         // 验证参数，验证通过
-        ProjectServletListener.scheduler.execute(()->{
-             this.ttDailyValueService.getAllData(jsonObject);
+        ProjectServletListener.scheduler.execute(() -> {
+            this.ttDailyValueService.getAllData(jsonObject);
         });
-        return  new CrudObjectResult();
+        return new CrudObjectResult();
     }
 
     @GetMapping(value = "/getPage")

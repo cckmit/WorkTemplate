@@ -32,8 +32,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * @author cf
@@ -59,33 +57,29 @@ public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
         ArrayList<String> appIdLists = new ArrayList<>();
         getAppIdLists(sessionId, appIdLists);
         try {
-            // 用线程池来执行
-            ExecutorService executorService = Executors.newFixedThreadPool(16);
             for (String appId : appIdLists) {
-                executorService.submit(() -> {
-                    //今日头条广告数据请求
-                    String ttBannerUrl = String.format(ttConfig.getTtBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                    String ttVideoUrl = String.format(ttConfig.getTtVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                    String ttIntUrl = String.format(ttConfig.getTtIntUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                    //今日头条极速版广告数据请求
-                    String ttExtremeVideoUrl = String.format(ttConfig.getTtExtremeVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                    String ttExtremeBannerUrl = String.format(ttConfig.getTtExtremeBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                    //抖音广告数据请求参数
-                    String tikTokVideoUrl = String.format(ttConfig.getTikTokVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                    //抖音极速版广告数据请求参数
-                    String tikTokExtremeVideoUrl = String.format(ttConfig.getTikTokExtremeVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                    //西瓜视频广告数据请求参数
-                    String watermelonVideoUrl = String.format(ttConfig.getWatermelonVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                    String watermelonBannerUrl = String.format(ttConfig.getWatermelonBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
-                    //解析不同平台数据
-                    Map<String, TtDailyAdValue> ttDailyAdValueMap = new HashMap<>(16);
-                    getAdValue(appId, "tt", ttDailyAdValueMap, ttBannerUrl, ttVideoUrl, ttIntUrl, sessionId, exportMap);
-                    getAdValue(appId, "watermelon", ttDailyAdValueMap, watermelonBannerUrl, watermelonVideoUrl, "", sessionId, null);
-                    getAdValue(appId, "tikTok", ttDailyAdValueMap, "", tikTokVideoUrl, "", sessionId, null);
-                    getAdValue(appId, "ttExtreme", ttDailyAdValueMap, ttExtremeBannerUrl, ttExtremeVideoUrl, "", sessionId, null);
-                    getAdValue(appId, "tikTokExtreme", ttDailyAdValueMap, "", tikTokExtremeVideoUrl, "", sessionId, null);
-                    this.saveOrUpdateBatch(new ArrayList<>(ttDailyAdValueMap.values()));
-                });
+                //今日头条广告数据请求
+                String ttBannerUrl = String.format(ttConfig.getTtBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                String ttVideoUrl = String.format(ttConfig.getTtVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                String ttIntUrl = String.format(ttConfig.getTtIntUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                //今日头条极速版广告数据请求
+                String ttExtremeVideoUrl = String.format(ttConfig.getTtExtremeVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                String ttExtremeBannerUrl = String.format(ttConfig.getTtExtremeBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                //抖音广告数据请求参数
+                String tikTokVideoUrl = String.format(ttConfig.getTikTokVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                //抖音极速版广告数据请求参数
+                String tikTokExtremeVideoUrl = String.format(ttConfig.getTikTokExtremeVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                //西瓜视频广告数据请求参数
+                String watermelonVideoUrl = String.format(ttConfig.getWatermelonVideoUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                String watermelonBannerUrl = String.format(ttConfig.getWatermelonBannerUrl(), appId, simpleDateFormat.format(startDate), simpleDateFormat.format(endDate));
+                //解析不同平台数据
+                Map<String, TtDailyAdValue> ttDailyAdValueMap = new HashMap<>(16);
+                getAdValue(appId, "tt", ttDailyAdValueMap, ttBannerUrl, ttVideoUrl, ttIntUrl, sessionId, exportMap);
+                getAdValue(appId, "watermelon", ttDailyAdValueMap, watermelonBannerUrl, watermelonVideoUrl, "", sessionId, null);
+                getAdValue(appId, "tikTok", ttDailyAdValueMap, "", tikTokVideoUrl, "", sessionId, null);
+                getAdValue(appId, "ttExtreme", ttDailyAdValueMap, ttExtremeBannerUrl, ttExtremeVideoUrl, "", sessionId, null);
+                getAdValue(appId, "tikTokExtreme", ttDailyAdValueMap, "", tikTokExtremeVideoUrl, "", sessionId, null);
+                this.saveOrUpdateBatch(new ArrayList<>(ttDailyAdValueMap.values()));
             }
             TIME_CACHE_MAP.put("time", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
             postResult.setData(JSON.parseObject(JSON.toJSONString(TIME_CACHE_MAP)));
@@ -210,7 +204,7 @@ public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
                             transferData.setBnExposure(ttDailyAdValue.getWxBannerShow());
                             transferData.setBnClicksNum(ttDailyAdValue.getWxBannerClickCount());
                             transferData.setBnClicksRate(ttDailyAdValue.getWxBannerClickrate().toString());
-                            transferData.setSpIncome(ttDailyAdValue.getWxBannerIncome().toString());
+                            transferData.setBnIncome(ttDailyAdValue.getWxBannerIncome().toString());
                         }
                     }
                 }
