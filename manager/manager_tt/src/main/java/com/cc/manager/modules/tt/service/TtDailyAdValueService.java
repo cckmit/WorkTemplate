@@ -152,6 +152,7 @@ public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
                         dateAdValue.setWxVideoIncome(datumObject.getBigDecimal("cost"));
                         dateAdValue.setWxVideoClickCount(datumObject.getInteger("click"));
                         dateAdValue.setWxVideoShow(datumObject.getInteger("show"));
+                        getSpData(exportMap, dateAdValue);
                     } else {
                         TtDailyAdValue ttDailyAdValue = new TtDailyAdValue();
                         ttDailyAdValue.setWxDate(LocalDate.parse(datumObject.getString("date"), fmt));
@@ -164,18 +165,22 @@ public class TtDailyAdValueService extends BaseCrudService<TtDailyAdValue, TtDai
                         ttDailyAdValue.setWxVideoClickCount(datumObject.getInteger("click"));
                         ttDailyAdValue.setWxVideoShow(datumObject.getInteger("show"));
                         ttDailyAdValueMap.put(datumObject.getString("date") + "-" + appType, ttDailyAdValue);
-                        if (exportMap != null) {
-                            TransferData transferData = exportMap.get(ttDailyAdValue.getWxAppId() + "-" + ttDailyAdValue.getWxDate().toString().replace("-", "").trim());
-                            if (transferData != null) {
-                                transferData.setSpExposure(ttDailyAdValue.getWxVideoShow());
-                                transferData.setSpClicksNum(ttDailyAdValue.getWxVideoClickCount());
-                                transferData.setSpClicksRate(ttDailyAdValue.getWxVideoClickrate().toString());
-                                transferData.setSpIncome(ttDailyAdValue.getWxVideoIncome().toString());
-                            }
-                        }
+                        getSpData(exportMap, ttDailyAdValue);
 
                     }
                 }
+            }
+        }
+    }
+
+    private void getSpData(Map<String, TransferData> exportMap, TtDailyAdValue ttDailyAdValue) {
+        if (exportMap != null) {
+            TransferData transferData = exportMap.get(ttDailyAdValue.getWxAppId() + "-" + ttDailyAdValue.getWxDate().toString().replace("-", "").trim());
+            if (transferData != null) {
+                transferData.setSpExposure(ttDailyAdValue.getWxVideoShow());
+                transferData.setSpClicksNum(ttDailyAdValue.getWxVideoClickCount());
+                transferData.setSpClicksRate(ttDailyAdValue.getWxVideoClickrate().toString());
+                transferData.setSpIncome(ttDailyAdValue.getWxVideoIncome().toString());
             }
         }
     }
